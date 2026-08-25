@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Popular Subjects | EduTrust</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        @keyframes pagePopup {
+            0% { opacity: 0; transform: scale(0.95) translateY(15px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .page-popup-anim {
+            animation: pagePopup 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="page-bg text-gray-800 min-h-screen flex flex-col justify-between">
+
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <span class="text-2xl font-extrabold tracking-tight text-gray-900">
+                    Edu<span class="text-brand-600">Trust</span>
+                </span>
+            </a>
+
+            <div class="hidden lg:flex items-center gap-8 font-medium text-gray-600">
+                <a href="{% url 'home' %}" class="hover:text-brand-600 transition-colors">Home</a>
+                <a href="{% url 'course' %}" class="hover:text-brand-600 transition-colors text-brand-600 font-semibold">Courses</a>
+                <a href="{% url 'home' %}#tutor" class="hover:text-brand-600 transition-colors">Tutors</a>
+                <a href="{% url 'studymaterial'%}" class="hover:text-brand-600 transition-colors">Study Material</a> 
+                <a href="{% url 'faqs'%}" class="hover:text-brand-600 transition-colors">FAQs</a>
+                <!-- <a href="{% url 'teacher_registration'%}" class="hover:text-brand-600 transition-colors text-brand-600 font-semibold">Teacher Registration</a> </div> -->
+
+            <div class="hidden lg:flex items-center gap-4">
+                <button onclick="openLoginModal()" class="text-gray-700m gap-4 font-semibold px-5 py-2.5 rounded-xl hover:bg-gray-100 transition-colors">Login</button>
+                <button onclick="openRegisterModal()" class="bg-brand-600 gap-4 bg-brand-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg shadow-brand-600/30 transition-all">Register/Student</button>
+            </div>
+
+            <button id="mobile-menu-btn" class="lg:hidden text-gray-700 text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100">
+            <div class="flex flex-col p-6 gap-4 font-medium text-gray-700">
+                <a href="{% url 'home' %}" class="hover:text-brand-600">Home</a>
+                <a href="{% url 'course' %}" class="hover:text-brand-600 text-brand-600 font-semibold">Courses</a>
+                <a href="{% url 'home' %}#tutor" class="hover:text-brand-600">Tutors</a>
+                <a href="{% url 'home' %}#tutor" class="hover:text-brand-600">Study Material</a>
+                <a href="{% url 'faqs'%}" class="hover:text-brand-600">FAQs</a>
+                <!-- <a href="{% url 'teacher_registration'%}" class="text-brand-600 font-semibold">Teacher Registration</a> <hr class="my-2 border-gray-100"> -->
+                <button onclick="openLoginModal()" class="w-full text-left py-2 font-semibold">Login</button>
+                <button onclick="openRegisterModal()" class="w-full bg-brand-600 text-white px-6 py-3 rounded-xl font-medium text-center">Register Free</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-popup-anim py-12 flex-grow">
+        <!-- SECTION 1: COURSE BATCHES CATALOG -->
+        <section id="courses" class="container mx-auto px-4 md:px-6 lg:px-8 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 py-12 mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10 pb-6 border-b border-gray-100">
+                <div>
+                    <span class="text-xs font-extrabold text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-100 uppercase tracking-wider">🎓 Featured Batches 2026-27</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Explore Premium Learning Batches</h2>
+                    <p class="text-sm text-gray-500 mt-1">Full-year syllabus, daily DPPs, handwritten notes, and live doubt resolution by India's top faculty.</p>
+                </div>
+                <!-- Board & Class Filter Slots -->
+                <div class="flex flex-col gap-3 w-full md:w-auto">
+                    <!-- Main Board Filter Tabs -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+                        <button onclick="setBoardFilter('all')" id="btnBoardAll" class="board-filter-btn active bg-brand-600 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer shadow-md transition-all">⚡ All Batches</button>
+                        <button onclick="setBoardFilter('UP Board')" id="btnBoardUP" class="board-filter-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-emerald-200 cursor-pointer transition-all">🟢 UP Board</button>
+                        <button onclick="setBoardFilter('CBSE')" id="btnBoardCBSE" class="board-filter-btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-blue-200 cursor-pointer transition-all">🔵 CBSE Board</button>
+                        <button onclick="setBoardFilter('ICSE')" id="btnBoardICSE" class="board-filter-btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-purple-200 cursor-pointer transition-all">🟣 ICSE Board</button>
+                    </div>
+
+                    <!-- Class Sub-Filter Pills (Class 9th - 12th inside Board) -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-thin bg-slate-50 p-1.5 rounded-2xl border border-slate-200/60">
+                        <span class="text-[11px] font-bold text-gray-500 px-2 shrink-0"><i class="fas fa-layer-group text-brand-600 mr-1"></i>Select Class:</span>
+                        <button onclick="setClassFilter('all')" class="class-filter-btn active bg-white text-brand-600 font-extrabold text-xs px-3 py-1.5 rounded-xl border border-gray-200 cursor-pointer shadow-xs transition-all">All Classes</button>
+                        <button onclick="setClassFilter('Class 9')" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all">Class 9th</button>
+                        <button onclick="setClassFilter('Class 10')" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all">Class 10th</button>
+                        <button onclick="setClassFilter('Class 11')" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all">Class 11th</button>
+                        <button onclick="setClassFilter('Class 12')" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all">Class 12th</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Course Cards Grid -->
+            <div id="courseCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: SUBJECT DIRECTORY -->
+        <section class="container mx-auto px-4 md:px-6 lg:px-8 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 py-12">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Explore Subject Wise Tutors</h2>
+                <p class="text-gray-500 text-sm max-w-2xl mx-auto">Find expert one-on-one home and online tutors for individual subjects.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div class="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100 cursor-pointer group shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Mathematics</h3>
+                    <p class="text-sm text-gray-500">Algebra, Calculus, Geo</p>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100 cursor-pointer group shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 mx-auto bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Physics</h3>
+                    <p class="text-sm text-gray-500">Mechanics, Optics</p>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100 cursor-pointer group shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 mx-auto bg-cyan-100 text-cyan-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Chemistry</h3>
+                    <p class="text-sm text-gray-500">Organic, Inorganic</p>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100 cursor-pointer group shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 mx-auto bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">Biology</h3>
+                    <p class="text-sm text-gray-500">Botany, Zoology</p>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100 cursor-pointer group shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 mx-auto bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">English</h3>
+                    <p class="text-sm text-gray-500">Grammar, Literature</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-300 pt-16 pb-12 border-t border-gray-800">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <span class="text-2xl font-extrabold tracking-tight text-white">
+                            Edu<span class="text-brand-500">Trust</span>
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Empowering students across India with personalized home and online tuition from expert educators.
+                    </p>
+                    <div class="flex gap-4 text-gray-400">
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'home' %}" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Courses</a></li>
+                        <li><a href="{% url 'tutor'%}" class="hover:text-white transition-colors">Tutors</a></li>
+                        <li><a href="{% url 'study_material' %}" class="hover:text-white transition-colors">Study Material</a></li>
+                        <li><a href="{% url 'success'%}" class="hover:text-white transition-colors">Success Story</a></li>
+                        <li><a href="{% url 'faqs'%}" class="hover:text-white transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Top Subjects</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors">Mathematics</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Physics & Chemistry</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">English Grammar</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Computer Science</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Newsletter</h4>
+                    <p class="text-sm text-gray-400 mb-4">Subscribe to get updates on new courses and study materials.</p>
+                    <form class="space-y-3">
+                        <input type="email" placeholder="Enter your email" class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-500 w-full text-sm">
+                        <button type="button" class="bg-brand-600 hover:bg-brand-700 text-white rounded-xl py-3 font-semibold transition-colors w-full text-sm">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-500">
+                    &copy; 2026 EduTrust Platform. All rights reserved.
+                </p>
+                <div class="flex gap-6 text-sm text-gray-500">
+                    <a href="{% url 'privacy_policy' %}" class="hover:text-white transition-colors">
+                        Privacy Policy
+                    </a>
+
+                    <a href="{% url 'terms_of_service' %}" class="hover:text-white transition-colors">
+                        Terms of Service
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- COURSE SYLLABUS & ENROLLMENT MODAL -->
+    <div id="courseDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden">
+            <div class="p-6 bg-gradient-to-r from-brand-600 to-indigo-600 text-white flex justify-between items-start">
+                <div>
+                    <span id="cmClassSubject" class="text-xs font-extrabold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">Class 10 | Mathematics</span>
+                    <h3 id="cmTitle" class="text-xl md:text-2xl font-extrabold mt-2">Class 10 CBSE Math & Science Masterclass</h3>
+                    <p id="cmTeacher" class="text-xs text-blue-100 mt-1"><i class="fas fa-chalkboard-teacher mr-1"></i> Er. Rajesh Sharma</p>
+                </div>
+                <button onclick="closeCourseModal()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center font-bold text-lg border-0 cursor-pointer transition-all">&times;</button>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-y-auto space-y-6">
+                <div class="bg-blue-50/60 p-4 rounded-2xl border border-blue-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-gray-500 font-semibold block">Enrollment Fee</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="cmEffectivePrice" class="text-2xl font-extrabold text-brand-700">₹1,799</span>
+                            <span id="cmOriginalPrice" class="text-sm text-gray-400 line-through">₹2,999</span>
+                            <span id="cmDiscount" class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-md">40% OFF</span>
+                        </div>
+                    </div>
+                    <button id="btnEnrollModal" onclick="submitEnrollment()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl shadow-lg shadow-emerald-600/30 border-0 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fas fa-bolt"></i> Enroll in Premium Tier (₹1,799)
+                    </button>
+                </div>
+
+                <!-- 3-TIER BATCH PLAN FEATURES COMPARISON WITH SELECT OPTIONS -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-gray-900 text-sm flex items-center gap-2 m-0">
+                            <i class="fas fa-layer-group text-brand-600"></i> Select Your Plan Tier & Features
+                        </h4>
+                        <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">Selected: <span id="lblSelectedTier">Premium Tier</span></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                        <!-- Normal Tier Card -->
+                        <div id="cardPlanNormal" onclick="selectCoursePlan('Normal')" class="plan-card cursor-pointer bg-white border-2 border-slate-200 rounded-2xl p-4 flex flex-col justify-between space-y-3 relative hover:border-slate-400 transition-all shadow-xs">
+                            <div>
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <span class="font-extrabold text-slate-800 text-xs flex items-center gap-1">🥉 Normal Tier</span>
+                                    <span id="priceNormal" class="text-xs font-extrabold text-slate-900">₹1,250</span>
+                                </div>
+                                <ul id="featuresNormalList" class="mt-3 space-y-2 text-[11px] text-gray-600 font-medium">
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check text-emerald-500 text-xs"></i> Full HD Recorded Video Lectures</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check text-emerald-500 text-xs"></i> Class PDF Notes & Formulas</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check text-emerald-500 text-xs"></i> Daily Practice Homework (DPPs)</li>
+                                </ul>
+                            </div>
+                            <button type="button" id="btnSelectNormal" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl border border-slate-300 transition-all flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                                <i class="far fa-circle text-slate-400"></i> Select Normal Plan
+                            </button>
+                        </div>
+
+                        <!-- Premium Tier Card -->
+                        <div id="cardPlanPremium" onclick="selectCoursePlan('Premium')" class="plan-card cursor-pointer bg-gradient-to-b from-amber-50 to-orange-50/50 border-2 border-amber-500 rounded-2xl p-4 flex flex-col justify-between space-y-3 relative shadow-md transition-all ring-2 ring-amber-400">
+                            <span class="absolute -top-2.5 right-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">Most Popular</span>
+                            <div>
+                                <div class="flex items-center justify-between pb-2 border-b border-amber-200/60">
+                                    <span class="font-extrabold text-amber-950 text-xs flex items-center gap-1">🥈 Premium Tier</span>
+                                    <span id="pricePremium" class="text-xs font-extrabold text-amber-900">₹1,799</span>
+                                </div>
+                                <ul id="featuresPremiumList" class="mt-3 space-y-2 text-[11px] text-amber-950 font-medium">
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Everything in Normal Plan</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Daily Live Classes & Q&A</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Weekly Live Doubt Clearing</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Weekly Mock Tests & Ranks</li>
+                                </ul>
+                            </div>
+                            <button type="button" id="btnSelectPremium" class="w-full py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                                <i class="fas fa-check-circle"></i> Selected (Best Value)
+                            </button>
+                        </div>
+
+                        <!-- Ultra Premium Tier Card -->
+                        <div id="cardPlanUltra" onclick="selectCoursePlan('Ultra Premium')" class="plan-card cursor-pointer bg-gradient-to-b from-purple-50 via-indigo-50/50 to-cyan-50 border-2 border-purple-300 rounded-2xl p-4 flex flex-col justify-between space-y-3 relative hover:border-purple-500 transition-all shadow-xs">
+                            <span class="absolute -top-2.5 right-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">VIP Mentorship</span>
+                            <div>
+                                <div class="flex items-center justify-between pb-2 border-b border-purple-200/60">
+                                    <span class="font-extrabold text-purple-950 text-xs flex items-center gap-1">🥇 Ultra Premium</span>
+                                    <span id="priceUltra" class="text-xs font-extrabold text-purple-900">₹3,240</span>
+                                </div>
+                                <ul id="featuresUltraList" class="mt-3 space-y-2 text-[11px] text-purple-950 font-medium">
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> Everything in Premium Plan</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> 1-on-1 Personal Home Tutor</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> Dedicated VIP Academic Mentor</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> Instant 24/7 AI Doubts Solver</li>
+                                </ul>
+                            </div>
+                            <button type="button" id="btnSelectUltra" class="w-full py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-extrabold text-xs rounded-xl border border-purple-300 transition-all flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                                <i class="far fa-circle text-purple-400"></i> Select Ultra Premium
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-gray-900 text-base mb-3 flex items-center gap-2">
+                        <i class="fas fa-list-ol text-brand-600"></i> Course Syllabus & Chapters Tree
+                    </h4>
+                    <div id="cmSyllabusTree" class="space-y-3">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allCoursesData = [];
+
+        function fetchCourses(className = 'all', boardName = 'all') {
+            const grid = document.getElementById('courseCardsGrid');
+            if (!grid) return;
+
+            fetch(`/api/courses/?class_name=${encodeURIComponent(className)}&board=${encodeURIComponent(boardName)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.courses) {
+                        allCoursesData = data.courses;
+                        grid.innerHTML = data.courses.map(c => `
+                            <div class="bg-white rounded-3xl border border-gray-100 shadow-soft hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group relative">
+                                <div class="relative h-48 overflow-hidden">
+                                    <img src="${c.banner_image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${c.title}">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent to-transparent"></div>
+                                    <span class="absolute top-3 left-3 bg-brand-600 text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">${c.board} • ${c.class_name}</span>
+                                    ${c.discount_percent > 0 ? `<span class="absolute top-3 right-3 bg-rose-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md">${c.discount_percent}% OFF</span>` : ''}
+                                    <span class="absolute bottom-3 left-3 text-white text-xs font-bold flex items-center gap-1.5"><i class="fas fa-user-graduate text-cyan-400"></i> ${c.enrollment_count} Students Enrolled</span>
+                                </div>
+
+                                <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                                    <div>
+                                        <h3 class="font-extrabold text-gray-900 text-lg leading-snug group-hover:text-brand-600 transition-colors">${c.title}</h3>
+                                        <p class="text-xs text-gray-500 mt-1 line-clamp-2">${c.description}</p>
+                                        <div class="mt-3 flex items-center justify-between text-xs">
+                                            <div class="text-indigo-700 font-bold bg-indigo-50/70 px-3 py-1.5 rounded-xl w-fit">
+                                                <i class="fas fa-chalkboard-teacher"></i> ${c.teacher_name}
+                                            </div>
+                                            <span class="text-[10px] font-bold text-gray-400">Full Academic Batch</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
+                                        <div>
+                                            <span class="text-[10px] text-gray-400 font-semibold block uppercase">Course Fee</span>
+                                            <div class="flex items-baseline gap-1.5">
+                                                <strong class="text-xl font-extrabold text-gray-900">₹${c.effective_price}</strong>
+                                                ${c.discount_percent > 0 ? `<span class="text-xs text-gray-400 line-through">₹${c.original_price}</span>` : ''}
+                                            </div>
+                                        </div>
+                                        <button onclick="openCourseDetails('${c.course_id}')" class="bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-md shadow-brand-600/20 border-0 cursor-pointer transition-all flex items-center gap-1.5">
+                                            <i class="fas fa-play-circle"></i> View Batch
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        grid.innerHTML = `<div class="col-span-full py-16 text-center text-gray-400 font-medium">No courses available for selected filters.</div>`;
+                    }
+                })
+                .catch(err => console.error("Error fetching courses:", err));
+        }
+
+        let activeBoardFilter = 'all';
+        let activeClassFilter = 'all';
+
+        function setBoardFilter(boardName) {
+            activeBoardFilter = boardName;
+            
+            document.querySelectorAll('.board-filter-btn').forEach(btn => {
+                if (btn.id === 'btnBoardUP') {
+                    btn.className = 'board-filter-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-emerald-200 cursor-pointer transition-all';
+                } else if (btn.id === 'btnBoardCBSE') {
+                    btn.className = 'board-filter-btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-blue-200 cursor-pointer transition-all';
+                } else if (btn.id === 'btnBoardICSE') {
+                    btn.className = 'board-filter-btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-extrabold text-xs px-3.5 py-2 rounded-xl border border-purple-200 cursor-pointer transition-all';
+                } else {
+                    btn.className = 'board-filter-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer transition-all';
+                }
+            });
+
+            if (event && event.currentTarget) {
+                if (boardName === 'UP Board') {
+                    event.currentTarget.className = 'board-filter-btn active bg-emerald-600 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl border-0 cursor-pointer shadow-md transition-all';
+                } else if (boardName === 'CBSE') {
+                    event.currentTarget.className = 'board-filter-btn active bg-blue-600 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl border-0 cursor-pointer shadow-md transition-all';
+                } else if (boardName === 'ICSE') {
+                    event.currentTarget.className = 'board-filter-btn active bg-purple-600 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl border-0 cursor-pointer shadow-md transition-all';
+                } else {
+                    event.currentTarget.className = 'board-filter-btn active bg-brand-600 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer shadow-md transition-all';
+                }
+            }
+
+            fetchCourses(activeClassFilter, activeBoardFilter);
+        }
+
+        function setClassFilter(className) {
+            activeClassFilter = className;
+
+            document.querySelectorAll('.class-filter-btn').forEach(btn => {
+                btn.className = 'class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all';
+            });
+
+            if (event && event.currentTarget) {
+                event.currentTarget.className = 'class-filter-btn active bg-white text-brand-600 font-extrabold text-xs px-3 py-1.5 rounded-xl border border-gray-200 cursor-pointer shadow-xs transition-all';
+            }
+
+            fetchCourses(activeClassFilter, activeBoardFilter);
+        }
+
+        let activeSelectedTier = 'Premium';
+        let currentBatchRealPrices = { Normal: 1999, Premium: 2999, 'Ultra Premium': 4999 };
+        let currentBatchTierDiscounts = { Normal: 20, Premium: 30, 'Ultra Premium': 40 };
+
+        function getDiscountedPrice(realPrice, discPct) {
+            if (!discPct || discPct <= 0) return Math.round(realPrice);
+            return Math.round(realPrice * (1 - discPct / 100.0));
+        }
+
+        function selectCoursePlan(tier) {
+            activeSelectedTier = tier;
+            const realPrice = currentBatchRealPrices[tier] || 2999;
+            const discPct = currentBatchTierDiscounts[tier] || 0;
+            const effectivePrice = getDiscountedPrice(realPrice, discPct);
+
+            const lblTier = document.getElementById('lblSelectedTier');
+            if (lblTier) lblTier.textContent = `${tier} Tier (₹${effectivePrice.toLocaleString('en-IN')})`;
+
+            const effPrice = document.getElementById('cmEffectivePrice');
+            if (effPrice) effPrice.textContent = `₹${effectivePrice.toLocaleString('en-IN')}`;
+
+            const cmOrig = document.getElementById('cmOriginalPrice');
+            if (cmOrig) {
+                if (discPct > 0) {
+                    cmOrig.textContent = `₹${realPrice.toLocaleString('en-IN')}`;
+                    cmOrig.style.display = 'inline';
+                } else {
+                    cmOrig.style.display = 'none';
+                }
+            }
+
+            const cmDisc = document.getElementById('cmDiscount');
+            if (cmDisc) {
+                if (discPct > 0) {
+                    cmDisc.textContent = `${discPct}% OFF`;
+                    cmDisc.style.display = 'inline-block';
+                } else {
+                    cmDisc.style.display = 'none';
+                }
+            }
+
+            const btnEnroll = document.getElementById('btnEnrollModal');
+            if (btnEnroll) {
+                btnEnroll.innerHTML = `<i class="fas fa-bolt"></i> Enroll in ${tier} Tier (₹${effectivePrice.toLocaleString('en-IN')})`;
+            }
+
+            const cardNormal = document.getElementById('cardPlanNormal');
+            const cardPremium = document.getElementById('cardPlanPremium');
+            const cardUltra = document.getElementById('cardPlanUltra');
+
+            const btnNormal = document.getElementById('btnSelectNormal');
+            const btnPremium = document.getElementById('btnSelectPremium');
+            const btnUltra = document.getElementById('btnSelectUltra');
+
+            [cardNormal, cardPremium, cardUltra].forEach(c => {
+                if (c) c.classList.remove('ring-4', 'ring-slate-800', 'ring-amber-500', 'ring-purple-600', 'shadow-lg');
+            });
+
+            if (btnNormal) btnNormal.innerHTML = `<i class="far fa-circle text-slate-400"></i> Select Normal Plan`;
+            if (btnPremium) btnPremium.innerHTML = `<i class="far fa-circle text-amber-500"></i> Select Premium Plan`;
+            if (btnUltra) btnUltra.innerHTML = `<i class="far fa-circle text-purple-400"></i> Select Ultra Premium`;
+
+            if (tier === 'Normal') {
+                if (cardNormal) cardNormal.classList.add('ring-4', 'ring-slate-800', 'shadow-lg');
+                if (btnNormal) btnNormal.innerHTML = `<i class="fas fa-check-circle text-emerald-600"></i> Selected Normal Plan`;
+            } else if (tier === 'Premium') {
+                if (cardPremium) cardPremium.classList.add('ring-4', 'ring-amber-500', 'shadow-lg');
+                if (btnPremium) btnPremium.innerHTML = `<i class="fas fa-check-circle"></i> Selected (Best Value)`;
+            } else if (tier === 'Ultra Premium') {
+                if (cardUltra) cardUltra.classList.add('ring-4', 'ring-purple-600', 'shadow-lg');
+                if (btnUltra) btnUltra.innerHTML = `<i class="fas fa-check-circle text-purple-600"></i> Selected Ultra Premium`;
+            }
+        }
+
+        function submitEnrollment() {
+            const realPrice = currentBatchRealPrices[activeSelectedTier] || 2999;
+            const discPct = currentBatchTierDiscounts[activeSelectedTier] || 0;
+            const price = getDiscountedPrice(realPrice, discPct);
+            alert(`🎉 Enrollment Request Submitted!\n\nSelected Plan: ${activeSelectedTier} Tier\nCourse Fee: ₹${price.toLocaleString('en-IN')}\n\nOur Academic Counselor will contact you shortly to complete your enrollment.`);
+        }
+
+        function renderFeatureList(rawText, iconClass = 'fa-check text-emerald-500', defaultItems = []) {
+            if (!rawText || !rawText.trim()) {
+                return defaultItems.map(item => `<li class="flex items-center gap-1.5"><i class="fas ${iconClass} text-xs"></i> ${item}</li>`).join('');
+            }
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            return lines.map(l => {
+                const cleanLine = l.replace(/^•\s*/, '').replace(/^-\s*/, '');
+                return `<li class="flex items-center gap-1.5"><i class="fas ${iconClass} text-xs"></i> ${cleanLine}</li>`;
+            }).join('');
+        }
+
+        function openCourseDetails(courseId) {
+            fetch(`/api/courses/${courseId}/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.course) {
+                        const c = data.course;
+                        document.getElementById('cmTitle').textContent = c.title;
+                        document.getElementById('cmClassSubject').textContent = `${c.class_name} | ${c.subject}`;
+                        document.getElementById('cmTeacher').innerHTML = `<i class="fas fa-chalkboard-teacher mr-1"></i> ${c.teacher_name}`;
+
+                        currentBatchRealPrices = {
+                            Normal: c.price_normal ? Math.round(c.price_normal) : 1999,
+                            Premium: c.price_premium ? Math.round(c.price_premium) : Math.round(c.original_price || 2999),
+                            'Ultra Premium': c.price_ultra ? Math.round(c.price_ultra) : 4999
+                        };
+
+                        currentBatchTierDiscounts = {
+                            Normal: c.discount_normal || c.discount_percent || 20,
+                            Premium: c.discount_premium || c.discount_percent || 30,
+                            'Ultra Premium': c.discount_ultra || c.discount_percent || 40
+                        };
+                        
+                        const effNorm = getDiscountedPrice(currentBatchRealPrices.Normal, currentBatchTierDiscounts.Normal);
+                        const effPrem = getDiscountedPrice(currentBatchRealPrices.Premium, currentBatchTierDiscounts.Premium);
+                        const effUlt = getDiscountedPrice(currentBatchRealPrices['Ultra Premium'], currentBatchTierDiscounts['Ultra Premium']);
+
+                        const pNorm = document.getElementById('priceNormal');
+                        if (pNorm) pNorm.textContent = `₹${effNorm.toLocaleString('en-IN')}`;
+                        const pPrem = document.getElementById('pricePremium');
+                        if (pPrem) pPrem.textContent = `₹${effPrem.toLocaleString('en-IN')}`;
+                        const pUlt = document.getElementById('priceUltra');
+                        if (pUlt) pUlt.textContent = `₹${effUlt.toLocaleString('en-IN')}`;
+
+                        // Render Feature Checklist Points typed by Admin
+                        const ulNorm = document.getElementById('featuresNormalList');
+                        if (ulNorm) ulNorm.innerHTML = renderFeatureList(c.features_normal, 'fa-check text-emerald-500', ['Full HD Recorded Video Lectures', 'Class PDF Notes & Formulas', 'Daily Practice Homework (DPPs)']);
+
+                        const ulPrem = document.getElementById('featuresPremiumList');
+                        if (ulPrem) ulPrem.innerHTML = renderFeatureList(c.features_premium, 'fa-check-circle text-amber-600', ['Everything in Normal Plan', 'Daily Live Classes & Q&A', 'Weekly Live Doubt Clearing', 'Weekly Mock Tests & Ranks']);
+
+                        const ulUlt = document.getElementById('featuresUltraList');
+                        if (ulUlt) ulUlt.innerHTML = renderFeatureList(c.features_ultra, 'fa-star text-purple-600', ['Everything in Premium Plan', '1-on-1 Personal Home Tutor', 'Dedicated VIP Academic Mentor', 'Instant 24/7 AI Doubts Solver']);
+
+                        selectCoursePlan('Premium');
+
+                        const tree = document.getElementById('cmSyllabusTree');
+                        if (c.chapters && c.chapters.length > 0) {
+                            tree.innerHTML = c.chapters.map(ch => `
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <h5 class="font-extrabold text-gray-900 text-sm flex items-center gap-2 m-0">
+                                            <span class="w-6 h-6 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold">${ch.sequence_number}</span> ${ch.title}
+                                        </h5>
+                                        <span class="bg-cyan-50 text-cyan-700 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-cyan-100"><i class="fas fa-file-invoice mr-1"></i> Chapter DPP Included</span>
+                                    </div>
+                                    <div class="pl-8 space-y-1.5">
+                                        ${ch.lectures.map(lec => `
+                                            <div class="flex items-center justify-between text-xs py-1.5 px-3 bg-white rounded-xl border border-gray-100 shadow-xs">
+                                                <span class="font-semibold text-gray-800"><i class="fas fa-circle-play text-brand-600 mr-2"></i> ${lec.title} (${lec.duration} min)</span>
+                                                ${lec.is_free_demo ? `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded">FREE DEMO</span>` : `<i class="fas fa-lock text-gray-300"></i>`}
+                                            </div>
+                                        `).join('')}
+                                        <div class="flex items-center justify-between text-xs py-1.5 px-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/60 mt-2">
+                                            <span class="font-bold text-amber-900 flex items-center gap-1.5"><i class="fas fa-file-pdf text-amber-600"></i> 📄 ${ch.title} — Daily Practice Paper (DPP & Solutions)</span>
+                                            <button onclick="alert('Downloading DPP PDF for ${ch.title}...'); window.open('/studymaterial/', '_blank');" class="bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-colors shadow-xs">
+                                                Download DPP PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('');
+                        } else {
+                            tree.innerHTML = `<p class="text-xs text-gray-400">Chapters & syllabus tree being updated.</p>`;
+                        }
+
+                        const modal = document.getElementById('courseDetailModal');
+                        if (modal) {
+                            modal.classList.remove('hidden');
+                            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                        }
+                    }
+                });
+        }
+
+        function closeCourseModal() {
+            const modal = document.getElementById('courseDetailModal');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => fetchCourses('all'));
+    </script>
+
+    <!-- Floating 24/7 AI Doubt Solver Drawer Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleDoubtDrawer()" class="w-14 h-14 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-2xl hover:scale-110 transition-transform cursor-pointer border-2 border-white" title="24/7 AI Doubt Solver">
+            <i class="fas fa-robot"></i>
+        </button>
+    </div>
+
+    <!-- AI Doubt Solver Interactive Drawer -->
+    <div id="aiDoubtDrawer" class="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 p-5 space-y-4 hidden transition-all">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-indigo-50 text-brand-600 flex items-center justify-center font-bold">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-slate-900 text-sm m-0">24/7 EduTrust AI Doubt Solver</h4>
+                    <p class="text-[10px] text-emerald-600 font-extrabold m-0"><i class="fas fa-circle text-[7px] mr-1"></i> Instant AI Faculty Active</p>
+                </div>
+            </div>
+            <button onclick="toggleDoubtDrawer()" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent text-lg cursor-pointer">&times;</button>
+        </div>
+
+        <div id="doubtChatBox" class="max-h-60 overflow-y-auto space-y-2 text-xs bg-slate-50 p-3 rounded-2xl border border-slate-100">
+            <div class="bg-indigo-100/80 text-slate-800 p-2.5 rounded-xl font-medium">
+                👋 Hello! Ask me any physics, math, or chemistry question or upload a photo of your problem for instant step-by-step resolution.
+            </div>
+        </div>
+
+        <form id="aiDoubtForm" onsubmit="submitAIDoubt(event)" class="space-y-2">
+            <textarea id="doubtText" rows="2" placeholder="Type your doubt question here..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 font-medium"></textarea>
+            <div class="flex justify-between items-center">
+                <label class="cursor-pointer text-[11px] font-bold text-brand-600 hover:underline flex items-center gap-1">
+                    <i class="fas fa-camera"></i> Attach Photo
+                    <input type="file" id="doubtImage" accept="image/*" class="hidden" onchange="alert('Photo attached!')">
+                </label>
+                <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer shadow-xs flex items-center gap-1">
+                    Solve Doubt <i class="fas fa-paper-plane text-[10px]"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function toggleDoubtDrawer() {
+            const drawer = document.getElementById('aiDoubtDrawer');
+            if (drawer) drawer.classList.toggle('hidden');
+        }
+
+        function submitAIDoubt(e) {
+            e.preventDefault();
+            const text = document.getElementById('doubtText').value.trim();
+            const imageInput = document.getElementById('doubtImage');
+            
+            if (!text && (!imageInput.files || !imageInput.files[0])) return;
+
+            const chat = document.getElementById('doubtChatBox');
+            chat.innerHTML += `<div class="bg-brand-600 text-white p-2.5 rounded-xl font-medium self-end text-right">❓ ${text || 'Photo Question Submitted'}</div>`;
+            document.getElementById('doubtText').value = '';
+
+            const fd = new FormData();
+            fd.append('query_text', text);
+            if (imageInput.files && imageInput.files[0]) fd.append('image_query', imageInput.files[0]);
+
+            fetch('/api/doubts/solve/', {
+                method: 'POST',
+                body: fd
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    chat.innerHTML += `<div class="bg-white border border-indigo-100 text-slate-800 p-2.5 rounded-xl font-medium shadow-xs">${data.solution.replace(/\n/g, '<br>')}</div>`;
+                    chat.scrollTop = chat.scrollHeight;
+                }
+            });
+        }
+    </script>
+</body>
+</html>

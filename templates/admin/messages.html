@@ -1,0 +1,878 @@
+{% extends base_template %}
+{% load static %}
+
+{% block admin_content %}
+<div class="space-y-5 fade-in text-slate-800 dark:text-slate-100 font-sans pb-8">
+    
+    <!-- ========================================== -->
+    <!-- 1. PAGE HEADER & TOP ACTION BUTTONS -->
+    <!-- ========================================== -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold flex items-center justify-center text-base shadow-md shadow-blue-500/20">
+                    <i class="fas fa-comments"></i>
+                </div>
+                Messages & Communication Center
+            </h1>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">
+                Centralized multi-channel communication hub for students, teachers, parents, staff and LMS users.
+            </p>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2.5">
+            <button onclick="openModal('modalBroadcast')" class="px-4 py-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs border border-indigo-200 dark:border-indigo-800 cursor-pointer transition-all flex items-center gap-2">
+                <i class="fas fa-bullhorn"></i> <span>Broadcast</span>
+            </button>
+            <button onclick="openModal('modalNotice')" class="px-4 py-2.5 rounded-2xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 text-blue-600 dark:text-blue-400 font-extrabold text-xs border border-blue-200 dark:border-blue-800 cursor-pointer transition-all flex items-center gap-2">
+                <i class="fas fa-flag"></i> <span>New Notice</span>
+            </button>
+
+            <!-- + NEW MESSAGE DROPDOWN -->
+            <div class="relative">
+                <button type="button" id="btnNewMessageDropdown" onclick="toggleDropdown('newMsgMenu')" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs border-0 cursor-pointer shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2">
+                    <i class="fas fa-plus text-xs"></i>
+                    <span>+ New Message</span>
+                    <i class="fas fa-chevron-down text-[10px] ml-1"></i>
+                </button>
+
+                <div id="newMsgMenu" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2 space-y-1">
+                    <button onclick="openNewCommModal('TEXT')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fas fa-comment-alt text-blue-500"></i> New Text Message
+                    </button>
+                    <button onclick="openNewCommModal('WHATSAPP')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fab fa-whatsapp text-emerald-500"></i> New WhatsApp Message
+                    </button>
+                    <button onclick="openNewCommModal('EMAIL')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fas fa-envelope text-indigo-500"></i> New Email
+                    </button>
+                    <button onclick="openNewCommModal('SMS')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fas fa-sms text-amber-500"></i> New SMS
+                    </button>
+                    <div class="border-t border-slate-100 dark:border-slate-800/80 my-1"></div>
+                    <button onclick="openModal('modalNotice')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fas fa-flag text-rose-500"></i> Create Notice
+                    </button>
+                    <button onclick="openModal('modalAnnouncement')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fas fa-scroll text-purple-500"></i> Create Announcement
+                    </button>
+                    <button onclick="openModal('modalBroadcast')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2.5 cursor-pointer border-0 bg-transparent">
+                        <i class="fas fa-bullhorn text-cyan-500"></i> Create Broadcast
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. DYNAMIC DASHBOARD STATS BAR (8 CARDS) -->
+    <!-- ========================================== -->
+    <!-- COMPACT MODERN SLEEK STATS CARDS BAR -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5" id="statsBar">
+        <!-- Total Conversations -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-blue-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-blue-600 dark:text-blue-400">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Conversations</span>
+                <i class="fas fa-comments text-xs"></i>
+            </div>
+            <strong id="statTotalConvs" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Unread Messages -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-amber-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-amber-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Unread</span>
+                <i class="fas fa-envelope text-xs"></i>
+            </div>
+            <strong id="statUnread" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Active Chats -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-emerald-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-emerald-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Active</span>
+                <i class="fas fa-user-check text-xs"></i>
+            </div>
+            <strong id="statActiveChats" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Support Tickets -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-rose-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-rose-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Support</span>
+                <i class="fas fa-headset text-xs"></i>
+            </div>
+            <strong id="statSupportTickets" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Today's Messages -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-indigo-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-indigo-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Today</span>
+                <i class="fas fa-calendar-day text-xs"></i>
+            </div>
+            <strong id="statTodaysMsgs" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Notices -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-cyan-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-cyan-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Notices</span>
+                <i class="fas fa-flag text-xs"></i>
+            </div>
+            <strong id="statNotices" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Announcements -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-purple-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-purple-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Announc</span>
+                <i class="fas fa-scroll text-xs"></i>
+            </div>
+            <strong id="statAnnouncements" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+
+        <!-- Multi-Channel -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:border-teal-500/30 transition-all space-y-0.5">
+            <div class="flex items-center justify-between text-teal-500">
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Channels</span>
+                <i class="fab fa-whatsapp text-xs"></i>
+            </div>
+            <strong id="statWhatsApp" class="block text-sm font-black text-slate-900 dark:text-white">--</strong>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. SEPARATED COMMUNICATION WORKSPACE -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[620px] relative">
+        
+        <!-- STANDALONE STICKY LEFT PANEL: CATEGORIES & CHANNELS NAVIGATION (3 COLS) -->
+        <div class="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 space-y-5 shadow-xs sticky top-20 h-fit max-h-[calc(100vh-6rem)] overflow-y-auto main-scrollbar">
+            <div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-2">INBOX</span>
+                <nav class="space-y-1 text-xs font-bold">
+                    <button onclick="selectCategory('all')" id="cat-all" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between bg-blue-600 text-white shadow-sm border-0 cursor-pointer">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-inbox w-4"></i> All Conversations</span>
+                        <span id="badge-all" class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">--</span>
+                    </button>
+                    <button onclick="selectCategory('unread')" id="cat-unread" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-envelope-open-text w-4 text-amber-500"></i> Unread</span>
+                        <span id="badge-unread" class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full">0</span>
+                    </button>
+                    <button onclick="selectCategory('starred')" id="cat-starred" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-star w-4 text-yellow-500"></i> Starred</span>
+                    </button>
+                    <button onclick="selectCategory('archived')" id="cat-archived" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-archive w-4 text-slate-400"></i> Archived</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-2">PEOPLE</span>
+                <nav class="space-y-1 text-xs font-bold">
+                    <button onclick="selectCategory('students')" id="cat-students" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-user-graduate w-4 text-blue-500"></i> Students</span>
+                    </button>
+                    <button onclick="selectCategory('teachers')" id="cat-teachers" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-chalkboard-teacher w-4 text-emerald-500"></i> Teachers</span>
+                    </button>
+                    <button onclick="selectCategory('admins')" id="cat-admins" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-user-shield w-4 text-indigo-500"></i> Admins & Staff</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-2">CHANNELS</span>
+                <nav class="space-y-1 text-xs font-bold">
+                    <button onclick="selectCategory('whatsapp')" id="cat-whatsapp" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fab fa-whatsapp w-4 text-emerald-500"></i> WhatsApp</span>
+                    </button>
+                    <button onclick="selectCategory('email')" id="cat-email" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-envelope w-4 text-indigo-500"></i> Email</span>
+                    </button>
+                    <button onclick="selectCategory('sms')" id="cat-sms" class="cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-sms w-4 text-amber-500"></i> SMS</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- STANDALONE RIGHT WORKSPACE: CONVERSATION LIST & CHAT (9 COLS) -->
+        <div class="lg:col-span-9 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xs overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+            
+            <!-- CENTER PANEL: CONVERSATION LIST & LIVE SEARCH (5 COLS) -->
+            <div class="lg:col-span-5 border-r border-slate-200 dark:border-slate-800/80 flex flex-col h-full bg-white dark:bg-slate-900">
+            <!-- Sticky Search Bar with Category Filter Dropdown -->
+            <div class="p-3.5 border-b border-slate-200 dark:border-slate-800 space-y-2 sticky top-0 bg-white dark:bg-slate-900 z-10 shadow-2xs">
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"><i class="fas fa-search"></i></span>
+                        <input type="text" id="commSearchInput" onkeyup="handleCommSearch()" placeholder="Search users, messages..." class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white text-xs font-semibold rounded-2xl pl-9 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <select id="commCategoryDropdown" onchange="selectCategory(this.value)" class="bg-slate-100 dark:bg-slate-800 border-0 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-2xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                        <option value="all">📥 All Inbox</option>
+                        <option value="unread">✉️ Unread</option>
+                        <option value="starred">⭐ Starred</option>
+                        <option value="archived">📁 Archived</option>
+                        <option value="students">🎓 Students</option>
+                        <option value="teachers">👨‍🏫 Teachers</option>
+                        <option value="admins">🛡️ Staff</option>
+                        <option value="whatsapp">💬 WhatsApp</option>
+                        <option value="email">📧 Email</option>
+                        <option value="sms">📱 SMS</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Conversations Independent Scrollable List -->
+            <div id="convListContainer" class="flex-1 overflow-y-auto max-h-[calc(100vh-14rem)] min-h-[480px] main-scrollbar divide-y divide-slate-100 dark:divide-slate-800/60">
+                <!-- Skeleton Loader State -->
+                <div class="p-4 space-y-3">
+                    <div class="h-12 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+                    <div class="h-12 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+                    <div class="h-12 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: ACTIVE CHAT WORKSPACE (5 COLS) -->
+        <div class="lg:col-span-5 flex flex-col h-full bg-slate-50/30 dark:bg-slate-950/20 relative" id="chatWorkspaceArea">
+            <!-- Empty State initially -->
+            <div id="emptyChatState" class="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3 my-auto">
+                <div class="w-16 h-16 rounded-3xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 text-2xl font-black flex items-center justify-center shadow-lg shadow-blue-500/10">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3 class="text-base font-black text-slate-900 dark:text-white">Select a Conversation</h3>
+                <p class="text-xs font-semibold text-slate-400 max-w-xs leading-relaxed">
+                    Choose a student, teacher, or group from the list on the left to start communicating via Text, WhatsApp, Email, or SMS.
+                </p>
+            </div>
+
+            <!-- ACTIVE CHAT INTERFACE (Initially Hidden) -->
+            <div id="activeChatBox" class="hidden flex-1 flex flex-col h-full">
+                <!-- Chat Header -->
+                <div class="p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
+                    <div class="flex items-center gap-3">
+                        <div id="activeUserAvatar" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black flex items-center justify-center text-sm shadow-md">AD</div>
+                        <div>
+                            <strong id="activeUserName" class="block text-xs font-black text-slate-900 dark:text-white leading-tight">Admin User</strong>
+                            <span id="activeUserRole" class="text-[10px] font-semibold text-slate-400">Student</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleUserDrawer(currentTargetId)" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer transition-colors flex items-center gap-1.5" title="View Profile Details">
+                            <i class="fas fa-user-circle text-blue-500"></i> Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Scroll Area -->
+                <div id="chatMessagesArea" class="flex-1 overflow-y-auto main-scrollbar p-4 space-y-3">
+                    <!-- Messages rendered dynamically -->
+                </div>
+
+                <!-- Chat Composer Footer -->
+                <form id="chatComposerForm" onsubmit="handleSendChatMessage(event)" class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                    <input type="hidden" id="activeTargetId" value="">
+                    <input type="hidden" id="activeTargetType" value="USER">
+
+                    <!-- Attachment Upload -->
+                    <label class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center cursor-pointer transition-colors" title="Attach File">
+                        <i class="fas fa-paperclip text-xs"></i>
+                        <input type="file" id="chatAttachmentInput" class="hidden">
+                    </label>
+
+                    <textarea id="chatMessageInput" rows="1" placeholder="Type a message... (Shift+Enter for newline)" required class="flex-1 bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white text-xs font-semibold rounded-2xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none max-h-24"></textarea>
+
+                    <button type="submit" id="btnSendChat" class="w-9 h-9 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold flex items-center justify-center cursor-pointer border-0 shadow-md shadow-blue-500/20 hover:scale-105 transition-all">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 4. RIGHT USER PROFILE DRAWER -->
+<!-- ========================================== -->
+<div id="userProfileDrawer" class="hidden fixed inset-y-0 right-0 z-50 w-80 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl p-5 overflow-y-auto space-y-5 fade-in">
+    <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 class="text-sm font-black text-slate-900 dark:text-white">User Profile Details</h3>
+        <button onclick="toggleUserDrawer(currentTargetId)" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent text-sm cursor-pointer"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="text-center space-y-2">
+        <div id="drawerAvatar" class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-xl flex items-center justify-center mx-auto shadow-lg shadow-blue-500/20">SA</div>
+        <h4 id="drawerName" class="text-sm font-black text-slate-900 dark:text-white">--</h4>
+        <span id="drawerRole" class="inline-block px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-600 text-[10px] font-extrabold uppercase tracking-widest">--</span>
+    </div>
+
+    <div class="space-y-3 text-xs font-semibold border-t border-b border-slate-100 dark:border-slate-800/80 py-4">
+        <div class="flex items-center justify-between"><span class="text-slate-400">Username</span><span id="drawerUsername" class="text-slate-900 dark:text-white font-bold">--</span></div>
+        <div class="flex items-center justify-between"><span class="text-slate-400">Email</span><span id="drawerEmail" class="text-slate-900 dark:text-white font-bold truncate max-w-[140px]">--</span></div>
+        <div class="flex items-center justify-between"><span class="text-slate-400">Phone</span><span id="drawerPhone" class="text-slate-900 dark:text-white font-bold">--</span></div>
+        <div class="flex items-center justify-between"><span class="text-slate-400">Class</span><span id="drawerClass" class="text-slate-900 dark:text-white font-bold">--</span></div>
+        <div class="flex items-center justify-between"><span class="text-slate-400">Joined Date</span><span id="drawerJoined" class="text-slate-900 dark:text-white font-bold">--</span></div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 5. UNIFIED NEW COMMUNICATION MODAL -->
+<!-- ========================================== -->
+<div id="modalNewComm" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 my-auto relative text-slate-900 dark:text-white">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="text-base font-black flex items-center gap-2"><i class="fas fa-paper-plane text-blue-600"></i> New Communication</h3>
+            <button onclick="closeModal('modalNewComm')" class="text-slate-400 border-0 bg-transparent text-sm cursor-pointer"><i class="fas fa-times"></i></button>
+        </div>
+
+        <form id="newCommForm" onsubmit="submitNewCommForm(event)" class="space-y-4 text-xs font-semibold">
+            <!-- Channel Selector Tabs -->
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Channel</label>
+                <div class="grid grid-cols-4 gap-2" id="channelTabs">
+                    <button type="button" onclick="setCommChannel('TEXT')" id="tab-TEXT" class="p-2 rounded-xl border border-blue-600 bg-blue-600 text-white font-bold text-center border-0 cursor-pointer">💬 Text</button>
+                    <button type="button" onclick="setCommChannel('WHATSAPP')" id="tab-WHATSAPP" class="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-bold text-center border-0 cursor-pointer bg-transparent">🟢 WhatsApp</button>
+                    <button type="button" onclick="setCommChannel('EMAIL')" id="tab-EMAIL" class="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-bold text-center border-0 cursor-pointer bg-transparent">✉ Email</button>
+                    <button type="button" onclick="setCommChannel('SMS')" id="tab-SMS" class="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-bold text-center border-0 cursor-pointer bg-transparent">📱 SMS</button>
+                </div>
+                <input type="hidden" id="selectedChannel" value="TEXT">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Recipient User</label>
+                <select id="commRecipientId" required class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none font-bold">
+                    <option value="">Select Recipient Student or Teacher...</option>
+                </select>
+            </div>
+
+            <div id="emailSubjectContainer" class="hidden">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Email Subject</label>
+                <input type="text" id="commSubject" placeholder="Enter email subject" class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Message Content *</label>
+                <textarea id="commMessageText" rows="4" required placeholder="Write your message here..." class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none resize-none"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button type="button" onclick="closeModal('modalNewComm')" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border-0 cursor-pointer">Cancel</button>
+                <button type="submit" id="btnSendComm" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold border-0 cursor-pointer shadow-md">DISPATCH MESSAGE</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 6. BROADCAST MODAL -->
+<!-- ========================================== -->
+<div id="modalBroadcast" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 my-auto relative text-slate-900 dark:text-white">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="text-base font-black flex items-center gap-2"><i class="fas fa-bullhorn text-indigo-600"></i> Create Multi-Channel Broadcast</h3>
+            <button onclick="closeModal('modalBroadcast')" class="text-slate-400 border-0 bg-transparent text-sm cursor-pointer"><i class="fas fa-times"></i></button>
+        </div>
+
+        <form id="broadcastForm" onsubmit="submitBroadcastForm(event)" class="space-y-4 text-xs font-semibold">
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Target Audience</label>
+                <select id="broadcastAudience" class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none font-bold">
+                    <option value="ALL">All Eligible Users (Students & Teachers)</option>
+                    <option value="STUDENTS">All Students</option>
+                    <option value="TEACHERS">All Teachers</option>
+                    <option value="PARENTS">All Parents</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Dispatch Channels</label>
+                <div class="flex items-center gap-4 text-xs font-bold pt-1">
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="bcastChanText" checked class="w-4 h-4"> Internal Text</label>
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="bcastChanWA" checked class="w-4 h-4"> WhatsApp</label>
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="bcastChanEmail" checked class="w-4 h-4"> Email</label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Subject / Title</label>
+                <input type="text" id="bcastSubject" placeholder="Broadcast Title" class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Broadcast Message *</label>
+                <textarea id="bcastMessage" rows="4" required placeholder="Type your broadcast message content..." class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none resize-none"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button type="button" onclick="closeModal('modalBroadcast')" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border-0 cursor-pointer">Cancel</button>
+                <button type="submit" id="btnSendBcast" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold border-0 cursor-pointer shadow-md">SEND BROADCAST</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 7. NOTICE MODAL -->
+<!-- ========================================== -->
+<div id="modalNotice" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 my-auto relative text-slate-900 dark:text-white">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="text-base font-black flex items-center gap-2"><i class="fas fa-flag text-blue-600"></i> Create Official LMS Notice</h3>
+            <button onclick="closeModal('modalNotice')" class="text-slate-400 border-0 bg-transparent text-sm cursor-pointer"><i class="fas fa-times"></i></button>
+        </div>
+
+        <form id="noticeForm" onsubmit="submitNoticeForm(event)" class="space-y-4 text-xs font-semibold">
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Notice Title *</label>
+                <input type="text" id="noticeTitle" required placeholder="e.g. Mid-Term Examination Schedule Released" class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Action / Details Link (Optional)</label>
+                <input type="text" id="noticeLink" placeholder="e.g. /studymaterial.html" class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Notice Message Content *</label>
+                <textarea id="noticeMessage" rows="4" required placeholder="Type official notice details..." class="w-full bg-slate-100 dark:bg-slate-800 border-0 text-slate-900 dark:text-white p-2.5 rounded-xl outline-none resize-none"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <button type="button" onclick="closeModal('modalNotice')" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border-0 cursor-pointer">Cancel</button>
+                <button type="submit" id="btnSendNotice" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold border-0 cursor-pointer shadow-md">PUBLISH NOTICE</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let currentCategory = 'all';
+let currentTargetId = null;
+
+function initMessagesModule() {
+    loadStats();
+    loadConversations(currentCategory || 'all');
+    if (currentTargetId) {
+        const role = document.getElementById('activeUserRole').textContent;
+        const name = document.getElementById('activeUserName').textContent;
+        openThread(currentTargetId, 'USER', name, role);
+    }
+}
+window.initMessagesModule = initMessagesModule;
+
+// Execute immediately upon load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMessagesModule);
+} else {
+    initMessagesModule();
+}
+
+// Auto-refresh stats & messages smoothly every 4 seconds without reloading page
+if (!window.commAutoRefreshInterval) {
+    window.commAutoRefreshInterval = setInterval(() => {
+        const activeMod = document.getElementById('main-content')?.dataset?.activeModule;
+        if (activeMod === 'messages') {
+            loadStats();
+            loadConversations(currentCategory || 'all');
+            if (currentTargetId) {
+                const role = document.getElementById('activeUserRole').textContent;
+                const name = document.getElementById('activeUserName').textContent;
+                // Silently refresh active thread without replacing UI with loading spinners
+                fetch(`/api/admin/communication/messages/?target_id=${currentTargetId}&target_type=USER`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.messages) {
+                            const area = document.getElementById('chatMessagesArea');
+                            if (data.messages.length === 0) {
+                                if (!area.innerHTML.includes('No conversation yet')) {
+                                    area.innerHTML = `
+                                    <div class="flex flex-col items-center justify-center min-h-[300px] py-12 text-center text-slate-400 fade-in">
+                                        <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 flex items-center justify-center mb-3 shadow-xs">
+                                            <i class="fas fa-comments text-2xl"></i>
+                                        </div>
+                                        <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">No conversation yet</h4>
+                                        <p class="text-xs text-slate-400 mt-1 max-w-xs">Start a conversation by typing a message below.</p>
+                                    </div>`;
+                                }
+                            } else {
+                                let html = '';
+                                data.messages.forEach(m => {
+                                    const isMe = m.is_admin_sender;
+                                    html += `
+                                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
+                                        <div class="max-w-md p-3.5 rounded-2xl text-xs font-semibold ${isMe ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-none shadow-md' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-bl-none shadow-xs'}">
+                                            ${m.subject ? `<strong class="block text-[11px] uppercase tracking-wider mb-1 opacity-90">${escapeHtml(m.subject)}</strong>` : ''}
+                                            <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(m.message_text)}</p>
+                                            ${m.attachment_url ? `<div class="mt-2 pt-2 border-t border-white/20"><a href="${m.attachment_url}" target="_blank" class="underline text-[11px] font-bold"><i class="fas fa-file-download mr-1"></i> ${m.attachment_name || 'Attachment'}</a></div>` : ''}
+                                        </div>
+                                        <span class="text-[9px] font-semibold text-slate-400 px-1">${m.timestamp}</span>
+                                    </div>`;
+                                });
+                                area.innerHTML = html;
+                            }
+                        }
+                    }).catch(e => console.error(e));
+            }
+        }
+    }, 4000);
+}
+
+async function loadStats() {
+    try {
+        const res = await fetch('/api/admin/communication/stats/');
+        const data = await res.json();
+        if (data.status === 'success') {
+            const s = data.stats;
+            document.getElementById('statTotalConvs').textContent = s.total_conversations;
+            document.getElementById('statUnread').textContent = s.unread_messages;
+            document.getElementById('statActiveChats').textContent = s.active_chats;
+            document.getElementById('statSupportTickets').textContent = s.support_tickets;
+            document.getElementById('statTodaysMsgs').textContent = s.todays_messages;
+            document.getElementById('statNotices').textContent = s.notices_count;
+            document.getElementById('statAnnouncements').textContent = s.announcements_count;
+            document.getElementById('statWhatsApp').textContent = s.whatsapp_sent + s.emails_sent;
+            
+            document.getElementById('badge-all').textContent = s.total_conversations;
+            document.getElementById('badge-unread').textContent = s.unread_messages;
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function loadConversations(cat = 'all', query = '') {
+    currentCategory = cat;
+    const container = document.getElementById('convListContainer');
+    try {
+        const res = await fetch(`/api/admin/communication/conversations/?category=${cat}&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (data.status === 'success') {
+            const convs = data.conversations;
+            
+            // Populate New Communication Recipient Dropdown
+            const selectEl = document.getElementById('commRecipientId');
+            if (selectEl) {
+                selectEl.innerHTML = '<option value="">Select Recipient Student or Teacher...</option>';
+                convs.forEach(c => {
+                    selectEl.innerHTML += `<option value="${c.id}">${c.name} (${c.role} - ${c.email})</option>`;
+                });
+            }
+
+            if (convs.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-xs font-semibold text-slate-400">No conversations found.</div>`;
+                return;
+            }
+
+            let html = '';
+            convs.forEach(c => {
+                const isSelected = currentTargetId == c.id;
+                html += `
+                <div data-id="${c.id}" data-type="${c.type}" data-name="${escapeHtml(c.name)}" data-role="${escapeHtml(c.role)}" onclick="handleConvCardClick(this)" class="p-3.5 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 cursor-pointer transition-colors ${isSelected ? 'bg-blue-50/70 dark:bg-blue-950/40 border-l-4 border-blue-600' : ''}">
+                    <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-xs">${c.avatar_initials}</div>
+                            <div>
+                                <strong class="block text-xs font-black text-slate-900 dark:text-white leading-tight">${c.name}</strong>
+                                <span class="text-[10px] font-semibold text-slate-400">${c.role}</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-semibold text-slate-400">${c.timestamp}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs font-medium text-slate-500 dark:text-slate-400 pl-10">
+                        <p class="truncate max-w-[180px]">${c.last_message}</p>
+                        ${c.unread_count > 0 ? `<span class="px-1.5 py-0.5 rounded-full bg-blue-600 text-white font-black text-[9px]">${c.unread_count}</span>` : ''}
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+    } catch(e) { console.error(e); }
+}
+
+function selectCategory(cat) {
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.className = 'cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 border-0 cursor-pointer bg-transparent';
+    });
+    const selectedBtn = document.getElementById(`cat-${cat}`);
+    if (selectedBtn) {
+        selectedBtn.className = 'cat-btn w-full text-left px-3 py-2 rounded-xl flex items-center justify-between bg-blue-600 text-white shadow-sm border-0 cursor-pointer';
+    }
+    loadConversations(cat);
+}
+
+function handleCommSearch() {
+    const q = document.getElementById('commSearchInput').value;
+    loadConversations(currentCategory, q);
+}
+
+
+function handleConvCardClick(el) {
+    const id = el.getAttribute('data-id');
+    const type = el.getAttribute('data-type') || 'USER';
+    const name = el.getAttribute('data-name') || 'User';
+    const role = el.getAttribute('data-role') || 'User';
+    openThread(id, type, name, role);
+}
+
+async function openThread(id, type, name, role) {
+    currentTargetId = id;
+    document.getElementById('activeTargetId').value = id;
+    document.getElementById('activeTargetType').value = type;
+
+    const emptyState = document.getElementById('emptyChatState');
+    const chatBox = document.getElementById('activeChatBox');
+    if (emptyState) {
+        emptyState.classList.add('hidden');
+        emptyState.style.display = 'none';
+    }
+    if (chatBox) {
+        chatBox.classList.remove('hidden');
+        chatBox.style.display = 'flex';
+    }
+
+    document.getElementById('activeUserName').textContent = name;
+    document.getElementById('activeUserRole').textContent = role;
+    document.getElementById('activeUserAvatar').textContent = (name || 'User').substring(0, 2).toUpperCase();
+
+    // Update list item selection visual immediately
+    document.querySelectorAll('#convListContainer > div').forEach(el => {
+        el.classList.remove('bg-blue-50/70', 'dark:bg-blue-950/40', 'border-l-4', 'border-blue-600');
+    });
+
+    const area = document.getElementById('chatMessagesArea');
+    if (!area.children.length || area.innerHTML.includes('Loading conversation history')) {
+        area.innerHTML = `
+        <div class="flex flex-col items-center justify-center min-h-[250px] py-10 text-center text-slate-400">
+            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">No conversation yet</h4>
+            <p class="text-xs text-slate-400 mt-1">Fetching thread updates...</p>
+        </div>`;
+    }
+
+    try {
+        const res = await fetch(`/api/admin/communication/messages/?target_id=${id}&target_type=${type}`);
+        const data = await res.json();
+        if (data.status === 'success') {
+            const msgs = data.messages;
+            if (msgs.length === 0) {
+                area.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-[300px] py-12 text-center text-slate-400 fade-in">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 flex items-center justify-center mb-3 shadow-xs">
+                        <i class="fas fa-comments text-2xl"></i>
+                    </div>
+                    <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">No conversation yet</h4>
+                    <p class="text-xs text-slate-400 mt-1 max-w-xs">Start a conversation by typing a message below.</p>
+                </div>`;
+                return;
+            }
+
+            let html = '';
+            msgs.forEach(m => {
+                const isMe = m.is_admin_sender;
+                html += `
+                <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
+                    <div class="max-w-md p-3.5 rounded-2xl text-xs font-semibold ${isMe ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-none shadow-md' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-bl-none shadow-xs'}">
+                        ${m.subject ? `<strong class="block text-[11px] uppercase tracking-wider mb-1 opacity-90">${escapeHtml(m.subject)}</strong>` : ''}
+                        <p class="leading-relaxed whitespace-pre-wrap">${escapeHtml(m.message_text)}</p>
+                        ${m.attachment_url ? `<div class="mt-2 pt-2 border-t border-white/20"><a href="${m.attachment_url}" target="_blank" class="underline text-[11px] font-bold"><i class="fas fa-file-download mr-1"></i> ${m.attachment_name || 'Attachment'}</a></div>` : ''}
+                    </div>
+                    <span class="text-[9px] font-semibold text-slate-400 px-1">${m.timestamp}</span>
+                </div>
+                `;
+            });
+            area.innerHTML = html;
+            area.scrollTop = area.scrollHeight;
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function handleSendChatMessage(e) {
+    e.preventDefault();
+    const id = document.getElementById('activeTargetId').value;
+    const msg = document.getElementById('chatMessageInput').value;
+    const file = document.getElementById('chatAttachmentInput').files[0];
+    const btn = document.getElementById('btnSendChat');
+
+    if (!id || !msg) return;
+
+    btn.disabled = true;
+    const formData = new FormData();
+    formData.append('recipient_id', id);
+    formData.append('channel', 'TEXT');
+    formData.append('message', msg);
+    if (file) formData.append('attachment', file);
+
+    try {
+        const res = await fetch('/api/admin/communication/send/', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            document.getElementById('chatMessageInput').value = '';
+            document.getElementById('chatAttachmentInput').value = '';
+            const role = document.getElementById('activeUserRole').textContent;
+            const name = document.getElementById('activeUserName').textContent;
+            openThread(id, 'USER', name, role);
+            loadStats();
+        }
+    } catch(err) { console.error(err); }
+    btn.disabled = false;
+}
+
+function openNewCommModal(channel = 'TEXT') {
+    setCommChannel(channel);
+    openModal('modalNewComm');
+}
+
+function setCommChannel(ch) {
+    document.getElementById('selectedChannel').value = ch;
+    ['TEXT', 'WHATSAPP', 'EMAIL', 'SMS'].forEach(c => {
+        const btn = document.getElementById(`tab-${c}`);
+        if (c === ch) {
+            btn.className = 'p-2 rounded-xl border border-blue-600 bg-blue-600 text-white font-bold text-center border-0 cursor-pointer';
+        } else {
+            btn.className = 'p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-bold text-center border-0 cursor-pointer bg-transparent';
+        }
+    });
+    const subContainer = document.getElementById('emailSubjectContainer');
+    if (ch === 'EMAIL') subContainer.classList.remove('hidden');
+    else subContainer.classList.add('hidden');
+}
+
+async function submitNewCommForm(e) {
+    e.preventDefault();
+    const recipient_id = document.getElementById('commRecipientId').value;
+    const channel = document.getElementById('selectedChannel').value;
+    const subject = document.getElementById('commSubject').value;
+    const message = document.getElementById('commMessageText').value;
+    const btn = document.getElementById('btnSendComm');
+
+    if (!recipient_id || !message) return;
+
+    btn.disabled = true;
+    const formData = new FormData();
+    formData.append('recipient_id', recipient_id);
+    formData.append('channel', channel);
+    formData.append('subject', subject);
+    formData.append('message', message);
+
+    try {
+        const res = await fetch('/api/admin/communication/send/', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.status === 'success') {
+            closeModal('modalNewComm');
+            document.getElementById('newCommForm').reset();
+            alert(data.message);
+            loadStats();
+            loadConversations(currentCategory);
+        }
+    } catch(err) { console.error(err); }
+    btn.disabled = false;
+}
+
+async function submitBroadcastForm(e) {
+    e.preventDefault();
+    const audience = document.getElementById('broadcastAudience').value;
+    const message = document.getElementById('bcastMessage').value;
+    const subject = document.getElementById('bcastSubject').value;
+    
+    if (!confirm("Are you sure you want to dispatch this broadcast message to the selected target audience?")) return;
+
+    const channels = [];
+    if (document.getElementById('bcastChanText').checked) channels.push('TEXT');
+    if (document.getElementById('bcastChanWA').checked) channels.push('WHATSAPP');
+    if (document.getElementById('bcastChanEmail').checked) channels.push('EMAIL');
+
+    try {
+        const res = await fetch('/api/admin/communication/broadcast/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ audience, channels, subject, message })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            closeModal('modalBroadcast');
+            alert(data.message);
+            loadStats();
+        }
+    } catch(err) { console.error(err); }
+}
+
+async function submitNoticeForm(e) {
+    e.preventDefault();
+    const title = document.getElementById('noticeTitle').value;
+    const message = document.getElementById('noticeMessage').value;
+    const action_link = document.getElementById('noticeLink').value;
+
+    try {
+        const res = await fetch('/api/admin/communication/notices/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ title, message, action_link })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            closeModal('modalNotice');
+            alert(data.message);
+            loadStats();
+        }
+    } catch(err) { console.error(err); }
+}
+
+async function toggleUserDrawer(targetId = null) {
+    const target = targetId || currentTargetId;
+    const drawer = document.getElementById('userProfileDrawer');
+    if (!drawer) return;
+
+    if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (target) {
+            document.getElementById('drawerName').textContent = 'Loading profile...';
+            document.getElementById('drawerUsername').textContent = '...';
+            try {
+                const res = await fetch(`/api/admin/communication/user-drawer/?user_id=${target}`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const u = data.user_profile;
+                    document.getElementById('drawerName').textContent = u.name || u.username || 'User';
+                    document.getElementById('drawerRole').textContent = u.role || 'User';
+                    document.getElementById('drawerUsername').textContent = u.username || '--';
+                    document.getElementById('drawerEmail').textContent = u.email || '--';
+                    document.getElementById('drawerPhone').textContent = u.phone || '--';
+                    document.getElementById('drawerClass').textContent = u.class || 'N/A';
+                    document.getElementById('drawerJoined').textContent = u.date_joined || '--';
+                    document.getElementById('drawerAvatar').textContent = (u.name || u.username || 'User').substring(0, 2).toUpperCase();
+                }
+            } catch(e) { console.error(e); }
+        }
+    } else {
+        drawer.classList.add('hidden');
+    }
+}
+
+function toggleDropdown(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden');
+}
+
+function openModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('hidden');
+}
+
+function closeModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+</script>
+{% endblock %}

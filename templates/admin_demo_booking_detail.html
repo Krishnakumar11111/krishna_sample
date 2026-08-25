@@ -1,0 +1,339 @@
+{% extends 'admin.html' %}
+
+{% block admin_content %}
+<div class="space-y-6 fade-in">
+    <!-- PAGE HEADER BAR -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-1">
+                <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 no-underline text-slate-400">Dashboard</a> <i class="fas fa-chevron-right text-[9px]"></i>
+                <a href="{% url 'admin_demo_bookings' %}" class="hover:text-blue-600 no-underline text-slate-400">Demo Bookings</a> <i class="fas fa-chevron-right text-[9px]"></i>
+                <span class="text-blue-600 font-extrabold">{% if booking.booking_id %}{{ booking.booking_id }}{% else %}#DEMO-{{ booking.id }}{% endif %}</span>
+            </div>
+            <h2 class="text-xl font-black text-slate-900">Demo Class Booking Details</h2>
+            <p class="text-xs text-slate-500 font-medium">Complete request & scheduling information for {% if booking.booking_id %}{{ booking.booking_id }}{% else %}#DEMO-{{ booking.id }}{% endif %}</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'admin_demo_bookings' %}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all shadow-2xs no-underline inline-flex items-center gap-1.5"><i class="fas fa-arrow-left text-slate-400"></i> Back to Demo Bookings</a>
+        </div>
+    </div>
+
+    <!-- PROFILE HERO HEADER CARD -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-purple-100 text-purple-700 font-black flex items-center justify-center text-2xl uppercase shadow-xs">{{ booking.student_name|slice:":2"|upper }}</div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h3 class="text-lg font-black text-slate-900">{{ booking.student_name }}</h3>
+                    {% if booking.booking_status|lower == 'pending' or booking.booking_status|lower == 'new' %}
+                        <span id="detail-demo-status-badge" class="bg-amber-50 text-amber-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">PENDING</span>
+                    {% elif booking.booking_status|lower == 'approved' or booking.booking_status|lower == 'confirmed' %}
+                        <span id="detail-demo-status-badge" class="bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">CONFIRMED</span>
+                    {% elif booking.booking_status|lower == 'completed' %}
+                        <span id="detail-demo-status-badge" class="bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">COMPLETED</span>
+                    {% elif booking.booking_status|lower == 'cancelled' %}
+                        <span id="detail-demo-status-badge" class="bg-purple-50 text-purple-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">CANCELLED</span>
+                    {% elif booking.booking_status|lower == 'rejected' %}
+                        <span id="detail-demo-status-badge" class="bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">REJECTED</span>
+                    {% else %}
+                        <span id="detail-demo-status-badge" class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">{{ booking.booking_status }}</span>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-slate-500 font-semibold mt-0.5">Parent: {{ booking.parent_name|default:"N/A" }} · Email: {{ booking.student_email|default:"N/A" }} · Mobile: {{ booking.student_mobile|default:"N/A" }}</p>
+                <p class="text-[10px] text-slate-400 font-bold mt-0.5">Source: Free Trial Demo Class Request · ID: {% if booking.booking_id %}{{ booking.booking_id }}{% else %}#DEMO-{{ booking.id }}{% endif %}</p>
+            </div>
+        </div>
+
+        <div id="detail-demo-actions-container" class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+            <button id="btn-confirm-detail-demo-{{ booking.id }}" onclick="promptConfirmDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 {% if booking.booking_status|lower == 'approved' or booking.booking_status|lower == 'confirmed' %}hidden{% endif %}"><i class="fas fa-check"></i> CONFIRM</button>
+            <button onclick="promptCompleteDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-graduation-cap"></i> COMPLETE</button>
+            <button onclick="promptRejectDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-times"></i> REJECT</button>
+            <button onclick="promptRemoveDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
+        </div>
+    </div>
+
+    <!-- SECTIONS GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- STUDENT & CONTACT INFORMATION -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+            <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-user-graduate text-purple-500"></i> STUDENT & CONTACT DETAILS</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Student Name</span><strong class="text-slate-800">{{ booking.student_name }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Parent Name</span><strong class="text-slate-800">{{ booking.parent_name|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Mobile Number</span><strong class="text-slate-800">{{ booking.student_mobile|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Email Address</span><strong class="text-slate-800">{{ booking.student_email|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Gender</span><strong class="text-slate-800">{{ booking.student_gender|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Class / Grade</span><strong class="text-slate-800">{{ booking.student_class|default:"N/A" }}</strong></div>
+            </div>
+        </div>
+
+        <!-- TUITION & DEMO PREFERENCES -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+            <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-book-open text-blue-500"></i> TUITION & DEMO PREFERENCES</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Subject</span><strong class="text-slate-800">{{ booking.subject|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Board</span><strong class="text-slate-800">{{ booking.board|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tuition Mode</span><strong class="text-slate-800">{{ booking.tuition_mode|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Preferred Demo Date</span><strong class="text-slate-800">{{ booking.preferred_demo_date|date:"M d, Y"|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Time Slot</span><strong class="text-slate-800">{{ booking.preferred_time_slot|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Demo Sessions</span><strong class="text-slate-800">{{ booking.number_of_demo_sessions|default:"1" }} Session(s)</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Preferred Language</span><strong class="text-slate-800">{{ booking.preferred_language|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Learning Goal</span><strong class="text-slate-800">{{ booking.learning_goal|default:"N/A" }}</strong></div>
+            </div>
+        </div>
+
+        <!-- ASSIGNED TUTOR INFORMATION -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+            <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-amber-500"></i> ASSIGNED TUTOR INFORMATION</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tutor Name</span><strong class="text-slate-800">{% if booking.tutor_name %}{{ booking.tutor_name }}{% elif booking.assigned_teacher %}{{ booking.assigned_teacher.full_name }}{% else %}Unassigned{% endif %}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Qualification</span><strong class="text-slate-800">{{ booking.tutor_qualification|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Experience</span><strong class="text-slate-800">{{ booking.tutor_experience|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Location</span><strong class="text-slate-800">{{ booking.tutor_location|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Rating</span><strong class="text-amber-600 font-bold"><i class="fas fa-star text-[9px] mr-0.5"></i>{{ booking.tutor_rating|default:"5.0" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tutor Mode</span><strong class="text-slate-800">{{ booking.tutor_mode|default:"N/A" }}</strong></div>
+            </div>
+        </div>
+
+        <!-- HOME TUITION ADDRESS -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+            <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-map-marker-alt text-rose-500"></i> HOME TUITION ADDRESS</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">State</span><strong class="text-slate-800">{{ booking.state|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">City</span><strong class="text-slate-800">{{ booking.city|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Locality / Area</span><strong class="text-slate-800">{{ booking.locality|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Landmark</span><strong class="text-slate-800">{{ booking.landmark|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 col-span-2"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Complete Address</span><strong class="text-slate-800">{{ booking.complete_address|default:"N/A" }}</strong></div>
+            </div>
+        </div>
+
+        <!-- ADDITIONAL NOTES & REJECTION REASON -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3 md:col-span-2">
+            <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-comment-alt text-emerald-500"></i> ADDITIONAL NOTES & REQUIREMENTS</h4>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs space-y-3">
+                <p class="text-slate-700 font-semibold leading-relaxed">{{ booking.additional_notes|default:"No additional notes provided." }}</p>
+                {% if booking.rejection_reason %}
+                    <div class="p-3 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 font-bold"><i class="fas fa-times-circle mr-1"></i>Rejection/Cancellation Reason: {{ booking.rejection_reason }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- BOOKING SYSTEM METADATA -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3 md:col-span-2">
+            <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-info-circle text-slate-400"></i> SYSTEM METADATA</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Booking ID</span><strong class="text-purple-600 font-bold">{% if booking.booking_id %}{{ booking.booking_id }}{% else %}#DEMO-{{ booking.id }}{% endif %}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Submission Date</span><strong class="text-slate-800">{{ booking.created_at|date:"M d, Y I:i A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ booking.updated_at|date:"M d, Y I:i A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Device Type</span><strong class="text-slate-800">{{ booking.device_type|default:"Desktop" }}</strong></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- SLEEK DEMO ACTION MODAL POPUP (NO PAGE BLINK/RELOAD) -->
+<div id="demoActionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs hidden transition-all duration-300">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center transform transition-all scale-95 opacity-0" id="demoActionModalCard">
+        <div id="demoActionModalIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 shadow-sm">
+            <i class="fas fa-check"></i>
+        </div>
+        <h3 id="demoActionModalTitle" class="text-base font-extrabold text-slate-900 mb-1">Action Successful</h3>
+        <p id="demoActionModalMessage" class="text-xs text-slate-500 font-medium mb-5 leading-relaxed">Action processed successfully.</p>
+        <button type="button" onclick="closeActionPopup()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs py-2.5 rounded-xl border-0 cursor-pointer shadow-md transition-all">
+            OK
+        </button>
+    </div>
+</div>
+
+<!-- CUSTOM REJECT REASON MODAL POPUP -->
+<div id="rejectReasonModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs hidden transition-all duration-300">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 transform transition-all scale-95 opacity-0" id="rejectReasonModalCard">
+        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="text-base font-extrabold text-slate-900 text-center mb-1">Reject Demo Booking</h3>
+        <p class="text-xs text-slate-500 font-medium text-center mb-4 leading-relaxed">Please enter the reason for rejecting this demo booking (optional):</p>
+        
+        <textarea id="rejectReasonInput" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-rose-500 transition-colors resize-none mb-4" placeholder="Type rejection reason here..."></textarea>
+        
+        <div class="flex items-center gap-2">
+            <button type="button" onclick="closeRejectReasonModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl border-0 cursor-pointer transition-all">
+                Cancel
+            </button>
+            <button type="button" id="submitRejectReasonBtn" onclick="submitRejectReasonAction()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs py-2.5 rounded-xl border-0 cursor-pointer shadow-md transition-all">
+                Confirm Reject
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentRejectBookingId = null;
+
+    function showActionPopup(title, message, type = 'success') {
+        const modal = document.getElementById('demoActionModal');
+        const card = document.getElementById('demoActionModalCard');
+        const icon = document.getElementById('demoActionModalIcon');
+        const titleEl = document.getElementById('demoActionModalTitle');
+        const msgEl = document.getElementById('demoActionModalMessage');
+        if (!modal || !card || !icon || !titleEl || !msgEl) return;
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+
+        if (type === 'success') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-emerald-100 text-emerald-600 shadow-emerald-100/50';
+            icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        } else if (type === 'complete' || type === 'info') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-blue-100 text-blue-600 shadow-blue-100/50';
+            icon.innerHTML = '<i class="fas fa-graduation-cap"></i>';
+        } else if (type === 'reject' || type === 'warning') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-amber-100 text-amber-600 shadow-amber-100/50';
+            icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        } else if (type === 'remove' || type === 'danger' || type === 'error') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-rose-100 text-rose-600 shadow-rose-100/50';
+            icon.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeActionPopup() {
+        const modal = document.getElementById('demoActionModal');
+        const card = document.getElementById('demoActionModalCard');
+        if (!modal || !card) return;
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function closeRejectReasonModal() {
+        const modal = document.getElementById('rejectReasonModal');
+        const card = document.getElementById('rejectReasonModalCard');
+        if (!modal || !card) return;
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            currentRejectBookingId = null;
+        }, 200);
+    }
+
+    function submitRejectReasonAction() {
+        if (!currentRejectBookingId) return;
+        const input = document.getElementById('rejectReasonInput');
+        const reason = input ? input.value.trim() : '';
+        const bookingId = currentRejectBookingId;
+        closeRejectReasonModal();
+        window.sendDemoBookingAction(bookingId, 'reject', reason);
+    }
+
+    window.sendDemoBookingAction = async function(id, action, reason = '') {
+        const confirmBtn = document.getElementById('btn-confirm-' + id) || document.getElementById('btn-confirm-detail-demo-' + id);
+        const rejectBtn = document.getElementById('btn-reject-' + id);
+        const badgeEl = document.getElementById('detail-demo-status-badge') || document.getElementById('demo-booking-status-' + id);
+
+        let targetBtn = null;
+        let originalHtml = '';
+
+        if (action === 'confirm' && confirmBtn) {
+            targetBtn = confirmBtn;
+        } else if (action === 'reject' && rejectBtn) {
+            targetBtn = rejectBtn;
+        }
+
+        if (targetBtn) {
+            targetBtn.disabled = true;
+            originalHtml = targetBtn.innerHTML;
+            targetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ⏳ Processing...';
+        }
+
+        try {
+            const csrfToken = (typeof getCsrfToken === 'function' ? getCsrfToken() : '') || '{{ csrf_token }}';
+            const response = await fetch('/api/admin/demo-bookings/status/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ id: id, action: action, reason: reason })
+            });
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                const newStatus = (data.new_status || '').toLowerCase();
+
+                if (action === 'confirm' || newStatus === 'approved' || newStatus === 'confirmed') {
+                    if (confirmBtn) confirmBtn.classList.add('hidden');
+                    if (rejectBtn) rejectBtn.classList.remove('hidden');
+                    if (badgeEl) {
+                        badgeEl.className = 'bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]';
+                        badgeEl.textContent = 'CONFIRMED';
+                    }
+                    showActionPopup('Booking Confirmed! 🎉', 'Demo class booking has been confirmed successfully.', 'success');
+                } else if (action === 'reject' || newStatus === 'rejected') {
+                    if (rejectBtn) rejectBtn.classList.add('hidden');
+                    if (confirmBtn) confirmBtn.classList.remove('hidden');
+                    if (badgeEl) {
+                        badgeEl.className = 'bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]';
+                        badgeEl.textContent = 'REJECTED';
+                    }
+                    const reasonMsg = reason ? ` (Reason: "${reason}")` : '';
+                    showActionPopup('Booking Rejected ❌', `Demo class booking has been rejected${reasonMsg}.`, 'reject');
+                } else if (action === 'complete' || newStatus === 'completed') {
+                    if (badgeEl) {
+                        badgeEl.className = 'bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]';
+                        badgeEl.textContent = 'COMPLETED';
+                    }
+                    showActionPopup('Booking Completed! 🎓', 'Demo class booking marked as completed.', 'complete');
+                } else if (action === 'remove') {
+                    showActionPopup('Record Removed 🗑️', 'Demo booking record removed. Redirecting...', 'remove');
+                    setTimeout(() => window.location.href = "{% url 'admin_demo_bookings' %}", 1200);
+                } else {
+                    showActionPopup('Success!', data.message || 'Operation processed successfully.', 'success');
+                }
+            } else {
+                showActionPopup('Action Failed', data.message || 'Unable to complete action.', 'error');
+            }
+        } catch(err) {
+            console.error('Error:', err);
+            showActionPopup('Server Error', 'A server error occurred while processing action.', 'error');
+        } finally {
+            if (targetBtn) {
+                targetBtn.disabled = false;
+                targetBtn.innerHTML = originalHtml;
+            }
+        }
+    };
+
+    window.promptConfirmDemoBooking = function(id) {
+        window.sendDemoBookingAction(id, 'confirm');
+    };
+    window.promptCompleteDemoBooking = function(id) {
+        window.sendDemoBookingAction(id, 'complete');
+    };
+    window.promptRejectDemoBooking = function(id) {
+        currentRejectBookingId = id;
+        const modal = document.getElementById('rejectReasonModal');
+        const card = document.getElementById('rejectReasonModalCard');
+        const input = document.getElementById('rejectReasonInput');
+        if (!modal || !card || !input) return;
+
+        input.value = '';
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+            input.focus();
+        }, 10);
+    };
+    window.promptRemoveDemoBooking = function(id) {
+        if (confirm('Are you sure you want to permanently delete this demo booking record?')) {
+            window.sendDemoBookingAction(id, 'remove');
+        }
+    };
+</script>
+{% endblock %}

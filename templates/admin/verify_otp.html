@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Identity (OTP) | EduTrust LMS Super Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { brand: { 500: '#3b82f6', 600: '#2563eb' } } } }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">
+    <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 backdrop-blur-xl rounded-3xl p-8 shadow-2xl space-y-6 text-center relative z-10">
+        
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white text-2xl font-black shadow-lg shadow-blue-500/30 mb-1">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+
+        <div class="space-y-1">
+            <h2 class="text-xl font-black text-white tracking-tight">Verify Your Identity</h2>
+            <p class="text-xs font-semibold text-slate-400 leading-relaxed">
+                We have sent a 6-digit OTP to your registered email address:<br>
+                <strong class="text-blue-400 font-extrabold">{{ masked_email }}</strong>
+            </p>
+        </div>
+
+        {% if dev_otp %}
+        <!-- DEV OTP DISPLAY BADGE -->
+        <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold text-center space-y-1.5 shadow-lg shadow-blue-500/5">
+            <span class="text-[11px] block uppercase tracking-widest text-slate-400 font-extrabold">YOUR VERIFICATION OTP CODE:</span>
+            <strong id="displayDevOtpPage" class="text-3xl font-mono font-black text-emerald-400 tracking-[0.35em] block py-2 bg-slate-950/80 rounded-xl border border-emerald-500/40 shadow-inner">{{ dev_otp }}</strong>
+        </div>
+        {% endif %}
+
+        <div id="otpAlert" class="hidden p-3.5 rounded-2xl text-xs font-semibold text-center border"></div>
+
+        <form id="otpForm" onsubmit="submitOtp(event)" class="space-y-5">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input type="hidden" id="otpPurpose" value="{{ purpose }}">
+
+            <!-- 6 Digit Input Boxes -->
+            <div class="flex items-center justify-center gap-2" id="otpBoxes">
+                <input type="text" maxlength="1" class="otp-box w-11 h-13 text-center bg-slate-800 border border-slate-700 rounded-2xl text-xl font-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="otp-box w-11 h-13 text-center bg-slate-800 border border-slate-700 rounded-2xl text-xl font-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="otp-box w-11 h-13 text-center bg-slate-800 border border-slate-700 rounded-2xl text-xl font-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="otp-box w-11 h-13 text-center bg-slate-800 border border-slate-700 rounded-2xl text-xl font-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="otp-box w-11 h-13 text-center bg-slate-800 border border-slate-700 rounded-2xl text-xl font-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" maxlength="1" class="otp-box w-11 h-13 text-center bg-slate-800 border border-slate-700 rounded-2xl text-xl font-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <button type="submit" id="btnVerifyOtp" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-blue-600/30 cursor-pointer border-0 transition-all">
+                VERIFY OTP & CONTINUE
+            </button>
+        </form>
+
+        <div class="flex items-center justify-between text-xs font-semibold text-slate-400 pt-2 border-t border-slate-800">
+            <button type="button" id="btnResend" onclick="resendOtp()" class="text-blue-400 hover:text-blue-300 font-extrabold cursor-pointer border-0 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed">
+                Resend OTP <span id="cooldownTimer"></span>
+            </button>
+            <a href="/admin/login/" class="text-slate-400 hover:text-white text-xs font-semibold no-underline">Cancel & Login Again</a>
+        </div>
+    </div>
+
+    <script>
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach((box, idx) => {
+        box.addEventListener('keyup', (e) => {
+            if (e.key >= '0' && e.key <= '9') {
+                if (idx < boxes.length - 1) boxes[idx + 1].focus();
+            } else if (e.key === 'Backspace') {
+                if (idx > 0) boxes[idx - 1].focus();
+            }
+        });
+        box.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text').trim();
+            if (/^\d{6}$/.test(text)) {
+                text.split('').forEach((ch, i) => { if (boxes[i]) boxes[i].value = ch; });
+                boxes[5].focus();
+            }
+        });
+    });
+
+        let cooldown = 60;
+    const devOtpVal = "{{ dev_otp|escapejs }}";
+    if (devOtpVal && devOtpVal.length === 6) {
+        devOtpVal.split('').forEach((ch, i) => { if (boxes[i]) boxes[i].value = ch; });
+    }
+    const cooldownSpan = document.getElementById('cooldownTimer');
+    const resendBtn = document.getElementById('btnResend');
+    function startTimer() {
+        resendBtn.disabled = true;
+        cooldown = 60;
+        const timer = setInterval(() => {
+            cooldownSpan.textContent = `(${cooldown}s)`;
+            cooldown--;
+            if (cooldown < 0) {
+                clearInterval(timer);
+                cooldownSpan.textContent = '';
+                resendBtn.disabled = false;
+            }
+        }, 1000);
+    }
+    startTimer();
+
+    async function submitOtp(e) {
+        e.preventDefault();
+        const code = Array.from(boxes).map(b => b.value).join('');
+        const alertBox = document.getElementById('otpAlert');
+        const btn = document.getElementById('btnVerifyOtp');
+        const purpose = document.getElementById('otpPurpose').value;
+
+        if (code.length !== 6) {
+            alertBox.className = 'p-3.5 rounded-2xl text-xs font-semibold text-center border bg-rose-500/10 border-rose-500/30 text-rose-400 block';
+            alertBox.textContent = 'Please enter all 6 digits of the OTP.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+        try {
+            const res = await fetch('/api/admin/auth/verify-otp/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                },
+                body: JSON.stringify({ otp_code: code, purpose })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alertBox.className = 'p-3.5 rounded-2xl text-xs font-semibold text-center border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 block';
+                alertBox.textContent = data.message;
+                setTimeout(() => { window.location.href = data.redirect_url || '/admin/dashboard/'; }, 1000);
+            } else {
+                alertBox.className = 'p-3.5 rounded-2xl text-xs font-semibold text-center border bg-rose-500/10 border-rose-500/30 text-rose-400 block';
+                alertBox.textContent = data.message || 'OTP verification failed.';
+                btn.disabled = false;
+                btn.textContent = 'VERIFY OTP & CONTINUE';
+            }
+        } catch (err) {
+            console.error(err);
+            alertBox.className = 'p-3.5 rounded-2xl text-xs font-semibold text-center border bg-rose-500/10 border-rose-500/30 text-rose-400 block';
+            alertBox.textContent = 'Server connection error.';
+            btn.disabled = false;
+            btn.textContent = 'VERIFY OTP & CONTINUE';
+        }
+    }
+
+    async function resendOtp() {
+        const alertBox = document.getElementById('otpAlert');
+        try {
+            const res = await fetch('/api/admin/auth/resend-otp/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                }
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alertBox.className = 'p-3.5 rounded-2xl text-xs font-semibold text-center border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 block';
+                alertBox.textContent = data.message;
+                startTimer();
+            } else {
+                alertBox.className = 'p-3.5 rounded-2xl text-xs font-semibold text-center border bg-rose-500/10 border-rose-500/30 text-rose-400 block';
+                alertBox.textContent = data.message;
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+    </script>
+</body>
+</html>

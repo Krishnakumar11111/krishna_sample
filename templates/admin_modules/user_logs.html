@@ -1,0 +1,955 @@
+{% extends base_template|default:'admin.html' %}
+
+{% block admin_content %}
+<div class="space-y-4 fade-in">
+    <!-- PAGE HEADER & CATEGORY SELECTION -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#111927] p-4 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+        <div>
+            <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-0.5">
+                <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 no-underline text-slate-400">Dashboard</a> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span>User Management</span> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span class="text-blue-600 font-extrabold">User Logs</span>
+            </div>
+            <h2 class="text-lg font-black text-slate-900 dark:text-white leading-tight">Registered User Logs & Authentication Trail</h2>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Database-backed authentication activity for registered Student and Teacher accounts.</p>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap">
+            <!-- USER TYPE DROPDOWN (ALL USERS / STUDENT / TEACHER CATEGORY SELECTOR) -->
+            <div class="flex items-center gap-2 bg-slate-50 dark:bg-[#162238] px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                <label for="userTypeSelect" class="text-xs font-black text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                    <i class="fas fa-users-cog text-blue-600"></i> User Type:
+                </label>
+                <select id="userTypeSelect" onchange="onUserTypeChange(this.value)" class="bg-white dark:bg-[#1e2d4a] border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white font-extrabold text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer shadow-2xs">
+                    <option value="All Users" selected>All Users</option>
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                </select>
+            </div>
+
+            <button onclick="fetchUserLogs()" class="bg-white dark:bg-[#182338] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-700 dark:text-slate-200 font-bold text-xs px-3 py-2 rounded-xl transition-all shadow-2xs cursor-pointer inline-flex items-center gap-1.5">
+                <i class="fas fa-sync-alt text-slate-400 text-[10px]" id="refresh-icon"></i> Refresh Data
+            </button>
+        </div>
+    </div>
+
+    <!-- REAL DATABASE KPI CARDS (7 SHRUNK CARDS) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span id="kpi-total-label" class="text-[8.5px] font-black text-slate-400 uppercase tracking-wider">Total Users</span><div class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-users"></i></div></div>
+            <div id="kpi-total-users" class="text-base font-black text-slate-900 dark:text-white leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Total Registered</span>
+        </div>
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-emerald-500 uppercase tracking-wider">New Today</span><div class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-plus"></i></div></div>
+            <div id="kpi-new-today" class="text-base font-black text-emerald-600 leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Today's Regs</span>
+        </div>
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-indigo-500 uppercase tracking-wider">Active</span><div class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-check"></i></div></div>
+            <div id="kpi-active-users" class="text-base font-black text-indigo-600 leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Active Accounts</span>
+        </div>
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-teal-500 uppercase tracking-wider">Verified</span><div class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-600 flex items-center justify-center text-[10px]"><i class="fas fa-badge-check"></i></div></div>
+            <div id="kpi-verified-users" class="text-base font-black text-teal-600 leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Verified Email/Status</span>
+        </div>
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-cyan-500 uppercase tracking-wider">Logins Today</span><div class="w-6 h-6 rounded-full bg-cyan-100 dark:bg-cyan-900/40 text-cyan-600 flex items-center justify-center text-[10px]"><i class="fas fa-sign-in-alt"></i></div></div>
+            <div id="kpi-logins-today" class="text-base font-black text-cyan-600 leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Successful Logins</span>
+        </div>
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-rose-500 uppercase tracking-wider">Failed Logins</span><div class="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center text-[10px]"><i class="fas fa-exclamation-triangle"></i></div></div>
+            <div id="kpi-failed-logins-today" class="text-base font-black text-rose-600 leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Incorrect Attempts</span>
+        </div>
+        <div class="bg-white dark:bg-[#111927] px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-purple-500 uppercase tracking-wider">Logouts Today</span><div class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 flex items-center justify-center text-[10px]"><i class="fas fa-sign-out-alt"></i></div></div>
+            <div id="kpi-logouts-today" class="text-base font-black text-purple-600 leading-none">0</div>
+            <span class="text-[8px] font-bold text-slate-400">Session Closures</span>
+        </div>
+    </div>
+
+    <!-- SEARCH & FILTER BAR -->
+    <div class="bg-white dark:bg-[#111927] p-3 rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-2xs">
+        <form id="filterForm" onsubmit="event.preventDefault(); fetchUserLogs();" class="flex flex-wrap items-center gap-2 text-xs">
+            <div class="relative flex-1 min-w-[220px]">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]"></i>
+                <input type="text" id="searchInput" placeholder="Search ID, name, email, mobile, city..." class="w-full bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-xl pl-8 pr-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <select id="statusFilter" onchange="fetchUserLogs()" class="bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl px-2.5 py-1.5 focus:outline-none">
+                <option value="ALL">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Approved">Approved</option>
+                <option value="Pending Approval">Pending Approval</option>
+            </select>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl border-0 cursor-pointer transition-all inline-flex items-center gap-1">
+                <i class="fas fa-filter text-[10px]"></i> Filter
+            </button>
+            <button type="button" onclick="resetFilters()" class="bg-slate-100 dark:bg-[#1d2b45] hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all inline-flex items-center gap-1">
+                <i class="fas fa-undo text-[9px]"></i> Reset
+            </button>
+        </form>
+    </div>
+
+    <!-- DYNAMIC USER LOGS TABLE -->
+    <div class="bg-white dark:bg-[#111927] rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-2xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr id="tableHeaderRow" class="bg-slate-50 dark:bg-[#162238] border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-extrabold uppercase text-[9px] tracking-wider">
+                        <!-- Dynamic Headers inserted by JS -->
+                    </tr>
+                </thead>
+                <tbody id="userLogsTbody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold text-slate-700 dark:text-slate-300">
+                    <tr>
+                        <td colspan="${(window.currentUserType === 'Teacher') ? 13 : 9}" class="text-center py-8 text-slate-400">
+                            <i class="fas fa-spinner fa-spin text-lg text-blue-600 mb-2"></i>
+                            <p class="text-xs font-semibold">Loading registered user activity...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- USER PROFILE & AUTH TIMELINE MODAL -->
+<div id="userAuthDetailModal" class="fixed inset-0 z-[100] hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4" style="z-index: 100;">
+    <div class="relative w-full max-w-4xl bg-white dark:bg-[#111927] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-6">
+        <!-- MODAL HEADER -->
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div id="modalAvatar" class="w-10 h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center text-sm uppercase">ST</div>
+                <div>
+                    <h3 id="modalUserName" class="text-base font-black leading-tight text-white">Student Name</h3>
+                    <p id="modalUserRoleBadge" class="text-[10px] font-bold text-blue-400">STUDENT PROFILE</p>
+                </div>
+            </div>
+            <button onclick="closeUserAuthDetailModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm transition-colors border-0 cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- MODAL BODY -->
+        <div class="p-6 space-y-6 max-h-[78vh] overflow-y-auto">
+            <!-- 1. USER DETAILS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- PERSONAL & REGISTRATION INFO -->
+                <div class="bg-slate-50 dark:bg-[#162238] p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 space-y-2">
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 pb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-id-card text-blue-600"></i> Registration Details
+                    </h4>
+                    <div class="space-y-1.5 text-xs">
+                        <div><span class="text-slate-400 block text-[10px]">User ID:</span><span id="modalUserId" class="font-extrabold text-slate-800 dark:text-slate-100">#STU-1029</span></div>
+                        <div><span class="text-slate-400 block text-[10px]">Email Address:</span><span id="modalUserEmail" class="font-bold text-slate-700 dark:text-slate-300 truncate block">student@example.com</span></div>
+                        <div><span class="text-slate-400 block text-[10px]">Mobile Number:</span><span id="modalUserMobile" class="font-bold text-slate-700 dark:text-slate-300">+91 9988776655</span></div>
+                        <div><span class="text-slate-400 block text-[10px]">Registration Date:</span><span id="modalRegDate" class="font-bold text-slate-700 dark:text-slate-300">14 Aug 2026</span></div>
+                        <div id="modalExtraFieldsContainer" class="space-y-1.5 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
+                            <!-- Dynamic registration fields (Class, Qual, Exp, Fee, Mode) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AUTH STATISTICS -->
+                <div class="bg-slate-50 dark:bg-[#162238] p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 space-y-2">
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 pb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-chart-line text-emerald-600"></i> Auth Statistics
+                    </h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center bg-white dark:bg-[#1e2d4a] p-2 rounded-xl border border-slate-200/60 dark:border-slate-700">
+                            <span class="text-slate-500 dark:text-slate-400 font-semibold">Total Logins:</span>
+                            <span id="modalTotalLogins" class="font-black text-emerald-600 text-sm">0</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-white dark:bg-[#1e2d4a] p-2 rounded-xl border border-slate-200/60 dark:border-slate-700">
+                            <span class="text-slate-500 dark:text-slate-400 font-semibold">Failed Logins:</span>
+                            <span id="modalFailedLogins" class="font-black text-rose-600 text-sm">0</span>
+                        </div>
+                        <div><span class="text-slate-400 block text-[10px]">Last Login:</span><span id="modalLastLogin" class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Never</span></div>
+                        <div><span class="text-slate-400 block text-[10px]">Last Logout:</span><span id="modalLastLogout" class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Never</span></div>
+                    </div>
+                </div>
+
+                <!-- PASSWORD SECURITY & STATUS -->
+                <div class="bg-slate-50 dark:bg-[#162238] p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 space-y-2">
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 pb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-lock text-amber-500"></i> Password Security
+                    </h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-amber-700 dark:text-amber-400 font-bold text-[11px]">Password Status:</span>
+                                <span id="modalPasswordStatus" class="font-black text-emerald-600 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full text-[10px]">Set</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">Account Password:</span>
+                                <span id="modalPasswordDisplay" class="font-mono text-slate-700 dark:text-slate-300 font-bold">Set / Protected</span>
+                            </div>
+                        </div>
+
+                        <button onclick="openResetPasswordModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2 rounded-xl transition-all shadow-2xs border-0 cursor-pointer inline-flex items-center justify-center gap-1.5">
+                            <i class="fas fa-key text-[10px]"></i> Reset Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. CHRONOLOGICAL ACTIVITY TIMELINE -->
+            <div class="bg-slate-50 dark:bg-[#162238] p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60">
+                <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider border-b border-slate-200 dark:border-slate-700 pb-2 mb-3 flex items-center gap-1.5">
+                    <i class="fas fa-history text-blue-600"></i> Chronological Authentication Trail
+                </h4>
+
+                <div id="modalTimelineContainer" class="space-y-3 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
+                    <!-- Dynamic timeline items inserted by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECURE ADMIN RESET PASSWORD MODAL -->
+<div id="resetPasswordModal" class="fixed inset-0 z-[200] hidden overflow-y-auto bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4" style="z-index: 200;">
+    <div class="relative w-full max-w-md bg-white dark:bg-[#111927] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-6">
+        <!-- MODAL HEADER -->
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-blue-600/20 text-blue-400 flex items-center justify-center text-xs">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black leading-tight text-white">Reset Password</h3>
+                    <p class="text-[10px] font-bold text-slate-400">Assign a new password securely</p>
+                </div>
+            </div>
+            <button onclick="closeResetPasswordModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs transition-colors border-0 cursor-pointer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- MODAL BODY -->
+        <div class="p-6 space-y-4 text-xs">
+            <!-- TARGET USER INFO CARD -->
+            <div class="bg-slate-50 dark:bg-[#162238] p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/60 space-y-1">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400 font-semibold text-[10.5px]">User:</span>
+                    <span id="resetModalUserName" class="font-extrabold text-slate-900 dark:text-white">User Name</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400 font-semibold text-[10.5px]">Email:</span>
+                    <span id="resetModalUserEmail" class="font-bold text-blue-600 dark:text-blue-400 truncate max-w-[200px]">user@email.com</span>
+                </div>
+            </div>
+
+            <!-- INLINE ERROR CONTAINER -->
+            <div id="resetModalErrorMsg" class="hidden bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl text-rose-600 dark:text-rose-400 font-bold text-[11px] flex items-center gap-2">
+                <i class="fas fa-exclamation-circle text-xs shrink-0"></i>
+                <span id="resetModalErrorText">Error message goes here</span>
+            </div>
+
+            <!-- FORM FIELDS -->
+            <div class="space-y-3">
+                <div>
+                    <label for="newPasswordInput" class="block font-extrabold text-slate-700 dark:text-slate-200 mb-1">
+                        New Password <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="newPasswordInput" placeholder="Enter new password (min. 8 chars)" class="w-full bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl pl-3 pr-9 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="button" onclick="togglePasswordVisibility('newPasswordInput', 'newPwdEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 border-0 bg-transparent cursor-pointer text-xs">
+                            <i class="fas fa-eye" id="newPwdEyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="confirmPasswordInput" class="block font-extrabold text-slate-700 dark:text-slate-200 mb-1">
+                        Confirm New Password <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="confirmPasswordInput" placeholder="Confirm new password" class="w-full bg-slate-50 dark:bg-[#162238] border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl pl-3 pr-9 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="button" onclick="togglePasswordVisibility('confirmPasswordInput', 'confirmPwdEyeIcon')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 border-0 bg-transparent cursor-pointer text-xs">
+                            <i class="fas fa-eye" id="confirmPwdEyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <button type="button" onclick="closeResetPasswordModal()" class="bg-slate-100 dark:bg-[#1d2b45] hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold text-xs px-4 py-2 rounded-xl transition-all border-0 cursor-pointer">
+                    Cancel
+                </button>
+                <button type="button" id="btnSubmitResetPwd" onclick="submitResetPassword()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-2xs border-0 cursor-pointer inline-flex items-center gap-1.5">
+                    <i class="fas fa-key text-[10px]"></i> Reset Password
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN TOAST NOTIFICATION CONTAINER -->
+<div id="adminToastContainer" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 pointer-events-none" style="z-index: 300;"></div>
+
+<script>
+window.currentUserType = window.currentUserType || 'All Users';
+window.currentPage = window.currentPage || 1;
+window.currentDetailUser = window.currentDetailUser || null;
+window.window.currentAbortController = window.window.currentAbortController || null;
+
+function onUserTypeChange(val) {
+    window.currentUserType = val;
+    currentPage = 1;
+    const labelEl = document.getElementById('kpi-total-label');
+    if (labelEl) labelEl.innerText = 'Total ' + (val === 'Student' ? 'Students' : (val === 'Teacher' ? 'Teachers' : 'Users'));
+    renderTableHeader();
+    fetchUserLogs();
+}
+
+function renderTableHeader() {
+    const tr = document.getElementById('tableHeaderRow');
+    if (!tr) return;
+    if (window.currentUserType === 'All Users') {
+        tr.innerHTML = `
+            <th class="px-3 py-2.5">ID</th>
+            <th class="px-3 py-2.5">User Name & Email</th>
+            <th class="px-3 py-2.5">User Role</th>
+            <th class="px-3 py-2.5">Mobile</th>
+            <th class="px-3 py-2.5">City</th>
+            <th class="px-3 py-2.5">Password</th>
+            <th class="px-3 py-2.5">Registered On</th>
+            <th class="px-3 py-2.5">Account Status</th>
+            <th class="px-3 py-2.5 text-right">Actions</th>
+        `;
+    } else if (window.currentUserType === 'Student') {
+        tr.innerHTML = `
+            <th class="px-3 py-2.5">ID</th>
+            <th class="px-3 py-2.5">Student Name & Email</th>
+            <th class="px-3 py-2.5">Class</th>
+            <th class="px-3 py-2.5">Board</th>
+            <th class="px-3 py-2.5">Mobile</th>
+            <th class="px-3 py-2.5">Password</th>
+            <th class="px-3 py-2.5">Registered On</th>
+            <th class="px-3 py-2.5">Account Status</th>
+            <th class="px-3 py-2.5 text-right">Actions</th>
+        `;
+    } else {
+        tr.innerHTML = `
+            <th class="px-3 py-2.5">ID</th>
+            <th class="px-3 py-2.5">Teacher Name & Email</th>
+            <th class="px-3 py-2.5">Mobile</th>
+            <th class="px-3 py-2.5">Qualification</th>
+            <th class="px-3 py-2.5">Experience</th>
+            <th class="px-3 py-2.5">Subjects</th>
+            <th class="px-3 py-2.5">Expected Fee</th>
+            <th class="px-3 py-2.5">City</th>
+            <th class="px-3 py-2.5">Teaching Mode</th>
+            <th class="px-3 py-2.5">Password</th>
+            <th class="px-3 py-2.5">Registered On</th>
+            <th class="px-3 py-2.5">Status</th>
+            <th class="px-3 py-2.5 text-right">Actions</th>
+        `;
+    }
+}
+
+function fetchUserLogs() {
+    const qElem = document.getElementById('searchInput');
+    const q = qElem ? qElem.value.trim() : '';
+
+    const statusElem = document.getElementById('statusFilter');
+    const status = statusElem ? statusElem.value : 'ALL';
+
+    const refreshIcon = document.getElementById('refresh-icon');
+    if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+    // Cancel any in-flight request to prevent race conditions
+    if (window.currentAbortController) {
+        window.currentAbortController.abort();
+    }
+    window.currentAbortController = new AbortController();
+    const signal = window.currentAbortController.signal;
+
+    const url = `/api/admin/user-logs/?user_type=${encodeURIComponent(currentUserType)}&q=${encodeURIComponent(q)}&status=${encodeURIComponent(status)}`;
+
+    fetch(url, { signal: signal })
+        .then(res => {
+            if (!res.ok) throw new Error('HTTP Error ' + res.status);
+            return res.json();
+        })
+        .then(resp => {
+            if (resp && resp.data) {
+                renderKPIs(resp.data.stats || {});
+                renderTable(resp.data.logs || []);
+            } else {
+                renderErrorState('Unable to load registered user data.');
+            }
+        })
+        .catch(err => {
+            if (err.name === 'AbortError') return; // Cancelled by newer request
+            console.error('Error fetching user logs:', err);
+            renderErrorState('Unable to load user data. Please try again.');
+        })
+        .finally(() => {
+            if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+        });
+}
+
+function renderKPIs(stats) {
+    const totalEl = document.getElementById('kpi-total-users');
+    if (totalEl) totalEl.innerText = stats.total_users || 0;
+
+    const newEl = document.getElementById('kpi-new-today');
+    if (newEl) newEl.innerText = stats.new_today || 0;
+
+    const activeEl = document.getElementById('kpi-active-users');
+    if (activeEl) activeEl.innerText = stats.active_users || 0;
+
+    const verifiedEl = document.getElementById('kpi-verified-users');
+    if (verifiedEl) verifiedEl.innerText = stats.verified_users || 0;
+
+    const loginsEl = document.getElementById('kpi-logins-today');
+    if (loginsEl) loginsEl.innerText = stats.logins_today || 0;
+
+    const failedEl = document.getElementById('kpi-failed-logins-today');
+    if (failedEl) failedEl.innerText = stats.failed_logins_today || 0;
+
+    const logoutsEl = document.getElementById('kpi-logouts-today');
+    if (logoutsEl) logoutsEl.innerText = stats.logouts_today || 0;
+}
+
+function formatDateHeaderLabel(dateObj) {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const targetDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const fullFormatted = targetDate.toLocaleDateString('en-US', options);
+
+    if (targetDate.getTime() === today.getTime()) {
+        return `📅 TODAY — ${fullFormatted}`;
+    } else if (targetDate.getTime() === yesterday.getTime()) {
+        return `📅 YESTERDAY — ${fullFormatted}`;
+    } else {
+        return `📅 ${fullFormatted}`;
+    }
+}
+
+function renderTable(logs) {
+    const tbody = document.getElementById('userLogsTbody');
+    if (!tbody) return;
+
+    if (!logs || logs.length === 0) {
+        const emptyMsg = window.currentUserType === 'Student' 
+            ? 'No student registration records found.' 
+            : (window.currentUserType === 'Teacher' ? 'No teacher registration records found.' : 'No registered user records found.');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="${(window.currentUserType === 'Teacher') ? 13 : 9}" class="text-center py-10 text-slate-400">
+                    <i class="fas fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400">${emptyMsg}</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    // Sort logs timestamp DESC (newest date & time first)
+    logs.sort((a, b) => {
+        const dateA = new Date(a.raw_created_at || a.created_at || 0);
+        const dateB = new Date(b.raw_created_at || b.created_at || 0);
+        return dateB - dateA;
+    });
+
+    const colspanCount = window.currentUserType === 'All Users' ? 9 : (window.currentUserType === 'Student' ? 9 : 13);
+    let html = '';
+    let lastDateKey = null;
+
+    logs.forEach(item => {
+        const logDateObj = new Date(item.raw_created_at || item.created_at || Date.now());
+        const dateKey = `${logDateObj.getFullYear()}-${String(logDateObj.getMonth() + 1).padStart(2, '0')}-${String(logDateObj.getDate()).padStart(2, '0')}`;
+
+        if (dateKey !== lastDateKey) {
+            const dateLabel = formatDateHeaderLabel(logDateObj);
+            html += `
+                <tr class="bg-slate-100/90 dark:bg-[#18253b] border-y border-slate-200 dark:border-slate-700/80">
+                    <td colspan="${colspanCount}" class="px-3 py-2 text-slate-800 dark:text-slate-100 font-black text-xs uppercase tracking-wider">
+                        <div class="flex items-center gap-2">
+                            <span>${dateLabel}</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            lastDateKey = dateKey;
+        }
+
+        const initials = (item.full_name || 'U').slice(0, 2).toUpperCase();
+        const role = item.role_type || (window.currentUserType === 'Teacher' ? 'Teacher' : 'Student');
+        const user_id = item.user_id || item.id || 'N/A';
+        const full_name = item.full_name || 'Registered User';
+        const email = item.email || 'N/A';
+        const mobile = item.mobile || 'N/A';
+        const city = item.city || 'N/A';
+        const student_class = item.student_class || 'N/A';
+        const board = item.board || '—';
+        const password_status = item.password_status || 'Set';
+        const password_display = item.password_display || 'Set / Protected';
+        const created_at = item.created_at || 'N/A';
+        const account_status = item.account_status || 'Active';
+        const verification_status = item.verification_status || 'Unverified';
+
+        if (window.currentUserType === 'All Users') {
+            const roleBadgeClass = role === 'Teacher' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300';
+            const avatarBg = role === 'Teacher' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
+
+            html += `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="px-3 py-2 font-extrabold ${role === 'Teacher' ? 'text-purple-600' : 'text-blue-600'} text-[11px] whitespace-nowrap">#${user_id}</td>
+                    <td class="px-3 py-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full ${avatarBg} font-black flex items-center justify-center text-[10px] uppercase shrink-0">${initials}</div>
+                            <div class="min-w-0">
+                                <span class="font-extrabold block text-slate-900 dark:text-white text-xs truncate max-w-[150px]">${full_name}</span>
+                                <span class="text-[10px] text-slate-400 block truncate max-w-[150px]">${email}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${roleBadgeClass}">
+                            ${role}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 font-bold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${mobile}</td>
+                    <td class="px-3 py-2 font-bold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${city}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${password_status === 'Set' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-600'}">
+                            <i class="fas fa-key text-[9px]"></i> ${password_display}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 text-slate-500 text-[10px] whitespace-nowrap">${created_at}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${account_status === 'Active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}">
+                            <span class="w-1.5 h-1.5 rounded-full ${account_status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                            ${account_status}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 text-right whitespace-nowrap">
+                        <button onclick="openUserAuthDetailModal('${email}', '${user_id}', '${role}')" class="bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 text-blue-600 dark:text-blue-400 font-bold text-[10px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all inline-flex items-center gap-1">
+                            <i class="fas fa-eye text-[9px]"></i> View Details
+                        </button>
+                    </td>
+                </tr>
+            `;
+        } else if (window.currentUserType === 'Student') {
+            html += `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="px-3 py-2 font-extrabold text-blue-600 text-[11px] whitespace-nowrap">#${user_id}</td>
+                    <td class="px-3 py-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center text-[10px] uppercase shrink-0">${initials}</div>
+                            <div class="min-w-0">
+                                <span class="font-extrabold block text-slate-900 dark:text-white text-xs truncate max-w-[150px]">${full_name}</span>
+                                <span class="text-[10px] text-slate-400 block truncate max-w-[150px]">${email}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-3 py-2 font-bold text-slate-800 dark:text-slate-200 text-[11px] whitespace-nowrap">${student_class}</td>
+                    <td class="px-3 py-2 font-extrabold text-blue-600 dark:text-blue-400 text-[11px] whitespace-nowrap">${board}</td>
+                    <td class="px-3 py-2 font-bold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${mobile}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${password_status === 'Set' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-600'}">
+                            <i class="fas fa-key text-[9px]"></i> ${password_display}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 text-slate-500 text-[10px] whitespace-nowrap">${created_at}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${account_status === 'Active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}">
+                            <span class="w-1.5 h-1.5 rounded-full ${account_status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
+                            ${account_status}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 text-right whitespace-nowrap">
+                        <button onclick="openUserAuthDetailModal('${email}', '${user_id}', 'Student')" class="bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 text-blue-600 dark:text-blue-400 font-bold text-[10px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all inline-flex items-center gap-1">
+                            <i class="fas fa-eye text-[9px]"></i> View Details
+                        </button>
+                    </td>
+                </tr>
+            `;
+        } else {
+            const qualification = item.qualification || 'Graduate';
+            const experience = item.experience || '1 Year';
+            const subjects = item.subjects || 'General Subjects';
+            const expected_fee = item.expected_fee || 'N/A';
+            const teaching_mode = item.teaching_mode || 'Home & Online';
+
+            html += `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="px-3 py-2 font-extrabold text-purple-600 text-[11px] whitespace-nowrap">#${user_id}</td>
+                    <td class="px-3 py-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 font-black flex items-center justify-center text-[10px] uppercase shrink-0">${initials}</div>
+                            <div class="min-w-0">
+                                <span class="font-extrabold block text-slate-900 dark:text-white text-xs truncate max-w-[150px]">${full_name}</span>
+                                <span class="text-[10px] text-slate-400 block truncate max-w-[150px]">${email}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-3 py-2 font-bold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${mobile}</td>
+                    <td class="px-3 py-2 font-semibold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${qualification}</td>
+                    <td class="px-3 py-2 font-semibold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${experience}</td>
+                    <td class="px-3 py-2 font-bold text-slate-800 dark:text-slate-200 text-[11px] max-w-[130px] truncate">${subjects}</td>
+                    <td class="px-3 py-2 font-extrabold text-emerald-600 text-[11px] whitespace-nowrap">${expected_fee}</td>
+                    <td class="px-3 py-2 font-bold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${city}</td>
+                    <td class="px-3 py-2 font-semibold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">${teaching_mode}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${password_status === 'Set' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-slate-100 text-slate-600'}">
+                            <i class="fas fa-key text-[9px]"></i> ${password_display}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 text-slate-500 text-[10px] whitespace-nowrap">${created_at}</td>
+                    <td class="px-3 py-2 whitespace-nowrap">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full ${verification_status === 'Approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}">
+                            ${verification_status}
+                        </span>
+                    </td>
+                    <td class="px-3 py-2 text-right whitespace-nowrap">
+                        <button onclick="openUserAuthDetailModal('${email}', '${user_id}', 'Teacher')" class="bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 text-purple-600 dark:text-purple-400 font-bold text-[10px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all inline-flex items-center gap-1">
+                            <i class="fas fa-eye text-[9px]"></i> View Details
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+    });
+    tbody.innerHTML = html;
+}
+
+function renderErrorState(msg) {
+    const tbody = document.getElementById('userLogsTbody');
+    if (!tbody) return;
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="${(window.currentUserType === 'Teacher') ? 13 : 9}" class="text-center py-10 text-slate-400">
+                <i class="fas fa-exclamation-circle text-3xl mb-2 text-rose-500"></i>
+                <p class="text-xs font-bold text-slate-700 dark:text-slate-300 mb-3">${msg}</p>
+                <button onclick="fetchUserLogs(currentPage)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-1.5 rounded-xl border-0 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs">
+                    <i class="fas fa-redo text-[10px]"></i> Retry
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+function resetFilters() {
+    const searchElem = document.getElementById('searchInput');
+    if (searchElem) searchElem.value = '';
+
+    const statusElem = document.getElementById('statusFilter');
+    if (statusElem) statusElem.value = 'ALL';
+
+    fetchUserLogs();
+}
+
+function openUserAuthDetailModal(email, userId, roleType) {
+    window.currentDetailUser = { email, userId, roleType };
+    const modal = document.getElementById('userAuthDetailModal');
+    if (modal) modal.classList.remove('hidden');
+
+    const url = `/api/admin/user-logs/user-detail/?email=${encodeURIComponent(email)}&user_id=${encodeURIComponent(userId)}&user_type=${roleType}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(resp => {
+            if (resp && resp.data) {
+                const user = resp.data;
+                const avatar = document.getElementById('modalAvatar');
+                if (avatar) avatar.innerText = (user.full_name || 'U').slice(0, 2).toUpperCase();
+
+                const userName = document.getElementById('modalUserName');
+                if (userName) userName.innerText = user.full_name;
+
+                const roleBadge = document.getElementById('modalUserRoleBadge');
+                if (roleBadge) roleBadge.innerText = user.role ? user.role.toUpperCase() + ' PROFILE' : 'REGISTERED PROFILE';
+
+                const uidEl = document.getElementById('modalUserId');
+                if (uidEl) uidEl.innerText = '#' + user.user_id;
+
+                const emailEl = document.getElementById('modalUserEmail');
+                if (emailEl) emailEl.innerText = user.email || 'N/A';
+
+                const mobileEl = document.getElementById('modalUserMobile');
+                if (mobileEl) mobileEl.innerText = user.mobile || 'N/A';
+
+                const regDateEl = document.getElementById('modalRegDate');
+                if (regDateEl) regDateEl.innerText = user.registration_date;
+
+                const extraContainer = document.getElementById('modalExtraFieldsContainer');
+                if (extraContainer) {
+                    let extraHtml = '';
+                    const ef = user.extra_fields || {};
+                    if (roleType === 'Student') {
+                        extraHtml = `
+                            <div><span class="text-slate-400 block text-[10px]">Class:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.student_class || 'N/A'}</span></div>
+                            <div><span class="text-slate-400 block text-[10px]">Board:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.board || '—'}</span></div>
+                            <div><span class="text-slate-400 block text-[10px]">City / Location:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.city || 'N/A'}</span></div>
+                        `;
+                    } else {
+                        extraHtml = `
+                            <div><span class="text-slate-400 block text-[10px]">Qualification:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.qualification || 'N/A'}</span></div>
+                            <div><span class="text-slate-400 block text-[10px]">Experience:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.experience || 'N/A'}</span></div>
+                            <div><span class="text-slate-400 block text-[10px]">Subjects:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.subjects || 'N/A'}</span></div>
+                            <div><span class="text-slate-400 block text-[10px]">Expected Fee:</span><span class="font-bold text-emerald-600">${ef.expected_fee || 'N/A'}</span></div>
+                            <div><span class="text-slate-400 block text-[10px]">Teaching Mode:</span><span class="font-bold text-slate-700 dark:text-slate-300">${ef.teaching_mode || 'N/A'}</span></div>
+                        `;
+                    }
+                    extraContainer.innerHTML = extraHtml;
+                }
+
+                const totalLogins = document.getElementById('modalTotalLogins');
+                if (totalLogins) totalLogins.innerText = user.stats ? user.stats.total_successful_logins : 0;
+
+                const failedLogins = document.getElementById('modalFailedLogins');
+                if (failedLogins) failedLogins.innerText = user.stats ? user.stats.total_failed_logins : 0;
+
+                const lastLogin = document.getElementById('modalLastLogin');
+                if (lastLogin) lastLogin.innerText = (user.stats && user.stats.last_login) ? user.stats.last_login.date_time : 'Never';
+
+                const lastLogout = document.getElementById('modalLastLogout');
+                if (lastLogout) lastLogout.innerText = (user.stats && user.stats.last_logout) ? user.stats.last_logout.date_time : 'Never';
+
+                const pwdStatus = document.getElementById('modalPasswordStatus');
+                if (pwdStatus) pwdStatus.innerText = user.password_status || 'Set';
+
+                const pwdDisplay = document.getElementById('modalPasswordDisplay');
+                if (pwdDisplay) pwdDisplay.innerText = user.password_display || 'Set / Protected';
+
+                renderTimeline(user.timeline || []);
+            }
+        });
+}
+
+function closeUserAuthDetailModal() {
+    const modal = document.getElementById('userAuthDetailModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function renderTimeline(timeline) {
+    const container = document.getElementById('modalTimelineContainer');
+    if (!container) return;
+
+    if (!timeline || timeline.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No authentication activity logged for this user.</p>`;
+        return;
+    }
+
+    let html = '';
+    timeline.forEach(item => {
+        let badgeColor = 'bg-blue-500';
+        let icon = 'fa-info-circle';
+        if (item.activity_type === 'REGISTRATION') { badgeColor = 'bg-purple-500'; icon = 'fa-user-plus'; }
+        else if (item.activity_type === 'LOGIN') { badgeColor = 'bg-emerald-500'; icon = 'fa-sign-in-alt'; }
+        else if (item.activity_type === 'FAILED_LOGIN') { badgeColor = 'bg-rose-500'; icon = 'fa-exclamation-triangle'; }
+        else if (item.activity_type === 'LOGOUT') { badgeColor = 'bg-amber-500'; icon = 'fa-sign-out-alt'; }
+        else if (item.activity_type === 'PASSWORD_RESET') { badgeColor = 'bg-amber-600'; icon = 'fa-key'; }
+
+        html += `
+            <div class="relative pl-7 text-xs">
+                <div class="absolute left-0 top-1 w-3.5 h-3.5 rounded-full ${badgeColor} text-white flex items-center justify-center text-[7px]">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="bg-white dark:bg-[#1e2d4a] p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-2xs">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-slate-800 dark:text-slate-100">${item.activity_type} (${item.status})</span>
+                        <span class="text-[10px] text-slate-400 font-medium">${item.timestamp_str}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">${item.description || ''}</p>
+                    <div class="flex items-center gap-3 mt-1 text-[9.5px] text-slate-400 font-medium">
+                        <span><i class="fas fa-network-wired text-[8px]"></i> ${item.ip_address}</span>
+                        <span><i class="fas fa-desktop text-[8px]"></i> ${item.device} (${item.operating_system})</span>
+                        <span><i class="fas fa-globe text-[8px]"></i> ${item.browser}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// RESET PASSWORD MODAL FUNCTIONS
+function openResetPasswordModal() {
+    if (!window.currentDetailUser) return;
+    const modal = document.getElementById('resetPasswordModal');
+    if (!modal) return;
+
+    // Reset Form & Errors
+    document.getElementById('newPasswordInput').value = '';
+    document.getElementById('confirmPasswordInput').value = '';
+    document.getElementById('newPasswordInput').type = 'password';
+    document.getElementById('confirmPasswordInput').type = 'password';
+    document.getElementById('newPwdEyeIcon').className = 'fas fa-eye';
+    document.getElementById('confirmPwdEyeIcon').className = 'fas fa-eye';
+
+    const errBox = document.getElementById('resetModalErrorMsg');
+    if (errBox) errBox.classList.add('hidden');
+
+    const nameEl = document.getElementById('resetModalUserName');
+    if (nameEl) nameEl.innerText = document.getElementById('modalUserName').innerText || 'User Name';
+
+    const emailEl = document.getElementById('resetModalUserEmail');
+    if (emailEl) emailEl.innerText = window.currentDetailUser.email || 'user@email.com';
+
+    modal.classList.remove('hidden');
+}
+
+function closeResetPasswordModal() {
+    const modal = document.getElementById('resetPasswordModal');
+    if (modal) modal.classList.add('hidden');
+    document.getElementById('newPasswordInput').value = '';
+    document.getElementById('confirmPasswordInput').value = '';
+}
+
+function togglePasswordVisibility(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (!input || !icon) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash text-blue-400';
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function submitResetPassword() {
+    if (!window.currentDetailUser) return;
+
+    const newPwd = document.getElementById('newPasswordInput').value;
+    const confirmPwd = document.getElementById('confirmPasswordInput').value;
+    const errBox = document.getElementById('resetModalErrorMsg');
+    const errText = document.getElementById('resetModalErrorText');
+    const btnSubmit = document.getElementById('btnSubmitResetPwd');
+
+    function showError(msg) {
+        if (errBox && errText) {
+            errText.innerText = msg;
+            errBox.classList.remove('hidden');
+        }
+    }
+
+    if (errBox) errBox.classList.add('hidden');
+
+    if (!newPwd || !confirmPwd) {
+        showError('Both New Password and Confirm Password are required.');
+        return;
+    }
+
+    if (newPwd !== confirmPwd) {
+        showError('Passwords do not match.');
+        return;
+    }
+
+    if (newPwd.length < 8) {
+        showError('Password must contain at least 8 characters.');
+        return;
+    }
+
+    if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin text-[10px]"></i> Updating...';
+    }
+
+    const payload = {
+        email: window.currentDetailUser.email,
+        user_id: window.currentDetailUser.userId,
+        user_type: window.currentDetailUser.roleType,
+        new_password: newPwd,
+        confirm_password: confirmPwd
+    };
+
+    fetch('/api/admin/user-logs/reset-password/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json().then(data => ({ status: res.status, body: data })))
+    .then(res => {
+        if (res.status === 200 && res.body.status === 'success') {
+            closeResetPasswordModal();
+            showAdminToast(res.body.message || `Password has been updated successfully for ${window.currentDetailUser.email}.`, 'success');
+            // Refresh User Details Modal Timeline
+            openUserAuthDetailModal(window.currentDetailUser.email, window.currentDetailUser.userId, window.currentDetailUser.roleType);
+            fetchUserLogs(currentPage);
+        } else {
+            showError(res.body.message || 'Unable to reset password. Please try again.');
+        }
+    })
+    .catch(err => {
+        console.error('Error resetting password:', err);
+        showError('Unable to reset password. Please try again.');
+    })
+    .finally(() => {
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="fas fa-key text-[10px]"></i> Reset Password';
+        }
+    });
+}
+
+function showAdminToast(message, type = 'success') {
+    const container = document.getElementById('adminToastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    const isSuccess = type === 'success';
+    const bgClass = isSuccess ? 'bg-slate-900 border-emerald-500/40 text-white' : 'bg-slate-900 border-rose-500/40 text-white';
+    const iconClass = isSuccess ? 'fa-check-circle text-emerald-400' : 'fa-exclamation-circle text-rose-400';
+
+    toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl text-xs font-bold transition-all duration-300 opacity-0 transform translate-y-2 ${bgClass}`;
+    toast.innerHTML = `
+        <i class="fas ${iconClass} text-sm"></i>
+        <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.remove('opacity-0', 'translate-y-2');
+    }, 10);
+
+    setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => {
+            if (container.contains(toast)) container.removeChild(toast);
+        }, 300);
+    }, 4000);
+}
+
+// EXECUTE IMMEDIATELY UPON MODULE LOAD (WORKS FOR BOTH SPA NAVTO AND DIRECT PAGE REFRESH)
+renderTableHeader();
+fetchUserLogs();
+</script>
+{% endblock %}

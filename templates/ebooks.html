@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Library & Textbooks | EduTrust LMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- HEADER BAR -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-4 lg:px-8 py-3.5 sticky top-0 z-30 shadow-2xs">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <a href="/studymaterial/" class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-teal-500/30 no-underline">
+                    E
+                </a>
+                <div>
+                    <h1 class="text-base font-black text-slate-900 dark:text-white leading-none tracking-tight">EduTrust</h1>
+                    <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 block tracking-wide mt-0.5">E-Books & NCERT Reference Library</span>
+                </div>
+            </div>
+
+            <div class="relative max-w-md w-full hidden md:block">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs"></i>
+                <input type="text" id="ebookSearch" onkeyup="handleSearch(this.value)" placeholder="Search books by title, author or subject..." class="w-full bg-slate-100/90 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-teal-500/30">
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleDarkMode()" type="button" aria-label="Toggle theme" title="Toggle theme" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-amber-500 flex items-center justify-center relative hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200/80 dark:border-slate-700">
+                    <i id="themeIcon" class="fas fa-sun text-xs"></i>
+                </button>
+
+                <a href="/studymaterial/" class="flex items-center gap-3 pl-1 pr-2 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors no-underline">
+                    <img src="https://ui-avatars.com/api/?name=Student+User&background=0d9488&color=fff&size=200" alt="Student Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-teal-500/30">
+                    <div class="hidden lg:block text-left">
+                        <strong class="block text-xs font-bold text-slate-900 dark:text-white leading-tight">{{ student_name|default:"Student User" }}</strong>
+                        <span class="text-[10px] font-semibold text-slate-400">Class 10 CBSE</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+        <nav class="flex items-center text-xs text-slate-500 dark:text-slate-400 font-semibold gap-2 overflow-x-auto whitespace-nowrap custom-scrollbar pb-1">
+            <a href="/studymaterial/" class="hover:text-teal-600 transition-colors flex items-center gap-1 no-underline">
+                <i class="fas fa-home text-slate-400"></i> Dashboard
+            </a>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span>E-Library</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbSubject" class="text-teal-600 dark:text-teal-400 font-bold">Mathematics</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span class="text-slate-900 dark:text-white font-extrabold">E-Books</span>
+        </nav>
+
+        <div id="subjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <section class="space-y-4">
+            <div class="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <i class="fas fa-book-reader text-teal-600 text-base"></i>
+                    <h2 id="centerHeading" class="font-extrabold text-sm text-slate-900 dark:text-white">E-Books - Mathematics</h2>
+                    <span id="centerCountBadge" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-[10px] rounded-full">2 Books</span>
+                </div>
+            </div>
+
+            <div id="ebookCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- INLINE LMS BOOK READER MODAL -->
+    <div id="lmsReaderModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[9999] flex flex-col hidden">
+        <div class="bg-slate-900 text-white px-6 py-3 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center font-bold text-sm">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div>
+                    <h3 id="readerBookTitle" class="text-sm font-black leading-tight">NCERT Class 10 Textbook</h3>
+                    <span id="readerBookMeta" class="text-[11px] text-slate-400 font-semibold">Mathematics • EduTrust LMS Reader</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="closeLmsReader()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold transition-colors border-0 cursor-pointer text-white">
+                    <i class="fas fa-times mr-1"></i> Close Reader
+                </button>
+            </div>
+        </div>
+
+        <div class="flex-1 bg-slate-950 p-4 flex items-center justify-center relative overflow-hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full h-full p-8 shadow-2xl overflow-y-auto space-y-6 border border-slate-800 text-slate-800 dark:text-slate-100 custom-scrollbar">
+                <div class="border-b border-slate-200 dark:border-slate-800 pb-4 flex justify-between items-center">
+                    <div>
+                        <span class="px-2 py-0.5 bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 font-black text-[10px] rounded-md uppercase">Official NCERT Text</span>
+                        <h2 id="readerInnerTitle" class="text-xl font-black mt-1">Mathematics Textbook - Chapter 1</h2>
+                    </div>
+                    <span class="text-xs font-bold text-slate-400">Page 1 of 240</span>
+                </div>
+
+                <div class="space-y-4 text-xs font-medium leading-relaxed text-slate-700 dark:text-slate-300">
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">1.1 Introduction to Real Numbers</p>
+                    <p>In Class IX, you began your exploration of the world of real numbers and encountered irrational numbers. In this chapter, we continue our study of real numbers. We begin with two very important properties of positive integers, namely the Euclid’s division algorithm and the Fundamental Theorem of Arithmetic.</p>
+                    
+                    <div class="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+                        <strong class="text-xs font-bold text-teal-600">Theorem 1.1 (Euclid’s Division Lemma):</strong>
+                        <p class="text-[11px] font-semibold text-slate-600 dark:text-slate-300">Given positive integers a and b, there exist unique integers q and r satisfying a = bq + r, 0 ≤ r < b.</p>
+                    </div>
+
+                    <p>Euclid’s division algorithm is a technique to compute the Highest Common Factor (HCF) of two given positive integers. Recall that the HCF of two positive integers a and b is the largest positive integer d that divides both a and b.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pageState = { subjectName: 'Mathematics' };
+        let allSubjectsData = [];
+        let allEbookData = [];
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        async function initPage() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('subject')) pageState.subjectName = params.get('subject');
+
+            await loadSubjects();
+        }
+
+        async function loadSubjects() {
+            try {
+                const res = await fetch('/api/dpp/subjects/');
+                const data = await res.json();
+                if (data.subjects) {
+                    allSubjectsData = data.subjects;
+                    renderSubjectCards();
+                    await loadEbooks();
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function renderSubjectCards() {
+            const grid = document.getElementById('subjectCardsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = allSubjectsData.map(s => {
+                const isActive = s.name.toLowerCase() === pageState.subjectName.toLowerCase();
+                const activeClass = isActive 
+                    ? 'border-2 border-teal-600 shadow-md bg-white dark:bg-slate-900' 
+                    : 'border border-slate-200/80 dark:border-slate-800 hover:border-teal-200 bg-white dark:bg-slate-900';
+
+                return `
+                    <div onclick="selectSubject('${s.name.replace(/'/g, "\\'")}')" class="${activeClass} rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer transition-all">
+                        <div class="w-10 h-10 rounded-xl ${s.badge_bg} flex items-center justify-center font-black text-sm">
+                            <i class="${s.icon}"></i>
+                        </div>
+                        <div>
+                            <strong class="block text-xs font-bold text-slate-900 dark:text-white">${s.name}</strong>
+                            <span class="text-[10px] font-semibold text-slate-400">Class 10 E-Books</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function selectSubject(subjName) {
+            pageState.subjectName = subjName;
+            renderSubjectCards();
+            await loadEbooks();
+        }
+
+        async function loadEbooks() {
+            try {
+                document.getElementById('breadcrumbSubject').textContent = pageState.subjectName;
+                document.getElementById('centerHeading').textContent = `E-Books - ${pageState.subjectName}`;
+
+                const res = await fetch(`/api/ebooks/list/?subject=${encodeURIComponent(pageState.subjectName)}`);
+                const data = await res.json();
+                
+                allEbookData = data.ebooks || [];
+                document.getElementById('centerCountBadge').textContent = `${allEbookData.length} Books`;
+                renderEbooks(allEbookData);
+
+            } catch(e) { console.error(e); }
+        }
+
+        function renderEbooks(items) {
+            const container = document.getElementById('ebookCardsContainer');
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800">
+                        <i class="fas fa-book-open text-3xl mb-2 block"></i>
+                        <p class="text-xs font-bold">No e-books available for ${pageState.subjectName}.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(b => `
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-16 rounded-xl bg-teal-600 text-white flex items-center justify-center font-black text-xl shadow-md shrink-0">
+                                <i class="fas fa-book font-outfit"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-900 dark:text-white leading-tight">${b.title}</h3>
+                                <p class="text-[11px] text-slate-400 font-semibold mt-0.5">By ${b.author}</p>
+                                <span class="px-2 py-0.5 bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300 text-[10px] font-extrabold rounded-md mt-1 inline-block">${b.publisher}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                            <div><i class="fas fa-list text-teal-500 mr-1"></i> ${b.chapters_count} Chapters</div>
+                            <div><i class="fas fa-file-alt text-teal-500 mr-1"></i> ${b.pages_count} Pages</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <button onclick="readOnline('${b.title.replace(/'/g, "\\'")}', '${b.author.replace(/'/g, "\\'")}')" class="flex-1 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs rounded-xl shadow-xs border-0 cursor-pointer">
+                            Read Online 📖
+                        </button>
+                        <button onclick="downloadBook('${b.title.replace(/'/g, "\\'")}')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors flex items-center justify-center border-0 cursor-pointer">
+                            <i class="fas fa-download text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch(query) {
+            if (!query) { renderEbooks(allEbookData); return; }
+            const q = query.toLowerCase();
+            const filtered = allEbookData.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q));
+            renderEbooks(filtered);
+        }
+
+        function readOnline(title, author) {
+            document.getElementById('readerBookTitle').textContent = title;
+            document.getElementById('readerBookMeta').textContent = `${author} • EduTrust LMS Reader`;
+            document.getElementById('readerInnerTitle').textContent = title;
+            document.getElementById('lmsReaderModal').classList.remove('hidden');
+        }
+
+        function closeLmsReader() {
+            document.getElementById('lmsReaderModal').classList.add('hidden');
+        }
+
+        function downloadBook(title) {
+            alert(`📥 Downloading E-Book: "${title}"...`);
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recorded Lectures - EduTrust LMS</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        outfit: ['"Outfit"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#2563eb',
+                            600: '#1d4ed8',
+                            700: '#1e40af',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+        }
+        .dark .glass-header {
+            background: rgba(15, 23, 42, 0.92);
+        }
+        .glass-hero-banner {
+            background: linear-gradient(135deg, rgba(239, 246, 255, 0.95) 0%, rgba(224, 239, 254, 0.75) 100%);
+        }
+        .dark .glass-hero-banner {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.85) 100%);
+        }
+        /* Custom PC Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.6);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+    <!-- TOP PC NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200/90 dark:border-slate-800 transition-colors shadow-xs">
+        <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo & Platform Title -->
+            <div class="flex items-center gap-4 shrink-0">
+                <a href="/studymaterial/" class="flex items-center gap-2.5 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white font-extrabold text-lg flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-all">
+                        E
+                    </div>
+                    <div>
+                        <span class="font-outfit font-extrabold text-slate-900 dark:text-white text-lg leading-none block">EduTrust</span>
+                        <span class="text-[10px] text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider block">Recorded Lectures Dashboard</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- PC Search Bar -->
+            <div class="hidden lg:flex flex-1 max-w-md mx-4">
+                <div class="relative w-full">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="pcGlobalSearch" onkeyup="handleGlobalSearch(this.value)" placeholder="Search recorded lectures, topics, teachers..." class="w-full bg-slate-100 dark:bg-slate-800/80 text-xs font-semibold text-slate-800 dark:text-slate-200 pl-9 pr-4 py-2 rounded-xl border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Header Controls & Student Profile -->
+            <div class="flex items-center gap-3 shrink-0">
+                <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">
+                    <i class="far fa-calendar-alt text-blue-600 dark:text-blue-400"></i>
+                    <span>Session 2026</span>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleDarkMode()" title="Toggle Dark/Light Mode" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fas fa-moon dark:hidden text-slate-600"></i>
+                    <i class="fas fa-sun hidden dark:block text-amber-400"></i>
+                </button>
+
+                <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1"></div>
+
+                <!-- Logged-in Authenticated Student Profile -->
+                <div class="flex items-center gap-2.5">
+                    {% if profile_photo_url %}
+                        <img src="{{ profile_photo_url }}" alt="{{ student_name }}" class="w-9 h-9 rounded-full object-cover border border-slate-300 ring-2 ring-blue-500/30">
+                    {% else %}
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-extrabold text-xs flex items-center justify-center border border-slate-300 ring-2 ring-blue-500/30 shadow-xs">
+                            {{ profile_initials }}
+                        </div>
+                    {% endif %}
+                    <div class="text-left hidden sm:block">
+                        <span id="profileHeaderName" class="block text-xs font-extrabold text-slate-900 dark:text-white leading-tight student-profile-name">{{ student_name }}</span>
+                        <span id="profileHeaderClass" class="block text-[10px] text-blue-600 dark:text-blue-400 font-bold">{{ student_class }} Student</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+    <!-- WIDESCREEN PC MAIN CONTAINER -->
+    <main class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1">
+
+        <!-- BREADCRUMB & PC TITLE NAVIGATION -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-3">
+            <nav class="flex items-center gap-2 text-xs text-slate-500 font-medium overflow-x-auto">
+                <a href="/studymaterial/" class="hover:text-blue-600 transition-colors flex items-center gap-1"><i class="fas fa-home text-[11px]"></i> Home</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-300 dark:text-slate-700"></i>
+                <span>My Classes</span>
+                <i class="fas fa-chevron-right text-[9px] text-slate-300 dark:text-slate-700"></i>
+                <span id="breadcrumbClass" class="font-bold text-slate-700 dark:text-slate-300">{{ student_class }}</span>
+                <i class="fas fa-chevron-right text-[9px] text-slate-300 dark:text-slate-700"></i>
+                <a href="javascript:void(0)" id="activeSubjectBreadcrumb" onclick="loadSubjects()" class="border-b-2 border-blue-600 font-extrabold text-blue-600 dark:text-blue-400">Subject</a>
+                <i class="fas fa-chevron-right text-[9px] text-slate-300 dark:text-slate-700"></i>
+                <span class="text-slate-900 dark:text-white font-extrabold">Recorded Lectures</span>
+            </nav>
+
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                <i class="fas fa-desktop text-blue-600"></i>
+                <span>PC Widescreen View</span>
+            </div>
+        </div>
+
+        <!-- HERO BANNER (PC OPTIMIZED) -->
+        <div class="glass-hero-banner rounded-3xl p-6 lg:p-7 border border-blue-100 dark:border-slate-800 shadow-xs relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-start gap-4.5 z-10">
+                <div id="classBadgeIcon" class="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white font-extrabold text-xl lg:text-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
+                    {{ student_class }}
+                </div>
+                
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-3">
+                        {% if enrolled_classes|length > 1 %}
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Class Context:</span>
+                            <select id="classContextSelector" onchange="switchClassContext(this.value)" class="text-xs font-extrabold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-1 text-slate-900 dark:text-slate-100 shadow-xs focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                {% for c in enrolled_classes %}
+                                <option value="{{ c }}" {% if c == student_class %}selected{% endif %}>{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% else %}
+                        <span id="heroClassLabel" class="text-xs font-extrabold text-slate-700 dark:text-slate-300 px-2.5 py-0.5 bg-white/80 dark:bg-slate-800/80 rounded-lg border border-slate-200 dark:border-slate-700">{{ student_class }}</span>
+                        {% endif %}
+                        <span class="bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/60">Active Enrollment</span>
+                    </div>
+
+                    <h1 class="text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                        <span id="activeSubjectHeroText">Recorded Lectures</span> <span id="activeSubjectIcon" class="text-blue-600"><i class="fas fa-book"></i></span>
+                    </h1>
+
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-semibold flex items-center gap-2 pt-0.5">
+                        <span>Database-Driven Course</span> • <span class="text-blue-700 dark:text-blue-400 font-extrabold student-profile-name">{{ student_name }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Action Stats on PC -->
+            <div class="hidden lg:flex items-center gap-4 z-10">
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs px-4 py-3 rounded-2xl border border-slate-200/80 dark:border-slate-700 text-center shadow-xs">
+                    <span class="text-[10px] font-extrabold uppercase text-slate-400 block tracking-wider">Total Subjects</span>
+                    <strong id="pcStatSubjectsCount" class="text-lg font-black text-blue-600 dark:text-blue-400">0</strong>
+                </div>
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xs px-4 py-3 rounded-2xl border border-slate-200/80 dark:border-slate-700 text-center shadow-xs">
+                    <span class="text-[10px] font-extrabold uppercase text-slate-400 block tracking-wider">Available Lectures</span>
+                    <strong id="pcStatLecturesCount" class="text-lg font-black text-emerald-600 dark:text-emerald-400">0</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUBJECTS SELECTOR ROW (PC WIDESCREEN GRID: 6 COLS ON XL) -->
+        <section class="space-y-3.5">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                    <i class="fas fa-layer-group text-blue-600"></i> Class Subjects
+                </h3>
+                <span class="text-xs font-semibold text-slate-400">Select a subject to explore chapters & lectures</span>
+            </div>
+
+            <!-- Dynamic Subject Cards Grid -->
+            <div id="subjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <!-- Dynamically rendered via loadSubjects() -->
+            </div>
+        </section>
+
+        <!-- CHAPTERS SIDEBAR & RECORDED LECTURES GRID (PC OPTIMIZED: 3 COLS SIDEBAR + 9 COLS MAIN) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- LEFT SIDEBAR: CHAPTERS (3 COLS ON PC, STICKY TOP) -->
+            <div class="lg:col-span-3 lg:sticky lg:top-20 space-y-4">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <h3 id="chaptersSidebarTitle" class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                            <i class="fas fa-list-ol text-blue-600"></i> Chapters
+                        </h3>
+                        <span id="chaptersCountBadge" class="text-[10px] font-extrabold px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 rounded-full border border-blue-200/60">0 Chapters</span>
+                    </div>
+
+                    <!-- Filter All Chapters Toggle -->
+                    <div id="btnAllChaptersToggle" onclick="selectChapter('')" class="p-2.5 rounded-2xl border border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-950 dark:text-blue-100 font-extrabold text-xs cursor-pointer flex items-center justify-between transition-all">
+                        <span class="flex items-center gap-2"><i class="fas fa-th-list text-blue-600"></i> All Chapters</span>
+                        <i class="fas fa-check text-[11px] text-blue-600"></i>
+                    </div>
+
+                    <!-- Dynamic Chapters Container -->
+                    <div id="chaptersSidebarContainer" class="space-y-1.5 font-medium text-xs max-h-[520px] overflow-y-auto pr-1">
+                        <!-- Dynamically rendered via loadChapters() -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT CONTENT: RECORDED LECTURES (9 COLS ON PC) -->
+            <div class="lg:col-span-9 space-y-4">
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 lg:p-6 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+                        <div>
+                            <h3 id="lecturesPanelHeader" class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="far fa-play-circle text-rose-500"></i> Recorded Lectures
+                            </h3>
+                            <p id="lecturesSubHeader" class="text-xs text-slate-400 font-semibold mt-0.5">Showing published video streams for selected course context</p>
+                        </div>
+
+                        <!-- Source Filters -->
+                        <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                            <button onclick="switchSourceTab('all')" id="tab-all" class="px-3 py-1.5 text-xs font-extrabold rounded-xl transition-all bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs">All Lectures</button>
+                            <button onclick="switchSourceTab('youtube')" id="tab-youtube" class="px-3 py-1.5 text-xs font-extrabold rounded-xl transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900">YouTube</button>
+                            <button onclick="switchSourceTab('file')" id="tab-file" class="px-3 py-1.5 text-xs font-extrabold rounded-xl transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900">Uploaded Videos</button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Recorded Lectures Container (PC Multi-Column Grid or List) -->
+                    <div id="recordedLecturesContainer" class="space-y-3.5">
+                        <!-- Dynamically rendered via loadRecordedLectures() -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- CINEMATIC PC VIDEO PLAYER MODAL -->
+    <div id="videoModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4 lg:p-8">
+        <div class="bg-slate-900 rounded-3xl border border-slate-800 max-w-5xl xl:max-w-6xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
+            <div class="p-4 lg:p-5 border-b border-slate-800 flex items-center justify-between text-white shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 id="modalVideoTitle" class="font-extrabold text-sm lg:text-base text-white truncate">Lecture Video Player</h3>
+                        <span id="modalVideoSubtitle" class="text-xs text-slate-400 block truncate">Class Video Stream</span>
+                    </div>
+                </div>
+                <button onclick="closeVideoModal()" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-colors shrink-0">
+                    <i class="fas fa-times text-base"></i>
+                </button>
+            </div>
+            <div class="relative aspect-video bg-black flex items-center justify-center overflow-hidden flex-1" id="modalVideoContainer">
+                <!-- Video player iframe or video element dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CONTROLLER -->
+    <script>
+        let pageState = {
+            currentClass: '{{ student_class }}' || 'Class 10',
+            subjectName: '',
+            subjectId: null,
+            chapterTitle: '',
+            sourceTab: 'all',
+            searchQuery: ''
+        };
+
+        let allSubjectsData = [];
+        let allChaptersData = [];
+        let allLecturesData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initRecordedLecturesPage();
+        });
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        async function initRecordedLecturesPage() {
+            // Apply saved theme
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('class')) pageState.currentClass = params.get('class');
+            if (params.get('subject')) pageState.subjectName = params.get('subject');
+            if (params.get('chapter')) pageState.chapterTitle = params.get('chapter');
+
+            await loadSubjects();
+        }
+
+        function handleGlobalSearch(q) {
+            pageState.searchQuery = (q || '').trim();
+            loadRecordedLectures();
+        }
+
+        async function switchClassContext(newClass) {
+            if (!newClass || pageState.currentClass === newClass) return;
+            pageState.currentClass = newClass;
+            pageState.subjectName = '';
+            pageState.subjectId = null;
+            pageState.chapterTitle = '';
+            
+            const classBadge = document.getElementById('classBadgeIcon');
+            if (classBadge) classBadge.textContent = newClass;
+            const heroClass = document.getElementById('heroClassLabel');
+            if (heroClass) heroClass.textContent = newClass;
+            const bcClass = document.getElementById('breadcrumbClass');
+            if (bcClass) bcClass.textContent = newClass;
+
+            await loadSubjects();
+        }
+
+        async function loadSubjects() {
+            try {
+                const res = await fetch(`/api/student/subjects/?class_name=${encodeURIComponent(pageState.currentClass)}`);
+                if (!res.ok) {
+                    console.error("Subjects API returned error status:", res.status);
+                    allSubjectsData = [];
+                    renderSubjectCards();
+                    return;
+                }
+                const data = await res.json();
+                allSubjectsData = data.subjects || [];
+
+                // Update PC quick stats
+                const statSubj = document.getElementById('pcStatSubjectsCount');
+                if (statSubj) statSubj.textContent = allSubjectsData.length;
+
+                if (allSubjectsData.length > 0) {
+                    if (!pageState.subjectName) {
+                        pageState.subjectName = allSubjectsData[0].name;
+                        pageState.subjectId = allSubjectsData[0].id;
+                    } else {
+                        const found = allSubjectsData.find(s => s.name.toLowerCase() === pageState.subjectName.toLowerCase());
+                        if (found) {
+                            pageState.subjectId = found.id;
+                        } else {
+                            pageState.subjectName = allSubjectsData[0].name;
+                            pageState.subjectId = allSubjectsData[0].id;
+                        }
+                    }
+                }
+
+                renderSubjectCards();
+                await loadChapters();
+            } catch(e) {
+                console.error("Error loading subjects:", e);
+            }
+        }
+
+        function renderSubjectCards() {
+            const grid = document.getElementById('subjectCardsGrid');
+            if (!grid) return;
+
+            if (allSubjectsData.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-10 px-4 text-center text-slate-400 font-medium text-xs bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                        <i class="fas fa-book-open text-3xl mb-2 text-slate-300 dark:text-slate-600 block"></i>
+                        No subjects assigned to ${pageState.currentClass} yet.
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = allSubjectsData.map(s => {
+                const isActive = s.name.toLowerCase() === pageState.subjectName.toLowerCase();
+                const activeClass = isActive 
+                    ? 'border-2 border-blue-600 shadow-md bg-white dark:bg-slate-900 ring-2 ring-blue-500/20' 
+                    : 'border border-slate-200/90 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 bg-white dark:bg-slate-900';
+
+                return `
+                    <div onclick="selectSubject('${s.name.replace(/'/g, "\'")}', ${s.id})" class="${activeClass} rounded-2xl p-4 cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden group">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-xl ${s.badge_bg} flex items-center justify-center text-lg font-bold shrink-0 shadow-xs">
+                                <i class="${s.icon}"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <strong class="block text-xs font-black text-slate-900 dark:text-white truncate">${s.name}</strong>
+                                <span class="text-[10px] text-slate-400 font-bold block mt-0.5">${s.lecture_count} Lectures</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const displaySub = pageState.subjectName || 'Select Subject';
+            const bcEl = document.getElementById('activeSubjectBreadcrumb');
+            if (bcEl) bcEl.textContent = displaySub;
+
+            const heroTextEl = document.getElementById('activeSubjectHeroText');
+            if (heroTextEl) heroTextEl.textContent = displaySub;
+        }
+
+        async function selectSubject(subjName, subjId) {
+            pageState.subjectName = subjName;
+            pageState.subjectId = subjId;
+            pageState.chapterTitle = '';
+            renderSubjectCards();
+            await loadChapters();
+        }
+
+        async function loadChapters() {
+            try {
+                const res = await fetch(`/api/student/chapters/?class_name=${encodeURIComponent(pageState.currentClass)}&subject=${encodeURIComponent(pageState.subjectName)}&subject_id=${pageState.subjectId || ''}`);
+                const data = await res.json();
+                allChaptersData = data.chapters || [];
+
+                renderChaptersSidebar();
+                await loadRecordedLectures();
+            } catch(e) {
+                console.error("Error loading chapters:", e);
+            }
+        }
+
+        function renderChaptersSidebar() {
+            const container = document.getElementById('chaptersSidebarContainer');
+            const badge = document.getElementById('chaptersCountBadge');
+            if (badge) badge.textContent = `${allChaptersData.length} Chapters`;
+
+            const btnAllToggle = document.getElementById('btnAllChaptersToggle');
+            if (btnAllToggle) {
+                if (!pageState.chapterTitle) {
+                    btnAllToggle.className = "p-2.5 rounded-2xl border border-blue-500 bg-blue-50/80 dark:bg-blue-950/60 text-blue-950 dark:text-blue-100 font-extrabold text-xs cursor-pointer flex items-center justify-between transition-all";
+                } else {
+                    btnAllToggle.className = "p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-400 font-semibold text-xs cursor-pointer flex items-center justify-between transition-all";
+                }
+            }
+
+            if (!container) return;
+
+            if (allChaptersData.length === 0) {
+                container.innerHTML = `
+                    <div class="py-6 px-3 text-center text-xs text-slate-400 font-semibold bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                        <i class="fas fa-folder-open text-2xl mb-2 block text-slate-300 dark:text-slate-600"></i>
+                        No chapters created yet
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = allChaptersData.map(c => {
+                const isActive = pageState.chapterTitle && c.chapter_title.toLowerCase() === pageState.chapterTitle.toLowerCase();
+                const activeClass = isActive 
+                    ? 'bg-blue-50/80 dark:bg-blue-950/60 border-blue-500 text-blue-950 dark:text-blue-100 font-bold' 
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-semibold';
+
+                return `
+                    <div onclick="selectChapter('${c.chapter_title.replace(/'/g, "\'")}')" class="p-2.5 rounded-2xl border ${activeClass} cursor-pointer flex items-center justify-between transition-all">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-6 h-6 rounded-lg bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0">${c.chapter_number}</span>
+                            <span class="truncate">${c.chapter_title}</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400 shrink-0 ml-2">${c.lecture_count} Lec</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function selectChapter(chapTitle) {
+            if (pageState.chapterTitle === chapTitle) {
+                pageState.chapterTitle = '';
+            } else {
+                pageState.chapterTitle = chapTitle;
+            }
+            renderChaptersSidebar();
+            await loadRecordedLectures();
+        }
+
+        function switchSourceTab(tab) {
+            pageState.sourceTab = tab;
+            ['all', 'youtube', 'file'].forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                if (btn) {
+                    if (t === tab) {
+                        btn.className = "px-3 py-1.5 text-xs font-extrabold rounded-xl transition-all bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-xs font-extrabold rounded-xl transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900";
+                    }
+                }
+            });
+            loadRecordedLectures();
+        }
+
+        async function loadRecordedLectures() {
+            try {
+                const url = `/api/student/recorded-lectures/?class_name=${encodeURIComponent(pageState.currentClass)}&subject=${encodeURIComponent(pageState.subjectName)}&chapter=${encodeURIComponent(pageState.chapterTitle)}&source=${encodeURIComponent(pageState.sourceTab)}&search=${encodeURIComponent(pageState.searchQuery)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                allLecturesData = data.lectures || [];
+
+                const statLec = document.getElementById('pcStatLecturesCount');
+                if (statLec) statLec.textContent = allLecturesData.length;
+
+                renderRecordedLectures();
+            } catch(e) {
+                console.error("Error loading recorded lectures:", e);
+            }
+        }
+
+        function renderRecordedLectures() {
+            const container = document.getElementById('recordedLecturesContainer');
+            if (!container) return;
+
+            if (allLecturesData.length === 0) {
+                const tabLabel = pageState.sourceTab === 'youtube' ? 'YouTube link' : (pageState.sourceTab === 'file' ? 'uploaded MP4' : '');
+                container.innerHTML = `
+                    <div class="py-14 px-6 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800">
+                        <i class="fas fa-video-slash text-4xl mb-3 block text-slate-300 dark:text-slate-700"></i>
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Not Uploaded Yet</p>
+                        <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">No ${tabLabel} recorded lectures have been uploaded for ${pageState.subjectName || 'this subject'} in ${pageState.currentClass} yet. Please check back later!</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = allLecturesData.map((item, idx) => {
+                const isFile = item.source_type === 'file';
+                const sourceBadge = isFile 
+                    ? '<span class="px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] border border-emerald-200 dark:border-emerald-800">Video File</span>'
+                    : '<span class="px-2.5 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 font-extrabold text-[10px] border border-rose-200 dark:border-rose-800">YouTube Stream</span>';
+
+                return `
+                    <div class="lecture-card p-4 rounded-2xl bg-white dark:bg-slate-900 hover:bg-blue-50/40 dark:hover:bg-slate-800/50 border border-slate-200/90 dark:border-slate-800 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xs">
+                        <div class="flex items-start gap-4 min-w-0 flex-1">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold shrink-0 text-lg shadow-xs">
+                                <i class="${isFile ? 'fas fa-file-video' : 'fab fa-youtube'}"></i>
+                            </div>
+                            <div class="space-y-1 min-w-0 flex-1">
+                                <div class="flex items-center gap-2.5">
+                                    ${sourceBadge}
+                                    <span class="text-xs font-bold text-slate-400 truncate"><i class="far fa-folder-open text-blue-500 mr-1"></i>${item.chapter}</span>
+                                </div>
+                                <h4 class="text-sm font-black text-slate-900 dark:text-white truncate">${item.title}</h4>
+                                <p class="text-xs text-slate-500 font-medium flex items-center gap-4 pt-0.5">
+                                    <span><i class="fas fa-chalkboard-teacher text-indigo-500 mr-1"></i>${item.teacher_name}</span>
+                                    <span><i class="far fa-clock text-amber-500 mr-1"></i>${item.duration}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button onclick="playLectureByIndex(${idx})" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-extrabold text-xs shadow-xs transition-all flex items-center gap-2 shrink-0 self-end sm:self-center cursor-pointer hover:scale-105">
+                            <i class="fas fa-play text-[10px]"></i> Watch Stream
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function playLectureByIndex(idx) {
+            if (!allLecturesData[idx]) return;
+            const item = allLecturesData[idx];
+
+            const modal = document.getElementById('videoModal');
+            const container = document.getElementById('modalVideoContainer');
+            const title = document.getElementById('modalVideoTitle');
+            const sub = document.getElementById('modalVideoSubtitle');
+
+            if (title) title.textContent = item.title;
+            if (sub) sub.textContent = `${item.subject} • ${item.chapter} (${item.class_name})`;
+
+            if (item.source_type === 'file' && item.file_url) {
+                container.innerHTML = `<video src="${item.file_url}" controls autoplay class="w-full h-full object-contain"></video>`;
+            } else if (item.youtube_id) {
+                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${item.youtube_id}?autoplay=1" class="w-full h-full" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            } else if (item.video_url) {
+                container.innerHTML = `<iframe src="${item.video_url}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                container.innerHTML = `<div class="p-6 text-white text-xs font-bold text-center">Video stream unavailable</div>`;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const container = document.getElementById('modalVideoContainer');
+            if (container) container.innerHTML = '';
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+</body>
+</html>

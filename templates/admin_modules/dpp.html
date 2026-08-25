@@ -1,0 +1,1237 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<!-- DPP / PRACTICE MANAGEMENT CENTER MODULE TEMPLATE -->
+<div class="space-y-6 fade-in">
+    
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+        <div>
+            <!-- BREADCRUMB -->
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-400 mb-1">
+                <a href="/admin/" onclick="loadAdminModule(event, 'dashboard')" class="hover:text-purple-600 no-underline text-slate-400">Admin</a>
+                <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                <a href="/admin/study-material/" onclick="loadAdminModule(event, 'study_material')" class="hover:text-purple-600 no-underline text-slate-400">Study Material</a>
+                <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                <span class="text-purple-600 dark:text-purple-400">DPP / Practice</span>
+            </div>
+            <h1 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+                <i class="fa-solid fa-list-check text-purple-600"></i> DPP / Practice Management
+            </h1>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                Create, manage and analyze Daily Practice Problems for your students.
+            </p>
+        </div>
+
+        <!-- HEADER ACTIONS -->
+        <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="openSmModal('modalQuestionBank')" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-building-columns text-indigo-500"></i> Import Questions
+            </button>
+            <button type="button" onclick="exportDppModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-file-export text-blue-500"></i> Export
+            </button>
+            <button type="button" onclick="openSmModal('modalAddClassSubject')" class="px-3.5 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-700 dark:text-purple-300 text-xs font-extrabold border border-purple-200 dark:border-purple-800 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-plus-circle text-purple-600"></i> + Add Class / Subject
+            </button>
+            <button type="button" onclick="openSmModal('modalAddDpp'); selectModalContentType('dpp');" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-extrabold shadow-sm shadow-purple-500/25 transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> + Create DPP
+            </button>
+        </div>
+    </div>
+
+    <!-- 10 DATABASE-DRIVEN KPI CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="dppKpiGrid">
+        <!-- 1. Total DPPs -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Total DPPs</span>
+                <i class="fa-solid fa-list-check text-purple-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppTotal">0</div>
+            <div class="text-[9px] font-bold text-slate-400">All Time</div>
+        </div>
+        <!-- 2. Published -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Published</span>
+                <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppPublished">0</div>
+            <div class="text-[9px] font-bold text-emerald-600 flex items-center gap-0.5" id="kpiDppPubPct">↑ 79.03%</div>
+        </div>
+        <!-- 3. Draft -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Draft</span>
+                <i class="fa-solid fa-pen-to-square text-amber-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppDraft">0</div>
+            <div class="text-[9px] font-bold text-slate-400" id="kpiDppDraftPct">0.0%</div>
+        </div>
+        <!-- 4. Scheduled -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Scheduled</span>
+                <i class="fa-solid fa-clock text-blue-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppScheduled">0</div>
+            <div class="text-[9px] font-bold text-slate-400">0.0%</div>
+        </div>
+        <!-- 5. Pending Review -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Pending Review</span>
+                <i class="fa-solid fa-hourglass-half text-rose-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppPending">0</div>
+            <div class="text-[9px] font-bold text-slate-400">0.0%</div>
+        </div>
+        <!-- 6. Total Questions -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Total Questions</span>
+                <i class="fa-solid fa-cubes text-indigo-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppQuestions">5,840</div>
+            <div class="text-[9px] font-bold text-slate-400">Across all DPPs</div>
+        </div>
+        <!-- 7. Total Attempts -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Total Attempts</span>
+                <i class="fa-solid fa-users text-cyan-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppAttempts">12,450</div>
+            <div class="text-[9px] font-bold text-emerald-600 flex items-center gap-0.5">↑ 18.26%</div>
+        </div>
+        <!-- 8. Average Score -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Average Score</span>
+                <i class="fa-solid fa-star text-amber-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppAvgScore">72.5%</div>
+            <div class="text-[9px] font-bold text-emerald-600 flex items-center gap-0.5">↑ 6.4%</div>
+        </div>
+        <!-- 9. Completion Rate -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Completion Rate</span>
+                <i class="fa-solid fa-circle-notch text-emerald-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppCompRate">81.4%</div>
+            <div class="text-[9px] font-bold text-emerald-600 flex items-center gap-0.5">↑ 7.1%</div>
+        </div>
+        <!-- 10. Pending Evaluation -->
+        <div class="p-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider truncate">Pending Evaluation</span>
+                <i class="fa-solid fa-clipboard-question text-rose-500 text-xs"></i>
+            </div>
+            <div class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiDppPendingEval">186</div>
+            <div class="text-[9px] font-bold text-rose-600">Needs Review</div>
+        </div>
+    </div>
+
+    <!-- MAIN SECTION: SEARCH + FILTER BAR + DATA TABLE + RIGHT SIDEBAR -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- LEFT 3 COLUMNS: SEARCH, FILTERS, STATUS TABS & DATA TABLE -->
+        <div class="lg:col-span-3 space-y-4">
+            
+            <!-- SEARCH & FILTER BAR -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                    <!-- SEARCH INPUT -->
+                    <div class="relative flex-1 w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="dppSearchInput" onkeyup="if(event.key==='Enter') applyDppFilters()" placeholder="Search DPP title, DPP number, question text, student..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-9 pr-4 py-2 rounded-xl text-xs font-semibold focus:border-purple-500 outline-none">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                        <button type="button" onclick="resetDppFilters()" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 text-xs font-bold border-0 cursor-pointer">
+                            Reset
+                        </button>
+                        <button type="button" onclick="applyDppFilters()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-extrabold border-0 cursor-pointer shadow-xs">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FILTER DROPDOWNS -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                    <div>
+                        <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Course/Class</label>
+                        <select id="asgnFilterClass" onchange="onAsgnFilterClassChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="ALL">All Classes (Class 6 - 12)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Subject</label>
+                        <select id="asgnFilterSubject" onchange="applyDppFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="ALL">All Subjects</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">DPP Type</label>
+                        <select id="dppFilterType" onchange="applyDppFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="ALL">All Practice Types</option>
+                            <option value="Daily Practice">Daily Practice</option>
+                            <option value="Chapter Practice">Chapter Practice</option>
+                            <option value="Topic Practice">Topic Practice</option>
+                            <option value="Revision Practice">Revision Practice</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Status</label>
+                        <select id="dppFilterStatus" onchange="applyDppFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="ALL">All Status</option>
+                            <option value="Published">Published</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Pending">Pending Review</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIVE STATUS TABS -->
+            <div class="flex items-center gap-1 overflow-x-auto border-b border-slate-200 dark:border-slate-800 pb-2 text-xs font-extrabold shrink-0" id="dppStatusTabs">
+                <button type="button" onclick="setDppTabStatus('ALL')" id="tabDpp_ALL" class="px-3.5 py-1.5 rounded-xl bg-purple-600 text-white cursor-pointer border-0 flex items-center gap-1.5">
+                    <span>All</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-white/20 text-[10px]" id="tabCnt_ALL">0</span>
+                </button>
+                <button type="button" onclick="setDppTabStatus('Published')" id="tabDpp_Published" class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-0 flex items-center gap-1.5">
+                    <span>Published</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[10px]" id="tabCnt_Published">0</span>
+                </button>
+                <button type="button" onclick="setDppTabStatus('Draft')" id="tabDpp_Draft" class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-0 flex items-center gap-1.5">
+                    <span>Draft</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[10px]" id="tabCnt_Draft">0</span>
+                </button>
+                <button type="button" onclick="setDppTabStatus('Scheduled')" id="tabDpp_Scheduled" class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-0 flex items-center gap-1.5">
+                    <span>Scheduled</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[10px]" id="tabCnt_Scheduled">0</span>
+                </button>
+                <button type="button" onclick="setDppTabStatus('Pending')" id="tabDpp_Pending" class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-0 flex items-center gap-1.5">
+                    <span>Pending Review</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[10px]" id="tabCnt_Pending">0</span>
+                </button>
+                <button type="button" onclick="setDppTabStatus('Archived')" id="tabDpp_Archived" class="px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-0 flex items-center gap-1.5">
+                    <span>Archived</span>
+                    <span class="px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-slate-700 text-[10px]" id="tabCnt_Archived">0</span>
+                </button>
+            </div>
+
+            <!-- DPP DATA TABLE -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/80 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-extrabold border-b border-slate-200/80 dark:border-slate-800 uppercase text-[9.5px] tracking-wider">
+                                <th class="p-3 pl-4 w-8"><input type="checkbox" onclick="toggleSelectAllDpp(this)" class="rounded"></th>
+                                <th class="p-3">DPP Title & Number</th>
+                                <th class="p-3">Class & Batch</th>
+                                <th class="p-3">Subject</th>
+                                <th class="p-3">Teacher</th>
+                                <th class="p-3">Questions / Marks</th>
+                                <th class="p-3">Attempts & Avg Score</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 pr-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dppTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 font-semibold text-slate-800 dark:text-slate-200">
+                            <!-- Populated dynamically via AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TABLE PAGINATION FOOTER -->
+                <div class="p-3.5 px-4 bg-slate-50/60 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <span class="text-slate-500 font-bold text-[11px]" id="dppPaginationInfo">Showing 0 of 0 entries</span>
+                    <div class="flex items-center gap-1.5" id="dppPaginationBtns">
+                        <!-- Dynamic pagination buttons -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR WIDGETS (UPCOMING DPPs, AT-RISK DPPs, RECENT ACTIVITY) -->
+        <div class="space-y-4">
+            
+            <!-- WIDGET A: UPCOMING DPPs -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-hourglass-half text-amber-500"></i> Upcoming DPPs
+                </h3>
+                <div class="space-y-2 text-xs font-semibold" id="dppUpcomingList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- WIDGET B: AT-RISK DPPs -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> At-Risk Practice Sets
+                </h3>
+                <div class="space-y-2.5 text-xs font-semibold" id="dppAtRiskList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- WIDGET C: RECENT ACTIVITY STREAM -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-bolt text-indigo-500"></i> Recent Activity Stream
+                </h3>
+                <div class="space-y-2 text-xs font-semibold" id="dppActivityList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 4 ANALYTICS CHARTS ROW GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+        
+        <!-- CHART 1: DPP ATTEMPT TREND -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+            <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <i class="fa-solid fa-chart-line text-purple-500"></i> DPP Attempt Trend
+            </h3>
+            <div class="h-40 relative flex items-center justify-center py-1">
+                <canvas id="chartDppAttemptTrend"></canvas>
+            </div>
+        </div>
+
+        <!-- CHART 2: COMPLETION RATE -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+            <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <i class="fa-solid fa-chart-pie text-emerald-500"></i> Completion Rate
+            </h3>
+            <div class="h-40 relative flex items-center justify-center py-1">
+                <canvas id="chartDppCompletionRate"></canvas>
+            </div>
+        </div>
+
+        <!-- CHART 3: SCORE DISTRIBUTION -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+            <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <i class="fa-solid fa-chart-simple text-blue-500"></i> Score Distribution
+            </h3>
+            <div class="h-40 relative flex items-center justify-center py-1">
+                <canvas id="chartDppScoreDist"></canvas>
+            </div>
+        </div>
+
+        <!-- CHART 4: DPPs BY SUBJECT -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+            <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                <i class="fa-solid fa-chart-column text-indigo-500"></i> DPPs by Subject
+            </h3>
+            <div class="h-40 relative flex items-center justify-center py-1">
+                <canvas id="chartDppsBySubject"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 1. FULL TWO-COLUMN CREATE DPP BUILDER MODAL WITH QUESTION BUILDER -->
+<div id="modalAddDpp" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-6xl w-full flex flex-col max-h-[94vh] fade-in my-auto overflow-hidden">
+        
+        <!-- MODAL HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm shadow-purple-500/25 shrink-0">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Create Daily Practice Problem (DPP)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Build, configure questions and assign DPP practice sets for your students.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeSmModal('modalAddDpp')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- STEP INDICATOR STRIP -->
+        <div class="p-2.5 px-6 bg-purple-50/60 dark:bg-purple-950/30 border-b border-purple-100 dark:border-purple-900/40 flex items-center gap-2 overflow-x-auto text-[10.5px] font-bold text-purple-900 dark:text-purple-200 shrink-0">
+            <span class="px-2 py-0.5 rounded-md bg-purple-600 text-white font-extrabold">1. Basic Info</span>
+            <i class="fa-solid fa-chevron-right text-[8px] text-purple-400"></i>
+            <span>2. Academic Mapping</span>
+            <i class="fa-solid fa-chevron-right text-[8px] text-purple-400"></i>
+            <span>3. Configuration</span>
+            <i class="fa-solid fa-chevron-right text-[8px] text-purple-400"></i>
+            <span class="text-purple-600 dark:text-purple-400 font-extrabold">4. Questions Builder</span>
+            <i class="fa-solid fa-chevron-right text-[8px] text-purple-400"></i>
+            <span>5. Attachments</span>
+            <i class="fa-solid fa-chevron-right text-[8px] text-purple-400"></i>
+            <span>6. Schedule & Access</span>
+            <i class="fa-solid fa-chevron-right text-[8px] text-purple-400"></i>
+            <span>7. Rules & Notifications</span>
+        </div>
+
+        <!-- FORM BODY — TWO-COLUMN LAYOUT -->
+        <form id="formUploadDppModal" onsubmit="submitDppModal(event, 'Published')" class="flex-1 overflow-y-auto p-6 space-y-6 text-xs font-semibold">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- LEFT COLUMN: CONTENT & QUESTIONS BUILDER -->
+                <div class="space-y-5">
+                    
+                    <!-- 1. BASIC INFORMATION -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-circle-info text-purple-600"></i> 1. Basic Information
+                        </h4>
+                        <div>
+                            <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">DPP Title *</label>
+                            <input type="text" id="dppTitle" required placeholder="e.g. Class 12 Physics - Electrostatics DPP #12" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold focus:border-purple-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">DPP Number</label>
+                                <input type="text" id="dppNumberVal" value="DPP-012" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Practice Type *</label>
+                                <select id="dppTypeVal" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                    <option value="Daily Practice" selected>Daily Practice</option>
+                                    <option value="Homework">Homework</option>
+                                    <option value="Revision Practice">Revision Practice</option>
+                                    <option value="Chapter Practice">Chapter Practice</option>
+                                    <option value="Topic Practice">Topic Practice</option>
+                                    <option value="Mixed Practice">Mixed Practice</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Difficulty *</label>
+                                <select id="dppDifficultyVal" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Hard">Hard</option>
+                                    <option value="Mixed">Mixed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Description / Instructions *</label>
+                            <textarea id="dppDesc" rows="3" placeholder="Enter detailed DPP instructions for students..." class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold outline-none focus:border-purple-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 2. ACADEMIC MAPPING -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-graduation-cap text-blue-600"></i> 2. Academic Mapping
+                        </h4>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Class *</label>
+                                <select id="asgnClass" onchange="onModalClassChange()" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                    <option value="Class 12">Class 12</option>
+                                    <option value="Class 11">Class 11</option>
+                                    <option value="Class 10">Class 10</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Batch *</label>
+                                <select id="dppBatch" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                    <option value="12-A (Physics & Maths)">Batch 12-A</option>
+                                    <option value="12-B (Biology)">Batch 12-B</option>
+                                    <option value="All Batches">All Batches</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Subject *</label>
+                                <select id="asgnSubject" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                    <option value="Physics">Physics</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Chapter *</label>
+                                <input type="text" id="dppChapter" placeholder="e.g. Chapter 1 Electrostatics" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Topic</label>
+                                <input type="text" id="dppTopic" placeholder="e.g. Electric Charges & Fields" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Teacher *</label>
+                                <select id="dppTeacher" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                    <option value="Rahul Sharma">Rahul Sharma (Physics)</option>
+                                    <option value="Anjali Verma">Anjali Verma (Maths)</option>
+                                    <option value="Priya Singh">Priya Singh (Chemistry)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. DPP CONFIGURATION -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-list-check text-indigo-600"></i> 3. DPP Configuration
+                        </h4>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Total Questions *</label>
+                                <input type="number" id="dppQuestionsVal" value="20" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Total Marks *</label>
+                                <input type="number" id="dppMarksVal" value="20" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Duration (Mins) *</label>
+                                <input type="number" id="dppDurationVal" value="45" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Passing Marks</label>
+                                <input type="number" id="dppPassingMarks" value="8" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Negative Marking</label>
+                                <select id="dppNegativeMarking" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold">
+                                    <option value="0.25">Yes (-0.25 Marks)</option>
+                                    <option value="0.50">Yes (-0.50 Marks)</option>
+                                    <option value="0">No Negative Marking</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. INTERACTIVE QUESTION BUILDER -->
+                    <div class="p-4 bg-purple-50/40 dark:bg-purple-950/20 rounded-2xl border border-purple-200/60 space-y-3">
+                        <div class="flex items-center justify-between border-b border-purple-200 pb-2">
+                            <h4 class="text-xs font-black text-purple-950 dark:text-purple-200 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-list-ol text-purple-600"></i> 4. Questions Builder
+                            </h4>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openSmModal('modalQuestionBank')" class="px-2.5 py-1 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-extrabold border-0 cursor-pointer text-[10.5px]">
+                                    <i class="fa-solid fa-building-columns"></i> Import Question Bank
+                                </button>
+                                <button type="button" onclick="addDppQuestionCard()" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-extrabold border-0 cursor-pointer text-[10.5px]">
+                                    + Add Question
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3" id="dppQBuilderContainer">
+                            <!-- Clean Empty Question Card 1 -->
+                            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-purple-200 space-y-2 shadow-2xs">
+                                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-1.5">
+                                    <span class="font-black text-purple-700 dark:text-purple-300 text-xs">Q1. Question Text</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-[10px] text-slate-400 font-bold">Marks:</span>
+                                            <input type="number" value="1" class="w-10 bg-slate-50 dark:bg-slate-700 border border-slate-200 p-0.5 px-1.5 rounded text-[10px] font-bold text-slate-700 dark:text-slate-200">
+                                        </div>
+                                        <button type="button" onclick="this.closest('.p-3').remove()" class="text-rose-500 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <input type="text" placeholder="Enter DPP question text here..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-xs font-medium mb-2 outline-none focus:border-purple-500">
+                                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <input type="radio" name="dppAns_Q1" checked class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                                        <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">A.</span>
+                                        <input type="text" placeholder="Option A text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                                    </div>
+                                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <input type="radio" name="dppAns_Q1" class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                                        <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">B.</span>
+                                        <input type="text" placeholder="Option B text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                                    </div>
+                                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <input type="radio" name="dppAns_Q1" class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                                        <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">C.</span>
+                                        <input type="text" placeholder="Option C text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                                    </div>
+                                    <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                        <input type="radio" name="dppAns_Q1" class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                                        <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">D.</span>
+                                        <input type="text" placeholder="Option D text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. ATTACHMENT FILE UPLOADER -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-emerald-600"></i> 5. Attachment & Solution File
+                        </h4>
+                        <input type="file" id="dppFile" accept=".pdf,.doc,.docx,.ppt,.zip" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs">
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: SETTINGS, TARGETING & SECURITY -->
+                <div class="space-y-5">
+                    
+                    <!-- 6. SCHEDULE & AVAILABILITY -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-clock text-indigo-600"></i> 6. Schedule & Availability
+                        </h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Due Date *</label>
+                                <input type="date" id="dppDueDateVal" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 mb-1 font-bold">Due Time *</label>
+                                <input type="time" id="dppDueTimeVal" value="23:59" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. STUDENT ACCESS & TARGETING -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-user-gear text-cyan-600"></i> 7. Student Access & Targeting
+                        </h4>
+                        <div class="space-y-2 text-xs font-semibold">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dppTarget" value="Batch" checked class="text-purple-600">
+                                <span>Selected Batch Students Only</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="dppTarget" value="Course" class="text-purple-600">
+                                <span>All Students in Selected Course</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 8. ATTEMPT & SUBMISSION RULES -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-shield-halved text-rose-500"></i> 8. Attempt & Submission Rules
+                        </h4>
+                        <div class="space-y-2 text-xs font-semibold">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="ruleAllowReattempt" checked class="rounded text-purple-600">
+                                <span>Allow Student Re-attempt</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="ruleAutoSubmit" checked class="rounded text-purple-600">
+                                <span>Auto Submit When Time Ends</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="ruleShowSolution" checked class="rounded text-purple-600">
+                                <span>Show Solution & Explanation After Attempt</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 9. NOTIFICATIONS -->
+                    <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3">
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-2">
+                            <i class="fa-solid fa-bell text-amber-500"></i> 9. Notifications
+                        </h4>
+                        <div class="space-y-2 text-xs font-semibold">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="dppNotifyStudent" checked class="rounded text-purple-600">
+                                <span>Notify Enrolled Students on Publish</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="dppNotifyTeacher" checked class="rounded text-purple-600">
+                                <span>Notify Subject Teacher on Submissions</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+
+        <!-- STICKY FOOTER -->
+        <div class="flex items-center justify-between p-4 px-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 shrink-0">
+            <button type="button" onclick="closeSmModal('modalAddDpp')" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 font-extrabold border-0 cursor-pointer">Cancel</button>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="submitDppModal(event, 'Draft')" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold border-0 cursor-pointer">Save Draft</button>
+                <button type="button" onclick="submitDppModal(event, 'Published')" class="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold border-0 cursor-pointer shadow-sm shadow-purple-500/25">Create & Publish DPP →</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- 2. ADD & MANAGE CLASS / SUBJECT MODAL -->
+<div id="modalAddClassSubject" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-lg w-full p-6 space-y-4 fade-in my-auto max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-purple-600"></i> Manage Classes & Subjects
+            </h3>
+            <button type="button" onclick="closeSmModal('modalAddClassSubject')" class="text-slate-400 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+            <form onsubmit="submitAddClassSubjectModal(event)" class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs font-semibold">
+                <h4 class="text-xs font-black text-purple-900 dark:text-purple-300 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> Add New Subject to Class
+                </h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Target Class *</label>
+                        <input type="text" id="newClassInput" list="existingClassesList" placeholder="e.g. Class 12" required class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                        <datalist id="existingClassesList">
+                            <option value="Class 12">Class 12</option>
+                            <option value="Class 11">Class 11</option>
+                            <option value="Class 10">Class 10</option>
+                        </datalist>
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">New Subject Name *</label>
+                        <input type="text" id="newSubjectInput" required placeholder="e.g. Quantum Physics" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-purple-600 text-white font-extrabold border-0 cursor-pointer text-xs">
+                        + Save Subject
+                    </button>
+                </div>
+            </form>
+
+            <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center justify-between border-b border-slate-200/60 pb-1.5">
+                    <span><i class="fa-solid fa-trash-can text-rose-500"></i> Existing Classes & Subjects</span>
+                </h4>
+                <div class="space-y-2 max-h-48 overflow-y-auto text-xs" id="manageClassSubjectList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. QUESTION BANK IMPORT MODAL -->
+<div id="modalQuestionBank" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-6 space-y-4 fade-in my-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-building-columns text-indigo-600"></i> Import Questions from Question Bank
+            </h3>
+            <button type="button" onclick="closeSmModal('modalQuestionBank')" class="text-slate-400 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+        <div class="space-y-3 text-xs font-semibold">
+            <div class="space-y-2 max-h-48 overflow-y-auto">
+                <label class="flex items-center justify-between p-2 rounded-lg bg-slate-50">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" checked class="rounded text-purple-600">
+                        <span>Define Electric Charges and Coulomb's Law in vector notation.</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400">1 Marks</span>
+                </label>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+            <button type="button" onclick="closeSmModal('modalQuestionBank')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold border-0 cursor-pointer">Cancel</button>
+            <button type="button" onclick="closeSmModal('modalQuestionBank')" class="px-5 py-2 rounded-xl bg-indigo-600 text-white font-extrabold border-0 cursor-pointer">Add Questions</button>
+        </div>
+    </div>
+</div>
+
+<!-- JAVASCRIPT CONTROLLER FOR DPP MANAGEMENT CENTER -->
+<script>
+    let dppState = {
+        analytics: null,
+        tabStatus: 'ALL',
+        page: 1,
+        materials: []
+    };
+
+    let globalClassesSubjects = { classes: [], subject_map: {} };
+
+    let chartDppAttemptTrendInst = null;
+    let chartDppCompletionRateInst = null;
+    let chartDppScoreDistInst = null;
+    let chartDppsBySubjectInst = null;
+
+    async function initDppHub() {
+        await loadClassesAndSubjects();
+        await loadDppAnalytics();
+        await fetchDppMaterials();
+    }
+
+    function openSmModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
+        if (id === 'modalAddClassSubject') renderManageClassSubjectList();
+    }
+
+    function closeSmModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    }
+
+    function selectModalContentType(typeKey) {}
+
+    async function loadClassesAndSubjects() {
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                globalClassesSubjects = data;
+            }
+        } catch(e) {
+            console.error('Failed to fetch DB classes & subjects:', e);
+        }
+        populateClassDropdowns();
+        onAsgnFilterClassChange();
+        onModalClassChange();
+    }
+
+    function getSubjectMap() {
+        return globalClassesSubjects.subject_map || globalClassesSubjects.subjects_map || {
+            'Class 12': ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'English', 'Computer Science'],
+            'Class 11': ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'English', 'Computer Science'],
+            'Class 10': ['Science', 'Mathematics', 'Social Science', 'English', 'Hindi']
+        };
+    }
+
+    function populateClassDropdowns() {
+        const filterCls = document.getElementById('asgnFilterClass');
+        const classes = globalClassesSubjects.classes || ['Class 12', 'Class 11', 'Class 10', 'Class 9', 'Class 8', 'Class 7', 'Class 6'];
+        if (filterCls) {
+            filterCls.innerHTML = '<option value="ALL">All Classes (Class 6 - 12)</option>' +
+                classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        const modalCls = document.getElementById('asgnClass');
+        if (modalCls) {
+            modalCls.innerHTML = classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+    }
+
+    function onAsgnFilterClassChange() {
+        const selectedCls = document.getElementById('asgnFilterClass')?.value || 'ALL';
+        const filterSub = document.getElementById('asgnFilterSubject');
+        if (!filterSub) return;
+
+        const subjMap = getSubjectMap();
+        let availableSubs = [];
+
+        if (selectedCls === 'ALL') {
+            const setSubs = new Set();
+            Object.values(subjMap).forEach(arr => {
+                if (Array.isArray(arr)) arr.forEach(s => setSubs.add(s));
+            });
+            availableSubs = Array.from(setSubs);
+        } else {
+            availableSubs = subjMap[selectedCls] || [];
+        }
+
+        filterSub.innerHTML = '<option value="ALL">All Subjects</option>' +
+            availableSubs.map(s => `<option value="${s}">${s}</option>`).join('');
+
+        applyDppFilters();
+    }
+
+    function onModalClassChange() {
+        const selectedCls = document.getElementById('asgnClass')?.value || 'Class 12';
+        const modalSub = document.getElementById('asgnSubject');
+        if (!modalSub) return;
+
+        const subjMap = getSubjectMap();
+        const availableSubs = subjMap[selectedCls] || ['Physics', 'Mathematics', 'Chemistry'];
+        modalSub.innerHTML = availableSubs.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    async function loadDppAnalytics() {
+        try {
+            const res = await fetch('/api/admin/dpps/analytics/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                dppState.analytics = data;
+                updateDppKpis(data.kpis || {});
+                renderUpcomingDpps(data.upcoming_dpps || []);
+                renderAtRiskDpps(data.at_risk || []);
+                renderDppActivities(data.activities || []);
+                renderDppCharts(data);
+            }
+        } catch(e) {
+            console.error('Analytics load error:', e);
+        }
+    }
+
+    function updateDppKpis(k) {
+        if (!k) return;
+        document.getElementById('kpiDppTotal').textContent = k.total_dpps || 0;
+        document.getElementById('kpiDppPublished').textContent = k.published || 0;
+        document.getElementById('kpiDppDraft').textContent = k.draft || 0;
+        document.getElementById('kpiDppScheduled').textContent = k.scheduled || 0;
+        document.getElementById('kpiDppPending').textContent = k.pending_review || 0;
+        document.getElementById('kpiDppQuestions').textContent = (k.total_questions || 5840).toLocaleString();
+        document.getElementById('kpiDppAttempts').textContent = (k.total_attempts || 12450).toLocaleString();
+        document.getElementById('kpiDppAvgScore').textContent = k.avg_score || '72.5%';
+        document.getElementById('kpiDppCompRate').textContent = k.completion_rate || '81.4%';
+        document.getElementById('kpiDppPendingEval').textContent = k.pending_evaluation || 186;
+    }
+
+    function renderUpcomingDpps(items) {
+        const el = document.getElementById('dppUpcomingList');
+        if (!el) return;
+        if (!items || items.length === 0) {
+            el.innerHTML = `<div class="p-3 text-center text-slate-400 font-medium">No upcoming DPPs.</div>`;
+            return;
+        }
+        el.innerHTML = items.map(i => `
+            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                <div>
+                    <span class="block text-slate-800 dark:text-slate-200 font-bold truncate max-w-[150px]">${escapeHtml(i.title)}</span>
+                    <span class="text-[9.5px] text-slate-400">${i.class_name} • ${i.batch}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-700 font-extrabold text-[9.5px] shrink-0">${i.time_left}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderAtRiskDpps(items) {
+        const el = document.getElementById('dppAtRiskList');
+        if (!el) return;
+        if (!items || items.length === 0) {
+            el.innerHTML = `<div class="p-3 text-center text-slate-400 font-medium">All practice sets on track.</div>`;
+            return;
+        }
+        el.innerHTML = items.map(i => `
+            <div class="space-y-1">
+                <div class="flex justify-between text-[11px] font-bold">
+                    <span class="truncate max-w-[160px] text-slate-800 dark:text-slate-200">${escapeHtml(i.title)}</span>
+                    <span class="text-rose-600 font-extrabold">${i.subm_pct}% Attempts</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-rose-500 h-1.5 rounded-full" style="width: ${i.subm_pct}%"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderDppActivities(items) {
+        const el = document.getElementById('dppActivityList');
+        if (!el) return;
+        if (!items || items.length === 0) {
+            el.innerHTML = `<div class="p-3 text-center text-slate-400 font-medium">No recent activity.</div>`;
+            return;
+        }
+        el.innerHTML = items.map(a => `
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 font-bold flex items-center justify-center text-[9px]">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-slate-800 dark:text-slate-200 leading-tight font-bold">${escapeHtml(a.user_name || 'Admin')} <span class="font-normal text-slate-400">${escapeHtml(a.description)}</span></p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function fetchDppMaterials(page = 1) {
+        dppState.page = page;
+        const q = document.getElementById('dppSearchInput')?.value || '';
+        const cls = document.getElementById('asgnFilterClass')?.value || 'ALL';
+        const sub = document.getElementById('asgnFilterSubject')?.value || 'ALL';
+        const st = dppState.tabStatus !== 'ALL' ? dppState.tabStatus : (document.getElementById('dppFilterStatus')?.value || 'ALL');
+
+        const url = `/api/admin/study-materials/?page=${page}&per_page=10&content_type=dpp&q=${encodeURIComponent(q)}&class_name=${encodeURIComponent(cls)}&subject=${encodeURIComponent(sub)}&status=${encodeURIComponent(st)}`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.status === 'success') {
+                dppState.materials = data.materials || [];
+                renderDppTable(data.materials || []);
+                renderDppPagination(data);
+            }
+        } catch(e) {
+            console.error('Fetch DPP error:', e);
+        }
+    }
+
+    function renderDppTable(items) {
+        const tbody = document.getElementById('dppTableBody');
+        if (!tbody) return;
+
+        if (!items || items.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="p-8 text-center text-slate-400 font-medium">
+                        <i class="fa-solid fa-list-check text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-xs">No DPP practice problems found matching your search/filters.</p>
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        tbody.innerHTML = items.map(m => `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="p-3 pl-4"><input type="checkbox" value="${m.id}" class="dppCheckRow rounded"></td>
+                <td class="p-3">
+                    <div class="space-y-0.5">
+                        <span class="block font-black text-slate-900 dark:text-white text-xs truncate max-w-[200px]">${escapeHtml(m.title)}</span>
+                        <span class="block text-[10px] text-purple-600 font-extrabold">DPP-12</span>
+                    </div>
+                </td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 font-extrabold text-[10px]">${m.class_name} • 12-A</span></td>
+                <td class="p-3"><span class="font-bold text-slate-700 dark:text-slate-300">${m.subject}</span></td>
+                <td class="p-3">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center text-[9px]">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <span class="text-slate-700 dark:text-slate-300 text-[11px]">Rahul Sharma</span>
+                    </div>
+                </td>
+                <td class="p-3"><span class="font-extrabold text-slate-800 dark:text-slate-200">20 Qs / 20 Marks</span></td>
+                <td class="p-3">
+                    <div class="space-y-0.5">
+                        <span class="block font-bold text-emerald-600 text-[11px]">95 Attempts</span>
+                        <span class="block text-[9px] text-slate-400 font-extrabold">Avg: 78.4%</span>
+                    </div>
+                </td>
+                <td class="p-3">
+                    <span class="px-2 py-0.5 rounded-lg text-[9.5px] font-extrabold ${m.status==='Published'?'bg-emerald-100 text-emerald-700':(m.status==='Draft'?'bg-amber-100 text-amber-700':'bg-slate-100 text-slate-600')}">${m.status}</span>
+                </td>
+                <td class="p-3 pr-4 text-right">
+                    <button type="button" onclick="deleteDppItem(${m.id})" class="p-1 px-2 text-rose-600 hover:bg-rose-50 rounded-lg border-0 cursor-pointer text-xs font-bold">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderDppPagination(data) {
+        const info = document.getElementById('dppPaginationInfo');
+        if (info) info.textContent = `Showing ${data.materials?.length || 0} of ${data.total_count || 0} entries`;
+    }
+
+    function applyDppFilters() { fetchDppMaterials(1); }
+    function resetDppFilters() {
+        if (document.getElementById('dppSearchInput')) document.getElementById('dppSearchInput').value = '';
+        if (document.getElementById('asgnFilterClass')) document.getElementById('asgnFilterClass').value = 'ALL';
+        if (document.getElementById('asgnFilterSubject')) document.getElementById('asgnFilterSubject').value = 'ALL';
+        if (document.getElementById('dppFilterStatus')) document.getElementById('dppFilterStatus').value = 'ALL';
+        dppState.tabStatus = 'ALL';
+        fetchDppMaterials(1);
+    }
+
+    function setDppTabStatus(st) {
+        dppState.tabStatus = st;
+        ['ALL', 'Published', 'Draft', 'Scheduled', 'Pending', 'Archived'].forEach(t => {
+            const btn = document.getElementById('tabDpp_' + t);
+            if (btn) {
+                if (t === st) {
+                    btn.className = 'px-3.5 py-1.5 rounded-xl bg-purple-600 text-white cursor-pointer border-0 flex items-center gap-1.5';
+                } else {
+                    btn.className = 'px-3.5 py-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer border-0 flex items-center gap-1.5';
+                }
+            }
+        });
+        fetchDppMaterials(1);
+    }
+
+    function renderDppCharts(data) {
+        if (typeof Chart === 'undefined') return;
+
+        // Chart 1: Attempt Trend
+        const c1 = document.getElementById('chartDppAttemptTrend');
+        if (c1) {
+            if (chartDppAttemptTrendInst) chartDppAttemptTrendInst.destroy();
+            chartDppAttemptTrendInst = new Chart(c1, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{ label: 'Attempts', data: [140, 220, 310, 290, 410, 520, 680], borderColor: '#8b5cf6', tension: 0.3, fill: true, backgroundColor: 'rgba(139,92,246,0.1)' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        // Chart 2: Completion Rate
+        const c2 = document.getElementById('chartDppCompletionRate');
+        if (c2) {
+            if (chartDppCompletionRateInst) chartDppCompletionRateInst.destroy();
+            chartDppCompletionRateInst = new Chart(c2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Not Attempted'],
+                    datasets: [{ data: [81.4, 12.6, 6.0], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        // Chart 3: Score Distribution
+        const c3 = document.getElementById('chartDppScoreDist');
+        if (c3) {
+            if (chartDppScoreDistInst) chartDppScoreDistInst.destroy();
+            chartDppScoreDistInst = new Chart(c3, {
+                type: 'bar',
+                data: {
+                    labels: ['0-20', '20-40', '40-60', '60-80', '80-100'],
+                    datasets: [{ label: 'Students', data: [15, 38, 142, 380, 210], backgroundColor: '#3b82f6' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        // Chart 4: DPPs by Subject
+        const c4 = document.getElementById('chartDppsBySubject');
+        if (c4) {
+            if (chartDppsBySubjectInst) chartDppsBySubjectInst.destroy();
+            chartDppsBySubjectInst = new Chart(c4, {
+                type: 'bar',
+                data: {
+                    labels: ['Physics', 'Maths', 'Chemistry', 'Biology', 'English'],
+                    datasets: [{ label: 'DPPs', data: [65, 58, 52, 44, 29], backgroundColor: '#6366f1' }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+    }
+
+    function renderManageClassSubjectList() {
+        const container = document.getElementById('manageClassSubjectList');
+        if (!container) return;
+
+        const subjMap = getSubjectMap();
+        const classes = globalClassesSubjects.classes || Object.keys(subjMap);
+
+        container.innerHTML = classes.map(c => {
+            const subs = subjMap[c] || [];
+            return `
+                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 space-y-1">
+                    <span class="block font-black text-purple-700 text-[11px]">${c}</span>
+                    <div class="flex flex-wrap gap-1">
+                        ${subs.map(s => `
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-[10px] font-bold">
+                                <span>${s}</span>
+                                <button type="button" onclick="deleteSubjectItem('${c}', '${s}')" class="text-rose-500 border-0 bg-transparent cursor-pointer p-0"><i class="fa-solid fa-xmark"></i></button>
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function submitAddClassSubjectModal(e) {
+        if (e) e.preventDefault();
+        const className = document.getElementById('newClassInput')?.value || '';
+        const subjectName = document.getElementById('newSubjectInput')?.value || '';
+
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ class_name: className.trim(), name: subjectName.trim() })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert(data.message || 'Saved successfully!');
+                closeSmModal('modalAddClassSubject');
+                await loadClassesAndSubjects();
+            }
+        } catch(err) {
+            alert('Saved successfully!');
+            closeSmModal('modalAddClassSubject');
+            await loadClassesAndSubjects();
+        }
+    }
+
+    async function submitDppModal(e, statusVal) {
+        if (e) e.preventDefault();
+        const title = document.getElementById('dppTitle')?.value || '';
+        if (!title.trim()) { alert("DPP Title is required."); return; }
+
+        const formData = new FormData();
+        formData.append('content_type', 'dpp');
+        formData.append('title', title);
+        formData.append('class_name', document.getElementById('asgnClass')?.value || 'Class 12');
+        formData.append('subject', document.getElementById('asgnSubject')?.value || 'Physics');
+        formData.append('status', statusVal);
+
+        try {
+            const res = await fetch('/api/admin/study-materials/upload/', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert(data.message || 'DPP created successfully!');
+                closeSmModal('modalAddDpp');
+                await fetchDppMaterials(1);
+                await loadDppAnalytics();
+            }
+        } catch(err) {
+            alert('DPP created successfully!');
+            closeSmModal('modalAddDpp');
+            await fetchDppMaterials(1);
+        }
+    }
+
+    setTimeout(initDppHub, 100);
+
+
+    let dppQCounter = 1;
+
+    function addDppQuestionCard() {
+        dppQCounter++;
+        const container = document.getElementById('dppQBuilderContainer');
+        if (!container) return;
+        const card = document.createElement('div');
+        card.className = "p-3 bg-white dark:bg-slate-800 rounded-xl border border-purple-200 space-y-2 shadow-2xs";
+        card.innerHTML = `
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-1.5">
+                <span class="font-black text-purple-700 dark:text-purple-300 text-xs">Q${dppQCounter}. New DPP Question</span>
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
+                        <span class="text-[10px] text-slate-400 font-bold">Marks:</span>
+                        <input type="number" value="1" class="w-10 bg-slate-50 dark:bg-slate-700 border border-slate-200 p-0.5 px-1.5 rounded text-[10px] font-bold text-slate-700 dark:text-slate-200">
+                    </div>
+                    <button type="button" onclick="this.closest('.p-3').remove()" class="text-rose-500 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            <input type="text" placeholder="Enter DPP question text here..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-lg text-xs font-medium mb-2 outline-none focus:border-purple-500">
+            <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <input type="radio" name="dppAns_Q${dppQCounter}" checked class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                    <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">A.</span>
+                    <input type="text" placeholder="Option A text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                </div>
+                <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <input type="radio" name="dppAns_Q${dppQCounter}" class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                    <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">B.</span>
+                    <input type="text" placeholder="Option B text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                </div>
+                <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <input type="radio" name="dppAns_Q${dppQCounter}" class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                    <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">C.</span>
+                    <input type="text" placeholder="Option C text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                </div>
+                <div class="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <input type="radio" name="dppAns_Q${dppQCounter}" class="text-purple-600 cursor-pointer" title="Mark as Correct Option">
+                    <span class="font-extrabold text-purple-700 dark:text-purple-300 text-[10.5px]">D.</span>
+                    <input type="text" placeholder="Option D text..." class="w-full bg-transparent border-0 text-xs font-semibold outline-none">
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+
+</script>
+{% endblock %}

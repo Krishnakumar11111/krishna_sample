@@ -1,0 +1,183 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-6 fade-in">
+    <!-- HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <h2 class="text-xl font-black text-slate-900 tracking-tight">Live Classes Schedule</h2>
+            <p class="text-xs text-slate-500 font-medium">Real-time active streaming sessions, upcoming schedule & conducted classes</p>
+        </div>
+        <button onclick="openModal('modalScheduleLive')" class="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-2xl border-0 cursor-pointer shadow-md flex items-center gap-2">
+            <i class="fas fa-video"></i> Schedule New Live Class
+        </button>
+    </div>
+
+    <!-- KPI SUMMARY CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Total Classes</span>
+            <h4 class="text-xl font-black text-slate-900 leading-none">{{ all_live_classes.count }}</h4>
+        </div>
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+            <span class="text-[10px] font-extrabold text-rose-500 uppercase tracking-wider block">Live Now</span>
+            <h4 class="text-xl font-black text-rose-600 leading-none">{% if live_now_classes %}{{ live_now_classes }}{% else %}0{% endif %}</h4>
+        </div>
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+            <span class="text-[10px] font-extrabold text-blue-500 uppercase tracking-wider block">Scheduled</span>
+            <h4 class="text-xl font-black text-blue-600 leading-none">{% if scheduled_live_classes %}{{ scheduled_live_classes }}{% else %}{{ all_live_classes.count }}{% endif %}</h4>
+        </div>
+        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
+            <span class="text-[10px] font-extrabold text-emerald-500 uppercase tracking-wider block">Conducted</span>
+            <h4 class="text-xl font-black text-emerald-600 leading-none">{% if conducted_live_classes %}{{ conducted_live_classes }}{% else %}0{% endif %}</h4>
+        </div>
+    </div>
+
+    <!-- LIVE CLASSES TABLE / LIST -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-broadcast-tower text-rose-600"></i> Active & Upcoming Live Sessions
+            </h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-500 font-extrabold uppercase text-[10px]">
+                        <th class="p-3 text-left">Class ID</th>
+                        <th class="p-3 text-left">Topic & Details</th>
+                        <th class="p-3 text-left">Teacher</th>
+                        <th class="p-3 text-left">Class / Subject</th>
+                        <th class="p-3 text-left">Status</th>
+                        <th class="p-3 text-left">Date & Time</th>
+                        <th class="p-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lc in all_live_classes %}
+                    <tr class="border-t border-slate-100 hover:bg-slate-50/70 transition-colors">
+                        <td class="p-3 font-mono text-[10px] font-bold text-slate-400">#LC-{{ lc.id }}</td>
+                        <td class="p-3 font-extrabold text-slate-900 max-w-[220px] truncate">{{ lc.topic }}</td>
+                        <td class="p-3 font-bold text-slate-700">{{ lc.teacher_name|default:"Assigned Faculty" }}</td>
+                        <td class="p-3 text-slate-600">{{ lc.class_name|default:"Class 10" }} • {{ lc.subject|default:"Science" }}</td>
+                        <td class="p-3">
+                            {% if lc.status == 'Live' %}
+                            <span class="bg-rose-100 text-rose-700 text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span> Live Now
+                            </span>
+                            {% elif lc.status == 'Ended' %}
+                            <span class="bg-slate-100 text-slate-600 text-[10px] font-extrabold px-2.5 py-1 rounded-full">Conducted</span>
+                            {% else %}
+                            <span class="bg-blue-100 text-blue-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full">Scheduled</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 text-slate-500 font-medium">{{ lc.scheduled_time|default:lc.created_at|date:"d M Y, h:i A" }}</td>
+                        <td class="p-3">
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="openLiveClassDetailModal({{ lc.id }}, '{{ lc.topic|escapejs }}', '{{ lc.teacher_name|escapejs }}', '{{ lc.class_name|escapejs }}', '{{ lc.subject|escapejs }}', '{{ lc.status|escapejs }}', '{{ lc.scheduled_time|date:"d M Y, h:i A" }}', '{{ lc.meet_link|escapejs }}')" title="View Details" class="w-7 h-7 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 border-0 cursor-pointer text-xs flex items-center justify-center p-0 transition-colors shadow-2xs">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% if lc.meet_link %}
+                                <a href="{{ lc.meet_link }}" target="_blank" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[10px] no-underline inline-flex items-center gap-1">
+                                    <i class="fas fa-play text-[9px]"></i> Join
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="p-8 text-center">
+                            <div class="text-slate-400 space-y-2">
+                                <i class="fas fa-video-slash text-3xl"></i>
+                                <h4 class="font-bold text-sm text-slate-700">No Live Classes Scheduled</h4>
+                                <p class="text-xs text-slate-400">Click Schedule New Live Class above to add a session.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ========== LIVE CLASS DETAIL MODAL ========== -->
+<div id="modalLiveClassDetail" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4" onclick="if(event.target===this) closeLiveClassDetailModal()">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200" onclick="event.stopPropagation()">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+            <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
+                <i class="fas fa-video text-rose-600"></i> Live Class Details
+            </h3>
+            <button onclick="closeLiveClassDetailModal()" class="w-8 h-8 rounded-full bg-slate-200/60 hover:bg-slate-300 text-slate-600 border-0 cursor-pointer flex items-center justify-center transition-colors">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        </div>
+        <div id="lcDetailBody" class="p-6 text-xs max-h-[80vh] overflow-y-auto space-y-4">
+            <!-- Dynamic JavaScript Populate -->
+        </div>
+        <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+            <button onclick="closeLiveClassDetailModal()" class="px-5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold border-0 cursor-pointer text-xs transition-colors">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openLiveClassDetailModal(id, topic, teacher, className, subject, status, scheduledTime, meetLink) {
+        const modal = document.getElementById('modalLiveClassDetail');
+        const body = document.getElementById('lcDetailBody');
+        if (!modal || !body) return;
+
+        let statusBadge = `<span class="bg-blue-100 text-blue-700 font-black px-2.5 py-1 rounded-full text-[10px]">Scheduled</span>`;
+        if (status === 'Live') statusBadge = `<span class="bg-rose-100 text-rose-700 font-black px-2.5 py-1 rounded-full text-[10px]">Live Now</span>`;
+        if (status === 'Ended') statusBadge = `<span class="bg-slate-100 text-slate-700 font-extrabold px-2.5 py-1 rounded-full text-[10px]">Conducted</span>`;
+
+        body.innerHTML = `
+            <div class="bg-slate-50 p-4 rounded-2xl border space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase">CLASS ID</span>
+                    <span class="font-mono font-black text-slate-800 text-xs">LC-${id}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase">STATUS</span>
+                    <div>${statusBadge}</div>
+                </div>
+                <div>
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase block mb-1">TOPIC</span>
+                    <span class="text-sm font-black text-slate-900 block leading-tight">${topic || 'Live Session'}</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs pt-2">
+                <div class="p-3 bg-white border border-slate-200 rounded-xl">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Faculty Instructor</span>
+                    <span class="font-extrabold text-slate-900 text-xs">${teacher || 'EduTrust Faculty'}</span>
+                </div>
+                <div class="p-3 bg-white border border-slate-200 rounded-xl">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Class & Subject</span>
+                    <span class="font-extrabold text-slate-900 text-xs">${className || 'Class 10'} • ${subject || 'Science'}</span>
+                </div>
+                <div class="p-3 bg-white border border-slate-200 rounded-xl col-span-2">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Scheduled Date & Time</span>
+                    <span class="font-bold text-slate-800">${scheduledTime || 'Today'}</span>
+                </div>
+            </div>
+
+            ${meetLink ? `
+                <div class="pt-3">
+                    <a href="${meetLink}" target="_blank" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2.5 rounded-xl border-0 cursor-pointer flex items-center justify-center gap-2 no-underline shadow-xs">
+                        <i class="fas fa-play"></i> Join Live Broadcast Room Now
+                    </a>
+                </div>
+            ` : ''}
+        `;
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeLiveClassDetailModal() {
+        const modal = document.getElementById('modalLiveClassDetail');
+        if (modal) modal.classList.add('hidden');
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,376 @@
+{% extends base_template|default:'admin.html' %}
+
+{% block admin_content %}
+<div class="space-y-4 fade-in">
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-0.5">
+                <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 no-underline text-slate-400">Dashboard</a> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span>Enquiry</span> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span class="text-blue-600 font-extrabold">Students / Parents Enquiry</span>
+            </div>
+            <h2 class="text-lg font-black text-slate-900 leading-tight">Students / Parents Enquiry</h2>
+            <p class="text-[11px] text-slate-500 font-medium">Manage student and parent enquiries received from Student Registration and Hire a Tutor.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'admin_student_parent_enquiries' %}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-lg transition-all shadow-2xs no-underline inline-flex items-center gap-1.5"><i class="fas fa-sync-alt text-slate-400 text-[10px]"></i> Refresh</a>
+        </div>
+    </div>
+
+    <!-- TOP KPI METRIC CARDS (SHRUNK COMPACT ROW - 6 CARDS) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-slate-400 uppercase tracking-wider">Total</span><div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-inbox"></i></div></div>
+            <div id="kpi-total" class="text-base font-black text-slate-900 leading-none">{{ kpi.total }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Database Total</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-blue-500 uppercase tracking-wider">Student</span><div class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-graduate"></i></div></div>
+            <div id="kpi-student" class="text-base font-black text-blue-600 leading-none">{{ kpi.student }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Student Regs</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-purple-500 uppercase tracking-wider">Parent</span><div class="w-6 h-6 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-friends"></i></div></div>
+            <div id="kpi-parent" class="text-base font-black text-purple-600 leading-none">{{ kpi.parent }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Hire a Tutor</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-amber-500 uppercase tracking-wider">New</span><div class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px]"><i class="fas fa-bell"></i></div></div>
+            <div id="kpi-new" class="text-base font-black text-amber-600 leading-none">{{ kpi.new }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Needs Action</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-emerald-500 uppercase tracking-wider">Confirmed</span><div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px]"><i class="fas fa-check-circle"></i></div></div>
+            <div id="kpi-confirmed" class="text-base font-black text-emerald-600 leading-none">{{ kpi.confirmed }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Accepted</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-rose-500 uppercase tracking-wider">Rejected</span><div class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-[10px]"><i class="fas fa-times-circle"></i></div></div>
+            <div id="kpi-rejected" class="text-base font-black text-rose-600 leading-none">{{ kpi.rejected }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Declined</span>
+        </div>
+    </div>
+
+    <!-- SEARCH & FILTERS -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+        <form method="GET" action="{% url 'admin_student_parent_enquiries' %}" class="flex flex-col md:flex-row gap-2 items-center justify-between">
+            <div class="relative w-full md:w-64">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]"></i>
+                <input type="text" name="q" value="{{ filters.q }}" placeholder="Search name, parent, email, mobile, ID..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto text-xs">
+                <select name="student_class" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.student_class == 'ALL' %}selected{% endif %}>All Classes</option>
+                    {% for c in class_list %}
+                    <option value="{{ c }}" {% if filters.student_class == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <select name="source" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.source == 'ALL' %}selected{% endif %}>All Sources</option>
+                    {% for s in source_list %}
+                    <option value="{{ s.val }}" {% if filters.source == s.val %}selected{% endif %}>{{ s.label }}</option>
+                    {% endfor %}
+                </select>
+                <select name="status" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.status == 'ALL' %}selected{% endif %}>All Statuses</option>
+                    <option value="NEW" {% if filters.status == 'NEW' %}selected{% endif %}>New</option>
+                    <option value="CONFIRMED" {% if filters.status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                    <option value="REJECTED" {% if filters.status == 'REJECTED' %}selected{% endif %}>Rejected</option>
+                </select>
+                <select name="city" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.city == 'ALL' %}selected{% endif %}>All Cities</option>
+                    {% for c in city_list %}
+                    <option value="{{ c }}" {% if filters.city == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg border-0 cursor-pointer hover:bg-blue-700 transition-colors"><i class="fas fa-filter text-[10px] mr-1"></i>Filter</button>
+                <a href="{% url 'admin_student_parent_enquiries' %}" class="bg-slate-100 text-slate-600 font-bold text-xs px-2.5 py-1.5 rounded-lg border-0 cursor-pointer hover:bg-slate-200 transition-colors no-underline inline-flex items-center"><i class="fas fa-undo text-[9px] mr-1"></i>Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- STUDENT / PARENT TABLE -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-extrabold uppercase text-[9px] tracking-wider">
+                        <th class="px-3 py-2.5">Student / Parent</th>
+                        <th class="px-3 py-2.5">Mobile</th>
+                        <th class="px-3 py-2.5">Student ID</th>
+                        <th class="px-3 py-2.5">Class</th>
+                        <th class="px-3 py-2.5">Subject</th>
+                        <th class="px-3 py-2.5">Budget</th>
+                        <th class="px-3 py-2.5">Requirement</th>
+                        <th class="px-3 py-2.5">Address</th>
+                        <th class="px-3 py-2.5">City</th>
+                        <th class="px-3 py-2.5">Source</th>
+                        <th class="px-3 py-2.5">Status</th>
+                        <th class="px-3 py-2.5">Submitted</th>
+                        <th class="px-3 py-2.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+                    {% for item in page_obj %}
+                    {% ifchanged item.date_group_label %}
+                    <tr class="date-group-header-row" style="background:#f1f5f9 !important; border-top:2px solid #cbd5e1; border-bottom:1px solid #e2e8f0;">
+                        <td colspan="13" class="px-3.5 py-2 date-group-header-cell" style="background:#f1f5f9 !important; color:#0f172a !important;">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-md {% if item.is_today %}bg-blue-600 text-white{% elif item.is_yesterday %}bg-slate-700 text-white{% else %}bg-slate-200 text-slate-700{% endif %} flex items-center justify-center text-[10px] font-bold shadow-2xs">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </div>
+                                    <span class="font-extrabold text-xs date-group-title-text tracking-tight" style="color:#0f172a !important;">
+                                        {{ item.date_group_label }}
+                                    </span>
+                                    {% if item.is_today %}
+                                        <span class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">TODAY</span>
+                                    {% elif item.is_yesterday %}
+                                        <span class="bg-slate-700 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">YESTERDAY</span>
+                                    {% endif %}
+                                </div>
+                                <span class="text-[10px] font-bold date-group-count-badge px-2.5 py-0.5 rounded-md shadow-2xs" style="background:#ffffff !important; color:#334155 !important; border:1px solid #cbd5e1 !important;">
+                                    <i class="far fa-clock mr-1 opacity-70" style="color:#64748b !important;"></i> {{ item.date_group_count }} Enquiry{{ item.date_group_count|pluralize }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endifchanged %}
+                    <tr id="student-enquiry-row-{{ item.id }}" data-enquiry-id="{{ item.id }}" class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-3 py-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center text-[10px] uppercase shrink-0">{{ item.full_name|slice:":2"|upper }}</div>
+                                <div class="min-w-0">
+                                    <span class="font-extrabold block text-slate-900 text-xs truncate max-w-[150px]">{{ item.full_name }}</span>
+                                    {% if item.parent_name %}
+                                        <span class="text-[9px] text-slate-400 block truncate max-w-[150px]">P: {{ item.parent_name }}</span>
+                                    {% endif %}
+                                    <span class="text-[9px] text-slate-400 block truncate max-w-[150px]">{{ item.email|default:"" }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2 font-bold text-slate-800 text-[11px] whitespace-nowrap">{{ item.mobile|default:"N/A" }}</td>
+                        <td class="px-3 py-2 font-bold text-slate-500 text-[10px] whitespace-nowrap">#ENQ-{{ item.id }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap"><span class="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-md text-[10px]">{{ item.student_class|default:"N/A" }}</span></td>
+                        <td class="px-3 py-2 font-semibold text-slate-700 text-[11px] max-w-[130px] truncate">{{ item.subject|default:"N/A" }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if item.parsed_budget %}
+                                <span class="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-md text-[10px]">{{ item.parsed_budget }}</span>
+                            {% else %}
+                                <span class="text-slate-400 text-[10px]">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-[10px] text-slate-600 font-medium" style="max-width:180px;">
+                            {% if item.parsed_requirement and item.parsed_requirement != '-' %}
+                                <span class="block" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.4;" title="{{ item.parsed_requirement }}">{{ item.parsed_requirement }}</span>
+                            {% else %}
+                                <span class="text-slate-400 font-extrabold">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-[10px] text-slate-600 font-medium" style="max-width:160px;">
+                            {% if item.location and item.location != 'Not provided' %}
+                                <span class="block" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.4;" title="{{ item.location }}">{{ item.location }}</span>
+                            {% else %}
+                                <span class="text-slate-400">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 font-bold text-slate-700 text-[11px] whitespace-nowrap">{{ item.city|default:"—" }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if item.formatted_source == 'Hire Tutor' or item.source == 'HIRE_A_TUTOR' %}
+                                <span class="bg-purple-50 text-purple-700 font-extrabold px-2 py-0.5 rounded-md text-[9px] inline-flex items-center gap-0.5"><i class="fas fa-user-friends text-[8px]"></i> Hire Tutor</span>
+                            {% elif item.formatted_source == 'Student Registration' or item.source == 'STUDENT_REGISTRATION' %}
+                                <span class="bg-blue-50 text-blue-700 font-extrabold px-2 py-0.5 rounded-md text-[9px] inline-flex items-center gap-0.5"><i class="fas fa-user-graduate text-[8px]"></i> Student Registration</span>
+                            {% elif item.formatted_source == 'Unknown' or not item.source %}
+                                <span class="text-slate-400 font-medium text-[10px]">—</span>
+                            {% else %}
+                                <span class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-md text-[9px] inline-flex items-center gap-0.5"><i class="fas fa-file-alt text-[8px]"></i> {{ item.formatted_source }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap" id="status-cell-{{ item.id }}">
+                            {% if item.status == 'NEW' %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="NEW" class="bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-full text-[9px]">NEW</span>
+                            {% elif item.status == 'CONFIRMED' %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="CONFIRMED" class="bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full text-[9px]">CONFIRMED</span>
+                            {% elif item.status == 'REJECTED' %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="REJECTED" class="bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full text-[9px]">REJECTED</span>
+                            {% else %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="{{ item.status }}" class="bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[9px]">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-slate-400 font-bold text-[10px] whitespace-nowrap">{{ item.created_at|date:"M d, Y" }}</td>
+                        <td class="px-3 py-2 text-right whitespace-nowrap">
+                            <!-- COMPACT ICON SYMBOL ACTION BUTTONS (32x32px) -->
+                            <div class="flex items-center justify-end gap-1.5 flex-nowrap">
+                                <a href="{% url 'admin_student_parent_enquiry_detail' item.id %}" title="View Details" aria-label="View Enquiry Details" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all no-underline inline-flex items-center justify-center p-0 border-0 shadow-2xs">
+                                    <i class="fas fa-eye text-xs"></i>
+                                </a>
+                                <button id="btn-confirm-{{ item.id }}" onclick="promptConfirmStudentEnquiry({{ item.id }})" title="Confirm Enquiry" aria-label="Confirm Enquiry" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.status == 'CONFIRMED' %}hidden{% endif %}">
+                                    <i class="fas fa-check text-xs"></i>
+                                </button>
+                                <button id="btn-reject-{{ item.id }}" onclick="promptRejectStudentEnquiry({{ item.id }})" title="Reject Enquiry" aria-label="Reject Enquiry" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.status == 'REJECTED' %}hidden{% endif %}">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="13" class="p-6 text-center">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-1 text-sm"><i class="fas fa-inbox"></i></div>
+                            <p class="font-extrabold text-slate-700 text-xs">No student/parent enquiries found</p>
+                            <p class="text-[11px] text-slate-400 font-medium">Student and parent enquiries will appear here.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION CONTROLS -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+            <span class="font-semibold text-slate-500 text-[11px]">Page <strong class="text-slate-900">{{ page_obj.number }}</strong> of <strong class="text-slate-900">{{ page_obj.paginator.num_pages }}</strong> ({{ total_results }} records)</span>
+            <div class="flex items-center gap-1 text-xs">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&student_class={{ filters.student_class }}&source={{ filters.source }}&status={{ filters.status }}&city={{ filters.city }}" class="px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 font-bold hover:bg-slate-100 transition-all no-underline text-[11px]">Prev</a>
+                {% endif %}
+
+                {% for p in page_obj.paginator.page_range %}
+                    {% if p == page_obj.number %}
+                        <span class="px-2.5 py-1 bg-blue-600 text-white rounded-md font-black text-[11px]">{{ p }}</span>
+                    {% elif p > page_obj.number|add:"-3" and p < page_obj.number|add:"3" %}
+                        <a href="?page={{ p }}&q={{ filters.q }}&student_class={{ filters.student_class }}&source={{ filters.source }}&status={{ filters.status }}&city={{ filters.city }}" class="px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 font-bold hover:bg-slate-100 transition-all no-underline text-[11px]">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&student_class={{ filters.student_class }}&source={{ filters.source }}&status={{ filters.status }}&city={{ filters.city }}" class="px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 font-bold hover:bg-slate-100 transition-all no-underline text-[11px]">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+window.sendStudentEnquiryAction = window.sendStudentEnquiryAction || async function(id, action, reason = '') {
+    const btnConfirm = document.getElementById('btn-confirm-' + id);
+    const btnReject = document.getElementById('btn-reject-' + id);
+    const activeBtn = action === 'confirm' ? btnConfirm : btnReject;
+    const originalHtml = activeBtn ? activeBtn.innerHTML : '';
+
+    if (activeBtn) {
+        activeBtn.disabled = true;
+        activeBtn.innerHTML = action === 'confirm' 
+            ? '<i class="fas fa-spinner fa-spin text-xs"></i>' 
+            : '<i class="fas fa-spinner fa-spin text-xs"></i>';
+    }
+
+    try {
+        const targetStatus = action === 'confirm' ? 'CONFIRMED' : 'REJECTED';
+        const csrfToken = (typeof getCsrfToken === 'function' ? getCsrfToken() : '') || '{{ csrf_token }}';
+        const response = await fetch('/api/admin/enquiries/student-parent/status/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'X-CSRFToken': csrfToken 
+            },
+            body: JSON.stringify({ id: parseInt(id), action: action, status: targetStatus, reason: reason })
+        });
+        const data = await response.json();
+
+        if (data.success === true || data.status === 'success') {
+            const statusBadge = document.getElementById('student-enquiry-status-' + id);
+            const statusCell = document.getElementById('status-cell-' + id);
+            const detailBadge = document.getElementById('detail-status-badge');
+
+            const confirmedBadgeHtml = '<span id="student-enquiry-status-' + id + '" data-status="CONFIRMED" class="bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full text-[9px]">CONFIRMED</span>';
+            const rejectedBadgeHtml = '<span id="student-enquiry-status-' + id + '" data-status="REJECTED" class="bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full text-[9px]">REJECTED</span>';
+
+            if (action === 'confirm') {
+                if (statusBadge) statusBadge.outerHTML = confirmedBadgeHtml;
+                else if (statusCell) statusCell.innerHTML = confirmedBadgeHtml;
+                if (detailBadge) detailBadge.innerHTML = '<span class="bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">CONFIRMED</span>';
+
+                if (btnConfirm) btnConfirm.classList.add('hidden');
+                if (btnReject) {
+                    btnReject.classList.remove('hidden');
+                    btnReject.disabled = false;
+                    btnReject.innerHTML = '<i class="fas fa-times text-xs"></i>';
+                }
+            } else if (action === 'reject') {
+                if (statusBadge) statusBadge.outerHTML = rejectedBadgeHtml;
+                else if (statusCell) statusCell.innerHTML = rejectedBadgeHtml;
+                if (detailBadge) detailBadge.innerHTML = '<span class="bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">REJECTED</span>';
+
+                if (btnReject) btnReject.classList.add('hidden');
+                if (btnConfirm) {
+                    btnConfirm.classList.remove('hidden');
+                    btnConfirm.disabled = false;
+                    btnConfirm.innerHTML = '<i class="fas fa-check text-xs"></i>';
+                }
+            }
+        } else {
+            alert(data.error || 'Failed to update status.');
+            if (activeBtn) {
+                activeBtn.disabled = false;
+                activeBtn.innerHTML = originalHtml;
+            }
+        }
+    } catch (err) {
+        console.error('Error updating enquiry status:', err);
+        alert('Network error while updating status.');
+        if (activeBtn) {
+            activeBtn.disabled = false;
+            activeBtn.innerHTML = originalHtml;
+        }
+    }
+};
+
+window.promptConfirmStudentEnquiry = function(id) {
+    if (typeof openEnquiryActionPrompt === 'function') {
+        openEnquiryActionPrompt('Confirm Student/Parent Enquiry', 'Are you sure you want to confirm this enquiry?', false, 'Confirm Enquiry', 'bg-emerald-600 hover:bg-emerald-700', async () => { await sendStudentEnquiryAction(id, 'confirm'); });
+    } else {
+        if (confirm('Are you sure you want to confirm this enquiry?')) {
+            sendStudentEnquiryAction(id, 'confirm');
+        }
+    }
+};
+
+window.promptRejectStudentEnquiry = function(id) {
+    if (typeof openEnquiryActionPrompt === 'function') {
+        openEnquiryActionPrompt('Reject Student/Parent Enquiry', 'Are you sure you want to reject this enquiry?', true, 'Reject Enquiry', 'bg-rose-600 hover:bg-rose-700', async (reason) => { await sendStudentEnquiryAction(id, 'reject', reason); });
+    } else {
+        const reason = prompt('Reason for rejection (optional):');
+        if (reason !== null) {
+            sendStudentEnquiryAction(id, 'reject', reason);
+        }
+    }
+};
+
+window.initStudentParentEnquiries = function() {
+    console.log('[MODULE INIT SUCCESS] student_parent_enquiries initialized');
+    
+    // Bind SPA click handlers to View Details links for seamless SPA navigation
+    const container = document.getElementById('main-content');
+    if (container && !container.dataset.speDetailsBound) {
+        container.dataset.speDetailsBound = "true";
+        container.addEventListener('click', function(e) {
+            const detailLink = e.target.closest('a[href*="/admin/student-parent-enquiries/"]');
+            if (detailLink && !detailLink.getAttribute('href').endsWith('/admin/student-parent-enquiries/')) {
+                e.preventDefault();
+                const targetUrl = detailLink.getAttribute('href');
+                if (typeof window.loadAdminModule === 'function') {
+                    window.loadAdminModule(targetUrl, true);
+                } else {
+                    window.location.href = targetUrl;
+                }
+            }
+        });
+    }
+};
+window.initStudentParentEnquiries();
+
+</script>
+{% endblock %}

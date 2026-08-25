@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions | EduTrust</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .faq-content {
+            max-height: 0px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+    </style> -->
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <header id="navbar" class="fixed w-full top-0 z-50 py-5 bg-white/80 backdrop-blur-md transition-all duration-300 border-b border-gray-100">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-gray-900">
+                        Edu<span class="text-brand-600">Trust</span>
+                    </span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-8 font-medium text-gray-600">
+                    <a href="{% url 'home' %}" class="hover:text-brand-600 transition-colors">Home</a>
+
+                    <a href="{% url 'courses' %}" class="hover:text-brand-600 transition-colors">Courses</a>
+
+                    <a href="{% url 'home' %}#tutors" class="hover:text-brand-600 transition-colors">Tutors</a>
+
+                    <a href="{% url 'study_material' %}" class="hover:text-brand-600 transition-colors">Study Material</a>
+
+                    <a href="{% url 'success' %}" class="hover:text-brand-600 transition-colors">Success Stories</a>
+
+                    <a href="{% url 'teacher_registration' %}" class="hover:text-brand-600 transition-colors text-brand-600 font-semibold">Teacher Registration</a>
+
+                    <a href="{% url 'faqs' %}" class="text-brand-600 font-bold transition-colors">FAQs</a>
+                </nav>
+
+                <div class="hidden lg:flex items-center gap-4">
+                    <a href="{% url 'login' %}" class="font-medium text-gray-700 hover:text-brand-600 transition-colors px-4 py-2">
+                        Login
+                    </a>
+
+                    <a href="{% url 'student_registration' %}" class="bg-brand-600 text-white px-6 py-3 rounded-xl font-medium text-center hover:bg-brand-700 shadow-md transition-colors">
+                        Register/Student
+                    </a>
+                </div>
+
+                <button id="mobile-menu-btn" class="lg:hidden text-gray-600 hover:text-brand-600 text-2xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100">
+            <div class="flex flex-col p-6 gap-4 font-medium text-gray-700">
+                    <a href="{% url 'home' %}" class="hover:text-brand-600">Home</a>
+
+                    <a href="{% url 'courses' %}" class="hover:text-brand-600">Courses</a>
+
+                    <a href="{% url 'home' %}#tutors" class="hover:text-brand-600">Tutors</a>
+
+                    <a href="{% url 'study_material' %}" class="hover:text-brand-600">Study Material</a>
+
+                    <a href="{% url 'success' %}" class="hover:text-brand-600">Success Stories</a>
+
+                    <a href="{% url 'teacher_registration' %}" class="text-brand-600 font-semibold">Teacher Registration</a>
+
+                    <a href="{% url 'faqs' %}" class="text-brand-600 font-bold">FAQs</a>
+
+                    <hr class="my-2 border-gray-100">
+
+                    <a href="{% url 'login' %}" class="w-full text-center py-2 font-medium text-gray-700">
+                        Login
+                    </a>
+
+                    <a href="{% url 'student_registration' %}" class="w-full bg-brand-600 text-white px-6 py-3 rounded-xl font-medium text-center">
+                        Register/Student
+                    </a>
+                </div>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+            <span class="bg-brand-50 text-brand-600 text-xs font-extrabold uppercase px-3 py-1.5 rounded-full tracking-wider border border-brand-100">Support Center</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mt-3">Frequently Asked Questions</h1>
+            <p class="text-gray-500 mt-3 text-lg">Find answers to common queries regarding tutors, courses, payments, and registration.</p>
+        </div>
+
+        <div class="space-y-4">
+            
+            <div class="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none group">
+                    <span class="font-bold text-gray-900 text-lg group-hover:text-brand-600 transition-colors">How can I find a verified home or online tutor on EduTrust?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 group-hover:text-brand-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-6 text-gray-600 text-sm leading-relaxed border-t border-gray-100">
+                    <p class="py-4">You can easily search for verified local or online tutors by entering your area/district, preferred subject, and class level on our home page or by checking out our dedicated tutor directory listings. All our teachers undergo background verification.</p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none group">
+                    <span class="font-bold text-gray-900 text-lg group-hover:text-brand-600 transition-colors">Are the study materials provided on EduTrust free of cost?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 group-hover:text-brand-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-6 text-gray-600 text-sm leading-relaxed border-t border-gray-100">
+                    <p class="py-4">Yes! A large portion of our curated notes, practice question papers, and syllabus guides in our Study Material section are completely free for registered students to download and read.</p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none group">
+                    <span class="font-bold text-gray-900 text-lg group-hover:text-brand-600 transition-colors">How can teachers/tutors register and apply for tuition jobs?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 group-hover:text-brand-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-6 text-gray-600 text-sm leading-relaxed border-t border-gray-100">
+                    <p class="py-4">Teachers can click on the "Teacher Registration" button in the menu, fill out their personal details, teaching location/address, preferred classes, and upload their photo/credentials to start receiving direct tuition inquiries.</p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none group">
+                    <span class="font-bold text-gray-900 text-lg group-hover:text-brand-600 transition-colors">Can I schedule a free demo class before hiring a tutor?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 group-hover:text-brand-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-6 text-gray-600 text-sm leading-relaxed border-t border-gray-100">
+                    <p class="py-4">Yes, EduTrust allows students to request a free trial or demo session with our listed tutors to ensure compatibility before finalizing regular tutoring schedules.</p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none group">
+                    <span class="font-bold text-gray-900 text-lg group-hover:text-brand-600 transition-colors">How do I reset my account password if I forget it?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 group-hover:text-brand-600 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content px-6 text-gray-600 text-sm leading-relaxed border-t border-gray-100">
+                    <p class="py-4">You can click on the 'Login' page, select 'Forgot Password', and enter your registered email address to receive password reset instructions instantly.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white pt-16 pb-12">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <span class="text-2xl font-extrabold tracking-tight text-white">Edu<span class="text-brand-600">Trust</span></span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Empowering students across India with verified home tutors, interactive courses, and premium study materials.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white transition-colors"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="{% url 'home' %}" class="hover:text-white transition-colors">Home</a></li>
+
+                        <li><a href="{% url 'courses' %}" class="hover:text-white transition-colors">Explore Courses</a></li>
+
+                        <li><a href="{% url 'study_material' %}" class="hover:text-white transition-colors">Study Material</a></li>
+
+                        <li><a href="{% url 'teacher_registration' %}" class="hover:text-white transition-colors">Teacher Registration</a></li>
+
+                        <li><a href="{% url 'faqs' %}" class="hover:text-white transition-colors text-brand-400">FAQs Support</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Top Subjects</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Mathematics & Statistics</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Physics & Chemistry</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">English & Literature</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Computer Science</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold text-lg mb-4">Newsletter</h4>
+                    <p class="text-sm text-gray-400 mb-4">Subscribe to get updates on new courses and study materials.</p>
+                    <form class="space-y-3">
+                        <input type="email" placeholder="Enter your email" class="bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-500 w-full text-sm">
+                        <button type="button" class="bg-brand-600 hover:bg-brand-700 text-white rounded-xl py-3 font-semibold transition-colors w-full text-sm">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-500">
+                    &copy; 2026 EduTrust Platform. All rights reserved.
+                </p>
+                <div class="flex gap-6 text-sm text-gray-500">
+                    <a href="{% url 'privacy_policy' %}" class="hover:text-white transition-colors">
+                        Privacy Policy
+                    </a>
+
+                    <a href="{% url 'terms_of_service' %}" class="hover:text-white transition-colors">
+                        Terms of Service
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="edu.js"></script>
+    
+</body>
+
+</html>

@@ -1,0 +1,341 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-4 fade-in">
+
+    <!-- HEADER & REFRESH BUTTON -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <h2 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">Student Profile Changes</h2>
+            <p class="text-xs text-slate-500 font-medium">Real-time audit history of student profile updates — OLD vs NEW value change records</p>
+        </div>
+        <button onclick="fetchProfileChangeHistory()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-3.5 py-2 rounded-xl border-0 cursor-pointer transition-colors inline-flex items-center gap-1.5 shrink-0 self-start sm:self-auto shadow-2xs">
+            <i class="fas fa-sync-alt text-[10px]"></i> Refresh Audit History
+        </button>
+    </div>
+
+    <!-- ========== 1. COMPACT KPI SUMMARY CARDS ========== -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <!-- Total Changes -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1 shadow-2xs hover:shadow-xs transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block truncate">Total Changes</span>
+                <div class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs shrink-0">
+                    <i class="fas fa-history"></i>
+                </div>
+            </div>
+            <h4 class="text-lg sm:text-xl font-black text-slate-900 leading-none" id="kpiTotalChanges">0</h4>
+        </div>
+
+        <!-- Today's Changes -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1 shadow-2xs hover:shadow-xs transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block truncate">Today's Changes</span>
+                <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+            </div>
+            <h4 class="text-lg sm:text-xl font-black text-blue-600 leading-none" id="kpiTodayChanges">0</h4>
+        </div>
+
+        <!-- Fields Modified -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1 shadow-2xs hover:shadow-xs transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block truncate">Fields Modified</span>
+                <div class="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs shrink-0">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+            </div>
+            <h4 class="text-lg sm:text-xl font-black text-amber-600 leading-none" id="kpiFieldsModified">0</h4>
+        </div>
+
+        <!-- Verified Updates -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1 shadow-2xs hover:shadow-xs transition-all">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block truncate">Verified Updates</span>
+                <div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs shrink-0">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            <h4 class="text-lg sm:text-xl font-black text-emerald-600 leading-none" id="kpiVerifiedUpdates">0</h4>
+        </div>
+    </div>
+
+    <!-- ========== 2. COMPACT FILTER BAR SLOTS ========== -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-2 shadow-2xs">
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 items-end">
+            <div>
+                <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Search Student / Ref</label>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="auditSearchInput" onkeyup="debounceAuditSearch()" placeholder="Name, STU-ID, UPD-Ref..." class="w-full pl-8 pr-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all">
+                </div>
+            </div>
+            <div>
+                <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Date Range</label>
+                <select id="auditDateFilter" onchange="fetchProfileChangeHistory()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all">
+                    <option value="">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="7days">Last 7 Days</option>
+                    <option value="30days">Last 30 Days</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Field Filter</label>
+                <select id="auditFieldFilter" onchange="fetchProfileChangeHistory()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all">
+                    <option value="">All Fields</option>
+                    <option value="full_name">Full Name</option>
+                    <option value="mobile">Mobile Number</option>
+                    <option value="city">City</option>
+                    <option value="state">State</option>
+                    <option value="address">Address</option>
+                    <option value="guardian_name">Guardian Name</option>
+                    <option value="school_name">School Name</option>
+                </select>
+            </div>
+            <div>
+                <button onclick="resetAuditFilters()" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border-0 cursor-pointer transition-colors inline-flex items-center justify-center gap-1">
+                    <i class="fas fa-undo text-[9px]"></i> Reset Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 3. COMPACT AUDIT TABLE & SLOTS ========== -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100 text-[9px] font-extrabold text-slate-500 uppercase tracking-wider">
+                        <th class="py-2.5 px-3">Student</th>
+                        <th class="py-2.5 px-3">Update Ref</th>
+                        <th class="py-2.5 px-3">Field Changed</th>
+                        <th class="py-2.5 px-3">Previous Value</th>
+                        <th class="py-2.5 px-3">New Value</th>
+                        <th class="py-2.5 px-3">Changed On</th>
+                        <th class="py-2.5 px-3 text-center">Status</th>
+                        <th class="py-2.5 px-3 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="auditTableBody" class="divide-y divide-slate-100 font-semibold text-slate-700">
+                    <tr>
+                        <td colspan="8" class="py-8 text-center text-slate-400">
+                            <i class="fas fa-spinner fa-spin text-lg mb-1.5 block"></i> Loading student profile change audit logs...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========== COMPACT CHANGE DETAILS MODAL ========== -->
+<div id="auditDetailModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-3 shadow-2xl relative">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="text-sm font-extrabold text-slate-900 truncate" id="modalAuditRef">Update Reference</h3>
+                    <p class="text-[11px] text-slate-400 font-medium truncate" id="modalAuditStudent">Student Info</p>
+                </div>
+            </div>
+            <button onclick="closeAuditModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 border-0 cursor-pointer flex items-center justify-center transition-colors">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div class="space-y-2.5">
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/60 space-y-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">Field Changed</span>
+                <h4 class="text-xs font-extrabold text-indigo-600" id="modalAuditField">Mobile Number</h4>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <div class="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/60">
+                    <span class="text-[9px] font-extrabold text-rose-500 uppercase tracking-wider block mb-0.5">Old Value</span>
+                    <p class="text-xs font-bold text-rose-900 break-words" id="modalAuditOld">-</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60">
+                    <span class="text-[9px] font-extrabold text-emerald-500 uppercase tracking-wider block mb-0.5">New Value</span>
+                    <p class="text-xs font-bold text-emerald-900 break-words" id="modalAuditNew">-</p>
+                </div>
+            </div>
+
+            <div class="pt-2 text-slate-600 text-[10px] font-semibold space-y-0.5 border-t border-slate-100">
+                <div><span class="text-slate-400">Changed By:</span> <span id="modalAuditBy" class="font-bold text-slate-800">Student</span></div>
+                <div><span class="text-slate-400">Date/Time:</span> <span id="modalAuditDate" class="font-bold text-slate-800">-</span></div>
+                <div><span class="text-slate-400">IP Address:</span> <span id="modalAuditIP" class="font-bold text-slate-800">127.0.0.1</span></div>
+            </div>
+        </div>
+
+        <div class="pt-2 flex justify-end">
+            <button onclick="closeAuditModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border-0 cursor-pointer transition-colors">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT CONTROLLER -->
+<script>
+    let auditDebounceTimer = null;
+
+    function fetchProfileChangeHistory() {
+        const search = document.getElementById('auditSearchInput') ? document.getElementById('auditSearchInput').value : '';
+        const dateFilter = document.getElementById('auditDateFilter') ? document.getElementById('auditDateFilter').value : '';
+        const fieldFilter = document.getElementById('auditFieldFilter') ? document.getElementById('auditFieldFilter').value : '';
+
+        const tbody = document.getElementById('auditTableBody');
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400"><i class="fas fa-spinner fa-spin text-base mb-1 block"></i> Loading audit history...</td></tr>`;
+        }
+
+        const url = `/api/admin/profile-changes/?search=${encodeURIComponent(search)}&date_range=${encodeURIComponent(dateFilter)}&field_name=${encodeURIComponent(fieldFilter)}`;
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 200 && data.data) {
+                    if (data.data.stats) {
+                        updateProfileChangeKPIs(data.data.stats);
+                    }
+                    if (data.data.logs) {
+                        renderAuditLogsTable(data.data.logs);
+                    }
+                } else {
+                    if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400 font-extrabold text-xs">No profile change records found.</td></tr>`;
+                }
+            })
+            .catch(err => {
+                console.error('Audit log fetch error:', err);
+                if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-rose-500 font-extrabold text-xs">Error loading profile change records.</td></tr>`;
+            });
+    }
+
+    function updateProfileChangeKPIs(stats) {
+        if (!stats) return;
+        if (document.getElementById('kpiTotalChanges')) document.getElementById('kpiTotalChanges').innerText = stats.total_changes || 0;
+        if (document.getElementById('kpiTodayChanges')) document.getElementById('kpiTodayChanges').innerText = stats.today_changes || 0;
+        if (document.getElementById('kpiFieldsModified')) document.getElementById('kpiFieldsModified').innerText = stats.fields_modified || 0;
+        if (document.getElementById('kpiVerifiedUpdates')) document.getElementById('kpiVerifiedUpdates').innerText = stats.verified_updates || 0;
+    }
+
+    function renderAuditLogsTable(logs) {
+        const tbody = document.getElementById('auditTableBody');
+        if (!tbody) return;
+
+        if (!logs || logs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400 font-extrabold text-xs">No student profile changes recorded yet.</td></tr>`;
+            return;
+        }
+
+        let html = '';
+        let lastDateLabel = '';
+        const dateGroupCounts = {};
+
+        logs.forEach(log => {
+            const lbl = log.date_group_label || 'Date Unknown';
+            dateGroupCounts[lbl] = (dateGroupCounts[lbl] || 0) + 1;
+        });
+
+        logs.forEach(log => {
+            const dateLabel = log.date_group_label || 'Date Unknown';
+
+            if (dateLabel !== lastDateLabel) {
+                lastDateLabel = dateLabel;
+                const count = dateGroupCounts[dateLabel] || 1;
+                const todayBadge = log.is_today ? `<span class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">TODAY</span>` : '';
+                const yesterdayBadge = log.is_yesterday ? `<span class="bg-slate-700 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">YESTERDAY</span>` : '';
+
+                html += `
+                    <tr class="bg-slate-100/90 border-t-2 border-b border-slate-200">
+                        <td colspan="8" class="px-3.5 py-2 bg-gradient-to-r from-slate-100 via-slate-50 to-white text-slate-800">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-md ${log.is_today ? 'bg-blue-600 text-white' : (log.is_yesterday ? 'bg-slate-700 text-white' : 'bg-slate-200 text-slate-700')} flex items-center justify-center text-[10px] font-bold shadow-2xs">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </div>
+                                    <span class="font-extrabold text-xs text-slate-900 tracking-tight">${dateLabel}</span>
+                                    ${todayBadge}
+                                    ${yesterdayBadge}
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-600 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 shadow-2xs">
+                                    <i class="far fa-clock mr-1 text-slate-400"></i> ${count} Change${count > 1 ? 's' : ''}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            const initial = log.student_name ? log.student_name.substring(0, 2).toUpperCase() : 'ST';
+            html += `
+            <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="py-2 px-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 font-black text-[10px] flex items-center justify-center shrink-0">
+                            ${initial}
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-extrabold text-slate-900 text-xs block truncate max-w-[130px]">${log.student_name}</span>
+                            <span class="text-[9px] text-slate-400 font-bold block truncate max-w-[130px]">${log.student_id} • ${log.student_class || 'Class 10'}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="py-2 px-3 whitespace-nowrap">
+                    <span class="inline-block px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[10px] font-mono font-bold">${log.update_reference}</span>
+                </td>
+                <td class="py-2 px-3 font-extrabold text-indigo-600 text-[11px] whitespace-nowrap">${log.field_label}</td>
+                <td class="py-2 px-3 text-rose-600 line-through max-w-[120px] truncate text-[11px]" title="${log.old_value}">${log.old_value}</td>
+                <td class="py-2 px-3 text-emerald-600 max-w-[120px] truncate text-[11px]" title="${log.new_value}">${log.new_value}</td>
+                <td class="py-2 px-3 text-slate-500 text-[10px] font-semibold whitespace-nowrap">${log.changed_at}</td>
+                <td class="py-2 px-3 text-center whitespace-nowrap">
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 text-[9px] font-extrabold">${log.status}</span>
+                </td>
+                <td class="py-2 px-3 text-right whitespace-nowrap">
+                    <button onclick='openAuditDetailModal(${JSON.stringify(log).replace(/'/g, "&apos;")})' title="View Details" aria-label="View Details" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs">
+                        <i class="fas fa-eye text-xs"></i>
+                    </button>
+                </td>
+            </tr>`;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    function debounceAuditSearch() {
+        clearTimeout(auditDebounceTimer);
+        auditDebounceTimer = setTimeout(fetchProfileChangeHistory, 300);
+    }
+
+    function resetAuditFilters() {
+        if (document.getElementById('auditSearchInput')) document.getElementById('auditSearchInput').value = '';
+        if (document.getElementById('auditDateFilter')) document.getElementById('auditDateFilter').value = '';
+        if (document.getElementById('auditFieldFilter')) document.getElementById('auditFieldFilter').value = '';
+        fetchProfileChangeHistory();
+    }
+
+    function openAuditDetailModal(log) {
+        if (document.getElementById('modalAuditRef')) document.getElementById('modalAuditRef').textContent = log.update_reference;
+        if (document.getElementById('modalAuditStudent')) document.getElementById('modalAuditStudent').textContent = `${log.student_name} (${log.student_id})`;
+        if (document.getElementById('modalAuditField')) document.getElementById('modalAuditField').textContent = log.field_label;
+        if (document.getElementById('modalAuditOld')) document.getElementById('modalAuditOld').textContent = log.old_value;
+        if (document.getElementById('modalAuditNew')) document.getElementById('modalAuditNew').textContent = log.new_value;
+        if (document.getElementById('modalAuditBy')) document.getElementById('modalAuditBy').textContent = log.changed_by;
+        if (document.getElementById('modalAuditDate')) document.getElementById('modalAuditDate').textContent = log.changed_at;
+        if (document.getElementById('modalAuditIP')) document.getElementById('modalAuditIP').textContent = log.ip_address;
+
+        const modal = document.getElementById('auditDetailModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAuditModal() {
+        const modal = document.getElementById('auditDetailModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // Auto load on init
+    fetchProfileChangeHistory();
+</script>
+{% endblock %}

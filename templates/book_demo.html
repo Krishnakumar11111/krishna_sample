@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Free Trail Class - EduTrust Tuition Platform</title>
+
+    <!-- SEO & Accessibility -->
+    <meta name="description" content="Schedule a free trail session with a verified tutor before making your final decision.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        accent: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 50px -12px rgba(37, 99, 235, 0.08)',
+                        'floating': '0 25px 50px -12px rgba(37, 99, 235, 0.2)',
+                        'glow': '0 0 25px rgba(59, 130, 246, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .animate-float-slow { animation: float 8s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 6s ease-in-out infinite; }
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(37, 99, 235, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .suggestions-list::-webkit-scrollbar { width: 6px; }
+        .suggestions-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Premium Background Implementation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 15% 30%, rgba(37, 99, 235, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 85% 70%, rgba(34, 211, 238, 0.1) 0%, transparent 45%);
+            z-index: -1;
+            pointer-events: none;
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .premium-input {
+            background: rgba(249, 250, 251, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body class="bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-50 via-white to-brand-50 text-gray-800 font-sans antialiased min-h-screen relative overflow-x-hidden selection:bg-brand-500 selection:text-white bg-fixed">
+
+    <!-- Premium SaaS Background Elements -->
+    <div class="absolute top-0 left-0 w-full h-[600px] bg-grid-pattern opacity-60 pointer-events-none z-0"></div>
+    <div class="absolute top-20 left-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl pointer-events-none animate-pulse-slow z-0"></div>
+    <div class="absolute top-40 right-10 w-[450px] h-[450px] bg-cyan-400/20 rounded-full blur-3xl pointer-events-none animate-pulse-slow z-0" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl pointer-events-none z-0"></div>
+
+    <!-- Header / Navbar -->
+    <header id="navbar" class="fixed w-full top-0 z-50 py-3.5 bg-white/70 backdrop-blur-xl transition-all duration-300 border-b border-gray-100/80 shadow-xs">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <a href="{% url 'home' %}" class="flex items-center gap-2.5 group">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform duration-300">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-gray-900">
+                        Edu<span class="text-brand-600">Trust</span>
+                    </span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-6 font-medium text-sm text-gray-600">
+                    <a href="{% url 'home' %}" class="hover:text-brand-600 transition-colors">Home</a>
+                    <a href="{% url 'findtutor'%}" class="hover:text-brand-600 transition-colors">Search Tutors</a>
+                    <a href="{%url 'latest_tution_job' %}" class="hover:text-brand-600 transition-colors">Search Tutor Jobs</a>
+                    <a href="{% url 'studymaterial'%}" class="hover:text-brand-600 transition-colors">Study Material</a>
+                    <a href="{%url 'faqs'%}" class="hover:text-brand-600 transition-colors">FAQs</a>
+                </nav>
+
+                <div class="hidden lg:flex items-center gap-3">
+                    <a href="{% url 'login' %}" class="font-semibold text-gray-700 hover:text-brand-600 transition-colors px-4 py-2 text-sm">Login</a>
+                    <a href="{% url 'registration' %}" class="bg-brand-600 text-white px-5 py-2.5 rounded-xl font-semibold text-center hover:bg-brand-700 shadow-md shadow-brand-500/20 hover:shadow-lg transition-all text-sm">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="pt-32 pb-24 px-4 md:px-6 lg:px-8 relative z-10">
+        <div class="container mx-auto max-w-4xl">
+            
+            <!-- Page Title & Subtitle -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-100 text-brand-700 font-bold text-xs mb-4 shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-brand-600 animate-ping"></span>
+                    Risk-Free 100% Verified Booking
+                </div>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-3">Book Your Free Trail Class</h1>
+                <p class="text-gray-600 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+                    Schedule a risk-free trial session with an expert verified tutor before finalizing your customized learning path.
+                </p>
+            </div>
+
+            <!-- Selected Tutor Info Card (Dynamic - Populated from Real Tutor Selection) -->
+            <div id="selectedTutorCard" class="hidden glass-panel rounded-3xl shadow-soft p-6 md:p-8 mb-8 transition-all duration-500 hover:shadow-floating group">
+                <div class="flex flex-col sm:flex-row items-center gap-6">
+                    <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-gradient-to-tr from-brand-100 to-cyan-100 flex-shrink-0 shadow-md border-2 border-white">
+                        <img id="tutorPhoto" src="" alt="Tutor Photo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-2.5 right-2.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-lg text-xs font-extrabold text-gray-800 shadow-sm flex items-center gap-1 border border-gray-100">
+                            <i class="fas fa-star text-amber-400"></i> <span id="tutorRating">5.0</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 text-center sm:text-left">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 mb-1.5">
+                            <h3 id="tutorName" class="text-xl md:text-2xl font-extrabold text-gray-900">—</h3>
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                                <i class="fas fa-check-circle text-xs"></i> Verified Expert
+                            </span>
+                        </div>
+                        <p id="tutorSkill" class="text-sm text-brand-600 font-bold mb-4">—</p>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-xs text-gray-600 bg-brand-50/40 p-3.5 rounded-2xl border border-brand-100/60">
+                            <div class="bg-white/80 p-2 rounded-xl border border-gray-100 shadow-2xs">
+                                <span class="block text-gray-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">Experience</span>
+                                <strong id="tutorExp" class="text-gray-900 text-sm font-bold">—</strong>
+                            </div>
+                            <div class="bg-white/80 p-2 rounded-xl border border-gray-100 shadow-2xs">
+                                <span class="block text-gray-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">Qualification</span>
+                                <strong id="tutorQual" class="text-gray-900 text-sm font-bold truncate block">—</strong>
+                            </div>
+                            <div class="bg-white/80 p-2 rounded-xl border border-gray-100 shadow-2xs">
+                                <span class="block text-gray-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">Class / Grades</span>
+                                <strong id="tutorClass" class="text-gray-900 text-sm font-bold truncate block">—</strong>
+                            </div>
+                            <div class="bg-white/80 p-2 rounded-xl border border-gray-100 shadow-2xs">
+                                <span class="block text-gray-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">Location</span>
+                                <strong id="tutorLocation" class="text-gray-900 text-sm font-bold truncate block">—</strong>
+                            </div>
+                            <div class="bg-white/80 p-2 rounded-xl border border-gray-100 shadow-2xs">
+                                <span class="block text-gray-400 font-bold text-[9px] uppercase tracking-wider mb-0.5">Mode</span>
+                                <strong id="tutorMode" class="text-gray-900 text-sm font-bold">—</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Booking Form -->
+            <form id="demoBookingForm" class="glass-panel rounded-3xl shadow-soft p-6 md:p-10 space-y-10 relative overflow-hidden" novalidate>
+                
+                <!-- Section 1: Student Information -->
+                <div class="space-y-5">
+                    <div class="flex items-center gap-3 pb-3 border-b border-gray-100">
+                        <div class="w-9 h-9 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm shadow-inner">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Student Information</h3>
+                            <p class="text-xs text-gray-500">Provide student contact & academic details</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Full Name *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-user text-xs"></i></span>
+                                <input type="text" id="studentName" placeholder="Enter student's full name" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium">
+                            </div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-studentName"><i class="fas fa-exclamation-circle mr-1"></i>Please enter full name.</p>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Mobile Number *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-phone text-xs"></i></span>
+                                <input type="tel" id="studentMobile" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric" pattern="[0-9]*" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium">
+                            </div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-studentMobile"><i class="fas fa-exclamation-circle mr-1"></i>Please enter a valid 10-digit mobile number.</p>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Email Address *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-envelope text-xs"></i></span>
+                                <input type="email" id="studentEmail" placeholder="student@example.com" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium">
+                            </div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-studentEmail"><i class="fas fa-exclamation-circle mr-1"></i>Please enter a valid email address.</p>
+                        </div>
+                        
+                        <!-- Smart Combobox: Gender -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="studentGender">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Gender</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-venus-mars text-xs"></i></span>
+                                <input type="text" id="studentGender" placeholder="Select or type gender" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                        </div>
+
+                        <!-- Smart Combobox: Class -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="studentClass">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Class / Grade *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-graduation-cap text-xs"></i></span>
+                                <input type="text" id="studentClass" placeholder="Select or type class" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-studentClass"><i class="fas fa-exclamation-circle mr-1"></i>Please select a class.</p>
+                        </div>
+
+                        <!-- Smart Combobox: Subject (Dynamic) -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="demoSubject">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Subject *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-book text-xs"></i></span>
+                                <input type="text" id="demoSubject" placeholder="Please select a class first." autocomplete="off" disabled class="w-full bg-gray-100 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm transition-all outline-none font-medium cursor-not-allowed text-gray-400">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-demoSubject"><i class="fas fa-exclamation-circle mr-1"></i>Please enter a subject.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Tuition Details -->
+                <div class="space-y-5">
+                    <div class="flex items-center gap-3 pb-3 border-b border-gray-100">
+                        <div class="w-9 h-9 rounded-xl bg-accent-500/10 text-accent-600 flex items-center justify-center font-bold text-sm shadow-inner">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Tuition Preferences</h3>
+                            <p class="text-xs text-gray-500">Configure your session mode, date, and schedule</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        
+                        <!-- Smart Combobox: Tuition Mode -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="tuitionMode">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Tuition Mode *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-laptop-house text-xs"></i></span>
+                                <input type="text" id="tuitionMode" placeholder="Select or type mode" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-tuitionMode"><i class="fas fa-exclamation-circle mr-1"></i>Please select a tuition mode.</p>
+                        </div>
+
+                        <!-- Premium Interactive Calendar Input Wrapper -->
+                        <div class="space-y-1.5 relative" id="calendarWrapper">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Preferred free trail Date *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-calendar-alt text-xs text-brand-600"></i></span>
+                                <input type="text" id="demoDate" placeholder="Select or type date (YYYY-MM-DD)" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs text-gray-400"></i></span>
+                            </div>
+                            <!-- Custom Airbnb / Calendly Style Popup Calendar -->
+                            <div id="customCalendarPopup" class="hidden absolute top-full left-0 w-80 bg-white border border-gray-100 rounded-3xl shadow-2xl mt-2 z-50 p-5 transform transition-all duration-300">
+                                <div class="flex items-center justify-between mb-4">
+                                    <button type="button" id="calPrevMonth" class="w-8 h-8 rounded-full hover:bg-brand-50 text-gray-600 flex items-center justify-center transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
+                                    <div class="flex items-center gap-2">
+                                        <select id="calMonthSelect" class="bg-transparent font-bold text-sm text-gray-900 focus:outline-none cursor-pointer">
+                                            <option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option>
+                                        </select>
+                                        <select id="calYearSelect" class="bg-transparent font-bold text-sm text-gray-900 focus:outline-none cursor-pointer"></select>
+                                    </div>
+                                    <button type="button" id="calNextMonth" class="w-8 h-8 rounded-full hover:bg-brand-50 text-gray-600 flex items-center justify-center transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+                                </div>
+                                <div class="grid grid-cols-7 gap-1 text-center mb-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                                    <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+                                </div>
+                                <div id="calDaysGrid" class="grid grid-cols-7 gap-1 text-center text-xs"></div>
+                            </div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-demoDate"><i class="fas fa-exclamation-circle mr-1"></i>Please select a valid future date.</p>
+                        </div>
+
+                        <!-- Smart Combobox: Time Slot -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="demoTimeSlot">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Preferred Time Slot *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-clock text-xs"></i></span>
+                                <input type="text" id="demoTimeSlot" placeholder="Select or type time slot" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-demoTimeSlot"><i class="fas fa-exclamation-circle mr-1"></i>Please select a time slot.</p>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Number of Demo Sessions</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-layer-group text-xs"></i></span>
+                                <input type="number" id="demoSessionsCount" value="1" min="1" max="2" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium">
+                            </div>
+                        </div>
+
+                        <!-- Smart Combobox: Language -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="demoLanguage">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Preferred Language</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-language text-xs"></i></span>
+                                <input type="text" id="demoLanguage" placeholder="Select or type language" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                        </div>
+
+                        <!-- Smart Combobox: Learning Goal -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="learningGoal">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Learning Goal / Academic Objective</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-bullseye text-xs"></i></span>
+                                <input type="text" id="learningGoal" placeholder="Select or type learning goal" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                        </div>
+
+                        <div class="md:col-span-2 space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Additional Notes (Optional)</label>
+                            <textarea id="additionalNotes" rows="3" placeholder="Mention any specific weak topics or requirements..." class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl px-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none resize-none font-medium"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Address (Conditional for Home Tuition) -->
+                <div id="homeTuitionAddressSection" class="hidden transition-all duration-300 space-y-5 pt-4 border-t border-gray-100">
+                    <div class="flex items-center gap-3 pb-3 border-b border-gray-100">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm shadow-inner">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Home Tuition Address</h3>
+                            <p class="text-xs text-gray-500">Where would you like the tutor to visit?</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        
+                        <!-- Smart Combobox: State -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="addrState">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">State *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-map text-xs"></i></span>
+                                <input type="text" id="addrState" placeholder="Select or type state" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-addrState"><i class="fas fa-exclamation-circle mr-1"></i>State is required for home tuition.</p>
+                        </div>
+
+                        <!-- Smart Combobox: City -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="addrCity">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">City *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-city text-xs"></i></span>
+                                <input type="text" id="addrCity" placeholder="Select or type city" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-addrCity"><i class="fas fa-exclamation-circle mr-1"></i>City is required for home tuition.</p>
+                        </div>
+
+                        <!-- Smart Combobox: Area / Locality -->
+                        <div class="space-y-1.5 relative combobox-wrapper" data-field="addrLocality">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Area / Locality *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-map-pin text-xs"></i></span>
+                                <input type="text" id="addrLocality" placeholder="Select or type locality" autocomplete="off" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl pl-10 pr-10 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium cursor-pointer">
+                                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                            </div>
+                            <div class="suggestions-dropdown hidden absolute top-full left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-xl mt-1.5 z-50 max-h-48 overflow-y-auto suggestions-list p-1"></div>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-addrLocality"><i class="fas fa-exclamation-circle mr-1"></i>Area is required for home tuition.</p>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Landmark</label>
+                            <input type="text" id="addrLandmark" placeholder="e.g. Near City Mall" class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl px-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none font-medium">
+                        </div>
+                        <div class="md:col-span-2 space-y-1.5">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-gray-700">Complete Address *</label>
+                            <textarea id="addrComplete" rows="2" placeholder="House No, Building, Street Name..." class="w-full premium-input hover:border-brand-300 border border-gray-200 rounded-2xl px-4 py-3.5 text-sm focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all outline-none resize-none font-medium"></textarea>
+                            <p class="error-msg text-red-500 text-xs font-medium mt-1 hidden" id="err-addrComplete"><i class="fas fa-exclamation-circle mr-1"></i>Complete address is required for home tuition.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100">
+                    <button type="button" id="resetFormBtn" class="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 py-4 rounded-2xl font-bold transition-all duration-300 text-sm cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]">
+                        <i class="fas fa-undo mr-2 text-gray-400"></i> Reset Form
+                    </button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white py-4 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-brand-500/25 hover:shadow-glow hover:-translate-y-0.5 text-sm border-0 cursor-pointer flex items-center justify-center gap-2 active:scale-[0.98]">
+                        <i class="fas fa-calendar-check"></i> Request for free trail
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
+        <div class="glass-panel p-8 md:p-10 rounded-3xl shadow-floating max-w-md w-full text-center relative transform transition-all">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-5 shadow-inner animate-bounce">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-gray-900 mb-2">Free Trail Class Booking Successful!</h3>
+            <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+                Your free trail class request has been submitted successfully. The tutor will contact you shortly after reviewing your request.
+            </p>
+            <div class="bg-gray-50 p-4 rounded-2xl mb-6 text-left text-xs space-y-2 border border-gray-100 shadow-inner">
+                <div class="flex justify-between items-center"><span class="text-gray-400 font-semibold">Booking ID:</span> <strong id="modalBookingId" class="text-brand-600 font-mono text-sm"></strong></div>
+                <div class="flex justify-between items-center"><span class="text-gray-400 font-semibold">Tutor:</span> <strong id="modalTutorName" class="text-gray-900"></strong></div>
+                <div class="flex justify-between items-center"><span class="text-gray-400 font-semibold">Date & Time:</span> <strong id="modalDateTime" class="text-gray-900"></strong></div>
+                <div class="flex justify-between items-center"><span class="text-gray-400 font-semibold">Status:</span> <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Pending</span></div>
+            </div>
+            <button id="modalCloseBtn" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-2xl border-0 cursor-pointer transition-all shadow-lg shadow-brand-500/20 active:scale-[0.98]">
+                Go to Dashboard / Home
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load Real Selected Tutor Info from URL parameter or localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlTutorId = urlParams.get('tutor_id') || urlParams.get('teacher_id');
+
+            let currentTutor = null;
+            const storedTutor = localStorage.getItem('selectedTutor');
+
+            if (storedTutor) {
+                try {
+                    currentTutor = JSON.parse(storedTutor);
+                } catch (e) {
+                    console.error("Error parsing selectedTutor", e);
+                }
+            }
+
+            function renderTutorCard(tutorObj) {
+                const card = document.getElementById('selectedTutorCard');
+
+                if (tutorObj && (tutorObj.name || tutorObj.full_name)) {
+                    const name = tutorObj.name || tutorObj.full_name || "Verified Tutor";
+                    const photo = tutorObj.photo || tutorObj.photo_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300";
+                    const skill = tutorObj.skill || tutorObj.subject || tutorObj.subjects || "Expert Tutor";
+                    const exp = tutorObj.exp || tutorObj.experience || "1+ Years";
+                    const qual = tutorObj.qualification || tutorObj.degree || "Graduate Degree";
+                    const tutorClass = tutorObj.tutorClass || tutorObj.class || tutorObj.teaching_classes || "Class 1 - 12";
+                    const loc = tutorObj.location || tutorObj.city || "Online";
+                    const mode = tutorObj.mode || tutorObj.tuition_mode || "Home & Online";
+                    const rating = tutorObj.rating || "5.0";
+
+                    document.getElementById('tutorName').innerText = name;
+                    document.getElementById('tutorSkill').innerText = skill;
+                    document.getElementById('tutorExp').innerText = exp;
+                    document.getElementById('tutorQual').innerText = qual;
+                    if (document.getElementById('tutorClass')) document.getElementById('tutorClass').innerText = tutorClass;
+                    document.getElementById('tutorLocation').innerText = loc;
+                    document.getElementById('tutorMode').innerText = mode;
+                    document.getElementById('tutorRating').innerText = rating;
+                    if (photo) document.getElementById('tutorPhoto').src = photo;
+
+                    if (card) card.classList.remove('hidden');
+
+                    // Pre-select Class and Subject from selectedTutor profile
+                    const rawClass = tutorObj.tutorClass || tutorObj.class || tutorObj.teaching_classes || '';
+                    const rawSubject = tutorObj.subject || tutorObj.skill || tutorObj.subjects || '';
+
+                    const classInput = document.getElementById('studentClass');
+                    const subjectInput = document.getElementById('demoSubject');
+
+                    if (rawClass && classInput && !classInput.value) {
+                        const firstClass = rawClass.split(',')[0].trim();
+                        classInput.value = firstClass;
+                        if (typeof updateSubjectFieldState === 'function') updateSubjectFieldState();
+                    }
+
+                    if (rawSubject && subjectInput && !subjectInput.value) {
+                        const firstSubject = rawSubject.split(',')[0].trim();
+                        subjectInput.value = firstSubject;
+                    }
+                } else {
+                    if (card) card.classList.add('hidden');
+                }
+            }
+
+            if (urlTutorId) {
+                // If tutor_id parameter is present in URL, fetch real database record
+                fetch(`/api/tutors/${urlTutorId}/`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.tutor) {
+                            currentTutor = data.tutor;
+                            localStorage.setItem('selectedTutor', JSON.stringify(data.tutor));
+                            renderTutorCard(currentTutor);
+                        } else if (currentTutor) {
+                            renderTutorCard(currentTutor);
+                        }
+                    })
+                    .catch(() => {
+                        if (currentTutor) renderTutorCard(currentTutor);
+                    });
+            } else {
+                renderTutorCard(currentTutor);
+            }
+
+            // --- STRICT MOBILE NUMBER VALIDATION ---
+            const mobileInput = document.getElementById('studentMobile');
+            mobileInput.addEventListener('input', function(e) {
+                let cleaned = this.value.replace(/\D/g, '');
+                if (cleaned.length > 10) {
+                    cleaned = cleaned.slice(0, 10);
+                }
+                this.value = cleaned;
+            });
+
+            // --- DYNAMIC CLASS -> SUBJECT MAPPING & OPTIONS ---
+            const subjectMapping = {
+                "nursery": ["English", "Hindi", "Mathematics", "EVS", "Drawing", "Rhymes"],
+                "lkg": ["English", "Hindi", "Mathematics", "EVS", "Drawing", "Rhymes"],
+                "ukg": ["English", "Hindi", "Mathematics", "EVS", "Drawing", "Rhymes"],
+                "class 1": ["English", "Hindi", "Mathematics", "EVS", "Computer", "GK"],
+                "class 2": ["English", "Hindi", "Mathematics", "EVS", "Computer", "GK"],
+                "class 3": ["English", "Hindi", "Mathematics", "EVS", "Computer", "GK"],
+                "class 4": ["English", "Hindi", "Mathematics", "EVS", "Computer", "GK"],
+                "class 5": ["English", "Hindi", "Mathematics", "EVS", "Computer", "GK"],
+                "class 6": ["Mathematics", "Science", "English", "Hindi", "Sanskrit", "Social Science", "Computer"],
+                "class 7": ["Mathematics", "Science", "English", "Hindi", "Sanskrit", "Social Science", "Computer"],
+                "class 8": ["Mathematics", "Science", "English", "Hindi", "Sanskrit", "Social Science", "Computer"],
+                "class 9": ["Mathematics", "Science", "Physics", "Chemistry", "Biology", "English", "Hindi", "Social Science", "Computer"],
+                "class 10": ["Mathematics", "Science", "Physics", "Chemistry", "Biology", "English", "Hindi", "Social Science", "Computer"],
+                "class 11": ["Physics", "Chemistry", "Biology", "Mathematics", "Computer Science", "English", "Accountancy", "Business Studies", "Economics"],
+                "class 12": ["Physics", "Chemistry", "Biology", "Mathematics", "Computer Science", "English", "Accountancy", "Business Studies", "Economics"]
+            };
+
+            const optionsData = {
+                studentGender: ["Male", "Female", "Other"],
+                studentClass: [
+                    "Nursery", "LKG", "UKG", "Class 1", "Class 2", "Class 3", "Class 4", 
+                    "Class 5", "Class 6", "Class 7", "Class 8", "Class 9", "Class 10", 
+                    "Class 11", "Class 12"
+                ],
+                tuitionMode: ["Home Tuition", "Online Tuition", "Either / Flexible"],
+                demoTimeSlot: [
+                    "09:00 AM - 11:00 AM", "11:00 AM - 01:00 PM", 
+                    "02:00 PM - 04:00 PM", "04:00 PM - 06:00 PM", 
+                    "06:00 PM - 08:00 PM", "Weekend Morning", "Sunday Evening", "After School"
+                ],
+                demoLanguage: ["English", "Hindi", "Bilingual (English & Hindi)", "Other"],
+                learningGoal: [
+                    "Board Exam Preparation", "Concept Clarity", "Homework Help", 
+                    "Revision", "Olympiad", "JEE", "NEET", "CUET", "Spoken English", "Assignment Help"
+                ],
+                addrState: ["Uttar Pradesh", "Delhi", "Maharashtra", "Karnataka", "Tamil Nadu", "Telangana", "West Bengal", "Gujarat"],
+                addrCity: ["Lucknow", "Delhi", "Mumbai", "Bangalore", "Hyderabad", "Kolkata", "Ahmedabad", "Noida", "Gurugram"],
+                addrLocality: ["Gomti Nagar", "Indiranagar", "Aliganj", "Connaught Place", "Bandra", "Koramangala", "Banjara Hills"]
+            };
+
+            const classInput = document.getElementById('studentClass');
+            const subjectInput = document.getElementById('demoSubject');
+
+            function updateSubjectFieldState() {
+                const selectedClassVal = classInput.value.trim();
+                if (selectedClassVal.length > 0) {
+                    subjectInput.removeAttribute('disabled');
+                    subjectInput.classList.remove('bg-gray-100', 'cursor-not-allowed', 'text-gray-400');
+                    subjectInput.classList.add('premium-input', 'hover:border-brand-300', 'cursor-pointer');
+                    subjectInput.setAttribute('placeholder', 'Select or type subject');
+                } else {
+                    subjectInput.setAttribute('disabled', 'true');
+                    subjectInput.value = '';
+                    subjectInput.classList.remove('premium-input', 'hover:border-brand-300', 'cursor-pointer');
+                    subjectInput.classList.add('bg-gray-100', 'cursor-not-allowed', 'text-gray-400');
+                    subjectInput.setAttribute('placeholder', 'Please select a class first.');
+                }
+            }
+
+            updateSubjectFieldState();
+
+
+
+            // Smart Combobox Engine - Premium UX + Full Keyboard Navigation
+            document.querySelectorAll('.combobox-wrapper').forEach(wrapper => {
+                const fieldKey = wrapper.getAttribute('data-field');
+                const input = wrapper.querySelector('input');
+                const dropdown = wrapper.querySelector('.suggestions-dropdown');
+                let activeIndex = -1;
+                let openedByFocus = false;
+
+                function getActiveItems() {
+                    if (fieldKey === 'studentClass') {
+                        return optionsData['studentClass'];
+                    }
+                    if (fieldKey === 'demoSubject') {
+                        const selectedClassKey = classInput.value.trim().toLowerCase();
+                        if (subjectMapping[selectedClassKey]) {
+                            return subjectMapping[selectedClassKey];
+                        }
+                        return [];
+                    }
+                    return optionsData[fieldKey] || [];
+                }
+
+                function renderSuggestions(filter = '', showAll = false) {
+                    if (fieldKey === 'demoSubject' && input.hasAttribute('disabled')) {
+                        dropdown.innerHTML = '';
+                        dropdown.classList.add('hidden');
+                        return;
+                    }
+
+                    const items = getActiveItems();
+                    const filterText = showAll ? '' : filter.toLowerCase();
+                    const filtered = items.filter(i => i.toLowerCase().includes(filterText));
+                    
+                    if (filtered.length === 0) {
+                        dropdown.innerHTML = '';
+                        dropdown.classList.add('hidden');
+                    } else {
+                        const currentVal = input.value.trim().toLowerCase();
+                        dropdown.innerHTML = filtered.map((item, idx) => {
+                            const isSelected = item.toLowerCase() === currentVal;
+                            const activeClass = isSelected ? 'bg-brand-50 text-brand-600' : '';
+                            return `<div class="sugg-item px-3.5 py-2.5 text-xs font-semibold text-gray-700 hover:bg-brand-100 hover:text-brand-700 rounded-xl cursor-pointer transition-colors ${activeClass}" data-index="${idx}">${item}</div>`;
+                        }).join('');
+                        dropdown.classList.remove('hidden');
+                        
+                        activeIndex = filtered.findIndex(i => i.toLowerCase() === currentVal);
+                        if (activeIndex === -1 && filtered.length > 0) activeIndex = 0;
+                        
+                        if (activeIndex >= 0) {
+                            const activeEl = dropdown.children[activeIndex];
+                            if (activeEl) {
+                                setTimeout(() => {
+                                    activeEl.scrollIntoView({ block: 'nearest' });
+                                }, 0);
+                            }
+                        }
+                    }
+                }
+
+                function updateActiveItem(items) {
+                    items.forEach((item, idx) => {
+                        if (idx === activeIndex) {
+                            item.classList.add('bg-brand-100', 'text-brand-700');
+                            item.scrollIntoView({ block: 'nearest' });
+                        } else {
+                            item.classList.remove('bg-brand-100', 'text-brand-700');
+                            if (item.innerText.trim().toLowerCase() !== input.value.trim().toLowerCase()) {
+                                item.classList.remove('bg-brand-50', 'text-brand-600');
+                            }
+                        }
+                    });
+                }
+
+                // SMART UX: Toggle Open/Close and Open on first click
+                input.addEventListener('click', () => {
+                    if (input.hasAttribute('disabled')) return;
+                    if (!openedByFocus) {
+                        if (dropdown.classList.contains('hidden')) {
+                            renderSuggestions('', true); // Show all on reopen
+                        } else {
+                            dropdown.classList.add('hidden');
+                        }
+                    }
+                    openedByFocus = false;
+                });
+
+                input.addEventListener('focus', () => {
+                    if (input.hasAttribute('disabled')) return;
+                    if (dropdown.classList.contains('hidden')) {
+                        openedByFocus = true;
+                        renderSuggestions('', true); // Show all options immediately without typing
+                    }
+                });
+
+                // Standard input filtering logic
+                input.addEventListener('input', () => {
+                    renderSuggestions(input.value, false);
+                    if (fieldKey === 'studentClass') {
+                        const prevClass = classInput.getAttribute('data-prev-class') || '';
+                        const currentClass = input.value.trim();
+                        if (prevClass.toLowerCase() !== currentClass.toLowerCase()) {
+                            subjectInput.value = '';
+                            classInput.setAttribute('data-prev-class', currentClass);
+                        }
+                        updateSubjectFieldState();
+                    }
+                });
+
+                // SMART UX: Keyboard Navigation
+                input.addEventListener('keydown', (e) => {
+                    if (input.hasAttribute('disabled')) return;
+                    const isHidden = dropdown.classList.contains('hidden');
+                    
+                    if (e.key === 'Escape') {
+                        dropdown.classList.add('hidden');
+                        input.blur();
+                        return;
+                    }
+                    if (e.key === 'Tab') {
+                        dropdown.classList.add('hidden');
+                        return;
+                    }
+
+                    if (isHidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter')) {
+                        e.preventDefault();
+                        renderSuggestions('', true);
+                        return;
+                    }
+
+                    const items = dropdown.querySelectorAll('.sugg-item');
+                    if (!isHidden && items.length > 0) {
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            activeIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
+                            updateActiveItem(items);
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            activeIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
+                            updateActiveItem(items);
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (activeIndex >= 0 && items[activeIndex]) {
+                                items[activeIndex].click();
+                            }
+                        }
+                    }
+                });
+
+                dropdown.addEventListener('click', (e) => {
+                    const itemEl = e.target.closest('.sugg-item');
+                    if (itemEl) {
+                        input.value = itemEl.innerText.trim();
+                        dropdown.classList.add('hidden');
+                        input.dispatchEvent(new Event('input'));
+                        input.dispatchEvent(new Event('change'));
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!wrapper.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Calendar Popup
+            const dateInput = document.getElementById('demoDate');
+            const calendarPopup = document.getElementById('customCalendarPopup');
+            const calDaysGrid = document.getElementById('calDaysGrid');
+            const calMonthSelect = document.getElementById('calMonthSelect');
+            const calYearSelect = document.getElementById('calYearSelect');
+            const calPrevMonth = document.getElementById('calPrevMonth');
+            const calNextMonth = document.getElementById('calNextMonth');
+
+            let today = new Date();
+            let currentMonth = today.getMonth();
+            let currentYear = today.getFullYear();
+
+            for (let y = currentYear; y <= currentYear + 3; y++) {
+                let opt = document.createElement('option');
+                opt.value = y;
+                opt.innerText = y;
+                calYearSelect.appendChild(opt);
+            }
+
+            function openCalendar() {
+                calendarPopup.classList.remove('hidden');
+                renderCalendar(currentMonth, currentYear);
+            }
+
+            function closeCalendar() {
+                calendarPopup.classList.add('hidden');
+            }
+
+            dateInput.addEventListener('focus', openCalendar);
+            dateInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openCalendar();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!document.getElementById('calendarWrapper').contains(e.target)) {
+                    closeCalendar();
+                }
+            });
+
+            function renderCalendar(month, year) {
+                calMonthSelect.value = month;
+                calYearSelect.value = year;
+                calDaysGrid.innerHTML = '';
+
+                const firstDayIndex = new Date(year, month, 1).getDay();
+                const totalDays = new Date(year, month + 1, 0).getDate();
+                const todayFormatted = today.toISOString().split('T')[0];
+
+                for (let i = 0; i < firstDayIndex; i++) {
+                    let blank = document.createElement('div');
+                    calDaysGrid.appendChild(blank);
+                }
+
+                for (let d = 1; d <= totalDays; d++) {
+                    let dayEl = document.createElement('div');
+                    let monthStr = String(month + 1).padStart(2, '0');
+                    let dayStr = String(d).padStart(2, '0');
+                    let dateStr = `${year}-${monthStr}-${dayStr}`;
+
+                    dayEl.innerText = d;
+                    dayEl.className = "py-2 rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center justify-center";
+
+                    let thisDate = new Date(year, month, d);
+                    let midnightToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+                    if (thisDate < midnightToday) {
+                        dayEl.classList.add('text-gray-300', 'cursor-not-allowed');
+                    } else {
+                        dayEl.classList.add('text-gray-700', 'hover:bg-brand-50', 'hover:text-brand-600');
+                        if (dateStr === todayFormatted) {
+                            dayEl.classList.add('border', 'border-brand-500', 'text-brand-600');
+                        }
+                        if (dateInput.value === dateStr) {
+                            dayEl.classList.add('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/30');
+                            dayEl.classList.remove('hover:bg-brand-50', 'text-gray-700');
+                        }
+
+                        dayEl.addEventListener('click', () => {
+                            dateInput.value = dateStr;
+                            closeCalendar();
+                            dateInput.dispatchEvent(new Event('change'));
+                        });
+                    }
+                    calDaysGrid.appendChild(dayEl);
+                }
+            }
+
+            calPrevMonth.addEventListener('click', () => {
+                currentMonth--;
+                if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            calNextMonth.addEventListener('click', () => {
+                currentMonth++;
+                if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            calMonthSelect.addEventListener('change', (e) => {
+                currentMonth = parseInt(e.target.value);
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            calYearSelect.addEventListener('change', (e) => {
+                currentYear = parseInt(e.target.value);
+                renderCalendar(currentMonth, currentYear);
+            });
+
+            // Home Tuition Address Toggle
+            const tuitionModeInput = document.getElementById('tuitionMode');
+            const addressSection = document.getElementById('homeTuitionAddressSection');
+
+            function checkHomeTuitionDisplay() {
+                if (tuitionModeInput.value.toLowerCase().includes('home')) {
+                    addressSection.classList.remove('hidden');
+                } else {
+                    addressSection.classList.add('hidden');
+                }
+            }
+
+            tuitionModeInput.addEventListener('change', checkHomeTuitionDisplay);
+            tuitionModeInput.addEventListener('input', checkHomeTuitionDisplay);
+
+            // Auto-preselect Class, Subject, and Tuition Mode from selectedTutor profile
+            if (currentTutor) {
+                const rawClass = currentTutor.tutorClass || currentTutor.class || currentTutor.teaching_classes || '';
+                const rawSubject = currentTutor.subject || currentTutor.skill || currentTutor.subjects || '';
+                const rawMode = currentTutor.mode || currentTutor.tuition_mode || '';
+
+                if (rawClass) {
+                    classInput.value = rawClass;
+                }
+
+                if (rawSubject) {
+                    subjectInput.value = rawSubject;
+                }
+
+                if (rawMode) {
+                    if (rawMode.toLowerCase().includes('home')) tuitionModeInput.value = 'Home Tuition';
+                    else if (rawMode.toLowerCase().includes('online')) tuitionModeInput.value = 'Online Tuition';
+                    else tuitionModeInput.value = 'Either / Flexible';
+                }
+
+                updateSubjectFieldState();
+                checkHomeTuitionDisplay();
+            }
+
+            // Form Submit & Django Backend API Integration
+            const form = document.getElementById('demoBookingForm');
+            const successModal = document.getElementById('successModal');
+            const todayStr = today.toISOString().split('T')[0];
+                    
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                let isValid = true;
+            
+                document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+            
+                // Existing validation checks (Name, Mobile, Email, Class, Subject, Date, Time, etc.) remain identical
+                const studentName = document.getElementById('studentName').value.trim();
+                if (!studentName) { document.getElementById('err-studentName').classList.remove('hidden'); isValid = false; }
+            
+                const mobile = mobileInput.value.trim();
+                if (!/^[0-9]{10}$/.test(mobile)) { document.getElementById('err-studentMobile').classList.remove('hidden'); isValid = false; }
+            
+                const email = document.getElementById('studentEmail').value.trim();
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('err-studentEmail').classList.remove('hidden'); isValid = false; }
+            
+                const studentClass = classInput.value.trim();
+                if (!studentClass) { document.getElementById('err-studentClass').classList.remove('hidden'); isValid = false; }
+            
+                const demoSubject = subjectInput.value.trim();
+                if (!demoSubject) { document.getElementById('err-demoSubject').classList.remove('hidden'); isValid = false; }
+            
+                const tuitionMode = tuitionModeInput.value.trim();
+                if (!tuitionMode) { document.getElementById('err-tuitionMode').classList.remove('hidden'); isValid = false; }
+            
+                const demoDate = dateInput.value.trim();
+                if (!demoDate) {
+                    document.getElementById('err-demoDate').classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    const selD = new Date(demoDate);
+                    const todayD = new Date();
+                    todayD.setHours(0,0,0,0);
+                    if (!isNaN(selD.getTime()) && selD < todayD) {
+                        document.getElementById('err-demoDate').classList.remove('hidden');
+                        isValid = false;
+                    }
+                }
+            
+                const timeSlot = document.getElementById('demoTimeSlot').value.trim();
+                if (!timeSlot) { document.getElementById('err-demoTimeSlot').classList.remove('hidden'); isValid = false; }
+            
+                if (!isValid) return;
+            
+                // Prepare Payload for Django Backend
+                const bookingRecord = {
+                    tutor: currentTutor,
+                    student: {
+                        name: studentName,
+                        mobile: mobile,
+                        email: email,
+                        gender: document.getElementById('studentGender').value.trim(),
+                        class: studentClass
+                    },
+                    tuition: {
+                        mode: tuitionMode,
+                        subject: demoSubject,
+                        date: demoDate,
+                        timeSlot: timeSlot,
+                        sessionsCount: document.getElementById('demoSessionsCount').value,
+                        language: document.getElementById('demoLanguage').value.trim(),
+                        goal: document.getElementById('learningGoal').value.trim(),
+                        notes: document.getElementById('additionalNotes').value.trim(),
+                        address: tuitionMode.toLowerCase().includes('home') ? {
+                            state: document.getElementById('addrState').value.trim(),
+                            city: document.getElementById('addrCity').value.trim(),
+                            locality: document.getElementById('addrLocality').value.trim(),
+                            landmark: document.getElementById('addrLandmark').value.trim(),
+                            complete: document.getElementById('addrComplete').value.trim()
+                        } : null
+                    }
+                };
+            
+                // Send POST Request using Fetch API (AJAX) to Django Backend
+                fetch('/api/book-demo/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingRecord)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('modalBookingId').innerText = data.booking_id;
+                        document.getElementById('modalTutorName').innerText = (currentTutor && (currentTutor.name || currentTutor.full_name)) ? (currentTutor.name || currentTutor.full_name) : 'Assigned Tutor';
+                        document.getElementById('modalDateTime').innerText = `${demoDate} (${timeSlot})`;
+                    
+                        successModal.classList.remove('hidden');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Something went wrong. Please try again.');
+                });
+            });
+
+            document.getElementById('resetFormBtn').addEventListener('click', function() {
+                form.reset();
+                addressSection.classList.add('hidden');
+                document.querySelectorAll('.error-msg').forEach(el => el.classList.add('hidden'));
+                updateSubjectFieldState();
+            });
+
+            document.getElementById('modalCloseBtn').addEventListener('click', function() {
+                successModal.classList.add('hidden');
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>

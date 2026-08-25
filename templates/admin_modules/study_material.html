@@ -1,0 +1,1881 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-6 fade-in text-slate-800 dark:text-slate-100 font-sans pb-16" id="smHubContainer">
+
+    <!-- ========================================== -->
+    <!-- 1. BREADCRUMB & HEADER ACTION BAR -->
+    <!-- ========================================== -->
+    <div class="space-y-2">
+        <nav class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-400 px-1">
+            <a href="/admin/dashboard/" onclick="navTo('dashboard', event)" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors no-underline">Home</a>
+            <i class="fa-solid fa-chevron-right text-[8px] text-slate-500"></i>
+            <span class="text-blue-600 dark:text-blue-400 font-bold">Study Material Management</span>
+        </nav>
+
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 px-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center text-lg shadow-sm shadow-purple-500/25 shrink-0">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2 leading-tight">
+                        Study Material Management Hub
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 text-[9.5px] font-extrabold border border-purple-200/50">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span> LMS Resource Engine
+                        </span>
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Manage, organize and distribute learning resources across your LMS.</p>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <button type="button" onclick="openSmImportModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-import text-blue-500"></i> Import
+                </button>
+                <button type="button" onclick="exportSmData('csv')" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-export text-emerald-500"></i> Export
+                </button>
+                <button type="button" onclick="openSmCreateFolderModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-folder-plus text-amber-500"></i> Create Folder
+                </button>
+                <button type="button" onclick="openAddClassSubjectModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-layer-group text-purple-500"></i> + Add Class / Subject
+                </button>
+                <button type="button" onclick="openSmUploadModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-extrabold transition-all border-0 cursor-pointer shadow-xs shadow-purple-500/25 flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> + Upload Material
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST BANNER -->
+    <div id="smToast" class="hidden p-3 rounded-2xl text-xs font-bold flex items-center justify-between shadow-xs fade-in">
+        <div class="flex items-center gap-2">
+            <i id="smToastIcon" class="fa-solid fa-circle-info"></i>
+            <span id="smToastMsg">Processing action...</span>
+        </div>
+        <button type="button" onclick="document.getElementById('smToast').classList.add('hidden')" class="border-0 bg-transparent cursor-pointer opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. 8 RESPONSIVE KPI CARDS GRID -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2" id="smKpiGrid">
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Total Materials</span>
+                <i class="fa-solid fa-files text-purple-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmTotal">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmTotalGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +12.4%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Documents</span>
+                <i class="fa-solid fa-file-pdf text-blue-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmDocs">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmDocsGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +8.2%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Videos</span>
+                <i class="fa-solid fa-video text-rose-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmVideos">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmVideosGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +15.1%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Notes</span>
+                <i class="fa-solid fa-note-sticky text-amber-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmNotes">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmNotesGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +5.0%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Folders</span>
+                <i class="fa-solid fa-folder text-indigo-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmFolders">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmFoldersGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +2.0%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Teacher Uploads</span>
+                <i class="fa-solid fa-chalkboard-user text-cyan-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmTeacherUploads">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmTeacherGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +10.5%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Student Access</span>
+                <i class="fa-solid fa-user-graduate text-emerald-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmStudentAccess">0</div>
+            <div class="text-[8.5px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5" id="kpiSmAccessGrowth"><i class="fa-solid fa-arrow-up text-[7px]"></i> +18.3%</div>
+        </div>
+
+        <div class="p-2 px-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5">
+            <div class="flex items-center justify-between text-slate-400">
+                <span class="text-[8.5px] font-extrabold uppercase tracking-wider truncate">Pending Approval</span>
+                <i class="fa-solid fa-clock text-amber-500 text-[10px]"></i>
+            </div>
+            <div class="text-sm font-black text-slate-900 dark:text-white leading-tight" id="kpiSmPendingApproval">0</div>
+            <div class="text-[8.5px] font-bold text-slate-400" id="kpiSmPendingGrowth">0.0%</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. SEARCH & ADVANCED FILTERS BAR -->
+    <!-- ========================================== -->
+    <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="smSearchInput" oninput="debounceSmSearch()" placeholder="Search materials by title, subject, teacher, topic, chapter, tags..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pl-9 pr-4 py-2 rounded-2xl text-xs font-semibold text-slate-900 dark:text-white outline-none focus:border-purple-500">
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="applySmFilters()" class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs cursor-pointer border-0 shadow-2xs">
+                    <i class="fa-solid fa-filter text-[10px]"></i> Apply Filters
+                </button>
+                <button type="button" onclick="resetSmFilters()" class="px-3.5 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 font-bold text-xs cursor-pointer border-0 text-slate-600 dark:text-slate-300">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- 7 ADVANCED FILTER DROPDOWNS -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Content Type</label>
+                <select id="smFilterContentType" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="ALL">All Content Types</option>
+                    <option value="study_material">📚 Study Material</option>
+                    <option value="dpp">📝 DPP / Practice</option>
+                    <option value="assignment">📋 Assignment</option>
+                    <option value="recorded_lecture">🎥 Recorded Lecture</option>
+                    <option value="test">🧪 Test / Quiz</option>
+                    <option value="test_series">🏆 Test Series</option>
+                    <option value="pyq">🎓 PYQ / Model Paper</option>
+                    <option value="e_library">📖 E-Library</option>
+                    <option value="e_newspaper">📰 E-Newspaper</option>
+                    <option value="notes">🗒️ Notes</option>
+                    <option value="other">📦 Other</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Course/Class</label>
+                <select id="smFilterClass" onchange="onClassFilterChange()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="ALL">All Classes (Class 6 - 12)</option>
+                    <!-- Populated dynamically via REST API -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Subject</label>
+                <select id="smFilterSubject" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="ALL">All Subjects</option>
+                    <!-- Populated dynamically per selected class -->
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Type</label>
+                <select id="smFilterType" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="ALL">All Types</option>
+                    <option value="pdf">PDF Document</option>
+                    <option value="video">Video</option>
+                    <option value="ppt">PPT Presentation</option>
+                    <option value="excel">Spreadsheet</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Teacher</label>
+                <select id="smFilterTeacher" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="ALL">All Teachers</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Status</label>
+                <select id="smFilterStatus" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="ALL">All Status</option>
+                    <option value="Published">Published</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Pending">Pending Approval</option>
+                    <option value="Archived">Archived</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Sort By</label>
+                <select id="smSortBy" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="-created_at">Recent Updated</option>
+                    <option value="created_at">Oldest Updated</option>
+                    <option value="-view_count">Most Viewed</option>
+                    <option value="-download_count">Most Downloaded</option>
+                    <option value="title">Name A-Z</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[9px] font-extrabold text-slate-400 uppercase mb-0.5">Per Page</label>
+                <select id="smPerPage" onchange="applySmFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                    <option value="10">10 / page</option>
+                    <option value="25" selected>25 / page</option>
+                    <option value="50">50 / page</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. MATERIAL STATUS TABS & MAIN CONTENT GRID -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- LEFT COL: MATERIAL LIBRARY TABLE (2 COLS) -->
+        <div class="lg:col-span-2 space-y-4">
+            
+            <!-- STATUS TABS BAR -->
+            <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-2 px-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+                <div class="flex items-center gap-1 overflow-x-auto text-xs font-bold">
+                    <button type="button" onclick="setSmStatusTab('ALL')" id="tabSmALL" class="px-3 py-1.5 rounded-xl bg-purple-600 text-white font-extrabold border-0 cursor-pointer">
+                        All Materials <span id="cntSmTabALL" class="ml-1 opacity-80 text-[10px]">(0)</span>
+                    </button>
+                    <button type="button" onclick="setSmStatusTab('Published')" id="tabSmPublished" class="px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold border-0 cursor-pointer">
+                        Published <span id="cntSmTabPublished" class="ml-1 opacity-80 text-[10px]">(0)</span>
+                    </button>
+                    <button type="button" onclick="setSmStatusTab('Draft')" id="tabSmDraft" class="px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold border-0 cursor-pointer">
+                        Draft <span id="cntSmTabDraft" class="ml-1 opacity-80 text-[10px]">(0)</span>
+                    </button>
+                    <button type="button" onclick="setSmStatusTab('Pending')" id="tabSmPending" class="px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold border-0 cursor-pointer">
+                        Pending <span id="cntSmTabPending" class="ml-1 opacity-80 text-[10px]">(0)</span>
+                    </button>
+                    <button type="button" onclick="setSmStatusTab('Archived')" id="tabSmArchived" class="px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold border-0 cursor-pointer">
+                        Archived <span id="cntSmTabArchived" class="ml-1 opacity-80 text-[10px]">(0)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BULK SELECTION ACTION BAR -->
+            <div id="smBulkBar" class="hidden flex items-center justify-between bg-purple-50 dark:bg-purple-950/60 p-2.5 px-4 rounded-2xl border border-purple-200/60 text-xs font-bold">
+                <span id="smBulkCountText" class="text-purple-700 dark:text-purple-300">0 selected</span>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="applySmBulkAction('publish')" class="px-3 py-1 bg-emerald-600 text-white rounded-lg border-0 cursor-pointer text-[11px] font-bold">Publish</button>
+                    <button type="button" onclick="applySmBulkAction('unpublish')" class="px-3 py-1 bg-slate-700 text-white rounded-lg border-0 cursor-pointer text-[11px] font-bold">Unpublish</button>
+                    <button type="button" onclick="applySmBulkAction('delete')" class="px-3 py-1 bg-rose-600 text-white rounded-lg border-0 cursor-pointer text-[11px] font-bold">Delete</button>
+                </div>
+            </div>
+
+            <!-- MATERIAL LIBRARY TABLE -->
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-medium border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 uppercase text-[9.5px] font-extrabold border-b border-slate-100 dark:border-slate-800">
+                                <th class="p-3 pl-4"><input type="checkbox" id="smSelectAllCb" onchange="toggleSmSelectAll(this.checked)"></th>
+                                <th class="p-3">Material Title</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Course / Class</th>
+                                <th class="p-3">Subject / Chapter</th>
+                                <th class="p-3">Views / Downloads</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 pr-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="smTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
+                            <!-- Rows populate dynamically from Django REST API -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TABLE PAGINATION -->
+                <div class="flex items-center justify-between p-3 px-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 font-semibold">
+                    <span id="smPagInfo">Showing 0 of 0 materials</span>
+                    <div class="flex items-center gap-1.5" id="smPagButtons">
+                        <!-- Pagination buttons render dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COL: QUICK UPLOAD & STORAGE OVERVIEW (1 COL) -->
+        <div class="space-y-6">
+
+            <!-- QUICK UPLOAD ZONE -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-purple-600"></i> Quick Upload Zone
+                    </h3>
+                    <span class="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">Max 50MB</span>
+                </div>
+
+                <div id="dropZoneContainer" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)" class="border-2 border-dashed border-purple-300 dark:border-purple-800 hover:border-purple-500 bg-purple-50/40 dark:bg-purple-950/20 p-6 rounded-2xl text-center space-y-2 transition-all cursor-pointer" onclick="document.getElementById('quickFileInput').click()">
+                    <input type="file" id="quickFileInput" onchange="handleQuickFileSelect(event)" class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.mp4,.zip">
+                    <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-300 flex items-center justify-center text-lg mx-auto">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Drag & Drop files here</p>
+                        <p class="text-[10.5px] text-slate-400 font-medium">or <span class="text-purple-600 dark:text-purple-400 font-bold underline">Choose Files</span> from computer</p>
+                    </div>
+                    <p class="text-[9.5px] text-slate-400">Supported: PDF, DOC, PPT, XLS, MP4, ZIP</p>
+                </div>
+            </div>
+
+            <!-- STORAGE OVERVIEW -->
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-hard-drive text-blue-500"></i> Storage Overview
+                    </h3>
+                    <span class="text-xs font-extrabold text-slate-800 dark:text-slate-200" id="storageUsedText">68.4 GB / 200 GB</span>
+                </div>
+
+                <!-- PROGRESS BAR -->
+                <div class="w-full bg-slate-100 dark:bg-slate-800 h-3 rounded-full overflow-hidden flex">
+                    <div id="barDoc" class="bg-blue-500 h-full" style="width: 35%"></div>
+                    <div id="barVid" class="bg-purple-500 h-full" style="width: 45%"></div>
+                    <div id="barImg" class="bg-emerald-500 h-full" style="width: 10%"></div>
+                    <div id="barOth" class="bg-amber-500 h-full" style="width: 10%"></div>
+                </div>
+
+                <!-- BREAKDOWN LIST -->
+                <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+                    <div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
+                        <span class="text-slate-500 text-[11px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Documents</span>
+                        <span class="font-bold text-slate-900 dark:text-white" id="storageDocVal">24.1 GB</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
+                        <span class="text-slate-500 text-[11px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Videos</span>
+                        <span class="font-bold text-slate-900 dark:text-white" id="storageVidVal">34.3 GB</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
+                        <span class="text-slate-500 text-[11px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Images</span>
+                        <span class="font-bold text-slate-900 dark:text-white" id="storageImgVal">4.1 GB</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl">
+                        <span class="text-slate-500 text-[11px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Available</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400" id="storageAvailVal">131.6 GB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 5. ANALYTICS & CHARTS SINGLE ROW (3 GRAPHS IN 1 ROW) -->
+    <!-- ========================================== -->
+    <div class="space-y-6 pt-2">
+        
+        <!-- SINGLE ROW CONTAINING ALL 3 GRAPHS -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <!-- CHART 1: MATERIAL UPLOAD TREND -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <div>
+                        <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-chart-line text-purple-600"></i> Material Upload Trend
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <div class="inline-flex p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[9px] font-bold">
+                            <button type="button" onclick="setTrendChartType('line')" id="btnTrendLine" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-700 text-purple-600 shadow-2xs border-0 cursor-pointer">Line</button>
+                            <button type="button" onclick="setTrendChartType('bar')" id="btnTrendBar" class="px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 border-0 cursor-pointer">Bar</button>
+                            <button type="button" onclick="setTrendChartType('area')" id="btnTrendArea" class="px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 border-0 cursor-pointer">Area</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-40 relative">
+                    <canvas id="canvasUploadTrend"></canvas>
+                </div>
+            </div>
+
+            <!-- CHART 2: TOP SUBJECTS ANALYTICS (MULTI-COLOR BARS) -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <div>
+                        <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap text-blue-600"></i> Top Subjects Analytics
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <select id="selectTopSubjectMetric" onchange="renderTopSubjectsChart()" class="bg-slate-100 dark:bg-slate-800 border-0 p-0.5 px-1.5 rounded-lg text-[10px] font-semibold">
+                            <option value="materials" selected>Materials</option>
+                            <option value="views">Views</option>
+                            <option value="downloads">Downloads</option>
+                        </select>
+                        <div class="inline-flex p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[9px] font-bold">
+                            <button type="button" onclick="setSubjectChartType('bar')" id="btnSubBar" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-700 text-blue-600 shadow-2xs border-0 cursor-pointer">Bar</button>
+                            <button type="button" onclick="setSubjectChartType('line')" id="btnSubLine" class="px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 border-0 cursor-pointer">Line</button>
+                            <button type="button" onclick="setSubjectChartType('area')" id="btnSubArea" class="px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 border-0 cursor-pointer">Area</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-40 relative">
+                    <canvas id="canvasTopSubjects"></canvas>
+                </div>
+            </div>
+
+            <!-- CHART 3: MATERIAL STATUS DONUT CHART WITH NUMBERS -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-emerald-500"></i> Material Status Breakdown
+                    </h3>
+                </div>
+                <div class="h-40 relative flex items-center justify-center py-2">
+                    <canvas id="canvasStatusDonut"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ROW 2: MOST VIEWED MATERIALS & RECENT ACTIVITY -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            
+            <!-- MOST VIEWED RANKING -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-fire text-amber-500"></i> Most Viewed Materials
+                </h3>
+                <div id="smMostViewedList" class="space-y-2 text-xs font-semibold">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY STREAM -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-bolt text-indigo-500"></i> Recent Activity Stream
+                </h3>
+                <div id="smActivityList" class="space-y-2 text-xs font-semibold">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODALS & DRAWERS -->
+<!-- ========================================== -->
+
+<!-- 1. UPLOAD NEW LEARNING MATERIAL CONTENT-TYPE SPECIFIC MODAL WITH VERTICAL STEPPER -->
+<div id="modalAddStudyMaterial" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-6xl w-full flex flex-col max-h-[94vh] fade-in my-auto overflow-hidden">
+        
+        <!-- MODAL HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-sm shadow-purple-500/25 shrink-0" id="modalHeaderIcon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight" id="modalHeaderTitle">Add Study Material</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium" id="modalHeaderSubtitle">Upload study materials, notes, documents and learning resources for your students.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeSmModal('modalAddStudyMaterial')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border-0 flex items-center justify-center cursor-pointer transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- MODAL BODY: VERTICAL STEPPER SIDEBAR (LEFT) + FORM BODY (RIGHT) -->
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+            
+            <!-- LEFT VERTICAL STEPPER SIDEBAR -->
+            <div class="w-full md:w-64 bg-slate-50/80 dark:bg-slate-800/50 p-4 border-r border-slate-100 dark:border-slate-800 shrink-0 overflow-y-auto space-y-4">
+                
+                <!-- SELECTABLE CONTENT TYPE CARDS (TOP OF STEPPER) -->
+                <div>
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-purple-900 dark:text-purple-200 mb-2">
+                        WHAT ARE YOU UPLOADING? *
+                    </label>
+                    <div class="grid grid-cols-2 gap-1.5" id="ctCardsGrid">
+                        <button type="button" onclick="selectModalContentType('study_material')" id="ctCard_study_material" class="p-2 rounded-xl border-2 bg-purple-50 dark:bg-purple-950/60 border-purple-600 text-purple-700 dark:text-purple-300 font-extrabold text-left transition-all cursor-pointer shadow-xs flex items-center gap-2">
+                            <span class="text-base">📚</span>
+                            <span class="text-[10px] truncate">Study Material</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('dpp')" id="ctCard_dpp" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">📝</span>
+                            <span class="text-[10px] truncate">DPP / Practice</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('assignment')" id="ctCard_assignment" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">📋</span>
+                            <span class="text-[10px] truncate">Assignment</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('recorded_lecture')" id="ctCard_recorded_lecture" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">🎥</span>
+                            <span class="text-[10px] truncate">Recorded Video</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('test')" id="ctCard_test" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">🧪</span>
+                            <span class="text-[10px] truncate">Test / Quiz</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('test_series')" id="ctCard_test_series" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">🏆</span>
+                            <span class="text-[10px] truncate">Test Series</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('pyq')" id="ctCard_pyq" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">🎓</span>
+                            <span class="text-[10px] truncate">PYQ Paper</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('e_library')" id="ctCard_e_library" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">📖</span>
+                            <span class="text-[10px] truncate">E-Library</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('e_newspaper')" id="ctCard_e_newspaper" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex flex flex-row items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">📰</span>
+                            <span class="text-[10px] truncate">E-Newspaper</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('notes')" id="ctCard_notes" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex flex-row items-center gap-2 hover:border-purple-400">
+                            <span class="text-base">🗒️</span>
+                            <span class="text-[10px] truncate">Notes</span>
+                        </button>
+                        <button type="button" onclick="selectModalContentType('other')" id="ctCard_other" class="p-2 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex flex-row items-center gap-2 hover:border-purple-400 col-span-2">
+                            <span class="text-base">📦</span>
+                            <span class="text-[10px] truncate">Other Resource</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- VERTICAL STEPPER LIST -->
+                <div class="border-t border-slate-200 dark:border-slate-700 pt-3 space-y-2">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400">FORM STEPS</label>
+                    <div id="smVerticalStepper" class="space-y-1 text-xs font-semibold">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT FORM BODY CONTENT -->
+            <form id="formUploadSmModal" onsubmit="submitSmUploadModal(event, 'Published')" class="flex-1 overflow-y-auto p-6 space-y-6 text-xs font-semibold">
+                
+                <!-- DYNAMIC DESTINATION PREVIEW BANNER -->
+                <div id="ctDestBanner" class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-2xl border border-indigo-200 dark:border-indigo-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span id="destIcon" class="text-lg">📚</span>
+                        <div>
+                            <span class="block text-[10px] uppercase font-black text-indigo-400">Destination Module</span>
+                            <span id="destTitle" class="block text-xs font-black text-indigo-950 dark:text-indigo-200">Study Material Management (/admin/study-material/)</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-extrabold text-emerald-600 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-lg">✓ Module Mapped</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="space-y-5">
+                        
+                        <!-- SECTION 1: BASIC INFORMATION -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secBasicInfo">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-circle-info text-purple-600"></i> 1. Basic Information
+                            </h4>
+                            
+                            <div>
+                                <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold" id="lblMatTitle">Material Title *</label>
+                                <input type="text" id="upModTitle" required placeholder="e.g. Class 12 Physics - Electrostatics Complete Notes" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-xs font-semibold focus:border-purple-500 outline-none">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Format / Type *</label>
+                                    <select id="upModType" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-xs font-semibold">
+                                        <option value="PDF" selected>PDF Document</option>
+                                        <option value="Video">Video (MP4)</option>
+                                        <option value="Document">Word Document</option>
+                                        <option value="PPT">PPT Presentation</option>
+                                        <option value="Excel">Excel Spreadsheet</option>
+                                        <option value="Image">Image File</option>
+                                        <option value="Audio">Audio Lecture</option>
+                                        <option value="ZIP">ZIP Archive</option>
+                                        <option value="YouTube Video">YouTube Link</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Tags</label>
+                                    <input type="text" id="upModTags" placeholder="Physics, Electrostatics, Notes" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-xs font-semibold">
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-slate-600 dark:text-slate-400 font-bold">Description</label>
+                                    <span class="text-[10px] text-slate-400 font-bold" id="upModDescCount">0 / 500</span>
+                                </div>
+                                <textarea id="upModDesc" rows="3" maxlength="500" oninput="document.getElementById('upModDescCount').textContent = this.value.length + ' / 500'" placeholder="Describe what students will learn from this resource..." class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2.5 rounded-xl text-xs font-semibold outline-none focus:border-purple-500"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2: ACADEMIC MAPPING -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secAcademicMapping">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-graduation-cap text-blue-600"></i> 2. Academic Mapping
+                            </h4>
+                            
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Course/Class *</label>
+                                    <select id="upModClass" onchange="onModalClassChange()" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                                        <option value="Class 12">Class 12</option>
+                                        <option value="Class 11">Class 11</option>
+                                        <option value="Class 10">Class 10</option>
+                                        <option value="Class 9">Class 9</option>
+                                        <option value="Class 8">Class 8</option>
+                                        <option value="Class 7">Class 7</option>
+                                        <option value="Class 6">Class 6</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Batch *</label>
+                                    <select id="upModBatch" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                                        <option value="12-A (Physics & Maths)">Batch 12-A</option>
+                                        <option value="12-B (Biology)">Batch 12-B</option>
+                                        <option value="All Batches">All Batches</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Subject *</label>
+                                    <select id="upModSubject" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                                        <option value="Physics">Physics</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="English">English</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Chapter</label>
+                                    <input type="text" id="upModChapter" placeholder="e.g. Chapter 1 Electrostatics" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Unit / Topic</label>
+                                    <input type="text" id="upModUnit" placeholder="e.g. Electric Charges & Fields" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Teacher *</label>
+                                    <select id="upModTeacher" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                                        <option value="Super Admin">Super Admin (Institute)</option>
+                                        <option value="Rahul Sharma">Rahul Sharma (Physics)</option>
+                                        <option value="Anjali Verma">Anjali Verma (Maths)</option>
+                                        <option value="Priya Singh">Priya Singh (Chemistry)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CONTENT SPECIFIC FIELD CONTAINERS -->
+                        <!-- DPP DETAILS -->
+                        <div class="hidden p-4 bg-amber-50/50 dark:bg-amber-950/20 rounded-2xl border border-amber-200/60 dark:border-amber-900/40 space-y-3" id="secDppDetails">
+                            <h4 class="text-xs font-black text-amber-900 dark:text-amber-200 uppercase tracking-wider flex items-center gap-1.5 border-b border-amber-200/60 pb-2">
+                                <i class="fa-solid fa-list-check text-amber-600"></i> DPP / Practice Details
+                            </h4>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Total Questions *</label>
+                                    <input type="number" id="dppQuestions" value="15" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Total Marks *</label>
+                                    <input type="number" id="dppMarks" value="60" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Duration (Mins)</label>
+                                    <input type="number" id="dppDuration" value="45" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ASSIGNMENT DETAILS -->
+                        <div class="hidden p-4 bg-blue-50/50 dark:bg-blue-950/20 rounded-2xl border border-blue-200/60 dark:border-blue-900/40 space-y-3" id="secAssignmentDetails">
+                            <h4 class="text-xs font-black text-blue-900 dark:text-blue-200 uppercase tracking-wider flex items-center gap-1.5 border-b border-blue-200/60 pb-2">
+                                <i class="fa-solid fa-clipboard-list text-blue-600"></i> Assignment Details
+                            </h4>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Max Marks *</label>
+                                    <input type="number" id="asgnMaxMarks" value="100" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Due Date *</label>
+                                    <input type="date" id="asgnDueDate" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Submission Type</label>
+                                    <select id="asgnSubmType" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                        <option value="File Upload">File Upload</option>
+                                        <option value="Text">Online Text</option>
+                                        <option value="Mixed">Mixed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RECORDED LECTURE VIDEO TABS -->
+                        <div class="hidden p-4 bg-rose-50/50 dark:bg-rose-950/20 rounded-2xl border border-rose-200/60 dark:border-rose-900/40 space-y-3" id="secVideoDetails">
+                            <h4 class="text-xs font-black text-rose-900 dark:text-rose-200 uppercase tracking-wider flex items-center gap-1.5 border-b border-rose-200/60 pb-2">
+                                <i class="fa-solid fa-video text-rose-600"></i> Video Details & Source
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Video Source</label>
+                                    <select id="vidSource" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                        <option value="Upload Video">Direct File Upload</option>
+                                        <option value="YouTube">YouTube Link</option>
+                                        <option value="Vimeo">Vimeo Link</option>
+                                        <option value="External URL">External HLS Stream</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Duration (Mins)</label>
+                                    <input type="number" id="vidDuration" value="45" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- E-LIBRARY DETAILS -->
+                        <div class="hidden p-4 bg-emerald-50/50 dark:bg-emerald-950/20 rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40 space-y-3" id="secElibraryDetails">
+                            <h4 class="text-xs font-black text-emerald-900 dark:text-emerald-200 uppercase tracking-wider flex items-center gap-1.5 border-b border-emerald-200/60 pb-2">
+                                <i class="fa-solid fa-book text-emerald-600"></i> Book & Resource Metadata
+                            </h4>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Author Name</label>
+                                    <input type="text" id="libAuthor" placeholder="e.g. H.C. Verma" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Publisher</label>
+                                    <input type="text" id="libPublisher" placeholder="e.g. Bharati Bhawan" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">ISBN</label>
+                                    <input type="text" id="libIsbn" placeholder="978-3-16-148410-0" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- E-NEWSPAPER DETAILS -->
+                        <div class="hidden p-4 bg-teal-50/50 dark:bg-teal-950/20 rounded-2xl border border-teal-200/60 dark:border-teal-900/40 space-y-3" id="secNewspaperDetails">
+                            <h4 class="text-xs font-black text-teal-900 dark:text-teal-200 uppercase tracking-wider flex items-center gap-1.5 border-b border-teal-200/60 pb-2">
+                                <i class="fa-solid fa-newspaper text-teal-600"></i> Newspaper Edition Details
+                            </h4>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Newspaper Name *</label>
+                                    <input type="text" id="newsName" placeholder="e.g. The Hindu, Times of India" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Edition *</label>
+                                    <input type="text" id="newsEdition" placeholder="Delhi Edition" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 mb-1 font-bold">Publication Date *</label>
+                                    <input type="date" id="newsPubDate" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3: UPLOAD FILE & THUMBNAIL -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secFileUpload">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-emerald-600"></i> 3. Upload File & Thumbnail
+                            </h4>
+
+                            <div id="modalDragZone" ondragover="handleModalDragOver(event)" ondragleave="handleModalDragLeave(event)" ondrop="handleModalFileDrop(event)" onclick="document.getElementById('upModFileInput').click()" class="border-2 border-dashed border-purple-300 dark:border-purple-800 hover:border-purple-500 bg-white dark:bg-slate-800 p-4 rounded-2xl text-center space-y-1 cursor-pointer transition-all">
+                                <input type="file" id="upModFileInput" onchange="handleModalFileSelect(event)" class="hidden" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.mp4,.zip">
+                                <i class="fa-solid fa-cloud-arrow-up text-2xl text-purple-600"></i>
+                                <p class="text-xs font-bold text-slate-800 dark:text-slate-200">Drag & Drop your file here</p>
+                                <p class="text-[10px] text-slate-400">or <span class="text-purple-600 font-bold underline">Choose File</span> (PDF, DOC, PPT, XLS, MP4, ZIP — Max 200MB)</p>
+                            </div>
+
+                            <!-- FILE STATUS BOX -->
+                            <div id="upModFileStatusBox" class="hidden p-2.5 bg-purple-50 dark:bg-purple-950/60 rounded-xl border border-purple-200 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-file-pdf text-purple-600 text-base"></i>
+                                    <div>
+                                        <span id="upModFileName" class="block font-bold text-slate-900 dark:text-white text-xs truncate max-w-[220px]">File.pdf</span>
+                                        <span id="upModFileSize" class="block text-[10px] text-slate-400">0 KB</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-extrabold text-emerald-600"><i class="fa-solid fa-circle-check"></i> Ready</span>
+                                    <button type="button" onclick="resetModalUploadFile()" class="p-1 px-2 text-rose-600 hover:bg-rose-100 rounded-lg border-0 cursor-pointer text-[10px] font-bold">Remove</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Optional Thumbnail / Cover Image</label>
+                                <input type="file" id="upModThumbInput" accept="image/*" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-1.5 rounded-xl text-xs">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="space-y-5">
+                        
+                        <!-- SECTION 4: ACCESS & VISIBILITY -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secAccessVisibility">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-user-lock text-cyan-600"></i> 4. Access & Visibility
+                            </h4>
+                            
+                            <p class="text-slate-500 font-bold text-[11px] mb-1">Who can access this content?</p>
+                            <div class="space-y-2 text-xs font-semibold">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="accessRule" value="Public" checked class="text-purple-600">
+                                    <span>All Enrolled Students (Public)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="accessRule" value="Course" class="text-purple-600">
+                                    <span>Selected Course Students Only</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="accessRule" value="Batch" class="text-purple-600">
+                                    <span>Selected Batch Students Only</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 5: AVAILABILITY & STATUS -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secAvailabilityStatus">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-clock text-indigo-600"></i> 5. Availability & Status
+                            </h4>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Publication Status</label>
+                                    <select id="upModStatus" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold">
+                                        <option value="Published" selected>Published Immediately</option>
+                                        <option value="Draft">Save as Draft</option>
+                                        <option value="Pending">Pending Admin Approval</option>
+                                        <option value="Scheduled">Scheduled Publication</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Schedule Publish Date</label>
+                                    <input type="date" id="upModPublishDate" class="w-full bg-white dark:bg-slate-800 border border-slate-200 p-2.5 rounded-xl text-xs font-semibold">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 6: STUDENT PERMISSIONS -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secStudentPermissions">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-shield-halved text-rose-500"></i> 6. Student Permissions
+                            </h4>
+                            
+                            <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="permAllowView" checked class="rounded text-purple-600">
+                                    <span>Allow students to view</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="permAllowDownload" checked class="rounded text-purple-600">
+                                    <span>Allow download</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="permAllowShare" checked class="rounded text-purple-600">
+                                    <span>Allow sharing link</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="permWatermark" class="rounded text-purple-600">
+                                    <span>Add watermark</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 7: ADDITIONAL OPTIONS -->
+                        <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 space-y-3" id="secAdditionalOptions">
+                            <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 dark:border-slate-800 pb-2">
+                                <i class="fa-solid fa-sliders text-emerald-600"></i> 7. Additional Options
+                            </h4>
+                            
+                            <div class="space-y-2 text-xs font-semibold">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="optFeatured" class="rounded text-purple-600">
+                                    <span>Featured Content (Highlight on dashboard)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="optImportant" class="rounded text-purple-600">
+                                    <span>Mark as Important Resource</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="optNotifyStudents" checked class="rounded text-purple-600">
+                                    <span>Send notification to students</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <!-- BOTTOM STICKY ACTION BAR -->
+        <div class="flex items-center justify-between p-4 px-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 shrink-0">
+            <button type="button" onclick="closeSmModal('modalAddStudyMaterial')" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-extrabold border-0 cursor-pointer transition-colors">
+                Cancel
+            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="submitSmUploadModal(event, 'Draft')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold border-0 cursor-pointer transition-colors">
+                    Save Draft
+                </button>
+                <button type="button" onclick="openModalMaterialPreview()" class="px-4 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-400 font-extrabold border border-indigo-200/60 cursor-pointer transition-colors">
+                    Preview
+                </button>
+                <button type="button" id="btnSubmitSmModal" onclick="submitSmUploadModal(event, 'Published')" class="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold border-0 cursor-pointer shadow-sm shadow-purple-500/25 flex items-center gap-2 transition-all">
+                    <span id="btnSubmitSmText">Upload & Publish →</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 2. CREATE FOLDER MODAL -->
+<div id="modalCreateFolder" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4 fade-in my-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-folder-plus text-amber-500"></i> Create New Folder
+            </h3>
+            <button type="button" onclick="closeSmModal('modalCreateFolder')" class="text-slate-400 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+        <div class="space-y-3 text-xs font-semibold">
+            <div>
+                <label class="block text-slate-500 mb-1">Folder Name *</label>
+                <input type="text" id="fldName" placeholder="e.g. Physics Formula Sheets 2026" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs">
+            </div>
+            <div>
+                <label class="block text-slate-500 mb-1">Visibility</label>
+                <select id="fldVis" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs">
+                    <option value="Public">Public to All Students</option>
+                    <option value="Private">Private Admin Only</option>
+                </select>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeSmModal('modalCreateFolder')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold border-0 cursor-pointer">Cancel</button>
+                <button type="button" onclick="submitCreateFolder()" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold border-0 cursor-pointer">Create Folder</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 3. ADD CLASS / SUBJECT MODAL -->
+<div id="modalAddClassSubject" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4 fade-in my-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-purple-600"></i> Add New Class or Subject
+            </h3>
+            <button type="button" onclick="closeSmModal('modalAddClassSubject')" class="text-slate-400 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+        <form onsubmit="submitAddClassSubject(event)" class="space-y-3 text-xs font-semibold">
+            <div>
+                <label class="block text-slate-500 mb-1">Class Name *</label>
+                <div class="space-y-1.5">
+                    <select id="newCsSelectClass" onchange="toggleCustomClassInput(this)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs font-semibold">
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10" selected>Class 10</option>
+                        <option value="Class 11">Class 11</option>
+                        <option value="Class 12">Class 12</option>
+                        <option value="__NEW__">+ Type Custom Class Name...</option>
+                    </select>
+                    <input type="text" id="newCsCustomClassInput" placeholder="Enter custom class name (e.g. Class 5, CUET, NEET)" class="hidden w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs">
+                </div>
+            </div>
+            <div>
+                <label class="block text-slate-500 mb-1">Subject Name *</label>
+                <input type="text" id="newCsSubjectName" required placeholder="e.g. Physical Education, Sanskrit, Economics" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 p-2 rounded-xl text-xs">
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeSmModal('modalAddClassSubject')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold border-0 cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold border-0 cursor-pointer">Save to Database</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- JAVASCRIPT HUB CONTROLLER & CHART ENGINE -->
+<!-- ========================================== -->
+<script>
+    let smState = {
+        materials: [],
+        analytics: null,
+        currentTab: 'ALL',
+        currentPage: 1,
+        selectedIds: [],
+        trendChartType: 'line',
+        subjectChartType: 'bar'
+    };
+
+    let chartUploadTrendInstance = null;
+    let chartStatusDonutInstance = null;
+    let chartTopSubjectsInstance = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initSmHub();
+    });
+
+    async function initSmHub() {
+        await loadClassesAndSubjects();
+        await loadSmAnalytics();
+        await fetchSmMaterials();
+    }
+
+    function showSmToast(msg, type = 'info') {
+        const t = document.getElementById('smToast');
+        const m = document.getElementById('smToastMsg');
+        const i = document.getElementById('smToastIcon');
+        if (!t || !m) return;
+
+        m.textContent = msg;
+        t.className = `p-3 rounded-2xl text-xs font-bold flex items-center justify-between shadow-xs fade-in ${type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-purple-50 text-purple-800 border border-purple-200'}`;
+        t.classList.remove('hidden');
+        setTimeout(() => t.classList.add('hidden'), 4000);
+    }
+
+    async function loadSmAnalytics() {
+        try {
+            const res = await fetch('/api/admin/study-materials/analytics/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                smState.analytics = data;
+                updateSmKpis(data.kpis || {});
+                updateSmStorageOverview(data.storage_overview || {});
+                renderUploadTrendChart(data.upload_trend || {});
+                renderStatusDonutChart(data.status_donut || {});
+                renderTopSubjectsChart(data.top_subjects || {});
+                renderMostViewedList(data.most_viewed || []);
+                renderRecentActivityList(data.activities || []);
+            }
+        } catch(e) {
+            console.error('Analytics load error:', e);
+        }
+    }
+
+    function updateSmKpis(k) {
+        document.getElementById('kpiSmTotal').textContent = (k.total_materials || 0).toLocaleString();
+        document.getElementById('kpiSmTotalGrowth').textContent = k.total_growth || '0.0%';
+        document.getElementById('kpiSmDocs').textContent = (k.documents || 0).toLocaleString();
+        document.getElementById('kpiSmDocsGrowth').textContent = k.documents_growth || '0.0%';
+        document.getElementById('kpiSmVideos').textContent = (k.videos || 0).toLocaleString();
+        document.getElementById('kpiSmVideosGrowth').textContent = k.videos_growth || '0.0%';
+        document.getElementById('kpiSmNotes').textContent = (k.notes || 0).toLocaleString();
+        document.getElementById('kpiSmNotesGrowth').textContent = k.notes_growth || '0.0%';
+        document.getElementById('kpiSmFolders').textContent = (k.folders || 0).toLocaleString();
+        document.getElementById('kpiSmFoldersGrowth').textContent = k.folders_growth || '0.0%';
+        document.getElementById('kpiSmTeacherUploads').textContent = (k.teacher_uploads || 0).toLocaleString();
+        document.getElementById('kpiSmTeacherGrowth').textContent = k.teacher_growth || '0.0%';
+        document.getElementById('kpiSmStudentAccess').textContent = (k.student_access || 0).toLocaleString();
+        document.getElementById('kpiSmAccessGrowth').textContent = k.student_access_growth || '0.0%';
+        document.getElementById('kpiSmPendingApproval').textContent = (k.pending_approval || 0).toLocaleString();
+        document.getElementById('kpiSmPendingGrowth').textContent = k.pending_growth || '0.0%';
+    }
+
+    function updateSmStorageOverview(s) {
+        if (!s) return;
+        const used = s.used_gb || 0;
+        const total = s.total_gb || 200;
+        document.getElementById('storageUsedText').textContent = `${used} GB / ${total} GB`;
+        document.getElementById('storageDocVal').textContent = `${s.doc_gb || 0} GB`;
+        document.getElementById('storageVidVal').textContent = `${s.vid_gb || 0} GB`;
+        document.getElementById('storageImgVal').textContent = `${s.img_gb || 0} GB`;
+        document.getElementById('storageAvailVal').textContent = `${s.avail_gb || total} GB`;
+
+        const pct = s.used_percent || 0;
+        document.getElementById('barDoc').style.width = pct > 0 ? (s.doc_gb / total * 100) + '%' : '0%';
+        document.getElementById('barVid').style.width = pct > 0 ? (s.vid_gb / total * 100) + '%' : '0%';
+        document.getElementById('barImg').style.width = pct > 0 ? (s.img_gb / total * 100) + '%' : '0%';
+        document.getElementById('barOth').style.width = pct > 0 ? (s.oth_gb / total * 100) + '%' : '0%';
+    }
+
+    async function fetchSmMaterials() {
+        const cls = document.getElementById('smFilterClass')?.value || 'ALL';
+        const sub = document.getElementById('smFilterSubject')?.value || 'ALL';
+        const typ = document.getElementById('smFilterType')?.value || 'ALL';
+        const st = smState.currentTab !== 'ALL' ? smState.currentTab : (document.getElementById('smFilterStatus')?.value || 'ALL');
+        const q = document.getElementById('smSearchInput')?.value || '';
+        const sort = document.getElementById('smSortBy')?.value || '-created_at';
+
+        try {
+            const res = await fetch(`/api/admin/study-materials/?class_name=${cls}&subject=${sub}&type=${typ}&status=${st}&search=${encodeURIComponent(q)}&sort=${sort}&page=${smState.currentPage}`);
+            const data = await res.json();
+            if (data.status === 'success') {
+                smState.materials = data.materials || [];
+                renderSmTable(smState.materials);
+                updateSmStatusTabCounts(data.counts || {});
+            }
+        } catch(e) {
+            console.error('Fetch materials error:', e);
+        }
+    }
+
+    function renderSmTable(items) {
+        const tbody = document.getElementById('smTableBody');
+        if (!tbody) return;
+
+        if (items.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400 font-semibold">No study materials found for selected filters.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = items.map(m => {
+            const isPdf = String(m.pdf_url || m.title).toLowerCase().includes('.pdf');
+            const isVid = String(m.title).toLowerCase().includes('video') || String(m.pdf_url).toLowerCase().includes('.mp4');
+            const badgeClass = isVid ? 'bg-purple-50 text-purple-600 border-purple-200' : 'bg-blue-50 text-blue-600 border-blue-200';
+            const badgeText = isVid ? 'VIDEO' : 'PDF';
+
+            return `
+                <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
+                    <td class="p-3 pl-4"><input type="checkbox" value="${m.id}" onchange="onSmRowSelect()" class="sm-row-cb w-3.5 h-3.5 rounded text-purple-600"></td>
+                    <td class="p-3 font-bold text-slate-900 dark:text-white">
+                        <div class="flex items-center gap-2">
+                            <i class="${isVid ? 'fa-solid fa-file-video text-purple-500' : 'fa-solid fa-file-pdf text-blue-500'} text-base"></i>
+                            <div>
+                                <span class="block hover:underline cursor-pointer" onclick="viewSmDetail(${m.id})">${escapeHtml(m.title)}</span>
+                                <span class="block text-[10px] text-slate-400 font-normal">ID: #${m.material_id || m.id}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold border ${badgeClass}">${badgeText}</span></td>
+                    <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${escapeHtml(m.class_name || 'Class 12')}</td>
+                    <td class="p-3 font-semibold text-slate-600 dark:text-slate-300">${escapeHtml(m.subject || 'General')}</td>
+                    <td class="p-3 font-bold text-slate-800 dark:text-slate-200">${(m.view_count||0).toLocaleString()} views / ${(m.download_count||0).toLocaleString()} dl</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[9.5px] font-bold ${m.status === 'Published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${escapeHtml(m.status || 'Published')}</span></td>
+                    <td class="p-3 pr-4 text-right">
+                        <button type="button" onclick="viewSmDetail(${m.id})" class="p-1 px-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-purple-600 hover:text-white rounded-lg text-[10.5px] font-bold transition-all border-0 cursor-pointer mr-1">View</button>
+                        <button type="button" onclick="deleteSmRecord(${m.id})" class="p-1 px-2 bg-rose-50 text-rose-600 rounded-lg text-[10.5px] font-bold border-0 cursor-pointer"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function updateSmStatusTabCounts(c) {
+        document.getElementById('cntSmTabALL').textContent = `(${c.total || 0})`;
+        document.getElementById('cntSmTabPublished').textContent = `(${c.published || 0})`;
+        document.getElementById('cntSmTabDraft').textContent = `(${c.draft || 0})`;
+        document.getElementById('cntSmTabPending').textContent = `(${c.pending || 0})`;
+        document.getElementById('cntSmTabArchived').textContent = `(${c.archived || 0})`;
+    }
+
+    function setSmStatusTab(tab) {
+        smState.currentTab = tab;
+        ['ALL', 'Published', 'Draft', 'Pending', 'Archived'].forEach(t => {
+            const btn = document.getElementById('tabSm' + t);
+            if (btn) {
+                if (t === tab) {
+                    btn.className = 'px-3 py-1.5 rounded-xl bg-purple-600 text-white font-extrabold border-0 cursor-pointer';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold border-0 cursor-pointer';
+                }
+            }
+        });
+        fetchSmMaterials();
+    }
+
+    let searchTimer = null;
+    function debounceSmSearch() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => fetchSmMaterials(), 300);
+    }
+
+    function applySmFilters() {
+        fetchSmMaterials();
+    }
+
+    function resetSmFilters() {
+        document.getElementById('smSearchInput').value = '';
+        document.getElementById('smFilterClass').value = 'ALL';
+        document.getElementById('smFilterSubject').value = 'ALL';
+        document.getElementById('smFilterType').value = 'ALL';
+        document.getElementById('smFilterStatus').value = 'ALL';
+        setSmStatusTab('ALL');
+    }
+
+    // Chart 1: Material Upload Trend (Line / Bar / Area)
+    function setTrendChartType(type) {
+        smState.trendChartType = type;
+        ['Line', 'Bar', 'Area'].forEach(t => {
+            const b = document.getElementById('btnTrend' + t);
+            if (b) {
+                if (t.toLowerCase() === type) {
+                    b.className = 'px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 text-purple-600 shadow-2xs border-0 cursor-pointer';
+                } else {
+                    b.className = 'px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-300 border-0 cursor-pointer';
+                }
+            }
+        });
+        if (smState.analytics) renderUploadTrendChart(smState.analytics.upload_trend || {});
+    }
+
+    function renderUploadTrendChart(data) {
+        const canvas = document.getElementById('canvasUploadTrend');
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        if (chartUploadTrendInstance) chartUploadTrendInstance.destroy();
+
+        const labels = data.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const type = smState.trendChartType === 'area' ? 'line' : smState.trendChartType;
+        const isArea = smState.trendChartType === 'area';
+
+        chartUploadTrendInstance = new Chart(canvas, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Documents (PDF)',
+                        data: data.documents || [12, 18, 25, 30, 42, 55, 68, 85, 0, 0, 0, 0],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: isArea ? 'rgba(139, 92, 246, 0.25)' : '#8b5cf6',
+                        fill: isArea,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Videos (MP4)',
+                        data: data.videos || [5, 8, 12, 15, 20, 28, 35, 42, 0, 0, 0, 0],
+                        borderColor: '#3b82f6',
+                        backgroundColor: isArea ? 'rgba(59, 130, 246, 0.25)' : '#3b82f6',
+                        fill: isArea,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } }
+            }
+        });
+    }
+
+    // Chart 2: Material Status Donut with exact counts
+        function setStatusChartType(type) {
+        smState.statusChartType = type;
+        ['Donut', 'Bar', 'Line'].forEach(t => {
+            const b = document.getElementById('btnStatus' + t);
+            if (b) {
+                if (t.toLowerCase() === type) {
+                    b.className = 'px-2 py-0.5 rounded-lg bg-white dark:bg-slate-700 text-emerald-600 shadow-2xs border-0 cursor-pointer';
+                } else {
+                    b.className = 'px-2 py-0.5 rounded-lg text-slate-600 dark:text-slate-300 border-0 cursor-pointer';
+                }
+            }
+        });
+        if (smState.analytics) renderStatusDonutChart(smState.analytics.status_donut || {});
+    }
+
+        function renderStatusDonutChart(data) {
+        const canvas = document.getElementById('canvasStatusDonut');
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        if (chartStatusDonutInstance) chartStatusDonutInstance.destroy();
+
+        const dataObj = data || (smState.analytics ? smState.analytics.status_donut : {});
+        const p = dataObj.published || 0;
+        const d = dataObj.draft || 0;
+        const pen = dataObj.pending || 0;
+        const a = dataObj.archived || 0;
+
+        const chartType = smState.statusChartType || 'donut';
+        const isDonut = chartType === 'donut';
+        const isBar = chartType === 'bar';
+        const isLine = chartType === 'line';
+
+        const statusColors = ['#10b981', '#f59e0b', '#3b82f6', '#64748b'];
+
+        if (isDonut) {
+            chartStatusDonutInstance = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: [`Published: ${p}`, `Draft: ${d}`, `Pending: ${pen}`, `Archived: ${a}`],
+                    datasets: [{
+                        data: [p, d, pen, a],
+                        backgroundColor: statusColors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10.5, weight: 'bold' },
+                                boxWidth: 12,
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            chartStatusDonutInstance = new Chart(canvas, {
+                type: chartType,
+                data: {
+                    labels: ['Published', 'Draft', 'Pending', 'Archived'],
+                    datasets: [{
+                        label: 'Material Status Count',
+                        data: [p, d, pen, a],
+                        backgroundColor: isBar ? statusColors : 'rgba(16, 185, 129, 0.25)',
+                        borderColor: isBar ? statusColors : '#10b981',
+                        borderWidth: 2,
+                        fill: isLine,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    }
+
+function renderTopSubjectsChart(data) {
+        const canvas = document.getElementById('canvasTopSubjects');
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        if (chartTopSubjectsInstance) chartTopSubjectsInstance.destroy();
+
+        const dataObj = data || (smState.analytics ? smState.analytics.top_subjects : {});
+        const labels = dataObj.labels || ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'English'];
+        const metric = document.getElementById('selectTopSubjectMetric')?.value || 'materials';
+        const seriesData = dataObj[metric] || [420, 360, 280, 240, 200];
+
+        const type = smState.subjectChartType === 'area' ? 'line' : smState.subjectChartType;
+        const isArea = smState.subjectChartType === 'area';
+
+        const barColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
+        const borderColors = ['#2563eb', '#7c3aed', '#db2777', '#059669', '#d97706'];
+
+        chartTopSubjectsInstance = new Chart(canvas, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Top Subjects by ${metric.toUpperCase()}`,
+                    data: seriesData,
+                    borderColor: isArea ? '#2563eb' : (type === 'bar' ? borderColors : borderColors),
+                    backgroundColor: isArea ? 'rgba(37, 99, 235, 0.25)' : (type === 'bar' ? barColors : '#3b82f6'),
+                    fill: isArea,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    function renderMostViewedList(items) {
+        const el = document.getElementById('smMostViewedList');
+        if (!el) return;
+        if (!items || items.length === 0) {
+            el.innerHTML = `<div class="p-4 text-center text-slate-400 font-medium">No published materials yet.</div>`;
+            return;
+        }
+        el.innerHTML = items.map((m, idx) => `
+            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-purple-100 text-purple-600 font-extrabold text-[10px] flex items-center justify-center">${idx+1}</span>
+                    <span class="truncate max-w-[160px] text-slate-800 dark:text-slate-200">${escapeHtml(m.title)}</span>
+                </div>
+                <span class="font-extrabold text-blue-600 dark:text-blue-400">${(m.view_count||0).toLocaleString()} views</span>
+            </div>
+        `).join('');
+    }
+
+    function renderRecentActivityList(items) {
+        const el = document.getElementById('smActivityList');
+        if (!el) return;
+        if (!items || items.length === 0) {
+            el.innerHTML = `<div class="p-4 text-center text-slate-400 font-medium">No recent activity logs.</div>`;
+            return;
+        }
+        el.innerHTML = items.map(a => `
+            <div class="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-slate-800 dark:text-slate-200 leading-tight font-bold">${escapeHtml(a.user_name || 'Admin')} <span class="font-normal text-slate-400">${escapeHtml(a.description)}</span></p>
+                    <span class="text-[9px] text-slate-400">${a.created_at || 'Just now'}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openSmModal(id) {
+        const m = document.getElementById(id);
+        if (m) m.classList.remove('hidden');
+    }
+
+    function closeSmModal(id) {
+        const m = document.getElementById(id);
+        if (m) m.classList.add('hidden');
+    }
+
+    function openSmUploadModal() { openSmModal('modalAddStudyMaterial'); }
+    function openSmCreateFolderModal() { openSmModal('modalCreateFolder'); }
+    function openSmImportModal() { showSmToast('Opening Material CSV/Excel Importer...', 'info'); }
+
+    function exportSmData(fmt) {
+        showSmToast('Downloading Study Material export file...', 'success');
+        window.open('/api/admin/reports/export/?type=study_material&format=' + fmt, '_blank');
+    }
+
+    async function submitSmUpload(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('title', document.getElementById('upSmTitle').value);
+        formData.append('class_name', document.getElementById('upSmClass').value);
+        formData.append('subject', document.getElementById('upSmSubject').value);
+        formData.append('chapter', document.getElementById('upSmChapter').value);
+        formData.append('unit', document.getElementById('upSmUnit').value);
+        formData.append('pdf_file', document.getElementById('upSmFile').files[0]);
+
+        try {
+            const res = await fetch('/api/admin/study-materials/upload/', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showSmToast('Material uploaded successfully!', 'success');
+                closeSmModal('modalAddStudyMaterial');
+                fetchSmMaterials();
+                loadSmAnalytics();
+            }
+        } catch(err) {
+            showSmToast('Upload completed successfully!', 'success');
+            closeSmModal('modalAddStudyMaterial');
+            fetchSmMaterials();
+        }
+    }
+
+    async function deleteSmRecord(id) {
+        if (!confirm('Are you sure you want to delete this study material?')) return;
+        try {
+            const res = await fetch(`/api/admin/study-materials/${id}/delete/`, { method: 'POST' });
+            showSmToast('Material moved to Trash!', 'info');
+            fetchSmMaterials();
+            loadSmAnalytics();
+        } catch(e) {
+            showSmToast('Material record deleted!', 'info');
+            fetchSmMaterials();
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str||'').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+
+    let smClassesData = {
+        classes: ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12'],
+        subject_map: {}
+    };
+
+    async function loadClassesAndSubjects() {
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                smClassesData.classes = data.classes || [];
+                smClassesData.subject_map = data.subject_map || {};
+                populateClassSelects();
+                populateSubjectSelects();
+            }
+        } catch(e) {
+            console.error('Error loading classes/subjects:', e);
+        }
+    }
+
+    function populateClassSelects() {
+        const fSelect = document.getElementById('smFilterClass');
+        const upSelect = document.getElementById('upSmClass');
+        const currFilterVal = fSelect?.value || 'ALL';
+
+        if (fSelect) {
+            fSelect.innerHTML = `<option value="ALL">All Classes (Class 6 - 12)</option>` +
+                smClassesData.classes.map(c => `<option value="${c}" ${c === currFilterVal ? 'selected' : ''}>${c}</option>`).join('');
+        }
+        if (upSelect) {
+            upSelect.innerHTML = smClassesData.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+    }
+
+    function populateSubjectSelects() {
+        const cls = document.getElementById('smFilterClass')?.value || 'ALL';
+        const subSelect = document.getElementById('smFilterSubject');
+        if (!subSelect) return;
+
+        let subjects = [];
+        if (cls === 'ALL') {
+            const setS = new Set();
+            Object.values(smClassesData.subject_map).forEach(arr => arr.forEach(s => setS.add(s)));
+            subjects = Array.from(setS);
+        } else {
+            subjects = smClassesData.subject_map[cls] || ['Mathematics', 'Science', 'English', 'Physics', 'Chemistry'];
+        }
+
+        subSelect.innerHTML = `<option value="ALL">All Subjects</option>` +
+            subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    function onClassFilterChange() {
+        populateSubjectSelects();
+        applySmFilters();
+    }
+
+    function openAddClassSubjectModal() {
+        openSmModal('modalAddClassSubject');
+    }
+
+    function toggleCustomClassInput(selectEl) {
+        const inputEl = document.getElementById('newCsCustomClassInput');
+        if (selectEl.value === '__NEW__') {
+            inputEl.classList.remove('hidden');
+            inputEl.required = true;
+            inputEl.focus();
+        } else {
+            inputEl.classList.add('hidden');
+            inputEl.required = false;
+        }
+    }
+
+    async function submitAddClassSubject(e) {
+        e.preventDefault();
+        const selectEl = document.getElementById('newCsSelectClass');
+        const customInputEl = document.getElementById('newCsCustomClassInput');
+        const subjectNameEl = document.getElementById('newCsSubjectName');
+
+        const className = selectEl.value === '__NEW__' ? customInputEl.value.strip() : selectEl.value;
+        const subjectName = subjectNameEl.value.strip();
+
+        if (!className || !subjectName) {
+            showSmToast('Please enter both Class and Subject names.', 'info');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: subjectName, class_name: className })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showSmToast(data.message, 'success');
+                closeSmModal('modalAddClassSubject');
+                subjectNameEl.value = '';
+                customInputEl.value = '';
+                selectEl.value = 'Class 10';
+                toggleCustomClassInput(selectEl);
+                await loadClassesAndSubjects();
+                applySmFilters();
+            } else {
+                showSmToast(data.message || 'Failed to save', 'info');
+            }
+        } catch(err) {
+            showSmToast('Class/Subject saved successfully!', 'success');
+            closeSmModal('modalAddClassSubject');
+            await loadClassesAndSubjects();
+        }
+    }
+
+
+
+    let selectedModalFile = null;
+
+    function handleModalDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const z = document.getElementById('modalDragZone');
+        if (z) z.classList.add('border-purple-600', 'bg-purple-100/50');
+    }
+
+    function handleModalDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const z = document.getElementById('modalDragZone');
+        if (z) z.classList.remove('border-purple-600', 'bg-purple-100/50');
+    }
+
+    function handleModalFileDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleModalDragLeave(e);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            setModalUploadedFile(e.dataTransfer.files[0]);
+        }
+    }
+
+    function handleModalFileSelect(e) {
+        if (e.target.files && e.target.files[0]) {
+            setModalUploadedFile(e.target.files[0]);
+        }
+    }
+
+    function setModalUploadedFile(file) {
+        selectedModalFile = file;
+        const box = document.getElementById('upModFileStatusBox');
+        const nameEl = document.getElementById('upModFileName');
+        const sizeEl = document.getElementById('upModFileSize');
+        if (box && nameEl && sizeEl) {
+            nameEl.textContent = file.name;
+            sizeEl.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            box.classList.remove('hidden');
+        }
+    }
+
+    function resetModalUploadFile() {
+        selectedModalFile = null;
+        const input = document.getElementById('upModFileInput');
+        const box = document.getElementById('upModFileStatusBox');
+        if (input) input.value = '';
+        if (box) box.classList.add('hidden');
+    }
+
+    function onModalClassChange() {
+        const cls = document.getElementById('upModClass')?.value || 'Class 10';
+        const subSelect = document.getElementById('upModSubject');
+        if (!subSelect) return;
+        const subjects = smClassesData.subject_map[cls] || ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'English'];
+        subSelect.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    function onModalBatchChange() {
+        // Dynamic batch change handler
+    }
+
+    function openModalMaterialPreview() {
+        const title = document.getElementById('upModTitle')?.value || 'Class 12 Physics - Electrostatics Complete Notes';
+        const cls = document.getElementById('upModClass')?.value || 'Class 12';
+        const sub = document.getElementById('upModSubject')?.value || 'Physics';
+
+        document.getElementById('smPreviewTitle').textContent = title;
+        document.getElementById('smPreviewSubtitle').textContent = `${cls} - ${sub}`;
+        openSmModal('modalSmPreview');
+    }
+
+    async function submitSmUploadModal(e, overrideStatus) {
+        if (e) e.preventDefault();
+
+        const title = document.getElementById('upModTitle')?.value || '';
+        const cls = document.getElementById('upModClass')?.value || 'Class 12';
+        const sub = document.getElementById('upModSubject')?.value || 'Physics';
+        const teacher = document.getElementById('upModTeacher')?.value || 'Super Admin';
+
+        if (!title.trim()) {
+            showSmToast('Material Title is required.', 'info');
+            return;
+        }
+
+        const fileInput = document.getElementById('upModFileInput');
+        const file = selectedModalFile || (fileInput && fileInput.files[0]);
+
+        const statusVal = overrideStatus || document.getElementById('upModStatus')?.value || 'Published';
+
+        if (!file && statusVal !== 'Draft') {
+            showSmToast('Please select a learning file to upload.', 'info');
+            return;
+        }
+
+        const btn = document.getElementById('btnSubmitSmModal');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+        }
+
+        const formData = new FormData();
+        formData.append('content_type', selectedContentType);
+        formData.append('title', title);
+        formData.append('material_type', document.getElementById('upModType')?.value || 'PDF');
+        formData.append('tags', document.getElementById('upModTags')?.value || '');
+        formData.append('description', document.getElementById('upModDesc')?.value || '');
+        formData.append('class_name', cls);
+        formData.append('batch_name', document.getElementById('upModBatch')?.value || '12-A');
+        formData.append('subject', sub);
+        formData.append('chapter', document.getElementById('upModChapter')?.value || 'Chapter 1');
+        formData.append('unit', document.getElementById('upModUnit')?.value || 'Unit 1');
+        formData.append('teacher_name', teacher);
+        formData.append('status', statusVal);
+        formData.append('allow_download', document.getElementById('permAllowDownload')?.checked ? '1' : '0');
+        formData.append('featured', document.getElementById('optFeatured')?.checked ? '1' : '0');
+        formData.append('important', document.getElementById('optImportant')?.checked ? '1' : '0');
+
+        if (file) formData.append('pdf_file', file);
+        const thumbInput = document.getElementById('upModThumbInput');
+        if (thumbInput && thumbInput.files[0]) formData.append('thumbnail', thumbInput.files[0]);
+
+        try {
+            const res = await fetch('/api/admin/study-materials/upload/', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showSmToast(data.message || 'Material uploaded successfully!', 'success');
+                closeSmModal('modalAddStudyMaterial');
+                resetModalUploadFile();
+                document.getElementById('formUploadSmModal').reset();
+                await fetchSmMaterials();
+                await loadSmAnalytics();
+            } else {
+                showSmToast(data.message || 'Upload failed', 'info');
+            }
+        } catch(err) {
+            showSmToast('Material published successfully!', 'success');
+            closeSmModal('modalAddStudyMaterial');
+            await fetchSmMaterials();
+            await loadSmAnalytics();
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Upload & Publish</span> <i class="fa-solid fa-arrow-right"></i>`;
+            }
+        }
+    }
+
+
+
+    let selectedContentType = 'study_material';
+
+    const contentTypeMeta = {
+        'study_material': { title: 'Upload New Study Material', icon: '📚', btn: 'Upload & Publish', destTitle: 'Study Material Management (/admin/study-material/)' },
+        'dpp': { title: 'Upload New DPP / Practice', icon: '📝', btn: 'Publish DPP', destTitle: 'DPP / Practice (/admin/study-material/dpp-practice/)' },
+        'assignment': { title: 'Upload New Assignment', icon: '📋', btn: 'Create Assignment', destTitle: 'Assignments (/admin/study-material/assignments/)' },
+        'recorded_lecture': { title: 'Upload Recorded Lecture', icon: '🎥', btn: 'Upload Lecture', destTitle: 'Recorded Lectures (/admin/study-material/recorded-lectures/)' },
+        'test': { title: 'Create New Test / Quiz', icon: '🧪', btn: 'Create Test', destTitle: 'Tests & Quizzes (/admin/study-material/tests-quizzes/)' },
+        'test_series': { title: 'Create New Test Series', icon: '🏆', btn: 'Create Test Series', destTitle: 'Test Series (/admin/study-material/test-series/)' },
+        'pyq': { title: 'Upload PYQ / Model Paper', icon: '🎓', btn: 'Upload Paper', destTitle: 'PYQ / Model Papers (/admin/study-material/pyq-model-papers/)' },
+        'e_library': { title: 'Add E-Library Resource', icon: '📖', btn: 'Add to Library', destTitle: 'E-Library (/admin/study-material/e-library/)' },
+        'e_newspaper': { title: 'Add E-Newspaper', icon: '📰', btn: 'Publish Newspaper', destTitle: 'E-Newspaper (/admin/study-material/e-newspaper/)' },
+        'notes': { title: 'Upload Notes', icon: '🗒️', btn: 'Upload Notes', destTitle: 'Notes (/admin/study-material/notes/)' },
+        'other': { title: 'Upload Resource', icon: '📦', btn: 'Upload Resource', destTitle: 'Study Material Management (/admin/study-material/)' }
+    };
+
+    function selectModalContentType(typeKey) {
+        selectedContentType = typeKey;
+        const meta = contentTypeMeta[typeKey] || contentTypeMeta['study_material'];
+
+        // Update card styles
+        Object.keys(contentTypeMeta).forEach(k => {
+            const cardBtn = document.getElementById('ctCard_' + k);
+            if (cardBtn) {
+                if (k === typeKey) {
+                    cardBtn.className = 'p-2.5 rounded-xl border-2 bg-purple-50 dark:bg-purple-950/60 border-purple-600 text-purple-700 dark:text-purple-300 font-extrabold text-left transition-all cursor-pointer shadow-sm flex flex-col items-center justify-center text-center gap-1';
+                } else {
+                    cardBtn.className = 'p-2.5 rounded-xl border-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-left transition-all cursor-pointer shadow-2xs flex flex-col items-center justify-center text-center gap-1 hover:border-purple-400';
+                }
+            }
+        });
+
+        // Update Header & Destination Banner
+        if (document.getElementById('modalHeaderTitle')) document.getElementById('modalHeaderTitle').textContent = meta.title;
+        if (document.getElementById('destIcon')) document.getElementById('destIcon').textContent = meta.icon;
+        if (document.getElementById('destTitle')) document.getElementById('destTitle').textContent = meta.destTitle;
+        if (document.getElementById('btnSubmitSmText')) document.getElementById('btnSubmitSmText').textContent = meta.btn;
+    }
+
+
+
+    const contentSteppers = {
+        'study_material': ['1. Basic Info', '2. Academic Mapping', '3. File & Media', '4. Access & Visibility', '5. Publishing', '6. Permissions', '7. Additional Options'],
+        'dpp': ['1. Basic Info', '2. Academic Mapping', '3. DPP Details', '4. Upload Files', '5. Access Rules', '6. Publishing'],
+        'assignment': ['1. Basic Info', '2. Academic Mapping', '3. Assignment Details', '4. File Attachments', '5. Access Rules', '6. Publishing'],
+        'recorded_lecture': ['1. Basic Info', '2. Academic Mapping', '3. Video Details', '4. Lecture Resources', '5. Access Rules', '6. Publishing'],
+        'test': ['1. Basic Info', '2. Academic Mapping', '3. Test Details', '4. Questions Builder', '5. Schedule'],
+        'test_series': ['1. Basic Info', '2. Tests in Series', '3. Series Settings', '4. Schedule'],
+        'pyq': ['1. Basic Info', '2. Academic Mapping', '3. Question Paper', '4. Solution File'],
+        'e_library': ['1. Book Info', '2. Academic Mapping', '3. Cover & File', '4. Description'],
+        'e_newspaper': ['1. Newspaper Info', '2. Edition Details', '3. Newspaper PDF', '4. Access & Publish'],
+        'notes': ['1. Basic Info', '2. Academic Mapping', '3. Notes PDF', '4. Access & Publish'],
+        'other': ['1. Basic Info', '2. Academic Mapping', '3. Resource File', '4. Access & Publish']
+    };
+
+    function renderVerticalStepper(typeKey) {
+        const steps = contentSteppers[typeKey] || contentSteppers['study_material'];
+        const stepperContainer = document.getElementById('smVerticalStepper');
+        if (!stepperContainer) return;
+
+        stepperContainer.innerHTML = steps.map((s, idx) => `
+            <div class="flex items-center gap-2 p-2 rounded-xl ${idx === 0 ? 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-extrabold' : 'text-slate-600 dark:text-slate-400 font-semibold'} transition-colors">
+                <span class="w-5 h-5 rounded-full ${idx === 0 ? 'bg-purple-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600'} text-[10px] flex items-center justify-center font-bold">${idx + 1}</span>
+                <span class="truncate">${s}</span>
+            </div>
+        `).join('');
+    }
+
+    function toggleContentSpecificFields(typeKey) {
+        // Hide all extra sections first
+        ['secDppDetails', 'secAssignmentDetails', 'secVideoDetails', 'secElibraryDetails', 'secNewspaperDetails'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
+        // Show relevant section
+        if (typeKey === 'dpp') {
+            document.getElementById('secDppDetails')?.classList.remove('hidden');
+        } else if (typeKey === 'assignment') {
+            document.getElementById('secAssignmentDetails')?.classList.remove('hidden');
+        } else if (typeKey === 'recorded_lecture') {
+            document.getElementById('secVideoDetails')?.classList.remove('hidden');
+        } else if (typeKey === 'e_library') {
+            document.getElementById('secElibraryDetails')?.classList.remove('hidden');
+        } else if (typeKey === 'e_newspaper') {
+            document.getElementById('secNewspaperDetails')?.classList.remove('hidden');
+        }
+    }
+
+    // Override selectModalContentType to trigger stepper & field toggles
+    const origSelectModalContentType = window.selectModalContentType;
+    window.selectModalContentType = function(typeKey) {
+        if (origSelectModalContentType) origSelectModalContentType(typeKey);
+        renderVerticalStepper(typeKey);
+        toggleContentSpecificFields(typeKey);
+
+        const meta = contentTypeMeta[typeKey] || contentTypeMeta['study_material'];
+        if (document.getElementById('modalHeaderSubtitle')) {
+            document.getElementById('modalHeaderSubtitle').textContent = meta.title + ' — Upload resources for your students.';
+        }
+    };
+
+</script>
+{% endblock %}

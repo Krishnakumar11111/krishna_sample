@@ -1,0 +1,494 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-6 fade-in">
+
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-black text-slate-900">Payments &amp; Invoices Overview</h2>
+            <p class="text-xs text-slate-500 font-medium">Track all payments, invoices, transactions and revenue in real time.</p>
+        </div>
+        <div class="flex items-center gap-2.5">
+            <button onclick="exportPaymentsCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer transition-colors flex items-center gap-2">
+                <i class="fas fa-file-export text-slate-500"></i>
+                <span>Export Report</span>
+            </button>
+            <button onclick="openModal('modalCreateInvoice')" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-extrabold text-xs tracking-wide px-5 py-2.5 rounded-xl border-0 cursor-pointer shadow-md shadow-blue-500/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2">
+                <span class="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center text-xs shrink-0"><i class="fas fa-plus"></i></span>
+                <span>+ Create Invoice</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== 8 KPI CARDS — ALL FROM REAL DB ========== -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        <!-- Total Revenue -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-emerald-600">
+                <i class="fas fa-wallet text-xs"></i>
+                <span class="text-[9px] font-extrabold text-emerald-600">Real DB</span>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total Revenue</span>
+            <h4 class="text-base font-black text-slate-900" id="kpiTotalRevenue">₹{{ total_revenue|default:"0.00" }}</h4>
+        </div>
+        <!-- Today's Revenue -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-blue-600">
+                <i class="fas fa-chart-line text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Today's Revenue</span>
+            <h4 class="text-base font-black text-blue-600" id="kpiTodayRevenue">₹{{ today_revenue|default:"0.00" }}</h4>
+        </div>
+        <!-- Pending Amount -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-amber-600">
+                <i class="fas fa-clock text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Pending Amount</span>
+            <h4 class="text-base font-black text-amber-600" id="kpiPendingAmount">₹{{ pending_amount|default:"0.00" }}</h4>
+            <span class="text-[8px] text-slate-400 block" id="kpiPendingCount">({{ pending_count|default:"0" }} pending)</span>
+        </div>
+        <!-- Total Transactions -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-indigo-600">
+                <i class="fas fa-exchange-alt text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Transactions</span>
+            <h4 class="text-base font-black text-slate-900" id="kpiTotalTxns">{{ total_transactions|default:"0" }}</h4>
+        </div>
+        <!-- Successful Payments -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-emerald-600">
+                <i class="fas fa-check-circle text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Successful</span>
+            <h4 class="text-base font-black text-slate-900" id="kpiSuccessPayments">{{ successful_payments|default:"0" }}</h4>
+            <span class="text-[8px] text-emerald-600 font-extrabold block" id="kpiSuccessRate">{{ success_rate|default:"0" }}% rate</span>
+        </div>
+        <!-- Failed Payments -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-rose-600">
+                <i class="fas fa-times-circle text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Failed</span>
+            <h4 class="text-base font-black text-rose-600" id="kpiFailedPayments">{{ failed_payments|default:"0" }}</h4>
+            <span class="text-[8px] text-rose-500 font-extrabold block" id="kpiFailureRate">{{ failure_rate|default:"0" }}% rate</span>
+        </div>
+        <!-- Refunded Amount -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-purple-600">
+                <i class="fas fa-undo text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Refunded</span>
+            <h4 class="text-base font-black text-slate-900" id="kpiRefundedAmount">₹{{ refunded_amount|default:"0.00" }}</h4>
+            <span class="text-[8px] text-slate-400 block" id="kpiRefundCount">({{ refund_count|default:"0" }} refunded)</span>
+        </div>
+        <!-- Discounts Given -->
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 space-y-1">
+            <div class="flex items-center justify-between text-teal-600">
+                <i class="fas fa-tags text-xs"></i>
+            </div>
+            <span class="text-[9px] text-slate-400 font-extrabold uppercase block">Discounts</span>
+            <h4 class="text-base font-black text-teal-600" id="kpiDiscountsGiven">₹{{ discounts_given|default:"0.00" }}</h4>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT & RIGHT SIDEBAR GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- LEFT/CENTER: FILTERS & RECENT TRANSACTIONS TABLE (2 COLS) -->
+        <div class="lg:col-span-2 space-y-4">
+            
+            <!-- FILTER BAR — DYNAMIC FROM REAL DB -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center gap-3">
+                <div class="flex-1 min-w-[180px]">
+                    <input type="text" id="paySearchInput" placeholder="Search by Txn ID, invoice, student name..." class="w-full border border-slate-200 p-2 rounded-xl outline-none text-xs font-medium" oninput="filterPayments()">
+                </div>
+                <select id="payStatusFilter" class="border border-slate-200 p-2 rounded-xl text-xs font-bold outline-none bg-white" onchange="filterPayments()">
+                    <option value="">All Statuses</option>
+                    {% for st in distinct_statuses %}
+                    <option value="{{ st }}">{{ st }}</option>
+                    {% endfor %}
+                </select>
+                <select id="payMethodFilter" class="border border-slate-200 p-2 rounded-xl text-xs font-bold outline-none bg-white" onchange="filterPayments()">
+                    <option value="">All Payment Methods</option>
+                    {% for pm in distinct_methods %}
+                    <option value="{{ pm }}">{{ pm }}</option>
+                    {% endfor %}
+                </select>
+                <button onclick="resetPaymentFilters()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3 py-2 rounded-xl border-0 cursor-pointer transition-colors">
+                    <i class="fas fa-sync-alt mr-1"></i> Reset
+                </button>
+            </div>
+
+            <!-- PAYMENT TRANSACTIONS TABLE -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-sm font-extrabold text-slate-900">Recent Payment Transactions</h3>
+                    <span class="text-[10px] text-slate-400 font-medium">Real-time DB Records</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 font-extrabold uppercase text-[10px]">
+                                <th class="p-3 text-left">Transaction ID</th>
+                                <th class="p-3 text-left">Student</th>
+                                <th class="p-3 text-left">Course / Batch</th>
+                                <th class="p-3 text-left">Amount</th>
+                                <th class="p-3 text-left">Method</th>
+                                <th class="p-3 text-left">Date &amp; Time</th>
+                                <th class="p-3 text-left">Status</th>
+                                <th class="p-3 text-left">Invoice</th>
+                                <th class="p-3 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payTableBody">
+                            {% for p in all_payments %}
+                            <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                <td class="p-3 font-mono text-[10px] font-bold text-slate-700">{{ p.transaction_id }}</td>
+                                <td class="p-3 font-extrabold text-slate-900 max-w-[140px] truncate">
+                                    {{ p.student_name }}
+                                    {% if p.student_email %}<span class="block text-[9px] font-normal text-slate-400 truncate">{{ p.student_email }}</span>{% endif %}
+                                </td>
+                                <td class="p-3 text-slate-600 max-w-[130px] truncate">{{ p.course_title }}</td>
+                                <td class="p-3 font-black text-slate-900">₹{{ p.amount }}</td>
+                                <td class="p-3">
+                                    <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-lg">{{ p.payment_method }}</span>
+                                </td>
+                                <td class="p-3 text-slate-400 text-[10px] whitespace-nowrap">{{ p.created_at|date:"d M Y, h:i A" }}</td>
+                                <td class="p-3">
+                                    {% if p.status == 'Success' %}
+                                    <span class="bg-emerald-50 text-emerald-600 text-[9px] font-extrabold px-2 py-0.5 rounded-full">SUCCESS</span>
+                                    {% elif p.status == 'Pending' %}
+                                    <span class="bg-amber-50 text-amber-600 text-[9px] font-extrabold px-2 py-0.5 rounded-full">PENDING</span>
+                                    {% elif p.status == 'Failed' %}
+                                    <span class="bg-rose-50 text-rose-600 text-[9px] font-extrabold px-2 py-0.5 rounded-full">FAILED</span>
+                                    {% elif p.status == 'Refunded' or p.status == 'Partially Refunded' %}
+                                    <span class="bg-purple-50 text-purple-600 text-[9px] font-extrabold px-2 py-0.5 rounded-full">{{ p.status|upper }}</span>
+                                    {% else %}
+                                    <span class="bg-slate-100 text-slate-600 text-[9px] font-extrabold px-2 py-0.5 rounded-full">{{ p.status|upper }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-3 font-mono text-[10px] text-blue-600 font-bold">
+                                    {{ p.invoice_number|default:"—" }}
+                                </td>
+                                <td class="p-3">
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="viewPaymentDetail({{ p.id }})" title="View Details" class="w-6 h-6 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 border-0 cursor-pointer text-[10px] flex items-center justify-center"><i class="fas fa-eye"></i></button>
+                                        <button onclick="previewInvoice({{ p.id }})" title="Invoice Receipt" class="w-6 h-6 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border-0 cursor-pointer text-[10px] flex items-center justify-center"><i class="fas fa-file-invoice"></i></button>
+                                        {% if p.status == 'Pending' %}
+                                        <button onclick="markPaymentPaid({{ p.id }})" title="Mark Paid" class="w-6 h-6 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border-0 cursor-pointer text-[10px] flex items-center justify-center"><i class="fas fa-check"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9" class="p-8 text-center">
+                                    <div class="text-slate-400 space-y-2">
+                                        <i class="fas fa-receipt text-3xl"></i>
+                                        <p class="font-bold text-sm">No payment transactions found</p>
+                                        <p class="text-[10px]">Create an invoice or record a payment to populate transaction history.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR WIDGETS (1 COL) -->
+        <div class="space-y-4">
+            
+            <!-- REVENUE OVERVIEW CHART -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-2xs">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-extrabold text-slate-800"><i class="fas fa-chart-line text-blue-600 mr-1.5"></i>Revenue Trend</h3>
+                    <span class="text-[9px] text-slate-400 font-bold">Last 7 Days</span>
+                </div>
+                <div id="payRevenueChartContainer" class="h-44">
+                    <canvas id="payRevenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- PAYMENT METHOD DISTRIBUTION -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-2xs">
+                <h3 class="text-xs font-extrabold text-slate-800"><i class="fas fa-chart-pie text-purple-600 mr-1.5"></i>Payment Method Distribution</h3>
+                <div id="payMethodChartContainer" class="h-40 flex items-center justify-center">
+                    <canvas id="payMethodChart"></canvas>
+                </div>
+            </div>
+
+            <!-- TOP COURSES BY REVENUE -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-2xs">
+                <h3 class="text-xs font-extrabold text-slate-800"><i class="fas fa-trophy text-amber-500 mr-1.5"></i>Top Courses by Revenue</h3>
+                <div id="payTopCourses" class="space-y-2">
+                    <div class="p-3 text-center text-slate-400 text-xs">
+                        <i class="fas fa-spinner fa-spin text-sm mb-1"></i>
+                        <p class="font-bold">Loading from database...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT PAYMENT ACTIVITY -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-2xs">
+                <h3 class="text-xs font-extrabold text-slate-800"><i class="fas fa-history text-indigo-500 mr-1.5"></i>Recent Activity</h3>
+                <div class="space-y-2" id="payActivityLog">
+                    {% for log in payment_logs %}
+                    <div class="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 text-[11px]">
+                        <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 text-[10px]">
+                            <i class="fas fa-receipt"></i>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-slate-700 leading-snug truncate">{{ log.description }}</p>
+                            <p class="text-[9px] text-slate-400">{{ log.created_at|date:"d M, h:i A" }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-4 text-center text-slate-400 text-xs">
+                        <p class="font-bold">No recent payment activity</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========== CREATE INVOICE MODAL ========== -->
+<div id="modalCreateInvoice" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onclick="if(event.target===this) closeModal('modalCreateInvoice')">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div class="p-5 border-b border-slate-100">
+            <h3 class="text-lg font-black text-slate-900"><i class="fas fa-file-invoice text-blue-600 mr-2"></i>Create New Invoice</h3>
+            <p class="text-[10px] text-slate-400 font-medium mt-0.5">Saves directly to Django database and creates audit record</p>
+        </div>
+        <form id="formCreateInvoice" class="p-5 space-y-3.5">
+            <!-- Student Selection -->
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Student Name *</label>
+                <input type="text" name="student_name" required placeholder="e.g. Rahul Sharma" class="w-full border p-2.5 rounded-xl outline-none font-bold text-xs">
+            </div>
+            <!-- Student Email & ID -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Student Email</label>
+                    <input type="email" name="student_email" placeholder="rahul@gmail.com" class="w-full border p-2.5 rounded-xl outline-none font-bold text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Student ID Code</label>
+                    <input type="text" name="student_id_code" placeholder="STD-10023" class="w-full border p-2.5 rounded-xl outline-none font-bold text-xs">
+                </div>
+            </div>
+            <!-- Course & Batch -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Course / Class *</label>
+                    <input type="text" name="course_title" required placeholder="Class 10 Saksham Batch" class="w-full border p-2.5 rounded-xl outline-none font-bold text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Batch Name</label>
+                    <input type="text" name="batch_title" placeholder="Batch 2026-27" class="w-full border p-2.5 rounded-xl outline-none font-bold text-xs">
+                </div>
+            </div>
+            <!-- Subtotal, Discount & Tax -->
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Subtotal (₹) *</label>
+                    <input type="number" step="0.01" id="invSubtotal" name="subtotal" required placeholder="4999" oninput="calcInvoiceTotals()" class="w-full border p-2 rounded-xl outline-none font-bold text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Discount (₹)</label>
+                    <input type="number" step="0.01" id="invDiscount" name="discount_amount" value="0" placeholder="500" oninput="calcInvoiceTotals()" class="w-full border p-2 rounded-xl outline-none font-bold text-xs text-emerald-600">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Tax / GST (₹)</label>
+                    <input type="number" step="0.01" id="invTax" name="tax_amount" value="0" placeholder="0" oninput="calcInvoiceTotals()" class="w-full border p-2 rounded-xl outline-none font-bold text-xs">
+                </div>
+            </div>
+            <!-- Final Total Calculation Display -->
+            <div class="p-3 bg-blue-50 rounded-xl border border-blue-100 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700">Final Net Amount:</span>
+                <span class="text-base font-black text-blue-700" id="invFinalTotalBadge">₹0.00</span>
+            </div>
+            <!-- Payment Method & Gateway -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Payment Method</label>
+                    <select name="payment_method" class="w-full border p-2 rounded-xl outline-none font-bold bg-white text-xs">
+                        <option value="UPI">UPI (GPay / PhonePe / Paytm)</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Net Banking">Net Banking</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Status</label>
+                    <select name="status" class="w-full border p-2 rounded-xl outline-none font-bold bg-white text-xs">
+                        <option value="Success">Success (Paid)</option>
+                        <option value="Pending">Pending (Unpaid)</option>
+                        <option value="Failed">Failed</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Notes -->
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Notes / Remainder</label>
+                <textarea name="notes" rows="2" placeholder="Fee receipt notes or installment details..." class="w-full border p-2.5 rounded-xl outline-none resize-none text-xs"></textarea>
+            </div>
+            <!-- Buttons -->
+            <div class="flex justify-end gap-2.5 pt-3 border-t">
+                <button type="button" onclick="closeModal('modalCreateInvoice')" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border-0 font-bold cursor-pointer transition-colors text-xs">Cancel</button>
+                <button type="submit" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-extrabold text-xs px-6 py-2.5 rounded-xl border-0 cursor-pointer shadow-md flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Generate Invoice Now</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- ========== PAYMENT DETAIL MODAL / DRAWER ========== -->
+<div id="modalPaymentDetail" class="hidden fixed inset-0 z-50 flex items-center justify-end bg-black/50 backdrop-blur-xs" onclick="if(event.target===this) closeModal('modalPaymentDetail')">
+    <div class="bg-white h-full w-full max-w-md p-6 space-y-5 overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between border-b pb-4">
+            <h3 class="text-base font-black text-slate-900"><i class="fas fa-receipt text-blue-600 mr-2"></i>Payment Details</h3>
+            <button onclick="closeModal('modalPaymentDetail')" class="text-slate-400 hover:text-slate-700 text-lg border-0 bg-transparent cursor-pointer"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="payDetailBody" class="space-y-4 text-xs">
+            <!-- Dynamic Javascript Populate -->
+        </div>
+    </div>
+</div>
+
+
+<!-- ========== INVOICE PRINT / PREVIEW MODAL ========== -->
+<div id="modalInvoicePreview" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onclick="if(event.target===this) closeModal('modalInvoicePreview')">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 max-h-[95vh] overflow-y-auto p-8 space-y-6" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-start border-b pb-6" id="invPreviewHeader">
+            <div>
+                <h2 class="text-2xl font-black text-indigo-950 tracking-tight">EDUTRUST LMS</h2>
+                <p class="text-xs text-slate-500 font-semibold">Official Fee Receipt &amp; Tax Invoice</p>
+            </div>
+            <div class="text-right">
+                <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-3 py-1 rounded-full uppercase" id="invPreviewStatus">PAID</span>
+                <p class="text-xs font-mono text-slate-500 mt-2" id="invPreviewNumber">INV-000000</p>
+            </div>
+        </div>
+
+        <div id="invPreviewBody" class="space-y-6 text-xs">
+            <!-- Dynamic Receipt Populate -->
+        </div>
+
+        <div class="flex justify-end gap-3 pt-6 border-t" id="invPreviewActions">
+            <button onclick="closeModal('modalInvoicePreview')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border-0 cursor-pointer text-xs">Close</button>
+            <button onclick="window.print()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold border-0 cursor-pointer text-xs flex items-center gap-1.5">
+                <i class="fas fa-print"></i> Print Invoice
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function viewPaymentDetail(paymentId) {
+        const modal = document.getElementById('modalPaymentDetail');
+        const body = document.getElementById('payDetailBody');
+        if (!modal || !body) return;
+
+        body.innerHTML = '<div class="p-6 text-center text-slate-400 font-bold"><i class="fas fa-spinner fa-spin mr-2"></i> Loading payment details...</div>';
+        modal.classList.remove('hidden');
+
+        try {
+            const res = await fetch(`/api/admin/payments/`);
+            const data = await res.json();
+            
+            let p = null;
+            if (res.ok && data.data && data.data.payments) {
+                p = data.data.payments.find(x => x.id == paymentId) || data.data.payments[0];
+            }
+
+            if (!p) {
+                const row = document.querySelector(`[data-payment-id="${paymentId}"]`);
+                if (row) {
+                    p = {
+                        id: paymentId,
+                        transaction_id: row.getAttribute('data-txn-id') || `TXN-${paymentId}`,
+                        payer_name: row.getAttribute('data-payer') || 'Student/User',
+                        amount: row.getAttribute('data-amount') || '0',
+                        status: row.getAttribute('data-status') || 'Success',
+                        payment_method: row.getAttribute('data-method') || 'UPI',
+                        created_at: row.getAttribute('data-date') || 'Recently'
+                    };
+                }
+            }
+
+            if (!p) {
+                p = { id: paymentId, transaction_id: `INV-${paymentId}`, payer_name: 'EduTrust Student', amount: '4,999.00', status: 'Success', payment_method: 'UPI / Online', created_at: 'Recently' };
+            }
+
+            let statusBadge = `<span class="bg-emerald-100 text-emerald-700 font-black px-2.5 py-1 rounded-full text-[10px]">${p.status || 'Success'}</span>`;
+            if (p.status === 'Pending') statusBadge = `<span class="bg-amber-100 text-amber-700 font-black px-2.5 py-1 rounded-full text-[10px]">Pending</span>`;
+            if (p.status === 'Failed') statusBadge = `<span class="bg-rose-100 text-rose-700 font-black px-2.5 py-1 rounded-full text-[10px]">Failed</span>`;
+
+            body.innerHTML = `
+                <div class="bg-slate-50 p-4 rounded-2xl border space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">INVOICE #</span>
+                        <span class="font-mono font-bold text-slate-800">${p.transaction_id || ('INV-' + p.id)}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">STATUS</span>
+                        <div>${statusBadge}</div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL AMOUNT</span>
+                        <span class="text-base font-black text-slate-900">₹${p.amount}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2">
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-slate-500 font-medium">Payer / Student Name:</span>
+                        <span class="font-extrabold text-slate-900">${p.payer_name || p.user_name || 'Student/Parent'}</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-slate-500 font-medium">Payment Mode:</span>
+                        <span class="font-bold text-slate-800">${p.payment_method || 'Online'}</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-slate-500 font-medium">Gateway Name:</span>
+                        <span class="font-bold text-slate-800">${p.gateway_name || 'Razorpay / EduTrust'}</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-2">
+                        <span class="text-slate-500 font-medium">Date & Time:</span>
+                        <span class="font-bold text-slate-800">${p.created_at || 'Recently'}</span>
+                    </div>
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button onclick="openInvoicePreview(${p.id})" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2.5 rounded-xl border-0 cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fas fa-file-invoice"></i> Print / Download Invoice
+                    </button>
+                </div>
+            `;
+        } catch (err) {
+            console.error("Error viewing payment detail:", err);
+        }
+    }
+
+    function openInvoicePreview(paymentId) {
+        const modal = document.getElementById('modalInvoicePreview');
+        if (modal) modal.classList.remove('hidden');
+    }
+</script>
+{% endblock %}

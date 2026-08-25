@@ -1,0 +1,438 @@
+{% extends base_template|default:'admin.html' %}
+
+{% block admin_content %}
+<div class="space-y-4 fade-in">
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-0.5">
+                <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 no-underline text-slate-400">Dashboard</a> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span>Enquiry</span> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span class="text-blue-600 font-extrabold">Demo Bookings</span>
+            </div>
+            <h2 class="text-lg font-black text-slate-900 leading-tight">Demo Class Bookings</h2>
+            <p class="text-[11px] text-slate-500 font-medium">Manage student free trial demo class booking requests received from Book Free Trial.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'admin_demo_bookings' %}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-lg transition-all shadow-2xs no-underline inline-flex items-center gap-1.5"><i class="fas fa-sync-alt text-slate-400 text-[10px]"></i> Refresh</a>
+        </div>
+    </div>
+
+    <!-- TOP KPI METRIC CARDS (SHRUNK COMPACT ROW - 6 CARDS) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-slate-400 uppercase tracking-wider">Total</span><div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-play-circle"></i></div></div>
+            <div id="kpi-demo-total" class="text-base font-black text-slate-900 leading-none">{{ kpi.total }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Database Total</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-amber-500 uppercase tracking-wider">Pending</span><div class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px]"><i class="fas fa-clock"></i></div></div>
+            <div id="kpi-demo-pending" class="text-base font-black text-amber-600 leading-none">{{ kpi.pending }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Needs Action</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-emerald-500 uppercase tracking-wider">Confirmed</span><div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px]"><i class="fas fa-check-circle"></i></div></div>
+            <div id="kpi-demo-confirmed" class="text-base font-black text-emerald-600 leading-none">{{ kpi.confirmed }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Approved</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-blue-500 uppercase tracking-wider">Completed</span><div class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-graduation-cap"></i></div></div>
+            <div id="kpi-demo-completed" class="text-base font-black text-blue-600 leading-none">{{ kpi.completed }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Demo Conducted</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-purple-500 uppercase tracking-wider">Cancelled</span><div class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px]"><i class="fas fa-ban"></i></div></div>
+            <div id="kpi-demo-cancelled" class="text-base font-black text-purple-600 leading-none">{{ kpi.cancelled }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Student Cancelled</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-rose-500 uppercase tracking-wider">Rejected</span><div class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-[10px]"><i class="fas fa-times-circle"></i></div></div>
+            <div id="kpi-demo-rejected" class="text-base font-black text-rose-600 leading-none">{{ kpi.rejected }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Declined</span>
+        </div>
+    </div>
+
+    <!-- SEARCH & FILTERS (SINGLE HORIZONTAL ROW) -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+        <form method="GET" action="{% url 'admin_demo_bookings' %}" class="flex flex-nowrap items-center gap-2 w-full text-xs overflow-x-auto custom-scrollbar pb-0.5">
+            <div class="relative min-w-[160px] max-w-[220px] flex-1 shrink-0">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]"></i>
+                <input type="text" name="q" value="{{ filters.q }}" placeholder="Search name, email, mobile..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+            </div>
+
+            <select name="status" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer shrink-0">
+                <option value="ALL" {% if filters.status == 'ALL' %}selected{% endif %}>All Statuses</option>
+                <option value="PENDING" {% if filters.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                <option value="CONFIRMED" {% if filters.status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                <option value="COMPLETED" {% if filters.status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+                <option value="CANCELLED" {% if filters.status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+                <option value="REJECTED" {% if filters.status == 'REJECTED' %}selected{% endif %}>Rejected</option>
+            </select>
+
+            <select name="student_class" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer shrink-0">
+                <option value="ALL" {% if filters.student_class == 'ALL' %}selected{% endif %}>All Classes</option>
+                {% for c in class_list %}
+                <option value="{{ c }}" {% if filters.student_class == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="subject" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer shrink-0 max-w-[130px] truncate">
+                <option value="ALL" {% if filters.subject == 'ALL' %}selected{% endif %}>All Subjects</option>
+                {% for s_item in subject_list %}
+                <option value="{{ s_item }}" {% if filters.subject == s_item %}selected{% endif %}>{{ s_item }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="tuition_mode" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer shrink-0">
+                <option value="ALL" {% if filters.tuition_mode == 'ALL' %}selected{% endif %}>All Modes</option>
+                {% for m_item in mode_list %}
+                <option value="{{ m_item }}" {% if filters.tuition_mode == m_item %}selected{% endif %}>{{ m_item }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="city" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer shrink-0">
+                <option value="ALL" {% if filters.city == 'ALL' %}selected{% endif %}>All Cities</option>
+                {% for c in city_list %}
+                <option value="{{ c }}" {% if filters.city == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all shrink-0 inline-flex items-center gap-1 shadow-2xs">
+                <i class="fas fa-filter text-[10px]"></i> Filter
+            </button>
+
+            <a href="{% url 'admin_demo_bookings' %}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs px-2.5 py-1.5 rounded-xl border-0 cursor-pointer transition-all no-underline shrink-0 inline-flex items-center gap-1">
+                <i class="fas fa-undo text-[9px]"></i> Reset
+            </a>
+        </form>
+    </div>
+
+    <!-- DEMO BOOKINGS TABLE -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-extrabold uppercase text-[9px] tracking-wider">
+                        <th class="px-3 py-2.5">Student / Parent</th>
+                        <th class="px-3 py-2.5">Mobile</th>
+                        <th class="px-3 py-2.5">Booking ID</th>
+                        <th class="px-3 py-2.5">Class & Subject</th>
+                        <th class="px-3 py-2.5">Tutor</th>
+                        <th class="px-3 py-2.5">Demo Date & Time</th>
+                        <th class="px-3 py-2.5">Mode</th>
+                        <th class="px-3 py-2.5">City / Locality</th>
+                        <th class="px-3 py-2.5">Status</th>
+                        <th class="px-3 py-2.5">Submitted</th>
+                        <th class="px-3 py-2.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+                    {% for item in page_obj %}
+                    {% if item.show_date_header %}
+                    <tr class="bg-slate-100/90 dark:bg-[#18253b] border-y border-slate-200 dark:border-slate-700/80">
+                        <td colspan="11" class="px-3 py-2 text-slate-800 dark:text-slate-100 font-black text-xs uppercase tracking-wider">
+                            <div class="flex items-center gap-2">
+                                <span>{{ item.date_header_label }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr id="demo-booking-row-{{ item.id }}" class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-3 py-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 font-black flex items-center justify-center text-[10px] uppercase shrink-0">{{ item.student_name|slice:":2"|upper }}</div>
+                                <div class="min-w-0">
+                                    <span class="font-extrabold block text-slate-900 text-xs truncate max-w-[150px]">{{ item.student_name }}</span>
+                                    {% if item.parent_name %}
+                                        <span class="text-[9px] text-slate-400 block truncate max-w-[150px]">P: {{ item.parent_name }}</span>
+                                    {% endif %}
+                                    <span class="text-[9px] text-slate-400 block truncate max-w-[150px]">{{ item.student_email|default:"" }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2 font-bold text-slate-800 text-[11px] whitespace-nowrap">{{ item.student_mobile|default:"N/A" }}</td>
+                        <td class="px-3 py-2 font-bold text-purple-600 text-[10px] whitespace-nowrap">{% if item.booking_id %}{{ item.booking_id }}{% else %}#DEMO-{{ item.id }}{% endif %}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <span class="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-md text-[10px] mr-1">{{ item.student_class|default:"N/A" }}</span>
+                            <span class="font-semibold text-slate-700 text-[11px]">{{ item.subject|default:"N/A" }}</span>
+                        </td>
+                        <td class="px-3 py-2 font-semibold text-slate-800 text-[11px] whitespace-nowrap">
+                            {% if item.tutor_name %}
+                                <span class="font-extrabold text-slate-900">{{ item.tutor_name }}</span>
+                            {% elif item.assigned_teacher %}
+                                <span class="font-extrabold text-slate-900">{{ item.assigned_teacher.full_name }}</span>
+                            {% else %}
+                                <span class="text-slate-400 font-medium">Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <span class="font-bold text-slate-800 text-[11px] block">{{ item.preferred_demo_date|date:"M d, Y"|default:"N/A" }}</span>
+                            <span class="text-[9px] text-slate-400 block">{{ item.preferred_time_slot|default:"" }}</span>
+                        </td>
+                        <td class="px-3 py-2 font-semibold text-slate-700 text-[11px] whitespace-nowrap">{{ item.tuition_mode|default:"N/A" }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <span class="font-bold text-slate-700 text-[11px] block">{{ item.city|default:"N/A" }}</span>
+                            {% if item.locality %}<span class="text-[9px] text-slate-400 block">{{ item.locality }}</span>{% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if item.booking_status|lower == 'pending' or item.booking_status|lower == 'new' %}
+                                <span id="demo-booking-status-{{ item.id }}" class="bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-full text-[9px]">PENDING</span>
+                            {% elif item.booking_status|lower == 'approved' or item.booking_status|lower == 'confirmed' %}
+                                <span id="demo-booking-status-{{ item.id }}" class="bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full text-[9px]">CONFIRMED</span>
+                            {% elif item.booking_status|lower == 'completed' %}
+                                <span id="demo-booking-status-{{ item.id }}" class="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-full text-[9px]">COMPLETED</span>
+                            {% elif item.booking_status|lower == 'cancelled' %}
+                                <span id="demo-booking-status-{{ item.id }}" class="bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-full text-[9px]">CANCELLED</span>
+                            {% elif item.booking_status|lower == 'rejected' %}
+                                <span id="demo-booking-status-{{ item.id }}" class="bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full text-[9px]">REJECTED</span>
+                            {% else %}
+                                <span id="demo-booking-status-{{ item.id }}" class="bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[9px]">{{ item.booking_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-slate-400 font-bold text-[10px] whitespace-nowrap">{{ item.created_at|date:"M d, Y" }}</td>
+                        <td class="px-3 py-2 text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-1.5 flex-nowrap">
+                                <a href="{% url 'admin_demo_booking_detail' item.id %}" title="View Details" aria-label="View Booking Details" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all no-underline inline-flex items-center justify-center p-0 border-0 shadow-2xs">
+                                    <i class="fas fa-eye text-xs"></i>
+                                </a>
+                                <button id="btn-confirm-{{ item.id }}" onclick="promptConfirmDemoBooking({{ item.id }})" title="Confirm Booking" aria-label="Confirm Booking" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'approved' or item.booking_status|lower == 'confirmed' %}hidden{% endif %}">
+                                    <i class="fas fa-check text-xs"></i>
+                                </button>
+                                <button onclick="promptCompleteDemoBooking({{ item.id }})" title="Mark Completed" aria-label="Mark Completed" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs">
+                                    <i class="fas fa-graduation-cap text-xs"></i>
+                                </button>
+                                <button id="btn-reject-{{ item.id }}" onclick="promptRejectDemoBooking({{ item.id }})" title="Reject Booking" aria-label="Reject Booking" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'rejected' %}hidden{% endif %}">
+                                    <i class="fas fa-times text-xs"></i>
+                                </button>
+                                <button onclick="promptRemoveDemoBooking({{ item.id }})" title="Remove Booking" aria-label="Remove Booking" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="12" class="p-6 text-center">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-1 text-sm"><i class="fas fa-inbox"></i></div>
+                            <p class="font-extrabold text-slate-700 text-xs">No demo class bookings found</p>
+                            <p class="text-[11px] text-slate-400 font-medium">Free trial demo class requests will appear here.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<!-- SLEEK DEMO ACTION MODAL POPUP (NO PAGE BLINK/RELOAD) -->
+<div id="demoActionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs hidden transition-all duration-300">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 text-center transform transition-all scale-95 opacity-0" id="demoActionModalCard">
+        <div id="demoActionModalIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 shadow-sm">
+            <i class="fas fa-check"></i>
+        </div>
+        <h3 id="demoActionModalTitle" class="text-base font-extrabold text-slate-900 mb-1">Action Successful</h3>
+        <p id="demoActionModalMessage" class="text-xs text-slate-500 font-medium mb-5 leading-relaxed">Action processed successfully.</p>
+        <button type="button" onclick="closeActionPopup()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs py-2.5 rounded-xl border-0 cursor-pointer shadow-md transition-all">
+            OK
+        </button>
+    </div>
+</div>
+
+<!-- CUSTOM REJECT REASON MODAL POPUP -->
+<div id="rejectReasonModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs hidden transition-all duration-300">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-100 transform transition-all scale-95 opacity-0" id="rejectReasonModalCard">
+        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="text-base font-extrabold text-slate-900 text-center mb-1">Reject Demo Booking</h3>
+        <p class="text-xs text-slate-500 font-medium text-center mb-4 leading-relaxed">Please enter the reason for rejecting this demo booking (optional):</p>
+        
+        <textarea id="rejectReasonInput" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-rose-500 transition-colors resize-none mb-4" placeholder="Type rejection reason here..."></textarea>
+        
+        <div class="flex items-center gap-2">
+            <button type="button" onclick="closeRejectReasonModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl border-0 cursor-pointer transition-all">
+                Cancel
+            </button>
+            <button type="button" id="submitRejectReasonBtn" onclick="submitRejectReasonAction()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs py-2.5 rounded-xl border-0 cursor-pointer shadow-md transition-all">
+                Confirm Reject
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentRejectBookingId = null;
+
+    function showActionPopup(title, message, type = 'success') {
+        const modal = document.getElementById('demoActionModal');
+        const card = document.getElementById('demoActionModalCard');
+        const icon = document.getElementById('demoActionModalIcon');
+        const titleEl = document.getElementById('demoActionModalTitle');
+        const msgEl = document.getElementById('demoActionModalMessage');
+        if (!modal || !card || !icon || !titleEl || !msgEl) return;
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+
+        if (type === 'success') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-emerald-100 text-emerald-600 shadow-emerald-100/50';
+            icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        } else if (type === 'complete' || type === 'info') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-blue-100 text-blue-600 shadow-blue-100/50';
+            icon.innerHTML = '<i class="fas fa-graduation-cap"></i>';
+        } else if (type === 'reject' || type === 'warning') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-amber-100 text-amber-600 shadow-amber-100/50';
+            icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        } else if (type === 'remove' || type === 'danger' || type === 'error') {
+            icon.className = 'w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3.5 bg-rose-100 text-rose-600 shadow-rose-100/50';
+            icon.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        }
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeActionPopup() {
+        const modal = document.getElementById('demoActionModal');
+        const card = document.getElementById('demoActionModalCard');
+        if (!modal || !card) return;
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function closeRejectReasonModal() {
+        const modal = document.getElementById('rejectReasonModal');
+        const card = document.getElementById('rejectReasonModalCard');
+        if (!modal || !card) return;
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            currentRejectBookingId = null;
+        }, 200);
+    }
+
+    function submitRejectReasonAction() {
+        if (!currentRejectBookingId) return;
+        const input = document.getElementById('rejectReasonInput');
+        const reason = input ? input.value.trim() : '';
+        const bookingId = currentRejectBookingId;
+        closeRejectReasonModal();
+        window.sendDemoBookingAction(bookingId, 'reject', reason);
+    }
+
+    window.sendDemoBookingAction = async function(id, action, reason = '') {
+        const confirmBtn = document.getElementById('btn-confirm-' + id);
+        const rejectBtn = document.getElementById('btn-reject-' + id);
+        const statusBadge = document.getElementById('demo-booking-status-' + id);
+
+        let targetBtn = null;
+        let originalHtml = '';
+
+        if (action === 'confirm' && confirmBtn) {
+            targetBtn = confirmBtn;
+        } else if (action === 'reject' && rejectBtn) {
+            targetBtn = rejectBtn;
+        }
+
+        if (targetBtn) {
+            targetBtn.disabled = true;
+            originalHtml = targetBtn.innerHTML;
+            targetBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+        }
+
+        try {
+            const csrfToken = (typeof getCsrfToken === 'function' ? getCsrfToken() : '') || '{{ csrf_token }}';
+            const response = await fetch('/api/admin/demo-bookings/status/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ id: id, action: action, reason: reason })
+            });
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                const newStatus = (data.new_status || '').toLowerCase();
+
+                if (action === 'confirm' || newStatus === 'approved' || newStatus === 'confirmed') {
+                    if (statusBadge) {
+                        statusBadge.className = 'bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full text-[9px]';
+                        statusBadge.textContent = 'CONFIRMED';
+                    }
+                    if (confirmBtn) confirmBtn.classList.add('hidden');
+                    if (rejectBtn) rejectBtn.classList.remove('hidden');
+
+                    showActionPopup('Booking Confirmed! 🎉', `Demo booking #DEMO-${id} has been confirmed successfully.`, 'success');
+                } else if (action === 'reject' || newStatus === 'rejected') {
+                    if (statusBadge) {
+                        statusBadge.className = 'bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full text-[9px]';
+                        statusBadge.textContent = 'REJECTED';
+                    }
+                    if (rejectBtn) rejectBtn.classList.add('hidden');
+                    if (confirmBtn) confirmBtn.classList.remove('hidden');
+
+                    const reasonMsg = reason ? ` (Reason: "${reason}")` : '';
+                    showActionPopup('Booking Rejected ❌', `Demo class booking #DEMO-${id} has been rejected${reasonMsg}.`, 'reject');
+                } else if (action === 'complete' || newStatus === 'completed') {
+                    if (statusBadge) {
+                        statusBadge.className = 'bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-full text-[9px]';
+                        statusBadge.textContent = 'COMPLETED';
+                    }
+                    showActionPopup('Booking Completed! 🎓', `Demo class booking #DEMO-${id} marked as completed.`, 'complete');
+                } else if (action === 'remove') {
+                    const rowEl = document.getElementById('demo-booking-row-' + id);
+                    if (rowEl) {
+                        rowEl.style.transition = 'all 0.4s ease';
+                        rowEl.style.opacity = '0';
+                        rowEl.style.transform = 'scale(0.95)';
+                        setTimeout(() => rowEl.remove(), 400);
+                    }
+                    showActionPopup('Record Removed 🗑️', `Demo booking record #DEMO-${id} permanently removed.`, 'remove');
+                } else {
+                    showActionPopup('Success!', data.message || 'Operation processed successfully.', 'success');
+                }
+            } else {
+                showActionPopup('Action Failed', data.message || 'Unable to complete action.', 'error');
+            }
+        } catch(err) {
+            console.error('Error:', err);
+            showActionPopup('Server Error', 'A server error occurred while processing action.', 'error');
+        } finally {
+            if (targetBtn) {
+                targetBtn.disabled = false;
+                targetBtn.innerHTML = originalHtml;
+            }
+        }
+    };
+
+    window.promptConfirmDemoBooking = function(id) {
+        window.sendDemoBookingAction(id, 'confirm');
+    };
+    window.promptCompleteDemoBooking = function(id) {
+        window.sendDemoBookingAction(id, 'complete');
+    };
+    window.promptRejectDemoBooking = function(id) {
+        currentRejectBookingId = id;
+        const modal = document.getElementById('rejectReasonModal');
+        const card = document.getElementById('rejectReasonModalCard');
+        const input = document.getElementById('rejectReasonInput');
+        if (!modal || !card || !input) return;
+
+        input.value = '';
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+            input.focus();
+        }, 10);
+    };
+    window.promptRemoveDemoBooking = function(id) {
+        if (confirm('Are you sure you want to permanently delete this demo booking record?')) {
+            window.sendDemoBookingAction(id, 'remove');
+        }
+    };
+</script>
+{% endblock %}

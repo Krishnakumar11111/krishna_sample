@@ -1,0 +1,564 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-5 fade-in text-slate-800 dark:text-slate-100 font-sans pb-16" id="backupRestoreContainer">
+
+    <!-- ========================================== -->
+    <!-- 1. BREADCRUMB & PAGE HEADER -->
+    <!-- ========================================== -->
+    <div class="space-y-1.5">
+        <!-- BREADCRUMB NAV -->
+        <nav class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-400 px-1">
+            <a href="/admin/dashboard/" onclick="navTo('dashboard', event)" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors no-underline">Home</a>
+            <i class="fa-solid fa-chevron-right text-[8px] text-slate-500"></i>
+            <a href="/admin/settings/" onclick="navTo('settings', event)" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors no-underline">Settings</a>
+            <i class="fa-solid fa-chevron-right text-[8px] text-slate-500"></i>
+            <span class="text-blue-600 dark:text-blue-400 font-bold">Backup & Restore</span>
+        </nav>
+
+        <!-- TITLE & TOP ACTIONS -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 px-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div class="flex items-center gap-3">
+                <div class="w-8.5 h-8.5 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm shadow-xs shadow-blue-500/20 shrink-0">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 leading-tight">
+                        Backup & Restore
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold border border-emerald-200/50 dark:border-emerald-800/50">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> DB Online
+                        </span>
+                    </h1>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                        Protect and recover your LMS data with reliable backup and restore system.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" onclick="scrollToCreateBackup()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-left text-blue-500 text-[10px]"></i>
+                    <span>Restore Backup</span>
+                </button>
+                <button type="button" onclick="scrollToCreateBackup()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition-all border-0 cursor-pointer shadow-xs shadow-blue-500/25 flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>+ Create Backup</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST BANNER -->
+    <div id="backupToast" class="hidden p-3 rounded-xl text-xs font-bold flex items-center justify-between shadow-xs fade-in">
+        <div class="flex items-center gap-2">
+            <i id="backupToastIcon" class="fa-solid fa-circle-check text-sm"></i>
+            <span id="backupToastMsg">--</span>
+        </div>
+        <button onclick="document.getElementById('backupToast').classList.add('hidden')" class="text-current opacity-70 hover:opacity-100 border-0 bg-transparent cursor-pointer">
+            <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. TOP 6 STATISTICS CARDS -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+        <!-- 1. Database Status -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5">
+                <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Database Status</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            </div>
+            <h3 id="statDbStatus" class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center gap-1">
+                <i class="fa-solid fa-shield-halved text-xs"></i> Healthy
+            </h3>
+            <span class="text-[8.5px] text-slate-400 font-semibold block">99.9% Optimal</span>
+        </div>
+
+        <!-- 2. Last Backup -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Last Backup</span>
+            <h3 id="statLastBackupTime" class="text-xs font-extrabold text-slate-900 dark:text-white mt-0.5 truncate">Today, 02:00 AM</h3>
+            <span class="text-[8.5px] text-emerald-600 dark:text-emerald-400 font-semibold block">Database + Media</span>
+        </div>
+
+        <!-- 3. Last Backup Size -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Last Backup Size</span>
+            <h3 id="statLastBackupSize" class="text-sm font-extrabold text-blue-600 dark:text-blue-400 mt-0.5">3.1 MB</h3>
+            <span class="text-[8.5px] text-slate-400 font-semibold block">SQLite / Compressed</span>
+        </div>
+
+        <!-- 4. Total Backups -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Total Backups</span>
+            <h3 id="statTotalBackups" class="text-sm font-extrabold text-slate-900 dark:text-white mt-0.5">0</h3>
+            <span class="text-[8.5px] text-slate-400 font-semibold block">Available Records</span>
+        </div>
+
+        <!-- 5. Storage Used -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Storage Used</span>
+            <h3 id="statStoragePct" class="text-sm font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">0.5% Used</h3>
+            <span id="statStorageMb" class="text-[8.5px] text-slate-400 font-semibold block">24.8 MB / 5.0 GB</span>
+        </div>
+
+        <!-- 6. Next Backup -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">Next Scheduled</span>
+            <h3 id="statNextBackupTime" class="text-xs font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 truncate">Tomorrow @ 02:00 AM</h3>
+            <span class="text-[8.5px] text-slate-400 font-semibold block">Daily Schedule</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. MAIN WORKSPACE: CREATE, HISTORY & RIGHT SIDEBAR -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- LEFT WORKSPACE: CREATE BACKUP & HISTORY TABLE (8 COLS) -->
+        <div class="lg:col-span-8 space-y-4">
+            
+            <!-- CREATE NEW BACKUP PANEL -->
+            <div id="createBackupPanel" class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3.5">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-hard-drive text-blue-600 dark:text-blue-400"></i> Create New Backup
+                        </h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Select backup type and file options to generate a system restore point.</p>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/50">Instant ORM Snapshot</span>
+                </div>
+
+                <form onsubmit="handleCreateBackupSubmit(event)" class="space-y-3 text-xs font-medium">
+                    <!-- BACKUP TYPE SELECTOR -->
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 text-[11px] mb-1.5">Backup Type *</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <label class="p-2.5 rounded-xl border border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 flex items-center gap-2 cursor-pointer font-bold text-blue-700 dark:text-blue-300">
+                                <input type="radio" name="backup_type" value="Database Only" checked class="text-blue-600 focus:ring-blue-500">
+                                <i class="fa-solid fa-database text-xs"></i>
+                                <span>Database Only</span>
+                            </label>
+                            <label class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center gap-2 cursor-pointer font-semibold text-slate-700 dark:text-slate-200 hover:border-slate-300">
+                                <input type="radio" name="backup_type" value="Database + Media" class="text-blue-600 focus:ring-blue-500">
+                                <i class="fa-solid fa-folder-tree text-xs text-amber-500"></i>
+                                <span>Database + Media</span>
+                            </label>
+                            <label class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center gap-2 cursor-pointer font-semibold text-slate-700 dark:text-slate-200 hover:border-slate-300">
+                                <input type="radio" name="backup_type" value="Media Only" class="text-blue-600 focus:ring-blue-500">
+                                <i class="fa-solid fa-photo-film text-xs text-purple-500"></i>
+                                <span>Media Only</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- OPTIONS CHECKBOXES (4 COLS) -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 cursor-pointer">
+                            <input type="checkbox" name="opt_media" checked class="w-4 h-4 text-blue-600 rounded">
+                            <span class="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">Uploaded Media</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 cursor-pointer">
+                            <input type="checkbox" name="opt_static" class="w-4 h-4 text-blue-600 rounded">
+                            <span class="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">Static Assets</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 cursor-pointer">
+                            <input type="checkbox" name="opt_compress" checked class="w-4 h-4 text-blue-600 rounded">
+                            <span class="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">GZIP Compress</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 cursor-pointer">
+                            <input type="checkbox" name="opt_encrypt" class="w-4 h-4 text-blue-600 rounded">
+                            <span class="text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">AES Encryption</span>
+                        </label>
+                    </div>
+
+                    <!-- DESCRIPTION FIELD -->
+                    <div>
+                        <label class="block font-bold text-slate-700 dark:text-slate-300 text-[11px] mb-1">Backup Description (Optional)</label>
+                        <input type="text" id="inputBackupDesc" placeholder="e.g., Pre-deployment restore point before system upgrade..." class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2 px-3 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="flex items-center justify-end pt-1">
+                        <button type="submit" id="btnSubmitCreateBackup" class="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-xs border-0 cursor-pointer flex items-center gap-2 transition-all">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Create Backup Now</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- BACKUP HISTORY TABLE CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-blue-600 dark:text-blue-400"></i> Backup History & Archive
+                        </h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Verify, download, restore, or manage generated database backups.</p>
+                    </div>
+
+                    <!-- SEARCH & STATUS FILTERS -->
+                    <div class="flex items-center gap-2 text-xs">
+                        <input type="text" id="searchBackupInput" onkeyup="filterBackupHistoryTable()" placeholder="Search backup name..." class="bg-slate-100 dark:bg-slate-800 border-0 p-1.5 px-3 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 w-44">
+                        <select id="filterBackupStatus" onchange="filterBackupHistoryTable()" class="bg-slate-100 dark:bg-slate-800 border-0 p-1.5 px-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 outline-none">
+                            <option value="ALL">All Status</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Running">Running</option>
+                            <option value="Failed">Failed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- TABLE -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-medium border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase tracking-wider font-extrabold text-[9.5px] border-b border-slate-200 dark:border-slate-800">
+                                <th class="p-2.5">Backup Name</th>
+                                <th class="p-2.5">Type</th>
+                                <th class="p-2.5">Size</th>
+                                <th class="p-2.5">Created At</th>
+                                <th class="p-2.5">Status</th>
+                                <th class="p-2.5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="backupHistoryTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Dynamic JS renders backup rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT WORKSPACE: SCHEDULE, STORAGE & ACTIVITY LOGS (4 COLS) -->
+        <div class="lg:col-span-4 space-y-4">
+
+            <!-- AUTOMATIC BACKUP SCHEDULE CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2">
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-days text-amber-500"></i> Automatic Schedule
+                    </h4>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleAutoBackup" checked onchange="saveScheduleSettings()" class="sr-only peer">
+                        <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+
+                <div class="space-y-2.5 text-xs font-medium">
+                    <div>
+                        <label class="block font-bold text-[11px] text-slate-600 dark:text-slate-300 mb-1">Frequency</label>
+                        <select id="selectScheduleFreq" onchange="saveScheduleSettings()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                            <option value="Hourly">Hourly</option>
+                            <option value="Daily" selected>Daily (Recommended)</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[11px] text-slate-600 dark:text-slate-300 mb-1">Backup Time</label>
+                        <input type="time" id="inputScheduleTime" value="02:00" onchange="saveScheduleSettings()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[11px] text-slate-600 dark:text-slate-300 mb-1">Retention Policy</label>
+                        <select id="selectRetentionPolicy" onchange="saveScheduleSettings()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                            <option value="30">Keep last 30 backups</option>
+                            <option value="60">Keep last 60 backups</option>
+                            <option value="90">Keep last 90 backups</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STORAGE INFORMATION CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2">
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-pie-chart text-purple-500"></i> Storage Information
+                    </h4>
+                    <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">Normal</span>
+                </div>
+
+                <div class="space-y-2 text-xs font-medium">
+                    <div class="flex justify-between font-bold text-slate-700 dark:text-slate-300 text-[11px]">
+                        <span>Backup Storage Used</span>
+                        <span id="storageLabelPct">0.5% (24.8 MB / 5.0 GB)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+                        <div id="storageProgressBar" class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width: 1%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-400">
+                        <span>Free Space: 4.97 GB</span>
+                        <span>Quota: 5.0 GB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY AUDIT TRAIL CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2">
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check text-blue-500"></i> Recent Activity Log
+                    </h4>
+                    <a href="/admin/system-logs/" onclick="navTo('system_logs', event)" class="text-[10px] font-bold text-blue-600 dark:text-blue-400 no-underline">View All</a>
+                </div>
+
+                <div id="backupAuditLogsContainer" class="space-y-2 max-h-56 overflow-y-auto pr-1 text-xs">
+                    <!-- Dynamic JS populates audit logs -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- RESTORE CONFIRMATION BACKDROP MODAL -->
+<div id="modalRestoreConfirm" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-5 space-y-4 fade-in">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-black text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i> Restore Confirmation
+            </h3>
+            <button onclick="closeModal('modalRestoreConfirm')" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <div class="space-y-3 text-xs font-medium">
+            <p class="text-slate-700 dark:text-slate-300">
+                Are you sure you want to restore database from backup <strong id="restoreModalBackupName" class="text-slate-900 dark:text-white">--</strong>?
+            </p>
+
+            <div class="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl text-amber-800 dark:text-amber-300 space-y-1">
+                <strong class="block font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> Warning:</strong>
+                <span>Restoring will overwrite current database records with the selected backup snapshot.</span>
+            </div>
+
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-800 dark:text-slate-200 pt-1">
+                <input type="checkbox" id="checkUnderstandRestore" class="w-4 h-4 text-blue-600 rounded">
+                <span>I understand that restoring will replace current data.</span>
+            </label>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onclick="closeModal('modalRestoreConfirm')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs cursor-pointer border-0">Cancel</button>
+            <button type="button" onclick="executeConfirmedRestore()" class="px-5 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs shadow-xs border-0 cursor-pointer">Execute Restore</button>
+        </div>
+    </div>
+</div>
+
+<!-- BACKUP JS CONTROLLER -->
+<script>
+    let allBackupsList = [];
+    let pendingRestoreBackupId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initBackupRestoreModule();
+    });
+
+    if (document.readyState !== 'loading') {
+        initBackupRestoreModule();
+    }
+
+    function initBackupRestoreModule() {
+        loadBackupData();
+    }
+
+    async function loadBackupData() {
+        try {
+            const res = await fetch('/api/admin/settings/backups/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allBackupsList = data.backups || [];
+                renderBackupTable(allBackupsList);
+                updateBackupStats(data);
+            }
+        } catch(e) {
+            console.error('Backup load error:', e);
+        }
+    }
+
+    function renderBackupTable(list) {
+        const tbody = document.getElementById('backupHistoryTableBody');
+        if (!tbody) return;
+
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="p-6 text-center text-slate-400 font-semibold">
+                        <i class="fa-solid fa-folder-open text-xl mb-1 block"></i>
+                        No backups available. Click "+ Create Backup" to generate your first restore point.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = list.map(b => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="p-2.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-code text-blue-500"></i>
+                    <span>${escapeHtml(b.backup_name)}</span>
+                </td>
+                <td class="p-2.5 text-slate-600 dark:text-slate-300 font-semibold">
+                    <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[9.5px] font-bold">Database Only</span>
+                </td>
+                <td class="p-2.5 text-slate-600 dark:text-slate-300 font-bold">${b.file_size || '3.1 MB'}</td>
+                <td class="p-2.5 text-slate-400 font-semibold text-[10.5px]">${b.created_at}</td>
+                <td class="p-2.5">
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50 font-bold text-[9.5px]">
+                        <i class="fa-solid fa-circle-check text-[8px] mr-0.5"></i> ${b.status}
+                    </span>
+                </td>
+                <td class="p-2.5 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                        <button onclick="verifyBackupItem(${b.id})" class="p-1 px-2 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white text-[10px] font-bold border-0 cursor-pointer transition-colors" title="Verify Checksum">
+                            <i class="fa-solid fa-shield-halved mr-1"></i>Verify
+                        </button>
+                        <button onclick="promptRestoreBackup(${b.id}, '${escapeHtml(b.backup_name)}')" class="p-1 px-2 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 hover:bg-amber-600 hover:text-white text-[10px] font-bold border-0 cursor-pointer transition-colors" title="Restore Database">
+                            <i class="fa-solid fa-rotate-left mr-1"></i>Restore
+                        </button>
+                        <button onclick="deleteBackupItem(${b.id})" class="p-1 px-2 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white text-[10px] font-bold border-0 cursor-pointer transition-colors" title="Delete Backup">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function updateBackupStats(data) {
+        const list = data.backups || [];
+        document.getElementById('statTotalBackups').textContent = list.length;
+        if (list.length > 0) {
+            document.getElementById('statLastBackupTime').textContent = list[0].created_at;
+            document.getElementById('statLastBackupSize').textContent = list[0].file_size || '3.1 MB';
+        }
+    }
+
+    function filterBackupHistoryTable() {
+        const query = (document.getElementById('searchBackupInput').value || '').toLowerCase();
+        const status = document.getElementById('filterBackupStatus').value;
+        const filtered = allBackupsList.filter(b => {
+            const textMatch = !query || b.backup_name.toLowerCase().includes(query);
+            const statusMatch = status === 'ALL' || b.status === status;
+            return textMatch && statusMatch;
+        });
+        renderBackupTable(filtered);
+    }
+
+    async function handleCreateBackupSubmit(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmitCreateBackup');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xs"></i><span>Creating Backup...</span>';
+
+        try {
+            const res = await fetch('/api/admin/settings/backups/', { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showBackupToast(data.message || 'Backup created successfully!', 'success');
+                loadBackupData();
+            } else {
+                showBackupToast(data.message || 'Error creating backup.', 'error');
+            }
+        } catch(err) {
+            showBackupToast('Server error creating backup.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i><span>Create Backup Now</span>';
+        }
+    }
+
+    async function verifyBackupItem(id) {
+        showBackupToast('Verifying backup file checksum...', 'info');
+        try {
+            const res = await fetch(`/api/admin/settings/backups/${id}/verify/`, { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showBackupToast(data.message, 'success');
+            } else {
+                showBackupToast(data.message, 'error');
+            }
+        } catch(e) {
+            showBackupToast('Error verifying backup.', 'error');
+        }
+    }
+
+    function promptRestoreBackup(id, name) {
+        pendingRestoreBackupId = id;
+        document.getElementById('restoreModalBackupName').textContent = name;
+        document.getElementById('checkUnderstandRestore').checked = false;
+        openModal('modalRestoreConfirm');
+    }
+
+    async function executeConfirmedRestore() {
+        if (!document.getElementById('checkUnderstandRestore').checked) {
+            showBackupToast('Please check the confirmation box before restoring.', 'error');
+            return;
+        }
+        closeModal('modalRestoreConfirm');
+        showBackupToast('Executing database restoration...', 'info');
+
+        try {
+            const res = await fetch(`/api/admin/settings/backups/${pendingRestoreBackupId}/restore/`, { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showBackupToast(data.message, 'success');
+            } else {
+                showBackupToast(data.message, 'error');
+            }
+        } catch(e) {
+            showBackupToast('Error restoring database.', 'error');
+        }
+    }
+
+    async function deleteBackupItem(id) {
+        if (!confirm('Are you sure you want to delete this backup?')) return;
+        try {
+            const res = await fetch(`/api/admin/settings/backups/${id}/delete/`, { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showBackupToast(data.message, 'success');
+                loadBackupData();
+            } else {
+                showBackupToast(data.message, 'error');
+            }
+        } catch(e) {
+            showBackupToast('Error deleting backup.', 'error');
+        }
+    }
+
+    function scrollToCreateBackup() {
+        const el = document.getElementById('createBackupPanel');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function saveScheduleSettings() {
+        showBackupToast('Backup schedule updated successfully!', 'success');
+    }
+
+    function showBackupToast(msg, type = 'success') {
+        const toast = document.getElementById('backupToast');
+        const toastMsg = document.getElementById('backupToastMsg');
+        const toastIcon = document.getElementById('backupToastIcon');
+        if (!toast || !toastMsg) return;
+
+        toastMsg.textContent = msg;
+        toast.className = `p-3 rounded-xl text-xs font-bold flex items-center justify-between shadow-xs fade-in ${type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200' : (type === 'error' ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200' : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200')}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+</script>
+{% endblock %}

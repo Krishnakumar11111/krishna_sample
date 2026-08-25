@@ -1,0 +1,821 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become an EduTrust Teacher | Teacher Registration Module</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 50px -12px rgba(37, 99, 235, 0.1)',
+                        'floating': '0 30px 60px -15px rgba(37, 99, 235, 0.22)',
+                        'glow': '0 0 25px rgba(59, 130, 246, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Aurora Background Blobs */
+        .aurora-blob-1 {
+            position: fixed;
+            top: -150px;
+            left: -100px;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(37, 99, 235, 0.1) 70%, transparent 100%);
+            filter: blur(90px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: moveAurora1 14s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        .aurora-blob-2 {
+            position: fixed;
+            bottom: -150px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, rgba(99, 102, 241, 0.1) 70%, transparent 100%);
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: moveAurora2 18s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes moveAurora1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 60px) scale(1.15); }
+        }
+
+        @keyframes moveAurora2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-90px, -70px) scale(1.2); }
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.82);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: rgba(15, 23, 42, 0.85);
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            outline: none;
+        }
+
+        .pill-checkbox input:checked + label {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .fee-card input:checked + label {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-color: #3b82f6;
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-center items-center py-10 px-4 sm:px-6 lg:px-8 relative selection:bg-brand-500 selection:text-white">
+
+    <div class="aurora-blob-1"></div>
+    <div class="aurora-blob-2"></div>
+
+    <div class="w-full max-w-3xl glass-card p-6 sm:p-10 rounded-3xl shadow-floating space-y-8 my-8 relative z-10">
+        
+        <!-- Header Branding & Subtitle -->
+        <div class="text-center space-y-3 pb-6 border-b border-slate-700/80">
+            <a href="{% url 'home' %}" class="inline-flex items-center gap-3 group text-decoration-none">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-brand-500/40 group-hover:scale-105 transition-transform duration-300">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <span class="text-3xl font-extrabold tracking-tight text-white">
+                    Edu<span class="text-brand-500">Trust</span>
+                </span>
+            </a>
+
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-3">Become an EduTrust Teacher</h1>
+            <p class="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto font-medium">Join India's premier home and online tuition platform & connect with thousands of motivated students.</p>
+
+            <!-- Trust Badges -->
+            <div class="flex flex-wrap justify-center gap-2 pt-2">
+                <span class="px-3 py-1 rounded-full bg-slate-800/90 text-cyan-400 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                    <i class="fas fa-user-check text-cyan-400 text-[10px]"></i> Verified Tutors
+                </span>
+                <span class="px-3 py-1 rounded-full bg-slate-800/90 text-purple-400 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                    <i class="fas fa-clock text-purple-400 text-[10px]"></i> Flexible Timings
+                </span>
+                <span class="px-3 py-1 rounded-full bg-slate-800/90 text-emerald-400 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 shadow-sm">
+                    <i class="fas fa-users text-emerald-400 text-[10px]"></i> Thousands of Students
+                </span>
+            </div>
+        </div>
+
+        <!-- Django Messages Alert Framework -->
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2.5 border {% if message.tags == 'error' %}bg-rose-500/10 border-rose-500/30 text-rose-300{% elif message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/30 text-emerald-300{% else %}bg-blue-500/10 border-blue-500/30 text-blue-300{% endif %}">
+                <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Registration Form -->
+        <form id="teacherRegistrationForm" action="{% url 'teacher_registration' %}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- SECTION 1: Personal Information -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-extrabold text-brand-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-user"></i> 1. Teacher Personal Information
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Full Name -->
+                    <div>
+                        <label for="fullName" class="block text-xs font-bold text-slate-300 mb-1.5">Full Name <span class="text-rose-400">*</span></label>
+                        <input type="text" id="fullName" name="full_name" required placeholder="e.g. Dr. Sunita Sharma"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                        <p id="errFullName" class="text-[10px] text-rose-400 font-bold mt-1 hidden"></p>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div>
+                        <label for="email" class="block text-xs font-bold text-slate-300 mb-1.5">Email Address <span class="text-rose-400">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="sunita@example.com"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                        <p id="errEmail" class="text-[10px] text-rose-400 font-bold mt-1 hidden"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Gender -->
+                    <div>
+                        <label for="gender" class="block text-xs font-bold text-slate-300 mb-1.5">Gender <span class="text-rose-400">*</span></label>
+                        <select id="gender" name="gender" required class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium cursor-pointer">
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Years of Experience -->
+                    <div>
+                        <label for="experience" class="block text-xs font-bold text-slate-300 mb-1.5">Experience <span class="text-rose-400">*</span></label>
+                        <select id="experience" name="experience" required class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium cursor-pointer">
+                            <option value="" disabled selected>Select Experience</option>
+                            <option value="Fresher">Fresher</option>
+                            <option value="1 Year">1 Year</option>
+                            <option value="2 Years">2 Years</option>
+                            <option value="3 Years">3 Years</option>
+                            <option value="5+ Years">5+ Years</option>
+                            <option value="10+ Years">10+ Years</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Your Qualification Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Your Qualification -->
+                    <div>
+                        <label for="qualification" class="block text-xs font-bold text-slate-300 mb-1.5"><i class="fas fa-user-graduate text-indigo-400 mr-1"></i>Your Qualification <span class="text-rose-400">*</span></label>
+                        <select id="qualification" name="qualification" required class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium cursor-pointer">
+                            <option value="" disabled selected>Select Your Qualification</option>
+                            <option value="10th Pass">10th Pass</option>
+                            <option value="12th Pass">12th Pass</option>
+                            <option value="Diploma">Diploma</option>
+                            <option value="Graduate (B.A.)">Graduate (B.A.)</option>
+                            <option value="Graduate (B.Sc.)">Graduate (B.Sc.)</option>
+                            <option value="Graduate (B.Com.)">Graduate (B.Com.)</option>
+                            <option value="Graduate (B.Tech/B.E.)">Graduate (B.Tech/B.E.)</option>
+                            <option value="Graduate (BCA)">Graduate (BCA)</option>
+                            <option value="Graduate (BBA)">Graduate (BBA)</option>
+                            <option value="Graduate (B.Ed.)">Graduate (B.Ed.)</option>
+                            <option value="Post Graduate (M.A.)">Post Graduate (M.A.)</option>
+                            <option value="Post Graduate (M.Sc.)">Post Graduate (M.Sc.)</option>
+                            <option value="Post Graduate (M.Com.)">Post Graduate (M.Com.)</option>
+                            <option value="Post Graduate (M.Tech/M.E.)">Post Graduate (M.Tech/M.E.)</option>
+                            <option value="Post Graduate (MBA)">Post Graduate (MBA)</option>
+                            <option value="Post Graduate (MCA)">Post Graduate (MCA)</option>
+                            <option value="Post Graduate (M.Ed.)">Post Graduate (M.Ed.)</option>
+                            <option value="PhD / Doctorate">PhD / Doctorate</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div>
+                        <label for="mobile" class="block text-xs font-bold text-slate-300 mb-1.5">Contact Number (10 Digits) <span class="text-rose-400">*</span></label>
+                        <input type="text" id="mobile" name="mobile" maxlength="10" required placeholder="9876543210"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                        <p id="errMobile" class="text-[10px] text-rose-400 font-bold mt-1 hidden"></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Password -->
+                    <div>
+                        <label for="regPassword" class="block text-xs font-bold text-slate-300 mb-1.5">Create Password <span class="text-rose-400">*</span></label>
+                        <input type="password" id="regPassword" name="password" required placeholder="Create strong password"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="regConfirmPassword" class="block text-xs font-bold text-slate-300 mb-1.5">Confirm Password <span class="text-rose-400">*</span></label>
+                        <input type="password" id="regConfirmPassword" name="confirm_password" required placeholder="Re-enter password"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- City -->
+                    <div>
+                        <label for="city" class="block text-xs font-bold text-slate-300 mb-1.5">City <span class="text-rose-400">*</span></label>
+                        <input type="text" id="city" name="city" required placeholder="e.g. Lucknow"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                    </div>
+
+                    <!-- State -->
+                    <div>
+                        <label for="state" class="block text-xs font-bold text-slate-300 mb-1.5">State <span class="text-rose-400">*</span></label>
+                        <input type="text" id="state" name="state" required placeholder="e.g. Uttar Pradesh"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                    </div>
+
+                    <!-- Pincode -->
+                    <div>
+                        <label for="pincode" class="block text-xs font-bold text-slate-300 mb-1.5">Pincode (Optional)</label>
+                        <input type="text" id="pincode" name="pincode" placeholder="e.g. 226010"
+                            class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Teaching Classes & Subjects -->
+            <div class="space-y-4 pt-2 border-t border-slate-700/60">
+                <h3 class="text-sm font-extrabold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-book-open"></i> 2. Teaching Details & Preference
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Teaching Class Dropdown -->
+                    <div>
+                        <label for="classDropdown" class="block text-xs font-bold text-slate-300 mb-1.5"><i class="fas fa-graduation-cap text-cyan-400 mr-1"></i>Select Class <span class="text-rose-400">*</span></label>
+                        <select id="classDropdown" class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium cursor-pointer">
+                            <option value="" disabled selected>-- Choose a Class --</option>
+                        </select>
+                        <div id="selectedClassesTags" class="flex flex-wrap gap-1.5 mt-2 min-h-[24px]"></div>
+                        <input type="hidden" id="selectedClassesInput" name="teaching_classes">
+                        <p id="errClasses" class="text-[10px] text-rose-400 font-bold mt-1 hidden">Please select at least one class!</p>
+                    </div>
+
+                    <!-- Subjects Dropdown (Class-Dependent) -->
+                    <div>
+                        <label for="subjectDropdown" class="block text-xs font-bold text-slate-300 mb-1.5"><i class="fas fa-book text-cyan-400 mr-1"></i>Select Subject <span class="text-rose-400">*</span> <span class="text-[10px] text-cyan-400/70 font-medium">(based on class)</span></label>
+                        <select id="subjectDropdown" class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium cursor-pointer" disabled>
+                            <option value="" disabled selected>-- Select class first --</option>
+                        </select>
+                        <div id="selectedSubjectsTags" class="flex flex-wrap gap-1.5 mt-2 min-h-[24px]"></div>
+                        <input type="hidden" id="selectedSubjectsInput" name="subjects">
+                        <p id="errSubjects" class="text-[10px] text-rose-400 font-bold mt-1 hidden">Please select at least one subject!</p>
+                    </div>
+
+                    <!-- Tuition Mode Dropdown -->
+                    <div>
+                        <label for="tuitionMode" class="block text-xs font-bold text-slate-300 mb-1.5"><i class="fas fa-chalkboard-teacher text-cyan-400 mr-1"></i>Tuition Mode <span class="text-rose-400">*</span></label>
+                        <select id="tuitionMode" name="tuition_mode" required class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium cursor-pointer">
+                            <option value="" disabled selected>Select Preferred Mode</option>
+                            <option value="All">All</option>
+                            <option value="Home Tuition">Home Tuition</option>
+                            <option value="Online Tuition">Online Tuition</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Expected Monthly Fee -->
+            <div class="space-y-3 pt-2 border-t border-slate-700/60">
+                <h3 class="text-sm font-extrabold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-tag"></i> 3. Expected Monthly Fee
+                </h3>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="fee-card">
+                        <input type="radio" id="fee1" name="fee_option" value="₹1,000 – ₹2,000" class="hidden">
+                        <label for="fee1" class="block p-3 rounded-2xl bg-slate-900/60 border border-slate-700 text-center text-xs font-extrabold cursor-pointer hover:border-brand-500 transition-all">₹1,000 – ₹2,000</label>
+                    </div>
+                    <div class="fee-card">
+                        <input type="radio" id="fee2" name="fee_option" value="₹2,000 – ₹4,000" class="hidden">
+                        <label for="fee2" class="block p-3 rounded-2xl bg-slate-900/60 border border-slate-700 text-center text-xs font-extrabold cursor-pointer hover:border-brand-500 transition-all">₹2,000 – ₹4,000</label>
+                    </div>
+                    <div class="fee-card">
+                        <input type="radio" id="fee3" name="fee_option" value="₹4,000 – ₹6,000" class="hidden">
+                        <label for="fee3" class="block p-3 rounded-2xl bg-slate-900/60 border border-slate-700 text-center text-xs font-extrabold cursor-pointer hover:border-brand-500 transition-all">₹4,000 – ₹6,000</label>
+                    </div>
+                    <div class="fee-card">
+                        <input type="radio" id="fee4" name="fee_option" value="₹6,000 – ₹8,000" class="hidden">
+                        <label for="fee4" class="block p-3 rounded-2xl bg-slate-900/60 border border-slate-700 text-center text-xs font-extrabold cursor-pointer hover:border-brand-500 transition-all">₹6,000 – ₹8,000</label>
+                    </div>
+                    <div class="fee-card">
+                        <input type="radio" id="fee5" name="fee_option" value="₹8,000 – ₹10,000" class="hidden">
+                        <label for="fee5" class="block p-3 rounded-2xl bg-slate-900/60 border border-slate-700 text-center text-xs font-extrabold cursor-pointer hover:border-brand-500 transition-all">₹8,000 – ₹10,000</label>
+                    </div>
+                    <div class="fee-card">
+                        <input type="radio" id="feeCustom" name="fee_option" value="Custom" class="hidden">
+                        <label for="feeCustom" class="block p-3 rounded-2xl bg-slate-900/60 border border-slate-700 text-center text-xs font-extrabold cursor-pointer hover:border-brand-500 transition-all">Custom Fee</label>
+                    </div>
+                </div>
+
+                <!-- Custom Fee Input Field -->
+                <div id="customFeeWrapper" class="hidden pt-2">
+                    <input type="number" id="customFeeVal" placeholder="Enter amount in ₹ (e.g. 12000)"
+                        class="w-full glass-input rounded-xl px-4 py-3 text-xs font-medium placeholder-slate-500">
+                </div>
+                <input type="hidden" id="finalFeeInput" name="expected_fee" value="">
+                <p id="errFee" class="text-[10px] text-rose-400 font-bold mt-1 hidden">Please select or enter an expected monthly fee!</p>
+            </div>
+
+            <!-- SECTION 4: Short Bio -->
+            <div class="space-y-2 pt-2 border-t border-slate-700/60">
+                <div class="flex items-center justify-between">
+                    <label for="bio" class="text-sm font-extrabold text-emerald-400 uppercase tracking-wider flex items-center gap-2 cursor-pointer">
+                        <i class="fas fa-pen font-bold"></i> 4. Short Bio & Teaching Methodology
+                    </label>
+                    <span class="text-[10px] font-semibold text-slate-400"><span id="bioCharCount">0</span> / 500</span>
+                </div>
+                <textarea id="bio" name="bio" rows="3" maxlength="500" placeholder="Write a short summary about your qualifications, teaching methodology, and achievements..."
+                    class="w-full glass-input rounded-xl p-4 text-xs font-medium placeholder-slate-500 resize-none"></textarea>
+            </div>
+
+            <!-- SECTION 5: Profile Photo Upload Dropzone -->
+            <div class="space-y-2 pt-2 border-t border-slate-700/60">
+                <h3 class="text-sm font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-camera"></i> 5. Profile Photo Upload
+                </h3>
+
+                <div id="dropzone" class="p-6 border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-3xl bg-slate-900/40 text-center space-y-3 cursor-pointer transition-all">
+                    <div id="dropzoneEmpty">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-800 text-brand-400 flex items-center justify-center mx-auto text-xl shadow-inner">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <p class="text-xs font-bold text-slate-200 mt-2">Drag & Drop profile photo or <span class="text-brand-400 underline">Browse</span></p>
+                        <p class="text-[10px] text-slate-400 mt-1">Supports JPG, PNG, WEBP (Max size: 5 MB)</p>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div id="dropzonePreview" class="hidden flex flex-col items-center gap-3">
+                        <img id="imgPreviewSrc" src="" alt="Profile Photo Preview" class="w-24 h-24 rounded-2xl object-cover border-2 border-brand-500 shadow-md">
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="removePhotoBtn" class="px-3 py-1.5 bg-rose-600/80 hover:bg-rose-600 text-white rounded-xl text-[11px] font-bold border-0 cursor-pointer">
+                                Remove Photo
+                            </button>
+                        </div>
+                    </div>
+                    <input type="file" id="profilePhoto" name="profile_photo" accept="image/jpeg,image/png,image/webp" class="hidden">
+                </div>
+            </div>
+
+            <!-- Submit & Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-700/80">
+                <button type="submit" id="submitBtn" class="flex-1 py-4 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl shadow-lg shadow-brand-500/30 transition-all border-0 cursor-pointer flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                    <span id="btnText"><i class="fas fa-paper-plane mr-1"></i> Submit & Register</span>
+                    <span id="btnSpinner" class="hidden"><i class="fas fa-spinner fa-spin"></i> Submitting...</span>
+                </button>
+
+                <a href="{% url 'home' %}" class="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold rounded-2xl text-xs text-decoration-none text-center transition-all border border-slate-700 flex items-center justify-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success Modal Alert -->
+    <div id="successModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-8 text-center space-y-5 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-3xl border border-emerald-500/40 animate-bounce">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Registration Submitted!</h3>
+            <p class="text-xs text-slate-300 leading-relaxed font-medium">Your registration request has been submitted successfully. Your profile will become visible to students only after verification and approval by the EduTrust Admin Team.</p>
+            <div class="p-3 bg-slate-950 rounded-2xl border border-slate-800 font-mono text-xs text-brand-400 font-extrabold">
+                Teacher ID: <span id="resTeacherId">EDUT-XXXXXX</span>
+            </div>
+            <a href="{% url 'teacher_dashboard' %}#performance" class="block w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs rounded-xl transition-all text-decoration-none shadow-md flex items-center justify-center gap-2">
+                <i class="fas fa-chalkboard-teacher"></i> Open Teacher Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript Integration for Registration Module -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ===== CLASS & SUBJECT DROPDOWN SYSTEM =====
+            const classesList = ['Play Group', 'Nursery', 'LKG', 'UKG', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12'];
+            let selectedClasses = [];
+            let selectedSubjects = [];
+
+            const classSubjectMap = {
+                'Play Group': ['English', 'Hindi', 'Drawing', 'Music', 'General Knowledge'],
+                'Nursery': ['English', 'Hindi', 'Mathematics', 'EVS', 'Drawing'],
+                'LKG': ['English', 'Hindi', 'Mathematics', 'EVS', 'Drawing'],
+                'UKG': ['English', 'Hindi', 'Mathematics', 'EVS', 'Drawing'],
+                'Class 1': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+                'Class 2': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+                'Class 3': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+                'Class 4': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+                'Class 5': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+                'Class 6': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Sanskrit', 'Computer', 'Drawing', 'Music'],
+                'Class 7': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Sanskrit', 'Computer', 'Drawing', 'Music'],
+                'Class 8': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Sanskrit', 'Computer', 'Drawing', 'Music'],
+                'Class 9': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer', 'Sanskrit'],
+                'Class 10': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer', 'Sanskrit'],
+                'Class 11': ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'Computer Science', 'Accountancy', 'Economics', 'Business Studies', 'History', 'Political Science', 'Geography', 'Hindi'],
+                'Class 12': ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'Computer Science', 'Accountancy', 'Economics', 'Business Studies', 'History', 'Political Science', 'Geography', 'Hindi']
+            };
+
+            const classDropdown = document.getElementById('classDropdown');
+            const subjectDropdown = document.getElementById('subjectDropdown');
+            const classTags = document.getElementById('selectedClassesTags');
+            const subjectTags = document.getElementById('selectedSubjectsTags');
+
+            // Populate class dropdown
+            classesList.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = cls;
+                classDropdown.appendChild(opt);
+            });
+
+            // When a class is selected from dropdown
+            classDropdown.addEventListener('change', () => {
+                const val = classDropdown.value;
+                if (val && !selectedClasses.includes(val)) {
+                    selectedClasses.push(val);
+                    updateClassTags();
+                    updateSubjectDropdown();
+                }
+                classDropdown.value = '';
+            });
+
+            function updateClassTags() {
+                classTags.innerHTML = selectedClasses.map(cls => `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-[11px] font-bold">
+                        <i class="fas fa-graduation-cap text-[9px]"></i> ${cls}
+                        <button type="button" onclick="removeClass('${cls}')" class="ml-0.5 text-cyan-400 hover:text-rose-400 transition-colors bg-transparent border-0 cursor-pointer text-xs font-bold p-0 leading-none">&times;</button>
+                    </span>
+                `).join('');
+                document.getElementById('selectedClassesInput').value = selectedClasses.join(', ');
+            }
+
+            window.removeClass = function(cls) {
+                selectedClasses = selectedClasses.filter(c => c !== cls);
+                // Remove subjects that are no longer available
+                const available = getAvailableSubjects();
+                selectedSubjects = selectedSubjects.filter(s => available.includes(s));
+                updateClassTags();
+                updateSubjectDropdown();
+                updateSubjectTags();
+            };
+
+            function getAvailableSubjects() {
+                if (selectedClasses.length === 0) return [];
+                const subjectSet = new Set();
+                selectedClasses.forEach(cls => {
+                    (classSubjectMap[cls] || []).forEach(s => subjectSet.add(s));
+                });
+                return Array.from(subjectSet);
+            }
+
+            function updateSubjectDropdown() {
+                const available = getAvailableSubjects();
+                subjectDropdown.innerHTML = '';
+
+                if (available.length === 0) {
+                    subjectDropdown.disabled = true;
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.disabled = true;
+                    opt.selected = true;
+                    opt.textContent = '-- Select class first --';
+                    subjectDropdown.appendChild(opt);
+                    return;
+                }
+
+                subjectDropdown.disabled = false;
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.disabled = true;
+                defaultOpt.selected = true;
+                defaultOpt.textContent = '-- Choose a Subject --';
+                subjectDropdown.appendChild(defaultOpt);
+
+                available.forEach(subj => {
+                    if (!selectedSubjects.includes(subj)) {
+                        const opt = document.createElement('option');
+                        opt.value = subj;
+                        opt.textContent = subj;
+                        subjectDropdown.appendChild(opt);
+                    }
+                });
+            }
+
+            subjectDropdown.addEventListener('change', () => {
+                const val = subjectDropdown.value;
+                if (val && !selectedSubjects.includes(val)) {
+                    selectedSubjects.push(val);
+                    updateSubjectTags();
+                    updateSubjectDropdown();
+                }
+                subjectDropdown.value = '';
+            });
+
+            function updateSubjectTags() {
+                subjectTags.innerHTML = selectedSubjects.map(subj => `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[11px] font-bold">
+                        <i class="fas fa-book text-[9px]"></i> ${subj}
+                        <button type="button" onclick="removeSubject('${subj}')" class="ml-0.5 text-indigo-400 hover:text-rose-400 transition-colors bg-transparent border-0 cursor-pointer text-xs font-bold p-0 leading-none">&times;</button>
+                    </span>
+                `).join('');
+                document.getElementById('selectedSubjectsInput').value = selectedSubjects.join(', ');
+            }
+
+            window.removeSubject = function(subj) {
+                selectedSubjects = selectedSubjects.filter(s => s !== subj);
+                updateSubjectTags();
+                updateSubjectDropdown();
+            };
+
+            // Fee Options Toggle
+            const feeOptions = document.querySelectorAll('input[name="fee_option"]');
+            const customFeeWrapper = document.getElementById('customFeeWrapper');
+            const customFeeVal = document.getElementById('customFeeVal');
+            const finalFeeInput = document.getElementById('finalFeeInput');
+
+            feeOptions.forEach(opt => {
+                opt.addEventListener('change', () => {
+                    if (opt.value === 'Custom') {
+                        customFeeWrapper.classList.remove('hidden');
+                        finalFeeInput.value = customFeeVal.value ? `₹${customFeeVal.value}/mo` : 'Custom Fee';
+                    } else {
+                        customFeeWrapper.classList.add('hidden');
+                        finalFeeInput.value = opt.value;
+                    }
+                });
+            });
+
+            customFeeVal.addEventListener('input', () => {
+                finalFeeInput.value = customFeeVal.value ? `₹${customFeeVal.value}/mo` : 'Custom Fee';
+            });
+
+            // Character counter for bio
+            const bioArea = document.getElementById('bio');
+            const bioCharCount = document.getElementById('bioCharCount');
+            bioArea.addEventListener('input', () => {
+                bioCharCount.textContent = bioArea.value.length;
+            });
+
+            // Profile Photo Drag & Drop Dropzone
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('profilePhoto');
+            const dropzoneEmpty = document.getElementById('dropzoneEmpty');
+            const dropzonePreview = document.getElementById('dropzonePreview');
+            const imgPreviewSrc = document.getElementById('imgPreviewSrc');
+            const removePhotoBtn = document.getElementById('removePhotoBtn');
+
+            dropzone.addEventListener('click', (e) => {
+                if (e.target !== removePhotoBtn) fileInput.click();
+            });
+
+            fileInput.addEventListener('change', handleFileSelect);
+
+            function handleFileSelect() {
+                const file = fileInput.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size exceeds 5 MB limit!');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        imgPreviewSrc.src = e.target.result;
+                        dropzoneEmpty.classList.add('hidden');
+                        dropzonePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            removePhotoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.value = '';
+                imgPreviewSrc.src = '';
+                dropzonePreview.classList.add('hidden');
+                dropzoneEmpty.classList.remove('hidden');
+            });
+
+            // Live Duplicate Check on Blur
+            const emailInput = document.getElementById('email');
+            const mobileInput = document.getElementById('mobile');
+            const errEmail = document.getElementById('errEmail');
+            const errMobile = document.getElementById('errMobile');
+
+            emailInput.addEventListener('blur', () => {
+                const emailVal = emailInput.value.trim();
+                if (emailVal) {
+                    fetch(`/api/check-duplicate/?email=${encodeURIComponent(emailVal)}`)
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.email_exists) {
+                                errEmail.textContent = 'This email address is already registered!';
+                                errEmail.classList.remove('hidden');
+                            } else {
+                                errEmail.classList.add('hidden');
+                            }
+                        });
+                }
+            });
+
+            mobileInput.addEventListener('blur', () => {
+                const mobileVal = mobileInput.value.trim();
+                if (mobileVal) {
+                    fetch(`/api/check-duplicate/?mobile=${encodeURIComponent(mobileVal)}`)
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.mobile_exists) {
+                                errMobile.textContent = 'This contact number is already registered!';
+                                errMobile.classList.remove('hidden');
+                            } else {
+                                errMobile.classList.add('hidden');
+                            }
+                        });
+                }
+            });
+
+            // Form Submit Handler
+            const form = document.getElementById('teacherRegistrationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Validation
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = emailInput.value.trim();
+                const mobile = mobileInput.value.trim();
+
+                if (!/^[a-zA-Z\s\.]+$/.test(fullName)) {
+                    document.getElementById('errFullName').textContent = 'Full name must contain only alphabets and spaces!';
+                    document.getElementById('errFullName').classList.remove('hidden');
+                    return;
+                } else {
+                    document.getElementById('errFullName').classList.add('hidden');
+                }
+
+                if (!/^[0-9]{10}$/.test(mobile)) {
+                    errMobile.textContent = 'Mobile number must be exactly 10 digits!';
+                    errMobile.classList.remove('hidden');
+                    return;
+                }
+
+                if (selectedClasses.length === 0) {
+                    document.getElementById('errClasses').classList.remove('hidden');
+                    return;
+                } else {
+                    document.getElementById('errClasses').classList.add('hidden');
+                }
+
+                if (selectedSubjects.length === 0) {
+                    document.getElementById('errSubjects').classList.remove('hidden');
+                    return;
+                } else {
+                    document.getElementById('errSubjects').classList.add('hidden');
+                }
+
+                if (!finalFeeInput.value) {
+                    document.getElementById('errFee').classList.remove('hidden');
+                    return;
+                } else {
+                    document.getElementById('errFee').classList.add('hidden');
+                }
+
+                submitBtn.disabled = true;
+                btnText.classList.add('hidden');
+                btnSpinner.classList.remove('hidden');
+
+                const formData = new FormData(form);
+                const pendingJobId = sessionStorage.getItem('pendingJobId');
+                if (pendingJobId) {
+                    formData.append('pending_job_id', pendingJobId);
+                }
+
+                fetch("{% url 'teacher_registration' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('hidden');
+                    btnSpinner.classList.add('hidden');
+
+                    if (data.status === 'success') {
+                        document.getElementById('resTeacherId').textContent = data.teacher_id;
+                        const modal = document.getElementById('successModal');
+                        modal.classList.remove('hidden');
+                        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                        
+                        const isApplyFlow = data.application_id || sessionStorage.getItem('pendingApplicationIntent') === 'true';
+
+                        setTimeout(() => {
+                            if (isApplyFlow) {
+                                // MODE B: APPLY REGISTRATION -> DO NOT REDIRECT TO DASHBOARD!
+                                // Remain on /latest-tuition-job/
+                                window.location.href = '/latest-tuition-job/';
+                            } else {
+                                // MODE A: NORMAL REGISTRATION -> REDIRECT TO DASHBOARD
+                                window.location.href = data.redirect_url || "{% url 'teacher_dashboard' %}#performance";
+                            }
+                        }, 1500);
+                    } else {
+                        alert(data.message || 'Registration failed!');
+                    }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    btnText.classList.remove('hidden');
+                    btnSpinner.classList.add('hidden');
+                    console.error('Registration error:', err);
+                    alert('Server error during registration!');
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2085 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-2 fade-in">
+
+    <!-- HEADER & ACTION BUTTONS -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+        <div>
+            <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-tight">Batch Control Center</h2>
+            <p class="text-[11px] text-slate-500 font-medium">Complete batch lifecycle control, multi-teacher assignments, pricing, subject & status management</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openAddBatchModal()" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-extrabold text-[11px] px-3 py-1.5 rounded-xl border-0 cursor-pointer transition-all flex items-center gap-1 shadow-2xs">
+                <i class="fas fa-plus text-[9px]"></i> Create Batch
+            </button>
+            <button onclick="executeBatchSearch()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-[11px] px-2.5 py-1.5 rounded-xl border-0 cursor-pointer transition-colors flex items-center gap-1 shrink-0">
+                <i class="fas fa-sync-alt text-[9px]"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== 1. ULTRA-COMPACT KPI STATS BAR (7 CARDS — 54px HEIGHT) ========== -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5">
+        <!-- Total Batches -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">TOTAL BATCHES</span>
+                <div class="w-3.5 h-3.5 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-cubes"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-slate-900 leading-none" id="kpiTotalBatches">0</h4>
+        </div>
+
+        <!-- Active -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">ACTIVE</span>
+                <div class="w-3.5 h-3.5 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-emerald-600 leading-none" id="kpiActiveBatches">0</h4>
+        </div>
+
+        <!-- Upcoming -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">UPCOMING</span>
+                <div class="w-3.5 h-3.5 rounded bg-blue-50 text-blue-600 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-hourglass-start"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-blue-600 leading-none" id="kpiUpcomingBatches">0</h4>
+        </div>
+
+        <!-- Draft -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">DRAFT</span>
+                <div class="w-3.5 h-3.5 rounded bg-slate-100 text-slate-500 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-slate-700 leading-none" id="kpiDraftBatches">0</h4>
+        </div>
+
+        <!-- Paused -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">PAUSED</span>
+                <div class="w-3.5 h-3.5 rounded bg-amber-50 text-amber-600 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-pause-circle"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-amber-600 leading-none" id="kpiPausedBatches">0</h4>
+        </div>
+
+        <!-- Expired -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">EXPIRED</span>
+                <div class="w-3.5 h-3.5 rounded bg-rose-50 text-rose-600 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-rose-600 leading-none" id="kpiExpiredBatches">0</h4>
+        </div>
+
+        <!-- Completed -->
+        <div class="bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between h-[54px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block truncate">COMPLETED</span>
+                <div class="w-3.5 h-3.5 rounded bg-purple-50 text-purple-600 flex items-center justify-center text-[8px] shrink-0">
+                    <i class="fas fa-flag-checkered"></i>
+                </div>
+            </div>
+            <h4 class="text-sm sm:text-base font-black text-purple-600 leading-none" id="kpiCompletedBatches">0</h4>
+        </div>
+    </div>
+
+    <!-- ========== 2. ULTRA-COMPACT FILTER CONTROL PANEL (SAME-ROW SEARCH + FILTERS — 30px HEIGHT) ========== -->
+    <div class="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+        
+        <!-- FILTERS GRID — ROW 1 (Search ~28-30% + 6 Filters: Class, Board, Stream, Subject, Teacher, Status) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-1.5 items-end">
+            <!-- Search Bar (Col 1 — ~28-30% width) -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">SEARCH BATCHES</label>
+                <div class="relative">
+                    <input type="text" id="batchSearchInput" placeholder="Search by Batch Name, Course, ID, Teacher, Class, Subject..."
+                        class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-2.5 h-[30px] text-[11px] font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    <i class="fas fa-search absolute left-2.5 top-2 text-slate-400 text-[10px]"></i>
+                </div>
+            </div>
+
+            <!-- Class Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">CLASS</label>
+                <select id="batchClassFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+
+            <!-- Board Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">BOARD</label>
+                <select id="batchBoardFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Boards</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ICSE">ICSE</option>
+                    <option value="ISC">ISC</option>
+                    <option value="UP Board">UP Board</option>
+                    <option value="State Board">State Board</option>
+                </select>
+            </div>
+
+            <!-- Stream Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">STREAM</label>
+                <select id="batchStreamFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Streams</option>
+                    <option value="Science">Science</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts / Humanities">Arts / Humanities</option>
+                </select>
+            </div>
+
+            <!-- Subject Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">SUBJECT</label>
+                <select id="batchSubjectFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Subjects</option>
+                </select>
+            </div>
+
+            <!-- Teacher Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">TEACHER</label>
+                <select id="batchTeacherFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Teachers</option>
+                </select>
+            </div>
+
+            <!-- Status Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">STATUS</label>
+                <select id="batchStatusFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Upcoming">Upcoming</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Paused">Paused</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Archived">Archived</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- FILTERS GRID — ROW 2 (6 Columns: Batch Type, Visibility, Price, Date Range, Search Button, Reset Button) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 items-end">
+            <!-- Batch Type -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">BATCH TYPE</label>
+                <select id="batchTypeFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Types</option>
+                    <option value="Live + Recorded">Live + Recorded</option>
+                    <option value="Live">Live</option>
+                    <option value="Recorded">Recorded</option>
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+
+            <!-- Visibility -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">VISIBILITY</label>
+                <select id="batchVisibilityFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Visibility</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                    <option value="Hidden">Hidden</option>
+                </select>
+            </div>
+
+            <!-- Price Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">PRICE</label>
+                <select id="batchPriceFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Prices</option>
+                    <option value="paid">Paid</option>
+                    <option value="free">Free</option>
+                </select>
+            </div>
+
+            <!-- Date Filter -->
+            <div>
+                <label class="text-[8px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">DATE RANGE</label>
+                <select id="batchDateFilter" onchange="executeBatchSearch()" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-semibold rounded-lg px-2 h-[30px] focus:outline-none focus:border-blue-500 truncate cursor-pointer">
+                    <option value="">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="expiring_soon">Expiring Soon</option>
+                    <option value="expired">Expired</option>
+                </select>
+            </div>
+
+            <!-- SEARCH BUTTON -->
+            <div>
+                <button id="batchSearchBtn" onclick="executeBatchSearch()" class="w-full h-[30px] bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[11px] rounded-lg border-0 cursor-pointer transition-all inline-flex items-center justify-center gap-1 shadow-2xs">
+                    <i class="fas fa-search text-[10px]"></i>
+                    <span id="batchSearchBtnText">Search</span>
+                </button>
+            </div>
+
+            <!-- RESET BUTTON -->
+            <div>
+                <button id="batchResetBtn" onclick="resetBatchFilters()" class="w-full h-[30px] bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-[11px] rounded-lg border-0 cursor-pointer transition-all inline-flex items-center justify-center gap-1">
+                    <i class="fas fa-undo text-[9px]"></i>
+                    <span>Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- FILTER RESULT STATUS (ULTRA-COMPACT 20px BAR) -->
+        <div id="batchResultStatus" class="hidden text-[10px] font-medium text-slate-500 pt-0.5 flex items-center justify-between border-t border-slate-100">
+            <span>Filter Results: <strong id="batchResultCountNum" class="text-blue-600 font-extrabold">0</strong> batches found</span>
+            <span class="text-[10px] text-slate-400 font-semibold" id="batchFilterSummary">Showing all real batches</span>
+        </div>
+
+    </div>
+
+<!-- ========== 3. DYNAMIC BATCH CARDS GRID (NO STATIC HTML CARDS) ========== -->
+    <div id="batchCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div class="col-span-full py-12 text-center text-slate-400">
+            <i class="fas fa-spinner fa-spin text-2xl mb-2 block text-blue-600"></i>
+            <p class="font-extrabold text-sm text-slate-700">Loading real batches from database...</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========== TEACHER LIST POPOVER MODAL (FOR "+X MORE TEACHERS") ========== -->
+<div id="teachersPopoverModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-4 space-y-3 shadow-2xl relative">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="text-sm font-extrabold text-slate-900" id="popoverBatchTitle">Assigned Teachers</h3>
+            <button onclick="closeTeachersPopover()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 border-0 cursor-pointer flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        <div id="popoverTeachersList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+            <!-- List populated dynamically from real DB -->
+        </div>
+    </div>
+</div>
+
+<!-- ========== REJECT BATCH MODAL ========== -->
+<div id="modalRejectBatch" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-3 shadow-2xl relative">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <h3 class="text-base font-black text-rose-600 flex items-center gap-1.5"><i class="fas fa-times-circle"></i> Reject Batch</h3>
+            <button onclick="closeRejectBatchModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 border-0 cursor-pointer flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        <div class="space-y-2 text-xs">
+            <p class="font-bold text-slate-700">Please state the reason for rejecting this batch:</p>
+            <textarea id="rejectReasonText" rows="3" placeholder="Enter rejection details or feedback..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:border-rose-500"></textarea>
+        </div>
+        <div class="pt-2 flex justify-end gap-2 text-xs">
+            <button onclick="closeRejectBatchModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border-0 cursor-pointer">Cancel</button>
+            <button onclick="submitRejectBatch()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-xl border-0 cursor-pointer shadow-2xs">Reject Batch</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== BATCH CONTROL CENTER DETAILS MODAL (11 TABS) ========== -->
+<div id="batchControlCenterModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
+        
+        <!-- MODAL HEADER -->
+        <div class="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-base font-bold shrink-0">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="text-base font-black truncate text-white" id="modalBatchTitle">Loading...</h3>
+                    <p class="text-[10px] text-slate-400 font-bold truncate" id="modalBatchSub">Fetching batch details...</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span id="modalBatchStatusBadge" class="bg-slate-700 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">LOADING</span>
+                <button onclick="openEditBatchModal(selectedBatchId)" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer transition-colors inline-flex items-center gap-1 shadow-2xs">
+                    <i class="fas fa-edit text-[10px]"></i> Edit Batch
+                </button>
+                <button onclick="closeBatchControlCenterModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white border-0 cursor-pointer flex items-center justify-center">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- TABS NAV BAR -->
+        <div class="flex items-center gap-1 border-b border-slate-200 bg-slate-50 px-3 pt-2 overflow-x-auto shrink-0">
+            <button onclick="switchBatchModalTab('overview', this)" class="batch-tab-btn active-tab px-3 py-1.5 text-xs font-extrabold rounded-t-xl text-blue-600 bg-white border-t border-x border-slate-200 border-b-white cursor-pointer shrink-0">Overview</button>
+            <button onclick="switchBatchModalTab('teachers', this)" class="batch-tab-btn px-3 py-1.5 text-xs font-extrabold rounded-t-xl text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0">Teachers</button>
+            <button onclick="switchBatchModalTab('schedule', this)" class="batch-tab-btn px-3 py-1.5 text-xs font-extrabold rounded-t-xl text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0">Schedule</button>
+            <button onclick="switchBatchModalTab('pricing', this)" class="batch-tab-btn px-3 py-1.5 text-xs font-extrabold rounded-t-xl text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0">Pricing & Coupons</button>
+            <button onclick="switchBatchModalTab('activity', this)" class="batch-tab-btn px-3 py-1.5 text-xs font-extrabold rounded-t-xl text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0">Audit Logs</button>
+            <button onclick="switchBatchModalTab('settings', this)" class="batch-tab-btn px-3 py-1.5 text-xs font-extrabold rounded-t-xl text-slate-600 hover:bg-slate-100 cursor-pointer shrink-0">Danger Zone</button>
+        </div>
+
+        <!-- MODAL BODY -->
+        <div class="p-4 overflow-y-auto space-y-4 flex-1" id="batchModalTabContent">
+            <div class="py-12 text-center text-slate-400">
+                <i class="fas fa-spinner fa-spin text-2xl mb-2 block text-blue-600"></i>
+                <p class="font-extrabold text-sm text-slate-700">Loading batch details...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== CREATE NEW BATCH MODAL ========== -->
+<div id="modalAddBatch" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 space-y-3 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <h3 class="text-base font-black text-slate-900">Create New Batch</h3>
+            <button onclick="closeAddBatchModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 border-0 cursor-pointer flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <form id="addBatchForm" onsubmit="submitNewBatch(event)" class="space-y-3 text-xs">
+            <div>
+                <label class="font-extrabold text-slate-700 block mb-1">Batch Title *</label>
+                <input type="text" id="newBatchTitle" required placeholder="e.g. Class 10 CBSE Math Pinnacle Batch 2026-27" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Class *</label>
+                    <select id="newBatchClass" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                        <option value="Class 1">Class 1</option>
+                        <option value="Class 2">Class 2</option>
+                        <option value="Class 3">Class 3</option>
+                        <option value="Class 4">Class 4</option>
+                        <option value="Class 5">Class 5</option>
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10" selected>Class 10</option>
+                        <option value="Class 11">Class 11</option>
+                        <option value="Class 12">Class 12</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Board *</label>
+                    <select id="newBatchBoard" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                        <option value="CBSE">CBSE</option>
+                        <option value="ICSE">ICSE</option>
+                        <option value="ISC">ISC</option>
+                        <option value="UP Board">UP Board</option>
+                        <option value="State Board">State Board</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Stream (Class 11/12)</label>
+                    <select id="newBatchStream" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                        <option value="N/A">N/A</option>
+                        <option value="Science">Science</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Arts / Humanities">Arts / Humanities</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Subject *</label>
+                    <input type="text" id="newBatchSubject" required placeholder="Mathematics, Physics..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Batch Type</label>
+                    <select id="newBatchType" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                        <option value="Live + Recorded">Live + Recorded</option>
+                        <option value="Live">Live</option>
+                        <option value="Recorded">Recorded</option>
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Price (₹) *</label>
+                    <input type="number" id="newBatchPrice" required value="2999" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                </div>
+            </div>
+
+            <div>
+                <label class="font-extrabold text-slate-700 block mb-1">Assign Multiple Teachers</label>
+                <select id="newBatchTeachers" multiple class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold h-24">
+                    <!-- Populated dynamically from real DB -->
+                </select>
+                <span class="text-[10px] text-slate-400 block mt-0.5">Hold Ctrl (or Cmd) to select multiple teachers.</span>
+            </div>
+
+            <div class="pt-2 flex justify-end gap-2">
+                <button type="button" onclick="closeAddBatchModal()" class="px-4 py-2 bg-slate-100 font-bold rounded-xl border-0">Cancel</button>
+                <button type="submit" id="btnSubmitNewBatch" class="px-5 py-2 bg-blue-600 text-white font-extrabold rounded-xl border-0 shadow-2xs">Create Batch</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========== ADD TEACHER PICKER SEARCH MODAL ========== -->
+<div id="modalAddTeacherToBatch" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[10005] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-4 space-y-3 shadow-2xl relative max-h-[85vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 shrink-0">
+            <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
+                <i class="fas fa-user-plus text-blue-600"></i> Add Faculty to Batch
+            </h3>
+            <button type="button" onclick="closeAddTeacherPickerModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 border-0 cursor-pointer flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div class="relative shrink-0">
+            <input type="text" id="teacherPickerSearchInput" onkeyup="filterAddTeacherPicker()" placeholder="Search faculty by name, subject, email..."
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500">
+            <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+        </div>
+
+        <div id="teacherPickerList" class="space-y-2 overflow-y-auto flex-1 pr-1">
+            <!-- Dynamic teacher list populated via JS from DB -->
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 flex justify-end shrink-0">
+            <button type="button" onclick="closeAddTeacherPickerModal()" class="px-4 py-1.5 bg-slate-100 font-extrabold text-xs text-slate-700 rounded-xl border-0 cursor-pointer">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== COMPLETE EDIT BATCH MODAL ========== -->
+<div id="modalEditBatch" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[10000] flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-5 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div class="flex items-center gap-2">
+                <h3 class="text-base font-black text-slate-900">Edit Batch Details</h3>
+                <span id="editBatchCodeDisplay" class="text-[10px] font-mono font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full"></span>
+            </div>
+            <button onclick="closeEditBatchModal()" class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 border-0 cursor-pointer flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+
+        <div id="editBatchErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold"></div>
+
+        <form id="editBatchForm" onsubmit="submitEditBatch(event)" class="space-y-4 text-xs">
+            <input type="hidden" id="editBatchId">
+
+            <!-- SECTION 1: BASIC INFORMATION -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fas fa-info-circle text-blue-600"></i> Basic Information
+                </h4>
+                
+                <div>
+                    <label class="font-extrabold text-slate-700 block mb-1">Batch Title *</label>
+                    <input type="text" id="editBatchTitle" required class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Class *</label>
+                        <select id="editBatchClass" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
+                            <option value="KG">KG</option>
+                            <option value="Class 1">Class 1</option>
+                            <option value="Class 2">Class 2</option>
+                            <option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option>
+                            <option value="Class 5">Class 5</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                            <option value="Class 9">Class 9</option>
+                            <option value="Class 10">Class 10</option>
+                            <option value="Class 11">Class 11</option>
+                            <option value="Class 12">Class 12</option>
+                            <option value="JEE Mastermind">JEE Mastermind</option>
+                            <option value="NEET Pinnacle">NEET Pinnacle</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Board *</label>
+                        <select id="editBatchBoard" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
+                            <option value="CBSE">CBSE</option>
+                            <option value="ICSE">ICSE</option>
+                            <option value="ISC">ISC</option>
+                            <option value="UP Board">UP Board</option>
+                            <option value="State Board">State Board</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Stream</label>
+                        <select id="editBatchStream" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
+                            <option value="N/A">N/A</option>
+                            <option value="Science">Science</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Arts / Humanities">Arts / Humanities</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Subject(s) *</label>
+                        <input type="text" id="editBatchSubject" required placeholder="Mathematics, Physics..." class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-900">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: BATCH SETTINGS & ACCESS -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fas fa-sliders-h text-blue-600"></i> Batch Settings & Access
+                </h4>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Batch Type</label>
+                        <select id="editBatchType" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
+                            <option value="Live + Recorded">Live + Recorded</option>
+                            <option value="Live">Live</option>
+                            <option value="Recorded">Recorded</option>
+                            <option value="Online">Online</option>
+                            <option value="Offline">Offline</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Visibility</label>
+                        <select id="editBatchVisibility" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
+                            <option value="Hidden">Hidden</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Status</label>
+                        <select id="editBatchStatus" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-800">
+                            <option value="Active">Active</option>
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Paused">Paused</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Expired">Expired</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: PRICING & DISCOUNTS -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fas fa-tag text-emerald-600"></i> Pricing & Discounts
+                </h4>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Base Price (₹) *</label>
+                        <input type="number" id="editBatchPrice" required oninput="calcEditModalFinalPrice()" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-900">
+                    </div>
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Discount %</label>
+                        <input type="number" id="editBatchDiscount" value="0" min="0" max="100" oninput="calcEditModalFinalPrice()" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-900">
+                    </div>
+                </div>
+
+                <div class="p-2.5 bg-emerald-50 text-emerald-800 rounded-xl font-extrabold text-xs flex justify-between">
+                    <span>Calculated Final Price:</span>
+                    <span id="editBatchFinalPricePreview">₹0.00</span>
+                </div>
+            </div>
+
+            <!-- SECTION 4: STRICT BATCH-SPECIFIC ASSIGNED TEACHERS -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fas fa-chalkboard-teacher text-indigo-600"></i> Assigned Faculty (<span id="editAssignedCountNum">0</span>)
+                    </h4>
+                </div>
+
+                <!-- STACKED LIST OF CURRENTLY ASSIGNED TEACHERS -->
+                <div id="assignedTeachersList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Populated dynamically per batch -->
+                </div>
+
+                <!-- ADD TEACHER BUTTON -->
+                <button type="button" onclick="openAddTeacherPickerModal()" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-extrabold text-xs rounded-xl border border-dashed border-blue-300 cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
+                    <i class="fas fa-plus text-xs"></i> Add Teacher
+                </button>
+            </div>
+
+            <!-- SECTION 5: SCHEDULE & DATES -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="far fa-calendar-alt text-amber-600"></i> Schedule & Dates
+                </h4>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Launch Date</label>
+                        <input type="date" id="editBatchLaunchDate" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Start Date</label>
+                        <input type="date" id="editBatchStartDate" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Expiry Date</label>
+                        <input type="date" id="editBatchExpiryDate" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5">
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Class Timing</label>
+                        <input type="text" id="editBatchClassTiming" placeholder="4:00 PM - 6:00 PM" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Class Days</label>
+                        <input type="text" id="editBatchClassDays" placeholder="Mon, Wed, Fri" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="font-extrabold text-slate-700 block mb-1">Branch / Room</label>
+                        <input type="text" id="editBatchBranch" placeholder="Main Campus Room 101" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 6: DESCRIPTION -->
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <i class="fas fa-align-left text-slate-600"></i> Batch Description
+                </h4>
+                <textarea id="editBatchDescription" rows="2" placeholder="Enter batch overview description..." class="w-full p-2 bg-white border border-slate-200 rounded-xl font-medium"></textarea>
+            </div>
+
+            <div class="pt-2 flex justify-end gap-2">
+                <button type="button" onclick="closeEditBatchModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl border-0 cursor-pointer">Cancel</button>
+                <button type="submit" id="btnSaveEditBatch" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl border-0 shadow-2xs cursor-pointer">
+                    <span id="btnSaveEditBatchText">Save Changes</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ========== JAVASCRIPT CONTROLLER FOR BATCH CONTROL CENTER ========== -->
+<script>
+    let globalBatchesData = [];
+    let globalTeacherOptions = [];
+    
+    // STRICT SINGLE BATCH STATE & SEQUENCE TRACKING TO PREVENT STALE DATA
+    let selectedBatchId = null;
+    let activeBatchDetail = null;
+    let batchDetailRequestId = 0;
+    let batchToRejectId = null;
+
+    // BATCH-SPECIFIC ASSIGNED TEACHERS ARRAY FOR EDIT FORM
+    let editingBatchAssignedTeachers = [];
+
+    let batchRequestInProgress = false;
+    let batchAbortController = null;
+
+    // Helper to retrieve valid Django CSRF token from cookie or DOM
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === ('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        if (!cookieValue) {
+            const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            if (tokenInput) cookieValue = tokenInput.value;
+        }
+        return cookieValue || '';
+    }
+
+    // Idempotent Module Initialization function (SAFE FOR SPA ROUTING & REFRESH)
+    function initBatchControlCenter() {
+        const root = document.getElementById('batchCardsGrid');
+        if (!root) return; // Module DOM not rendered yet
+
+        initBatchFiltersOptions();
+
+        if (!window.batchControlCenterInitialized) {
+            window.batchControlCenterInitialized = true;
+            setupBatchControlEvents();
+        }
+
+        // Load existing batches automatically from database
+        loadBatchData();
+    }
+
+    function setupBatchControlEvents() {
+        const searchInput = document.getElementById('batchSearchInput');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    executeBatchSearch();
+                }
+            });
+        }
+    }
+
+    // Populate Class 1-12 options if empty
+    function initBatchFiltersOptions() {
+        const classSel = document.getElementById('batchClassFilter');
+        if (classSel && classSel.options.length <= 1) {
+            classSel.innerHTML = '<option value="">All Classes</option>';
+            for (let i = 1; i <= 12; i++) {
+                const opt = document.createElement('option');
+                opt.value = `Class ${i}`;
+                opt.innerText = `Class ${i}`;
+                classSel.appendChild(opt);
+            }
+        }
+    }
+
+    function executeBatchSearch() {
+        loadBatchData();
+    }
+
+    async function loadBatchData(extraParams = {}) {
+        const root = document.getElementById('batchCardsGrid');
+        if (!root) return;
+
+        // Cancel previous request if still in flight
+        if (batchAbortController) {
+            batchAbortController.abort();
+        }
+        batchAbortController = new AbortController();
+
+        const q = (document.getElementById('batchSearchInput')?.value || '').trim();
+        const classVal = document.getElementById('batchClassFilter')?.value || '';
+        const boardVal = document.getElementById('batchBoardFilter')?.value || '';
+        const streamVal = document.getElementById('batchStreamFilter')?.value || '';
+        const subjectVal = document.getElementById('batchSubjectFilter')?.value || '';
+        const teacherVal = document.getElementById('batchTeacherFilter')?.value || '';
+        const statusVal = document.getElementById('batchStatusFilter')?.value || '';
+        const typeVal = document.getElementById('batchTypeFilter')?.value || '';
+        const visibilityVal = document.getElementById('batchVisibilityFilter')?.value || '';
+        const priceVal = document.getElementById('batchPriceFilter')?.value || '';
+        const dateVal = document.getElementById('batchDateFilter')?.value || '';
+
+        const btn = document.getElementById('batchSearchBtn');
+        const btnText = document.getElementById('batchSearchBtnText');
+
+        if (btn && btnText) {
+            btn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i> Searching...';
+        }
+
+        // Only show spinner in grid if cards have never been rendered before
+        if (!root.dataset.hasRendered) {
+            root.innerHTML = `
+                <div class="col-span-full py-12 text-center text-slate-400">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2 block text-blue-600"></i>
+                    <p class="font-extrabold text-sm text-slate-700">Loading real batches from database...</p>
+                </div>
+            `;
+        }
+
+        const params = new URLSearchParams();
+        if (q) params.append('q', q);
+        if (classVal) params.append('class_name', classVal);
+        if (boardVal) params.append('board', boardVal);
+        if (streamVal) params.append('stream', streamVal);
+        if (subjectVal) params.append('subject', subjectVal);
+        if (teacherVal) params.append('teacher_id', teacherVal);
+        if (statusVal) params.append('status', statusVal);
+        if (typeVal) params.append('batch_type', typeVal);
+        if (visibilityVal) params.append('visibility', visibilityVal);
+        if (priceVal) params.append('price_type', priceVal);
+        if (dateVal) params.append('date_preset', dateVal);
+        params.append('per_page', '100');
+
+        for (let k in extraParams) {
+            params.append(k, extraParams[k]);
+        }
+
+        batchRequestInProgress = true;
+
+        try {
+            const res = await fetch('/api/admin/batches/?' + params.toString(), {
+                signal: batchAbortController.signal,
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            });
+            const data = await res.json();
+
+            if (res.ok && (data.status === 200 || data.status === 'success')) {
+                root.dataset.hasRendered = "true";
+                const batches = (data.data && data.data.batches) ? data.data.batches : [];
+                globalBatchesData = batches;
+
+                renderBatchKPIs(data.data?.stats || {});
+                populateBatchFilterOptions(data.data?.filters || {});
+                renderBatchCardsGrid(globalBatchesData);
+
+                const statusBox = document.getElementById('batchResultStatus');
+                const countNum = document.getElementById('batchResultCountNum');
+                const filterSummary = document.getElementById('batchFilterSummary');
+
+                if (statusBox && countNum) {
+                    countNum.innerText = globalBatchesData.length;
+                    statusBox.classList.remove('hidden');
+
+                    let activeFilters = [];
+                    if (q) activeFilters.push(`"${q}"`);
+                    if (classVal) activeFilters.push(classVal);
+                    if (boardVal) activeFilters.push(boardVal);
+                    if (streamVal) activeFilters.push(streamVal);
+                    if (subjectVal) activeFilters.push(subjectVal);
+                    if (teacherVal) activeFilters.push(`Teacher: ${teacherVal}`);
+                    if (statusVal) activeFilters.push(statusVal);
+
+                    if (filterSummary) {
+                        filterSummary.innerText = activeFilters.length ? `Active Filters: ${activeFilters.join(' • ')}` : 'Showing all real batches';
+                    }
+                }
+            } else {
+                console.error("[Batch Control Center] API Error:", { status: res.status, data: data });
+                renderBatchErrorState("Unable to load batches from database.", res.status);
+            }
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                return; // Silent request cancellation
+            }
+            console.error("[Batch Control Center] Network Error:", err);
+            renderBatchErrorState("Unable to connect to server. Please check your connection.", "Network");
+        } finally {
+            batchRequestInProgress = false;
+            if (btn && btnText) {
+                btn.disabled = false;
+                btnText.innerText = 'Search';
+            }
+        }
+    }
+
+    function renderBatchErrorState(msg, code) {
+        const grid = document.getElementById('batchCardsGrid');
+        if (!grid) return;
+
+        grid.innerHTML = `
+            <div class="col-span-full bg-white rounded-3xl border border-rose-200 p-8 text-center space-y-3">
+                <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto text-xl font-bold">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h4 class="font-extrabold text-slate-800 text-sm">Unable to load batches</h4>
+                <p class="text-xs text-rose-600 font-medium">${msg} (Code: ${code})</p>
+                <button onclick="loadBatchData()" class="mt-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer transition-colors shadow-2xs inline-flex items-center gap-1">
+                    <i class="fas fa-sync-alt text-[10px]"></i> Retry
+                </button>
+            </div>
+        `;
+    }
+
+    function renderBatchKPIs(stats) {
+        if (!stats) return;
+        if (document.getElementById('kpiTotalBatches')) document.getElementById('kpiTotalBatches').innerText = stats.total_batches || 0;
+        if (document.getElementById('kpiActiveBatches')) document.getElementById('kpiActiveBatches').innerText = stats.active_count || 0;
+        if (document.getElementById('kpiUpcomingBatches')) document.getElementById('kpiUpcomingBatches').innerText = stats.upcoming_count || 0;
+        if (document.getElementById('kpiDraftBatches')) document.getElementById('kpiDraftBatches').innerText = stats.draft_count || 0;
+        if (document.getElementById('kpiPausedBatches')) document.getElementById('kpiPausedBatches').innerText = stats.paused_count || 0;
+        if (document.getElementById('kpiExpiredBatches')) document.getElementById('kpiExpiredBatches').innerText = stats.expired_count || 0;
+        if (document.getElementById('kpiCompletedBatches')) document.getElementById('kpiCompletedBatches').innerText = stats.completed_count || 0;
+    }
+
+    function populateBatchFilterOptions(filters) {
+        if (!filters) return;
+        if (filters.teachers) {
+            globalTeacherOptions = filters.teachers;
+        }
+
+        // Subjects dropdown
+        const subjSel = document.getElementById('batchSubjectFilter');
+        if (subjSel && filters.subjects) {
+            const currentVal = subjSel.value;
+            subjSel.innerHTML = '<option value="">All Subjects</option>';
+            filters.subjects.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.innerText = s;
+                if (s === currentVal) opt.selected = true;
+                subjSel.appendChild(opt);
+            });
+        }
+
+        // Teachers dropdown
+        const tSel = document.getElementById('batchTeacherFilter');
+        const newTeacherSel = document.getElementById('newBatchTeachers');
+
+        if (tSel && filters.teachers) {
+            const currentVal = tSel.value;
+            tSel.innerHTML = '<option value="">All Teachers</option>';
+            filters.teachers.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerText = `${t.full_name} (${t.subjects || 'Faculty'})`;
+                if (String(t.id) === String(currentVal)) opt.selected = true;
+                tSel.appendChild(opt);
+            });
+        }
+
+        if (newTeacherSel && filters.teachers && newTeacherSel.options.length === 0) {
+            filters.teachers.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.innerText = `${t.full_name} (${t.subjects || 'Faculty'})`;
+                newTeacherSel.appendChild(opt);
+            });
+        }
+    }
+
+    function resetBatchFilters() {
+        if (document.getElementById('batchSearchInput')) document.getElementById('batchSearchInput').value = '';
+        if (document.getElementById('batchClassFilter')) document.getElementById('batchClassFilter').value = '';
+        if (document.getElementById('batchBoardFilter')) document.getElementById('batchBoardFilter').value = '';
+        if (document.getElementById('batchStreamFilter')) document.getElementById('batchStreamFilter').value = '';
+        if (document.getElementById('batchSubjectFilter')) document.getElementById('batchSubjectFilter').value = '';
+        if (document.getElementById('batchTeacherFilter')) document.getElementById('batchTeacherFilter').value = '';
+        if (document.getElementById('batchStatusFilter')) document.getElementById('batchStatusFilter').value = '';
+        if (document.getElementById('batchTypeFilter')) document.getElementById('batchTypeFilter').value = '';
+        if (document.getElementById('batchVisibilityFilter')) document.getElementById('batchVisibilityFilter').value = '';
+        if (document.getElementById('batchPriceFilter')) document.getElementById('batchPriceFilter').value = '';
+        if (document.getElementById('batchDateFilter')) document.getElementById('batchDateFilter').value = '';
+
+        loadBatchData();
+    }
+
+    function renderBatchCardsGrid(batches) {
+        const grid = document.getElementById('batchCardsGrid');
+        if (!grid) return;
+
+        if (!batches || batches.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full bg-white rounded-3xl border border-slate-200 p-8 text-center space-y-3">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm">No batches found</h4>
+                    <p class="text-xs text-slate-400 font-medium">Create your first batch to get started.</p>
+                    <button onclick="openAddBatchModal()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer transition-colors shadow-2xs inline-flex items-center gap-1.5">
+                        <i class="fas fa-plus text-[10px]"></i> Create Batch
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        batches.forEach(b => {
+            let statusBadge = '<span class="bg-emerald-50 text-emerald-700 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-circle text-[7px] text-emerald-500"></i> ACTIVE</span>';
+            if (b.status === 'Upcoming' || b.status === 'Scheduled') {
+                statusBadge = '<span class="bg-blue-50 text-blue-700 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-clock text-[7px] text-blue-500"></i> UPCOMING</span>';
+            } else if (b.status === 'Draft') {
+                statusBadge = '<span class="bg-slate-100 text-slate-600 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-file-alt text-[7px]"></i> DRAFT</span>';
+            } else if (b.status === 'Paused') {
+                statusBadge = '<span class="bg-amber-50 text-amber-700 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-pause text-[7px] text-amber-500"></i> PAUSED</span>';
+            } else if (b.status === 'Expired') {
+                statusBadge = '<span class="bg-rose-50 text-rose-700 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-times-circle text-[7px] text-rose-500"></i> EXPIRED</span>';
+            } else if (b.status === 'Rejected') {
+                statusBadge = '<span class="bg-rose-100 text-rose-800 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-ban text-[7px] text-rose-600"></i> REJECTED</span>';
+            } else if (b.status === 'Completed') {
+                statusBadge = '<span class="bg-purple-50 text-purple-700 font-extrabold px-2 py-0.5 rounded-full text-[9px] flex items-center gap-1"><i class="fas fa-check-double text-[7px] text-purple-500"></i> COMPLETED</span>';
+            }
+
+            // Multiple assigned teachers formatting strictly from DB
+            const teachers = b.teachers || [];
+            let teachersHTML = '';
+            if (teachers.length > 0) {
+                const first3 = teachers.slice(0, 3);
+                const remaining = teachers.length - 3;
+                let teacherNames = first3.map(t => `<span class="font-bold text-slate-800 truncate">${t.full_name}</span>`).join(', ');
+
+                let moreBtn = '';
+                if (remaining > 0) {
+                    moreBtn = `<button onclick='openTeachersPopover(${JSON.stringify(teachers).replace(/'/g, "&apos;")}, "${b.title.replace(/"/g, "&quot;")}")' class="text-blue-600 hover:underline font-extrabold text-[10px] border-0 bg-transparent cursor-pointer ml-1">+ ${remaining} more</button>`;
+                }
+
+                teachersHTML = `
+                    <div class="text-[10px] text-slate-600 font-semibold leading-tight pt-1 border-t border-slate-100">
+                        <span class="text-slate-400 font-extrabold">Teachers:</span> ${teacherNames}${moreBtn}
+                    </div>
+                `;
+            } else {
+                teachersHTML = `<div class="text-[10px] text-slate-400 font-semibold pt-1 border-t border-slate-100">Teachers: No teachers assigned</div>`;
+            }
+
+            let streamBadge = (b.stream && b.stream !== 'N/A') ? ` • ${b.stream}` : '';
+
+            // Dynamic Status-Aware Action Button
+            let secondaryActionBtn = '';
+            if (b.status === 'Active') {
+                secondaryActionBtn = `<button onclick="triggerBatchQuickAction(${b.id}, 'pause')" class="w-full py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 font-extrabold text-[11px] rounded-xl border-0 cursor-pointer transition-colors text-center">Pause</button>`;
+            } else if (b.status === 'Paused') {
+                secondaryActionBtn = `<button onclick="triggerBatchQuickAction(${b.id}, 'resume')" class="w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold text-[11px] rounded-xl border-0 cursor-pointer transition-colors text-center">Resume</button>`;
+            } else if (b.status === 'Expired') {
+                secondaryActionBtn = `<button onclick="triggerBatchQuickAction(${b.id}, 'resume')" class="w-full py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-[11px] rounded-xl border-0 cursor-pointer transition-colors text-center">Relaunch</button>`;
+            } else if (b.status === 'Rejected') {
+                secondaryActionBtn = `<button onclick="triggerBatchQuickAction(${b.id}, 'launch_now')" class="w-full py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold text-[11px] rounded-xl border-0 cursor-pointer transition-colors text-center">Approve</button>`;
+            } else {
+                // Draft / Upcoming / Scheduled
+                secondaryActionBtn = `<button onclick="triggerBatchQuickAction(${b.id}, 'launch_now')" class="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[11px] rounded-xl border-0 cursor-pointer transition-colors text-center shadow-2xs">Launch</button>`;
+            }
+
+            html += `
+                <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between" data-batch-id="${b.id}">
+                    <div>
+                        <!-- CARD TOP BAR -->
+                        <div class="flex items-center justify-between gap-1 mb-1.5">
+                            ${statusBadge}
+                            <span class="text-[9px] font-mono text-slate-400 font-bold">${b.course_id}</span>
+                        </div>
+
+                        <!-- TITLE & BADGES -->
+                        <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2" title="${b.title}">${b.title}</h3>
+                        <p class="text-[10px] font-extrabold text-blue-600 mt-1">${b.class_name} • ${b.board}${streamBadge}</p>
+                        <p class="text-[10px] font-semibold text-slate-500 truncate" title="${b.subject}">${b.subject}</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <!-- MULTIPLE TEACHERS FROM DB -->
+                        ${teachersHTML}
+
+                        <!-- DATE RANGE -->
+                        <div class="text-[9px] text-slate-400 font-bold flex items-center gap-1">
+                            <i class="far fa-calendar-alt text-slate-400"></i>
+                            <span>${b.start_date || 'Ongoing'} → ${b.expiry_date || 'Academic Session'}</span>
+                        </div>
+
+                        <!-- FOOTER PRICE & BATCH TYPE -->
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                            <div>
+                                <span class="text-emerald-600 font-black text-sm">₹${b.final_price.toLocaleString()}</span>
+                                ${b.price > b.final_price ? `<span class="text-[9px] text-slate-400 line-through ml-1">₹${b.price.toLocaleString()}</span>` : ''}
+                            </div>
+                            <span class="text-[9px] font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">${b.batch_type || 'Live'}</span>
+                        </div>
+
+                        <!-- ACTION BUTTONS -->
+                        <div class="grid grid-cols-2 gap-1.5 pt-1">
+                            <button onclick="openBatchControlCenterModal(${b.id})" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-[11px] rounded-xl border-0 cursor-pointer transition-colors text-center">
+                                View Details
+                            </button>
+                            ${secondaryActionBtn}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = html;
+    }
+
+    function openTeachersPopover(teachers, batchTitle) {
+        const titleEl = document.getElementById('popoverBatchTitle');
+        const listEl = document.getElementById('popoverTeachersList');
+
+        if (titleEl) titleEl.innerText = `Assigned Faculty — ${batchTitle}`;
+        if (listEl) {
+            let html = '';
+            teachers.forEach(t => {
+                const initial = (t.full_name || 'T').substring(0, 2).toUpperCase();
+                html += `
+                    <div class="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0">
+                            ${initial}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="font-extrabold text-xs text-slate-900 truncate">${t.full_name}</h4>
+                            <p class="text-[10px] text-slate-400 font-semibold truncate">${t.subjects || 'Faculty'}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
+        }
+
+        const modal = document.getElementById('teachersPopoverModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeTeachersPopover() {
+        const modal = document.getElementById('teachersPopoverModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // =================================================================
+    // STRICT SINGLE BATCH ISOLATION & MODAL CONTROLLER
+    // =================================================================
+    async function openBatchControlCenterModal(batchId) {
+        if (!batchId) return;
+
+        selectedBatchId = batchId;
+        // Reset active batch & sequence token to prevent race conditions or leaking stale batch data
+        activeBatchDetail = null;
+        const currentReqId = ++batchDetailRequestId;
+
+        const modal = document.getElementById('batchControlCenterModal');
+        if (modal) modal.classList.remove('hidden');
+
+        // Render immediate loading state inside modal header & body
+        if (document.getElementById('modalBatchTitle')) document.getElementById('modalBatchTitle').innerText = 'Loading batch details...';
+        if (document.getElementById('modalBatchSub')) document.getElementById('modalBatchSub').innerText = `Batch ID #${batchId}`;
+        const badge = document.getElementById('modalBatchStatusBadge');
+        if (badge) badge.innerText = 'LOADING...';
+
+        const tabBody = document.getElementById('batchModalTabContent');
+        if (tabBody) {
+            tabBody.innerHTML = `
+                <div class="py-12 text-center text-slate-400">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2 block text-blue-600"></i>
+                    <p class="font-extrabold text-sm text-slate-700">Fetching batch details from server...</p>
+                </div>
+            `;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(batchId)}/`, {
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            });
+            
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (pErr) {
+                console.error("Non-JSON API response:", pErr);
+            }
+
+            // Sequence check: ignore stale response if user clicked another batch rapidly
+            if (currentReqId !== batchDetailRequestId) return;
+
+            if (res.ok && data.data && data.data.id == batchId) {
+                activeBatchDetail = data.data;
+
+                if (document.getElementById('modalBatchTitle')) document.getElementById('modalBatchTitle').innerText = activeBatchDetail.title;
+                if (document.getElementById('modalBatchSub')) document.getElementById('modalBatchSub').innerText = `${activeBatchDetail.course_id} • ${activeBatchDetail.class_name} ${activeBatchDetail.board}`;
+
+                if (badge) {
+                    badge.innerText = (activeBatchDetail.status || 'ACTIVE').toUpperCase();
+                }
+
+                // Render Overview tab for current batch
+                renderBatchModalOverviewTab();
+            } else {
+                let errText = "Unable to load batch details.";
+                if (res.status === 401) {
+                    errText = "Your session has expired. Please log in again.";
+                } else if (res.status === 403) {
+                    errText = "You do not have permission to view this batch.";
+                } else if (res.status === 404) {
+                    errText = "Batch not found or has been removed.";
+                } else if (data.message) {
+                    errText = data.message;
+                }
+
+                if (tabBody) {
+                    tabBody.innerHTML = `
+                        <div class="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center space-y-2">
+                            <h4 class="font-extrabold text-rose-800 text-sm">Unable to load batch details</h4>
+                            <p class="text-xs text-rose-600 font-medium">${errText}</p>
+                            <button onclick="openBatchControlCenterModal(${batchId})" class="mt-2 px-3 py-1.5 bg-rose-600 text-white font-bold text-xs rounded-xl border-0 cursor-pointer">
+                                Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        } catch (err) {
+            if (currentReqId !== batchDetailRequestId) return;
+            console.error("Error opening batch control center modal:", err);
+            if (tabBody) {
+                tabBody.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 rounded-2xl text-center space-y-2">
+                        <h4 class="font-extrabold text-rose-800 text-sm">Network Error</h4>
+                        <p class="text-xs text-rose-600 font-medium">Unable to connect to server. Please check your connection.</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function closeBatchControlCenterModal() {
+        activeBatchDetail = null;
+        selectedBatchId = null;
+        const modal = document.getElementById('batchControlCenterModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function switchBatchModalTab(tabName, btnEl) {
+        document.querySelectorAll('.batch-tab-btn').forEach(b => {
+            b.classList.remove('text-blue-600', 'bg-white', 'border-t', 'border-x', 'border-slate-200');
+            b.classList.add('text-slate-600');
+        });
+        if (btnEl) {
+            btnEl.classList.remove('text-slate-600');
+            btnEl.classList.add('text-blue-600', 'bg-white', 'border-t', 'border-x', 'border-slate-200');
+        }
+
+        if (tabName === 'overview') renderBatchModalOverviewTab();
+        else if (tabName === 'teachers') renderBatchModalTeachersTab();
+        else if (tabName === 'schedule') renderBatchModalScheduleTab();
+        else if (tabName === 'pricing') renderBatchModalPricingTab();
+        else if (tabName === 'activity') renderBatchModalActivityTab();
+        else if (tabName === 'settings') renderBatchModalSettingsTab();
+    }
+
+    function renderBatchModalOverviewTab() {
+        const container = document.getElementById('batchModalTabContent');
+        if (!container || !activeBatchDetail) return;
+
+        const b = activeBatchDetail;
+        container.innerHTML = `
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase">Class & Board</span>
+                    <p class="font-extrabold text-slate-900">${b.class_name} • ${b.board}</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase">Stream</span>
+                    <p class="font-extrabold text-slate-900">${b.stream || 'N/A'}</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase">Subject</span>
+                    <p class="font-extrabold text-slate-900">${b.subject}</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase">Price</span>
+                    <p class="font-extrabold text-emerald-600 text-sm">₹${b.final_price}</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase">Batch Access</span>
+                    <p class="font-extrabold text-blue-600">Available to All Eligible Students (${b.visibility})</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-0.5">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase">Batch Type</span>
+                    <p class="font-extrabold text-blue-600">${b.batch_type}</p>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <h4 class="font-extrabold text-slate-900 text-xs">Assigned Faculty (${(b.teachers || []).length})</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${(b.teachers || []).length ? (b.teachers || []).map(t => `
+                        <div class="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0">
+                                ${(t.full_name || 'T').substring(0, 2).toUpperCase()}
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="font-extrabold text-slate-900 text-xs truncate">${t.full_name}</h5>
+                                <p class="text-[10px] text-slate-400 font-semibold truncate">${t.subjects || t.role}</p>
+                            </div>
+                        </div>
+                    `).join('') : '<p class="text-slate-400 font-semibold text-xs py-2 col-span-2">No teachers currently assigned to this batch.</p>'}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderBatchModalTeachersTab() {
+        const container = document.getElementById('batchModalTabContent');
+        if (!container || !activeBatchDetail) return;
+
+        const teachers = activeBatchDetail.teachers || [];
+        container.innerHTML = `
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-extrabold text-slate-900 text-xs">Assigned Teachers (${teachers.length})</h4>
+                </div>
+
+                <div class="space-y-2">
+                    ${teachers.length ? teachers.map(t => `
+                        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0">
+                                    ${(t.full_name || 'T').substring(0, 2).toUpperCase()}
+                                </div>
+                                <div class="min-w-0">
+                                    <h5 class="font-extrabold text-slate-900 text-xs truncate">${t.full_name}</h5>
+                                    <p class="text-[10px] text-slate-400 font-semibold truncate">${t.email || t.code} • ${t.subjects || t.role}</p>
+                                </div>
+                            </div>
+                            <button onclick="removeTeacherFromBatch(${t.teacher_id})" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-[10px] rounded-lg border-0 cursor-pointer">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('') : '<p class="text-slate-400 font-semibold text-xs py-4 text-center">No teachers currently assigned.</p>'}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderBatchModalScheduleTab() {
+        const container = document.getElementById('batchModalTabContent');
+        if (!container || !activeBatchDetail) return;
+
+        const b = activeBatchDetail;
+        container.innerHTML = `
+            <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <h4 class="font-extrabold text-slate-900">Batch Schedule & Location</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        <div class="p-2 rounded-xl bg-white border border-slate-200">
+                            <span class="text-[9px] text-slate-400 font-extrabold block">Timing</span>
+                            <span class="font-extrabold text-slate-800">${b.class_timing || 'Not Specified'}</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-white border border-slate-200">
+                            <span class="text-[9px] text-slate-400 font-extrabold block">Days</span>
+                            <span class="font-extrabold text-slate-800">${b.class_days || 'Not Specified'}</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-white border border-slate-200">
+                            <span class="text-[9px] text-slate-400 font-extrabold block">Branch / Room</span>
+                            <span class="font-extrabold text-slate-800">${b.branch || 'Not Specified'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <h4 class="font-extrabold text-slate-900">Batch Lifecycle Actions</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        <button onclick="triggerBatchAction('launch_now')" class="p-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer text-center">
+                            🚀 Launch Now
+                        </button>
+                        <button onclick="triggerBatchAction('pause')" class="p-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs border-0 cursor-pointer text-center">
+                            ⏸️ Pause Batch
+                        </button>
+                        <button onclick="triggerBatchAction('resume')" class="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs border-0 cursor-pointer text-center">
+                            ▶️ Resume Batch
+                        </button>
+                        <button onclick="openRejectBatchModal(${b.id})" class="p-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs border-0 cursor-pointer text-center">
+                            ❌ Reject Batch
+                        </button>
+                        <button onclick="triggerBatchAction('expire_now')" class="p-2.5 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-extrabold text-xs border-0 cursor-pointer text-center">
+                            🛑 Expire Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderBatchModalPricingTab() {
+        const container = document.getElementById('batchModalTabContent');
+        if (!container || !activeBatchDetail) return;
+
+        const b = activeBatchDetail;
+        container.innerHTML = `
+            <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-slate-900 text-xs">Pricing Breakdown</h4>
+                        <button onclick="toggleEditPricingForm()" id="btnTogglePricingEdit" class="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 font-extrabold text-[11px] rounded-xl border-0 cursor-pointer">
+                            <i class="fas fa-edit mr-1"></i> Edit Pricing
+                        </button>
+                    </div>
+
+                    <div id="pricingDisplayView" class="grid grid-cols-3 gap-2 text-center">
+                        <div class="p-2 rounded-xl bg-white border border-slate-200">
+                            <span class="text-[9px] text-slate-400 font-extrabold block">Base Price</span>
+                            <span class="font-black text-slate-900 text-sm">₹${b.price}</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-white border border-slate-200">
+                            <span class="text-[9px] text-slate-400 font-extrabold block">Discount</span>
+                            <span class="font-black text-amber-600 text-sm">${b.discount_percent}%</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-white border border-slate-200">
+                            <span class="text-[9px] text-slate-400 font-extrabold block">Final Price</span>
+                            <span class="font-black text-emerald-600 text-sm">₹${b.final_price}</span>
+                        </div>
+                    </div>
+
+                    <!-- EDITABLE PRICING FORM -->
+                    <div id="pricingEditForm" class="hidden space-y-2 pt-2 border-t border-slate-200">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="font-extrabold text-slate-700 block mb-0.5">Base Price (₹)</label>
+                                <input type="number" id="editBasePrice" value="${b.price}" oninput="calcEditFinalPrice()" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold">
+                            </div>
+                            <div>
+                                <label class="font-extrabold text-slate-700 block mb-0.5">Discount %</label>
+                                <input type="number" id="editDiscountPercent" value="${b.discount_percent}" oninput="calcEditFinalPrice()" class="w-full p-2 bg-white border border-slate-200 rounded-xl font-bold">
+                            </div>
+                        </div>
+                        <div class="p-2 bg-emerald-50 text-emerald-800 rounded-xl font-extrabold text-xs flex justify-between">
+                            <span>Calculated Final Price:</span>
+                            <span id="editFinalPricePreview">₹${b.final_price}</span>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button onclick="toggleEditPricingForm()" class="px-3 py-1.5 bg-slate-200 font-bold rounded-xl border-0 cursor-pointer">Cancel</button>
+                            <button onclick="submitSavePricing()" class="px-4 py-1.5 bg-blue-600 text-white font-extrabold rounded-xl border-0 cursor-pointer shadow-2xs">Save Pricing</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function toggleEditPricingForm() {
+        const view = document.getElementById('pricingDisplayView');
+        const form = document.getElementById('pricingEditForm');
+        if (view && form) {
+            view.classList.toggle('hidden');
+            form.classList.toggle('hidden');
+        }
+    }
+
+    function calcEditFinalPrice() {
+        const price = floatVal(document.getElementById('editBasePrice')?.value || 0);
+        const disc = floatVal(document.getElementById('editDiscountPercent')?.value || 0);
+        const finalP = maxVal(0, price - (price * (disc / 100.0)));
+        const prev = document.getElementById('editFinalPricePreview');
+        if (prev) prev.innerText = `₹${finalP.toFixed(2)}`;
+    }
+
+    function floatVal(v) { return parseFloat(v) || 0; }
+    function maxVal(a, b) { return a > b ? a : b; }
+
+    async function submitSavePricing() {
+        if (!activeBatchDetail) return;
+        const targetId = selectedBatchId || activeBatchDetail.id;
+        const price = document.getElementById('editBasePrice')?.value || activeBatchDetail.price;
+        const disc = document.getElementById('editDiscountPercent')?.value || activeBatchDetail.discount_percent;
+
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(targetId)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    action: 'update_pricing',
+                    price: price,
+                    discount_percent: disc
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("Pricing updated successfully!");
+                openBatchControlCenterModal(targetId);
+                loadBatchData();
+            } else {
+                let msg = data.message || `Unable to update pricing. (Server code: ${res.status})`;
+                if (res.status === 401) msg = "Your session has expired. Please log in again.";
+                else if (res.status === 403) msg = "You do not have permission to modify this batch.";
+                alert(msg);
+            }
+        } catch (err) {
+            console.error("Error updating pricing:", err);
+        }
+    }
+
+    function renderBatchModalActivityTab() {
+        const container = document.getElementById('batchModalTabContent');
+        if (!container || !activeBatchDetail) return;
+
+        const logs = activeBatchDetail.activity_logs || [];
+        container.innerHTML = `
+            <div class="space-y-2 text-xs">
+                <h4 class="font-extrabold text-slate-900">Batch Audit Log</h4>
+                <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+                    ${logs.length ? logs.map(l => `
+                        <div class="p-2 rounded-xl bg-slate-50 border border-slate-100 text-[11px] space-y-0.5">
+                            <div class="flex items-center justify-between font-bold text-slate-800">
+                                <span>${l.action}</span>
+                                <span class="text-[9px] text-slate-400">${l.created_at}</span>
+                            </div>
+                            <p class="text-slate-500 font-medium text-[10px]">${l.description}</p>
+                        </div>
+                    `).join('') : '<p class="text-slate-400 text-xs py-2">No activity recorded for this batch yet.</p>'}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderBatchModalSettingsTab() {
+        const container = document.getElementById('batchModalTabContent');
+        if (!container || !activeBatchDetail) return;
+
+        container.innerHTML = `
+            <div class="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-2.5 text-xs">
+                <h4 class="font-extrabold text-rose-900">Danger Zone</h4>
+                <p class="text-rose-700 font-medium text-[11px]">Sensitive batch management actions.</p>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="triggerBatchAction('duplicate')" class="px-3 py-1.5 bg-indigo-600 text-white font-extrabold rounded-xl border-0 cursor-pointer">
+                        📋 Duplicate Batch
+                    </button>
+                    <button onclick="triggerBatchAction('archive')" class="px-3 py-1.5 bg-amber-600 text-white font-extrabold rounded-xl border-0 cursor-pointer">
+                        📁 Archive Batch
+                    </button>
+                    <button onclick="confirmDeleteBatchPrompt()" class="px-3 py-1.5 bg-rose-600 text-white font-extrabold rounded-xl border-0 cursor-pointer">
+                        🗑️ Delete Batch
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function confirmDeleteBatchPrompt() {
+        if (!activeBatchDetail) return;
+        const targetId = selectedBatchId || activeBatchDetail.id;
+        const confirmText = prompt(`Type "DELETE" to permanently delete batch "${activeBatchDetail.title}":`);
+        if (confirmText === "DELETE") {
+            triggerBatchAction('delete');
+        }
+    }
+
+    function openRejectBatchModal(batchId) {
+        batchToRejectId = batchId || selectedBatchId || (activeBatchDetail ? activeBatchDetail.id : null);
+        const modal = document.getElementById('modalRejectBatch');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeRejectBatchModal() {
+        const modal = document.getElementById('modalRejectBatch');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async function submitRejectBatch() {
+        if (!batchToRejectId) return;
+        const reason = document.getElementById('rejectReasonText')?.value || '';
+
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(batchToRejectId)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ action: 'reject', reason: reason })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("Batch rejected successfully.");
+                closeRejectBatchModal();
+                closeBatchControlCenterModal();
+                loadBatchData();
+            } else {
+                let msg = data.message || `Unable to reject batch. (Server code: ${res.status})`;
+                if (res.status === 401) msg = "Your session has expired. Please log in again.";
+                else if (res.status === 403) msg = "You do not have permission to reject this batch.";
+                alert(msg);
+            }
+        } catch (err) {
+            console.error("Error rejecting batch:", err);
+        }
+    }
+
+    async function triggerBatchAction(actionName) {
+        if (!activeBatchDetail && !selectedBatchId) return;
+        const targetId = selectedBatchId || activeBatchDetail.id;
+
+        if (actionName === 'expire_now' && !confirm("Are you sure you want to expire this batch?")) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(targetId)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ action: actionName })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                alert(data.message || "Action executed successfully!");
+                closeBatchControlCenterModal();
+                loadBatchData();
+            } else {
+                let msg = data.message || `Action failed. (Server code: ${res.status})`;
+                if (res.status === 401) msg = "Your session has expired. Please log in again.";
+                else if (res.status === 403) msg = "You do not have permission to modify this batch.";
+                alert(msg);
+            }
+        } catch (err) {
+            console.error("Error executing batch action:", err);
+        }
+    }
+
+    async function triggerBatchQuickAction(batchId, actionName) {
+        if (actionName === 'expire_now' && !confirm("Are you sure you want to expire this batch?")) {
+            return;
+        }
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(batchId)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ action: actionName })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                loadBatchData();
+            } else {
+                let msg = data.message || `Action failed. (Server code: ${res.status})`;
+                if (res.status === 401) msg = "Your session has expired. Please log in again.";
+                else if (res.status === 403) msg = "You do not have permission to modify this batch.";
+                alert(msg);
+            }
+        } catch (err) {
+            console.error("Error running quick action:", err);
+        }
+    }
+
+    // =================================================================
+    // EDIT BATCH MODAL CONTROLLER (ISOLATED ASSIGNED TEACHERS + SEARCH)
+    // =================================================================
+    async function openEditBatchModal(batchId) {
+        if (!batchId) {
+            batchId = selectedBatchId || (activeBatchDetail ? activeBatchDetail.id : null);
+        }
+        if (!batchId) return;
+
+        const errDiv = document.getElementById('editBatchErrorMsg');
+        if (errDiv) errDiv.classList.add('hidden');
+
+        try {
+            // Fetch fresh latest batch record from database to avoid stale data
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(batchId)}/`, {
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            });
+            const data = await res.json();
+
+            if (!res.ok || !data.data) {
+                let msg = data.message || "Failed to load latest batch details from server.";
+                if (res.status === 401) msg = "Your session has expired. Please log in again.";
+                else if (res.status === 403) msg = "You do not have permission to edit this batch.";
+                alert(msg);
+                return;
+            }
+
+            const batch = data.data;
+
+            document.getElementById('editBatchId').value = batch.id;
+            if (document.getElementById('editBatchCodeDisplay')) {
+                document.getElementById('editBatchCodeDisplay').innerText = batch.course_id || `CRS-${batch.id}`;
+            }
+
+            document.getElementById('editBatchTitle').value = batch.title || '';
+            document.getElementById('editBatchClass').value = batch.class_name || 'Class 10';
+            document.getElementById('editBatchBoard').value = batch.board || 'CBSE';
+            document.getElementById('editBatchStream').value = batch.stream || 'N/A';
+            document.getElementById('editBatchSubject').value = batch.subject || '';
+            document.getElementById('editBatchType').value = batch.batch_type || 'Live + Recorded';
+            document.getElementById('editBatchVisibility').value = batch.visibility || 'Public';
+            document.getElementById('editBatchPrice').value = batch.price || 0;
+            document.getElementById('editBatchDiscount').value = batch.discount_percent || 0;
+            document.getElementById('editBatchStatus').value = batch.status || 'Active';
+
+            document.getElementById('editBatchLaunchDate').value = batch.launch_date || '';
+            document.getElementById('editBatchStartDate').value = batch.start_date || '';
+            document.getElementById('editBatchExpiryDate').value = batch.expiry_date || '';
+            document.getElementById('editBatchClassTiming').value = batch.class_timing || '';
+            document.getElementById('editBatchClassDays').value = batch.class_days || '';
+            document.getElementById('editBatchBranch').value = batch.branch || '';
+            document.getElementById('editBatchDescription').value = batch.description || '';
+
+            calcEditModalFinalPrice();
+
+            // Populate ONLY assigned teachers for THIS batch strictly
+            editingBatchAssignedTeachers = (batch.teachers || []).map(t => ({
+                id: t.teacher_id || t.id,
+                teacher_id: t.teacher_id || t.id,
+                full_name: t.full_name,
+                subjects: t.subjects || t.role || 'Faculty'
+            }));
+
+            renderEditFormAssignedTeachers();
+
+            const modal = document.getElementById('modalEditBatch');
+            if (modal) modal.classList.remove('hidden');
+
+        } catch (err) {
+            console.error("Error opening edit batch modal:", err);
+            alert("Unable to open edit batch form.");
+        }
+    }
+
+    function renderEditFormAssignedTeachers() {
+        const container = document.getElementById('assignedTeachersList');
+        const countNum = document.getElementById('editAssignedCountNum');
+        if (countNum) countNum.innerText = editingBatchAssignedTeachers.length;
+
+        if (!container) return;
+
+        if (editingBatchAssignedTeachers.length === 0) {
+            container.innerHTML = `<p class="text-[11px] text-slate-400 font-semibold italic py-2 text-center">No teachers currently assigned to this batch.</p>`;
+            return;
+        }
+
+        let html = '';
+        editingBatchAssignedTeachers.forEach((t, idx) => {
+            const initial = (t.full_name || 'T').substring(0, 2).toUpperCase();
+            html += `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-extrabold text-[11px] flex items-center justify-center shrink-0">
+                            ${initial}
+                        </div>
+                        <div class="min-w-0">
+                            <h5 class="font-extrabold text-slate-900 text-xs truncate">${t.full_name}</h5>
+                            <p class="text-[10px] text-slate-400 font-semibold truncate">${t.subjects || 'Faculty'}</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="removeTeacherFromEditList(${idx})" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-[10px] rounded-lg border-0 cursor-pointer transition-colors inline-flex items-center gap-1">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function removeTeacherFromEditList(index) {
+        if (index >= 0 && index < editingBatchAssignedTeachers.length) {
+            editingBatchAssignedTeachers.splice(index, 1);
+            renderEditFormAssignedTeachers();
+        }
+    }
+
+    // Modal for selecting available teachers
+    function openAddTeacherPickerModal() {
+        filterAddTeacherPicker();
+        const modal = document.getElementById('modalAddTeacherToBatch');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAddTeacherPickerModal() {
+        const modal = document.getElementById('modalAddTeacherToBatch');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function filterAddTeacherPicker() {
+        const q = (document.getElementById('teacherPickerSearchInput')?.value || '').toLowerCase().trim();
+        const container = document.getElementById('teacherPickerList');
+        if (!container) return;
+
+        const assignedIds = new Set(editingBatchAssignedTeachers.map(t => String(t.id || t.teacher_id)));
+
+        const available = (globalTeacherOptions || []).filter(t => {
+            if (!q) return true;
+            return (t.full_name || '').toLowerCase().includes(q) ||
+                   (t.subjects || '').toLowerCase().includes(q) ||
+                   (t.email || '').toLowerCase().includes(q);
+        });
+
+        if (available.length === 0) {
+            container.innerHTML = `<p class="text-xs text-slate-400 font-semibold py-4 text-center">No matching faculty found.</p>`;
+            return;
+        }
+
+        let html = '';
+        available.forEach(t => {
+            const isAssigned = assignedIds.has(String(t.id));
+            const initial = (t.full_name || 'T').substring(0, 2).toUpperCase();
+
+            html += `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-extrabold text-xs flex items-center justify-center shrink-0">
+                            ${initial}
+                        </div>
+                        <div class="min-w-0">
+                            <h5 class="font-extrabold text-slate-900 text-xs truncate">${t.full_name}</h5>
+                            <p class="text-[10px] text-slate-400 font-semibold truncate">${t.subjects || 'Faculty'}</p>
+                        </div>
+                    </div>
+                    ${isAssigned ? 
+                        `<span class="text-[10px] font-extrabold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Already Assigned</span>` :
+                        `<button type="button" onclick='addTeacherToEditList(${JSON.stringify(t).replace(/'/g, "&apos;")})' class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-2xs">
+                            + Add to Batch
+                        </button>`
+                    }
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function addTeacherToEditList(tObj) {
+        const assignedIds = new Set(editingBatchAssignedTeachers.map(t => String(t.id || t.teacher_id)));
+        if (!assignedIds.has(String(tObj.id))) {
+            editingBatchAssignedTeachers.push({
+                id: tObj.id,
+                teacher_id: tObj.id,
+                full_name: tObj.full_name,
+                subjects: tObj.subjects || 'Faculty'
+            });
+            renderEditFormAssignedTeachers();
+            filterAddTeacherPicker();
+        }
+    }
+
+    function calcEditModalFinalPrice() {
+        const price = floatVal(document.getElementById('editBatchPrice')?.value || 0);
+        const disc = floatVal(document.getElementById('editBatchDiscount')?.value || 0);
+        const finalP = maxVal(0, price - (price * (disc / 100.0)));
+        const prev = document.getElementById('editBatchFinalPricePreview');
+        if (prev) prev.innerText = `₹${finalP.toFixed(2)}`;
+    }
+
+    function closeEditBatchModal() {
+        const modal = document.getElementById('modalEditBatch');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async function submitEditBatch(e) {
+        e.preventDefault();
+        const batchId = document.getElementById('editBatchId').value;
+        if (!batchId) return;
+
+        const errDiv = document.getElementById('editBatchErrorMsg');
+        if (errDiv) errDiv.classList.add('hidden');
+
+        const btn = document.getElementById('btnSaveEditBatch');
+        const btnText = document.getElementById('btnSaveEditBatchText');
+
+        const title = (document.getElementById('editBatchTitle').value || '').trim();
+        const class_name = document.getElementById('editBatchClass').value;
+        const board = document.getElementById('editBatchBoard').value;
+        const subject = (document.getElementById('editBatchSubject').value || '').trim();
+        const price = floatVal(document.getElementById('editBatchPrice').value);
+        const discount_percent = floatVal(document.getElementById('editBatchDiscount').value);
+
+        if (!title) {
+            showEditBatchError("Batch Title is required.");
+            return;
+        }
+        if (!subject) {
+            showEditBatchError("Subject(s) field is required.");
+            return;
+        }
+        if (price < 0) {
+            showEditBatchError("Price cannot be negative.");
+            return;
+        }
+        if (discount_percent < 0 || discount_percent > 100) {
+            showEditBatchError("Discount percentage must be between 0 and 100.");
+            return;
+        }
+
+        // Collect teacher_ids array from isolated editingBatchAssignedTeachers list
+        const teacher_ids = editingBatchAssignedTeachers.map(t => t.teacher_id || t.id);
+
+        const payload = {
+            action: 'update_batch',
+            title: title,
+            class_name: class_name,
+            board: board,
+            stream: document.getElementById('editBatchStream').value,
+            subject: subject,
+            batch_type: document.getElementById('editBatchType').value,
+            visibility: document.getElementById('editBatchVisibility').value,
+            price: price,
+            discount_percent: discount_percent,
+            status: document.getElementById('editBatchStatus').value,
+            launch_date: document.getElementById('editBatchLaunchDate').value,
+            start_date: document.getElementById('editBatchStartDate').value,
+            expiry_date: document.getElementById('editBatchExpiryDate').value,
+            class_timing: document.getElementById('editBatchClassTiming').value,
+            class_days: document.getElementById('editBatchClassDays').value,
+            branch: document.getElementById('editBatchBranch').value,
+            description: document.getElementById('editBatchDescription').value,
+            teacher_ids: teacher_ids
+        };
+
+        if (btn && btnText) {
+            btn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        }
+
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(batchId)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify(payload)
+            });
+
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (pErr) {
+                console.error("Non-JSON API response:", pErr);
+            }
+
+            if (res.ok && (data.status === 200 || data.message)) {
+                // Success: Close ONLY edit modal (keep control center modal open!)
+                closeEditBatchModal();
+
+                // Re-fetch latest batch details for control center modal
+                await openBatchControlCenterModal(batchId);
+
+                // Refresh main cards grid & KPIs
+                loadBatchData();
+
+            } else {
+                let errDetail = data.message || `Unable to save changes. (Server code: ${res.status})`;
+                if (res.status === 401) errDetail = "Your session has expired. Please log in again.";
+                else if (res.status === 403) errDetail = "You do not have permission to modify this batch.";
+                else if (res.status === 404) errDetail = "Batch not found or has been removed.";
+                showEditBatchError(errDetail);
+            }
+        } catch (err) {
+            console.error("Error submitting batch edit:", err);
+            showEditBatchError("Network error occurred while saving. Please try again.");
+        } finally {
+            if (btn && btnText) {
+                btn.disabled = false;
+                btnText.innerText = 'Save Changes';
+            }
+        }
+    }
+
+    function showEditBatchError(msg) {
+        const errDiv = document.getElementById('editBatchErrorMsg');
+        if (errDiv) {
+            errDiv.innerText = msg;
+            errDiv.classList.remove('hidden');
+        }
+    }
+
+    async function removeTeacherFromBatch(teacherId) {
+        if (!activeBatchDetail && !selectedBatchId) return;
+        const targetId = selectedBatchId || activeBatchDetail.id;
+        try {
+            const res = await fetch(`/api/admin/batches/${encodeURIComponent(targetId)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ action: 'remove_teacher', teacher_id: teacherId })
+            });
+            if (res.ok) {
+                openBatchControlCenterModal(targetId);
+                loadBatchData();
+            }
+        } catch (err) {
+            console.error("Error removing teacher:", err);
+        }
+    }
+
+    function openAddBatchModal() {
+        const modal = document.getElementById('modalAddBatch');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeAddBatchModal() {
+        const modal = document.getElementById('modalAddBatch');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async function submitNewBatch(e) {
+        e.preventDefault();
+        const form = document.getElementById('addBatchForm');
+        if (!form) return;
+
+        const formData = new FormData();
+        formData.append('title', document.getElementById('newBatchTitle').value);
+        formData.append('class_name', document.getElementById('newBatchClass').value);
+        formData.append('board', document.getElementById('newBatchBoard').value);
+        formData.append('stream', document.getElementById('newBatchStream').value);
+        formData.append('subject', document.getElementById('newBatchSubject').value);
+        formData.append('batch_type', document.getElementById('newBatchType').value);
+        formData.append('price', document.getElementById('newBatchPrice').value);
+
+        const selTeachers = document.getElementById('newBatchTeachers');
+        if (selTeachers) {
+            Array.from(selTeachers.selectedOptions).forEach(opt => {
+                formData.append('teacher_ids', opt.value);
+            });
+        }
+
+        try {
+            const res = await fetch('/api/admin/batches/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: formData
+            });
+            const data = await res.json();
+
+            if (res.ok && data.status === 201) {
+                alert("New Batch created successfully!");
+                closeAddBatchModal();
+                loadBatchData();
+            } else {
+                alert(data.message || "Failed to create batch.");
+            }
+        } catch (err) {
+            console.error("Error submitting new batch:", err);
+        }
+    }
+
+    // Auto-init execution upon load/render
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(initBatchControlCenter, 50);
+    } else {
+        document.addEventListener('DOMContentLoaded', initBatchControlCenter);
+    }
+</script>
+{% endblock %}

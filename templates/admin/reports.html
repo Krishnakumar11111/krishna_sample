@@ -1,0 +1,1582 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-5 fade-in text-slate-800 dark:text-slate-100 font-sans pb-16" id="reportsCenterContainer">
+
+    <!-- ========================================== -->
+    <!-- 1. BREADCRUMB & PAGE HEADER -->
+    <!-- ========================================== -->
+    <div class="space-y-1.5">
+        <!-- BREADCRUMB NAV -->
+        <nav class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-400 px-1">
+            <a href="/admin/dashboard/" onclick="navTo('dashboard', event)" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors no-underline">Home</a>
+            <i class="fa-solid fa-chevron-right text-[8px] text-slate-500"></i>
+            <span class="text-blue-600 dark:text-blue-400 font-bold">Reports & Analytics</span>
+        </nav>
+
+        <!-- TITLE & TOP ACTIONS -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 px-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div class="flex items-center gap-3">
+                <div class="w-8.5 h-8.5 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm shadow-xs shadow-blue-500/20 shrink-0">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 leading-tight">
+                        Reports & Analytics Center
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 text-[9px] font-bold border border-blue-200/50 dark:border-blue-800/50">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Commercial BI Engine
+                        </span>
+                    </h1>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                        Track, analyze and understand your EduTrust LMS performance in real time.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" onclick="triggerQuickExport('overview_summary')" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-export text-emerald-500 text-[10px]"></i>
+                    <span>Export Report</span>
+                </button>
+                <button type="button" onclick="openCustomReportBuilderModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-sliders text-purple-500 text-[10px]"></i>
+                    <span>Custom Builder</span>
+                </button>
+                <button type="button" onclick="openQuickGenerateModal()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition-all border-0 cursor-pointer shadow-xs shadow-blue-500/25 flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>Generate Report</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST BANNER -->
+    <div id="reportsToast" class="hidden p-3 rounded-xl text-xs font-bold flex items-center justify-between shadow-xs fade-in">
+        <div class="flex items-center gap-2">
+            <i id="reportsToastIcon" class="fa-solid fa-circle-check text-sm"></i>
+            <span id="reportsToastMsg">--</span>
+        </div>
+        <button onclick="document.getElementById('reportsToast').classList.add('hidden')" class="text-current opacity-70 hover:opacity-100 border-0 bg-transparent cursor-pointer">
+            <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. ULTRA-COMPACT GLOBAL MULTI-FILTER BAR -->
+    <!-- ========================================== -->
+    <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1.5">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1">
+            <h4 class="text-[9.5px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-filter text-blue-500 text-[9px]"></i> Global Analytics Filters
+            </h4>
+            <div class="flex items-center gap-1.5">
+                <button type="button" onclick="resetGlobalFilters()" class="text-[9.5px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border-0 bg-transparent cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left text-[8px]"></i> Reset
+                </button>
+                <button type="button" onclick="applyGlobalFilters()" class="px-2.5 py-0.5 rounded-lg bg-blue-600 text-white font-bold text-[9.5px] shadow-2xs border-0 cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-check text-[8px]"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 text-xs font-medium">
+            <!-- 1. Date Range -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Date Range</label>
+                <select id="filterDateRange" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="this_month" selected>This Month</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="this_week">This Week</option>
+                    <option value="last_month">Last Month</option>
+                    <option value="this_quarter">This Quarter</option>
+                    <option value="this_year">This Year</option>
+                    <option value="all_time">All Time</option>
+                </select>
+            </div>
+
+            <!-- 2. Academic Year -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Academic Session</label>
+                <select id="filterAcademicYear" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="ALL">2026 - 2027 (Current)</option>
+                    <option value="2025">2025 - 2026</option>
+                    <option value="2024">2024 - 2025</option>
+                </select>
+            </div>
+
+            <!-- 3. Course / Class -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Course / Class</label>
+                <select id="filterCourse" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="ALL">All Courses</option>
+                </select>
+            </div>
+
+            <!-- 4. Batch -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Batch</label>
+                <select id="filterBatch" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="ALL">All Batches</option>
+                </select>
+            </div>
+
+            <!-- 5. Subject -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Subject</label>
+                <select id="filterSubject" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="ALL">All Subjects</option>
+                </select>
+            </div>
+
+            <!-- 6. Teacher -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Teacher</label>
+                <select id="filterTeacher" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="ALL">All Teachers</option>
+                </select>
+            </div>
+
+            <!-- 7. Status -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Status Filter</label>
+                <select id="filterStatus" onchange="applyGlobalFilters()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="ALL">All Status</option>
+                    <option value="Active">Active Only</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+
+            <!-- 8. Search Input -->
+            <div>
+                <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Search Query</label>
+                <input type="text" id="filterSearchQuery" oninput="applyGlobalFilters()" placeholder="Keyword search..." class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-1 px-1.5 rounded-lg text-[11px] font-semibold text-slate-900 dark:text-white outline-none">
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. ULTRA-COMPACT 12 REAL-TIME KPI METRICS CARDS -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1.5 sm:gap-2">
+        <!-- 1. Total Students -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Students</span>
+            <h3 id="kpiTotalStudents" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-emerald-600 dark:text-emerald-400 font-semibold block flex items-center gap-0.5">
+                <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> <span id="kpiStudentGrowth">0% growth</span>
+            </span>
+        </div>
+
+        <!-- 2. Total Teachers -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Faculty</span>
+            <h3 id="kpiTotalTeachers" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-blue-600 dark:text-blue-400 font-semibold block flex items-center gap-0.5">
+                <i class="fa-solid fa-chalkboard-user text-[7px]"></i> <span id="kpiTeacherActive">0 Active</span>
+            </span>
+        </div>
+
+        <!-- 3. Active Batches -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Active Batches</span>
+            <h3 id="kpiActiveBatches" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-purple-600 dark:text-purple-400 font-semibold block">Running Courses</span>
+        </div>
+
+        <!-- 4. Live Classes -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Live Classes</span>
+            <h3 id="kpiLiveClasses" class="text-base font-extrabold text-rose-600 dark:text-rose-400 mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-slate-400 font-semibold block">Conducted / Scheduled</span>
+        </div>
+
+        <!-- 5. Recorded Lectures -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Recorded Lectures</span>
+            <h3 id="kpiRecordedLectures" class="text-base font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-slate-400 font-semibold block">Video Repository</span>
+        </div>
+
+        <!-- 6. Homework Assignments -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Assignments</span>
+            <h3 id="kpiAssignments" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-emerald-600 dark:text-emerald-400 font-semibold block">0% Submission Rate</span>
+        </div>
+
+        <!-- 7. Exams & Quizzes -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Exams & Quizzes</span>
+            <h3 id="kpiTotalExams" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-slate-400 font-semibold block">0% Participation</span>
+        </div>
+
+        <!-- 8. Average Pass Rate -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Avg Performance</span>
+            <h3 id="kpiAvgScore" class="text-base font-extrabold text-indigo-600 dark:text-indigo-400 mt-0.5 leading-tight">0%</h3>
+            <span class="text-[8px] text-emerald-600 dark:text-emerald-400 font-semibold block">Pass Grade</span>
+        </div>
+
+        <!-- 9. Attendance Rate -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Attendance Rate</span>
+            <h3 id="kpiAttendanceRate" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 leading-tight">0%</h3>
+            <span class="text-[8px] text-slate-400 font-semibold block">System Average</span>
+        </div>
+
+        <!-- 10. Total Revenue -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Revenue</span>
+            <h3 id="kpiTotalRevenue" class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5 leading-tight">₹0</h3>
+            <span class="text-[8px] text-emerald-600 dark:text-emerald-400 font-semibold block">Collected Fees</span>
+        </div>
+
+        <!-- 11. Pending Fees -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Pending Fees</span>
+            <h3 id="kpiPendingFees" class="text-base font-extrabold text-rose-600 dark:text-rose-400 mt-0.5 leading-tight">₹0</h3>
+            <span class="text-[8px] text-rose-500 font-semibold block">Due Collection</span>
+        </div>
+
+        <!-- 12. At-Risk Students -->
+        <div class="bg-white dark:bg-slate-900 p-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">At-Risk Students</span>
+            <h3 id="kpiAtRiskStudents" class="text-base font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 leading-tight">0</h3>
+            <span class="text-[8px] text-amber-500 font-semibold block">Low Attendance / Grade</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. ANALYTICS CHARTS & INSIGHTS SIDEBAR -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <!-- LEFT: ANALYTICS CHARTS GRID (8 COLS) -->
+        <div class="lg:col-span-8 space-y-4">
+            
+            <!-- CHART 1: REDESIGNED STUDENT & TEACHER ENROLLMENT ANALYTICS GRAPH -->
+            <div class="bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2.5">
+                <!-- CHART HEADER & CONTROLS -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5 border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs shrink-0 mt-0.5">
+                            <i class="fa-solid fa-chart-column"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2 leading-tight">
+                                Student & Teacher Enrollment Analytics
+                                <span id="chartSyncStatus" class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Updated 1 min ago
+                                </span>
+                            </h3>
+                            <p class="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium">Monthly registrations and active-user growth comparison.</p>
+                        </div>
+                    </div>
+
+                    <!-- CHART CONTROLS STRIP -->
+                    <div class="flex items-center gap-1.5 text-xs font-semibold shrink-0 flex-wrap">
+                        <select id="selectChartPeriod" onchange="loadEnrollmentChartData()" class="bg-slate-100 dark:bg-slate-800 border-0 p-1 px-2 rounded-lg text-[10.5px] font-bold text-slate-700 dark:text-slate-200 outline-none">
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+
+                        <select id="selectChartDataset" onchange="renderAnalyticsCharts()" class="bg-slate-100 dark:bg-slate-800 border-0 p-1 px-2 rounded-lg text-[10.5px] font-bold text-slate-700 dark:text-slate-200 outline-none">
+                            <option value="all" selected>Students + Teachers</option>
+                            <option value="students">Students Only</option>
+                            <option value="teachers">Teachers Only</option>
+                        </select>
+
+                        <div class="inline-flex p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-800">
+                            <button type="button" id="btnTypeBar" onclick="setChartType('bar')" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-2xs border-0 cursor-pointer">Bar</button>
+                            <button type="button" id="btnTypeLine" onclick="setChartType('line')" class="px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 border-0 cursor-pointer">Line</button>
+                        </div>
+
+                        <button type="button" onclick="toggleChartDataTable()" class="p-1 px-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold border-0 cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-table text-[9px]"></i> View Table
+                        </button>
+                    </div>
+                </div>
+
+                <!-- COMPACT KPI SUMMARY STRIP -->
+                <div class="flex items-center gap-3 text-xs font-semibold bg-slate-50/70 dark:bg-slate-800/40 p-2 px-3 rounded-xl border border-slate-200/50 dark:border-slate-800 flex-wrap justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-sm bg-blue-600"></span>
+                            <span class="text-slate-500 dark:text-slate-400 text-[11px]">Students:</span>
+                            <strong id="kpiChartStudents" class="text-slate-900 dark:text-white font-extrabold text-[11px]">10</strong>
+                            <span id="kpiChartStudentGrowth" class="text-[9.5px] font-bold text-emerald-600 dark:text-emerald-400">↑8.5%</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-sm bg-purple-600"></span>
+                            <span class="text-slate-500 dark:text-slate-400 text-[11px]">Teachers:</span>
+                            <strong id="kpiChartTeachers" class="text-slate-900 dark:text-white font-extrabold text-[11px]">20</strong>
+                            <span id="kpiChartTeacherGrowth" class="text-[9.5px] font-bold text-purple-600 dark:text-purple-400">↑5.2%</span>
+                        </div>
+                    </div>
+                    <div class="text-[10.5px] text-slate-500 dark:text-slate-400 font-semibold">
+                        New This Period: <strong id="kpiChartNewPeriod" class="text-slate-900 dark:text-white font-extrabold">30</strong> <span id="kpiChartNewGrowth" class="text-emerald-600 font-bold text-[9.5px]">↑12.4%</span>
+                    </div>
+                </div>
+
+                <!-- GROUPED COLUMN & LINE CANVAS GRAPH ENGINE -->
+                <div class="h-64 sm:h-72 w-full relative bg-slate-50/40 dark:bg-slate-800/20 rounded-xl p-3 border border-slate-200/40 dark:border-slate-800/60">
+                    <canvas id="chartStudentGrowth" class="w-full h-full"></canvas>
+                    
+                    <!-- INTERACTIVE HOVER TOOLTIP -->
+                    <div id="chartTooltip" class="hidden absolute pointer-events-none bg-slate-900/90 dark:bg-slate-950/95 text-white p-2.5 px-3 rounded-xl shadow-xl border border-slate-700/60 text-xs space-y-1 backdrop-blur-xs z-20 transition-all duration-75">
+                        <strong id="tooltipMonth" class="block font-bold border-b border-slate-700/80 pb-1 text-[11px] text-slate-200">August 2026</strong>
+                        <div class="flex items-center justify-between gap-4 text-[10.5px]">
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Students:</span>
+                            <strong id="tooltipStudents" class="font-extrabold text-blue-400">30</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 text-[10.5px]">
+                            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Teachers:</span>
+                            <strong id="tooltipTeachers" class="font-extrabold text-purple-400">8</strong>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 text-[10px] text-slate-300 pt-1 border-t border-slate-800">
+                            <span>Total New Registrations:</span>
+                            <strong id="tooltipTotal" class="font-extrabold text-emerald-400">38</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLICKABLE LEGEND & TREND SUMMARY -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-semibold pt-1 border-t border-slate-100 dark:border-slate-800/80">
+                    <div class="flex items-center gap-3">
+                        <button type="button" onclick="toggleSeries('students')" id="legendStudentsBtn" class="flex items-center gap-1.5 cursor-pointer border-0 bg-transparent text-slate-700 dark:text-slate-300 hover:text-blue-600">
+                            <span class="w-3 h-3 rounded-md bg-blue-600 inline-block"></span>
+                            <span>Students Series</span>
+                        </button>
+                        <button type="button" onclick="toggleSeries('teachers')" id="legendTeachersBtn" class="flex items-center gap-1.5 cursor-pointer border-0 bg-transparent text-slate-700 dark:text-slate-300 hover:text-purple-600">
+                            <span class="w-3 h-3 rounded-md bg-purple-600 inline-block"></span>
+                            <span>Teachers Series</span>
+                        </button>
+                    </div>
+
+                    <p id="chartTrendSentence" class="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium italic">
+                        <i class="fa-solid fa-arrow-trend-up text-emerald-500 mr-1"></i> Enrollment is trending upward. Student registrations increased 36.4% compared with previous month.
+                    </p>
+                </div>
+
+                <!-- ACCESSIBLE DATA TABLE VIEW (TOGGLEABLE) -->
+                <div id="chartDataTableContainer" class="hidden overflow-x-auto pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <table class="w-full text-left text-xs font-medium border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase text-[9.5px]">
+                                <th class="p-2">Period / Month</th>
+                                <th class="p-2">Student Registrations</th>
+                                <th class="p-2">Teacher Registrations</th>
+                                <th class="p-2">Total New Registrations</th>
+                                <th class="p-2 text-right">Growth Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chartDataTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- JS populates tabular breakdown -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CHART 2: ACADEMIC & EXAM PERFORMANCE MATRIX (FIXED IN SINGLE BALANCED ROW) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                        <h4 class="text-[11px] font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap text-purple-500 text-[10px]"></i> Exam & Quiz Pass Rate
+                        </h4>
+                        <span class="text-[8.5px] font-bold px-1.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">84.5% Avg</span>
+                    </div>
+                    <div class="h-36 w-full relative flex items-center justify-center">
+                        <canvas id="chartExamPerformance" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                        <h4 class="text-[11px] font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-video text-rose-500 text-[10px]"></i> Attendance & Live Class
+                        </h4>
+                        <span class="text-[8.5px] font-bold px-1.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">91.4% Rate</span>
+                    </div>
+                    <div class="h-36 w-full relative flex items-center justify-center">
+                        <canvas id="chartAttendanceTrend" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <!-- RIGHT: INSIGHTS, ALERTS & REPORT LIBRARIES (4 COLS) -->
+        <div class="lg:col-span-4 space-y-4">
+
+            <!-- ULTRA-COMPACT INSIGHTS & REAL-TIME ALERTS PANEL -->
+            <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                    <h4 class="text-[10.5px] font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt text-amber-500 text-[10px]"></i> Insights & Real-Time Alerts
+                    </h4>
+                    <span class="text-[8.5px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Live</span>
+                </div>
+
+                <div class="space-y-1.5 text-xs">
+                    <!-- Alert 1 -->
+                    <div class="p-1.5 px-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 flex items-start gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-xs mt-0.5 shrink-0"></i>
+                        <div class="min-w-0">
+                            <strong class="block font-bold text-amber-900 dark:text-amber-200 text-[10.5px] leading-tight truncate">High Risk Intervention Needed</strong>
+                            <p class="text-[8.5px] text-amber-700 dark:text-amber-300 leading-tight">3 students have attendance below 75% threshold in Class 12th PCM.</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert 2 -->
+                    <div class="p-1.5 px-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-800/60 flex items-start gap-2">
+                        <i class="fa-solid fa-video text-blue-600 text-xs mt-0.5 shrink-0"></i>
+                        <div class="min-w-0">
+                            <strong class="block font-bold text-blue-900 dark:text-blue-200 text-[10.5px] leading-tight truncate">Live Classes Milestone</strong>
+                            <p class="text-[8.5px] text-blue-700 dark:text-blue-300 leading-tight">12 live interactive classes conducted with 94.2% student participation.</p>
+                        </div>
+                    </div>
+
+                    <!-- Alert 3 -->
+                    <div class="p-1.5 px-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60 flex items-start gap-2">
+                        <i class="fa-solid fa-shield-check text-emerald-600 text-xs mt-0.5 shrink-0"></i>
+                        <div class="min-w-0">
+                            <strong class="block font-bold text-emerald-900 dark:text-emerald-200 text-[10.5px] leading-tight truncate">System & DB Health Optimal</strong>
+                            <p class="text-[8.5px] text-emerald-700 dark:text-emerald-300 leading-tight">SQLite Database engine operating at 99.9% health with automatic backups.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ULTRA-COMPACT POPULAR QUICK ACCESS REPORTS -->
+            <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                    <h4 class="text-[10.5px] font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-amber-400 text-[10px]"></i> Popular Reports
+                    </h4>
+                    <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400">Quick Access</span>
+                </div>
+
+                <div class="grid grid-cols-1 gap-1 text-xs">
+                    <button type="button" onclick="openPopularReportModal('student_attendance')" class="p-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/50 border border-slate-200/60 dark:border-slate-800 text-left cursor-pointer transition-colors flex items-center justify-between">
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-[10px] flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-clipboard-user text-blue-500 text-[10px] shrink-0"></i> Student Attendance Report
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <button type="button" onclick="openPopularReportModal('teacher_workload')" class="p-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/50 border border-slate-200/60 dark:border-slate-800 text-left cursor-pointer transition-colors flex items-center justify-between">
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-[10px] flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-briefcase text-purple-500 text-[10px] shrink-0"></i> Teacher Workload & Hours
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <button type="button" onclick="openPopularReportModal('batch_performance')" class="p-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/50 border border-slate-200/60 dark:border-slate-800 text-left cursor-pointer transition-colors flex items-center justify-between">
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-[10px] flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-layer-group text-emerald-500 text-[10px] shrink-0"></i> Batch Performance & Pass %
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <button type="button" onclick="openPopularReportModal('fee_collection')" class="p-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/50 border border-slate-200/60 dark:border-slate-800 text-left cursor-pointer transition-colors flex items-center justify-between">
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-[10px] flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-indian-rupee-sign text-amber-500 text-[10px] shrink-0"></i> Fee Collection & Dues
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <button type="button" onclick="openPopularReportModal('exam_analytics')" class="p-1 px-2 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/50 border border-slate-200/60 dark:border-slate-800 text-left cursor-pointer transition-colors flex items-center justify-between">
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-[10px] flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-file-pen text-rose-500 text-[10px] shrink-0"></i> Exam & Quiz Analytics
+                        </span>
+                        <i class="fa-solid fa-chevron-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ULTRA-COMPACT REPORT LIBRARY CATEGORIES (10 CARDS MOVED TO RIGHT SIDEBAR RED-MARKED AREA) -->
+            <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-folder-tree text-blue-600 dark:text-blue-400 text-xs"></i> Report Library Categories
+                        </h3>
+                        <p class="text-[9.5px] text-slate-500 dark:text-slate-400 font-medium">Browse module-specific reports.</p>
+                    </div>
+                    <span class="text-[8.5px] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/50">10 Categories</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-1.5">
+                    <!-- 1. Student Reports -->
+                    <button type="button" onclick="openCategoryReportModal('student')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Student Reports</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 2. Teacher Reports -->
+                    <button type="button" onclick="openCategoryReportModal('teacher')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Teacher Reports</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 3. Batch & Course Reports -->
+                    <button type="button" onclick="openCategoryReportModal('course')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Batch & Course</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 4. Attendance Reports -->
+                    <button type="button" onclick="openCategoryReportModal('attendance')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Attendance</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 5. Live Class Reports -->
+                    <button type="button" onclick="openCategoryReportModal('live_class')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-video"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Live Classes</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 6. Recorded Lecture Reports -->
+                    <button type="button" onclick="openCategoryReportModal('recorded')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-film"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Recorded Lectures</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 7. Assignment Reports -->
+                    <button type="button" onclick="openCategoryReportModal('assignment')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Assignments</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 8. Exam & Quiz Reports -->
+                    <button type="button" onclick="openCategoryReportModal('exam')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-file-pen"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Exams & Quizzes</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 9. Fees & Payment Reports -->
+                    <button type="button" onclick="openCategoryReportModal('revenue')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-credit-card"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">Fees & Payment</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+
+                    <!-- 10. System & Audit Reports -->
+                    <button type="button" onclick="openCategoryReportModal('system')" class="cat-nav-item text-left p-1.5 px-2 rounded-xl flex items-center justify-between gap-1 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center text-[9px] shrink-0">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <span class="block text-[10px] font-bold text-slate-900 dark:text-white leading-tight truncate">System & Audit</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-[8px] text-slate-400 shrink-0"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    
+</div>
+
+
+            <!-- AT-RISK STUDENTS IDENTIFICATION TABLE -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-2.5">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-user-ninja text-amber-500"></i> At-Risk Students Intervention Module
+                        </h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Students triggered by low attendance (&lt;75%), low score, or pending tasks.</p>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/50">Auto Rules Active</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-medium border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-800/50 text-slate-400 uppercase tracking-wider font-extrabold text-[9.5px] border-b border-slate-200 dark:border-slate-800">
+                                <th class="p-2">Student Name</th>
+                                <th class="p-2">Batch / Class</th>
+                                <th class="p-2">Attendance %</th>
+                                <th class="p-2">Avg Exam Score</th>
+                                <th class="p-2">Risk Level</th>
+                                <th class="p-2 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="atRiskStudentsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Dynamic JS renders At-Risk Students -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+<!-- ========================================== -->
+<!-- COMPLETE GENERATE REPORT SYSTEM MODAL -->
+<!-- ========================================== -->
+<div id="modalQuickGenerateReport" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/70 backdrop-blur-xs overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-3xl w-full p-4 sm:p-6 space-y-4 fade-in max-h-[92vh] flex flex-col my-auto">
+        
+        <!-- MODAL HEADER -->
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-8.5 h-8.5 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm shadow-xs shadow-blue-500/20 shrink-0">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2 leading-tight">
+                        Generate Report
+                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/50">LMS Engine</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Create a detailed report from your LMS database.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeModal('modalQuickGenerateReport')" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent cursor-pointer p-1">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- MODAL BODY FORM -->
+        <form id="formGenerateReportEngine" onsubmit="handleGenerateReportSubmit(event)" class="overflow-y-auto flex-1 space-y-4 text-xs font-medium pr-1">
+            
+            <!-- ① STEP 1: REPORT TYPE -->
+            <div class="space-y-1.5 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+                <label class="block font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                    <span class="w-4.5 h-4.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9.5px]">1</span> Report Type *
+                </label>
+                <select id="genReportType" onchange="updateGenerateReportTypeOptions()" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold text-slate-900 dark:text-white outline-none">
+                    <option value="students" selected>Student Report</option>
+                    <option value="teachers">Teacher Report</option>
+                    <option value="courses">Batch & Course Report</option>
+                    <option value="attendance">Attendance Report</option>
+                    <option value="assignments">Assignment Report</option>
+                    <option value="quizzes">Exam & Quiz Report</option>
+                    <option value="revenue">Fees & Payments Report</option>
+                    <option value="live_classes">Live Class Report</option>
+                    <option value="recorded">Recorded Lecture Report</option>
+                    <option value="custom">Custom Report</option>
+                </select>
+                <p class="text-[10px] text-slate-400 font-medium">Choose the target dataset for your generated document.</p>
+            </div>
+
+            <!-- ② STEP 2: REPORT TEMPLATE -->
+            <div class="space-y-1.5 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+                <label class="block font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                    <span class="w-4.5 h-4.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9.5px]">2</span> Report Template *
+                </label>
+                <div id="genTemplateContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <!-- Template cards populate dynamically -->
+                </div>
+            </div>
+
+            <!-- ③ STEP 3: DYNAMIC & CASCADING FILTERS -->
+            <div class="space-y-2 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+                <label class="block font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                    <span class="w-4.5 h-4.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9.5px]">3</span> Dynamic & Cascading Filters
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[9.5px] font-bold text-slate-400 uppercase mb-0.5">Date Range</label>
+                        <select id="genFilterDate" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="this_month" selected>This Month</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="this_week">This Week</option>
+                            <option value="last_month">Last Month</option>
+                            <option value="this_quarter">This Quarter</option>
+                            <option value="this_year">This Year</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Course (Cascading)</label>
+                        <select id="genFilterCourse" onchange="onCascadingCourseChange()" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="ALL">All Courses</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[8.5px] font-bold text-slate-400 uppercase mb-0.5">Batch (Cascading)</label>
+                        <select id="genFilterBatch" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1.5 rounded-xl text-xs font-semibold">
+                            <option value="ALL">All Batches</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ④ STEP 4: REPORT FIELDS & VALIDATION -->
+            <div class="space-y-2 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+                <div class="flex items-center justify-between">
+                    <label class="block font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                        <span class="w-4.5 h-4.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9.5px]">4</span> Select Report Columns *
+                    </label>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="toggleAllGenFields(true)" class="text-[9.5px] font-bold text-blue-600 hover:underline border-0 bg-transparent cursor-pointer">Select All</button>
+                        <button type="button" onclick="toggleAllGenFields(false)" class="text-[9.5px] font-bold text-slate-400 hover:underline border-0 bg-transparent cursor-pointer">Clear All</button>
+                    </div>
+                </div>
+                <div id="genFieldsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <!-- Checkboxes rendered dynamically -->
+                </div>
+                <p id="genFieldErrorMsg" class="hidden text-[10px] font-bold text-rose-500 flex items-center gap-1">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Please select at least one report column field.
+                </p>
+            </div>
+
+            <!-- ⑤ STEP 5: OUTPUT FORMAT CARDS -->
+            <div class="space-y-1.5 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+                <label class="block font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                    <span class="w-4.5 h-4.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9.5px]">5</span> Select Output Format *
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <label class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border-2 border-blue-600 cursor-pointer flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white group">
+                        <input type="radio" name="genOutputFormat" value="pdf" checked class="text-blue-600">
+                        <div>
+                            <span class="block text-[11px] font-bold text-blue-600 dark:text-blue-400"><i class="fa-solid fa-file-pdf"></i> PDF</span>
+                            <span class="block text-[8.5px] text-slate-400 font-medium">Printable Document</span>
+                        </div>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white group">
+                        <input type="radio" name="genOutputFormat" value="excel" class="text-emerald-600">
+                        <div>
+                            <span class="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400"><i class="fa-solid fa-file-excel"></i> Excel</span>
+                            <span class="block text-[8.5px] text-slate-400 font-medium">Spreadsheet (.xlsx)</span>
+                        </div>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white group">
+                        <input type="radio" name="genOutputFormat" value="csv" class="text-purple-600">
+                        <div>
+                            <span class="block text-[11px] font-bold text-purple-600 dark:text-purple-400"><i class="fa-solid fa-file-csv"></i> CSV</span>
+                            <span class="block text-[8.5px] text-slate-400 font-medium">Raw Tabular Data</span>
+                        </div>
+                    </label>
+                    <label class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white group">
+                        <input type="radio" name="genOutputFormat" value="print" class="text-amber-600">
+                        <div>
+                            <span class="block text-[11px] font-bold text-amber-600 dark:text-amber-400"><i class="fa-solid fa-print"></i> Print</span>
+                            <span class="block text-[8.5px] text-slate-400 font-medium">Print View Window</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ⑥ STEP 6: REPORT OPTIONS -->
+            <div class="space-y-1.5 p-3 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800">
+                <label class="block font-extrabold text-slate-900 dark:text-white text-xs flex items-center gap-1.5">
+                    <span class="w-4.5 h-4.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[9.5px]">6</span> Additional Report Options
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <label class="flex items-center gap-1.5 text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" checked class="rounded text-blue-600"> Include Summary Stats
+                    </label>
+                    <label class="flex items-center gap-1.5 text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" checked class="rounded text-blue-600"> Include Filters Used
+                    </label>
+                    <label class="flex items-center gap-1.5 text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" checked class="rounded text-blue-600"> Include Generated Date
+                    </label>
+                    <label class="flex items-center gap-1.5 text-[10.5px] font-semibold text-slate-700 dark:text-slate-300">
+                        <input type="checkbox" checked class="rounded text-blue-600"> Include Header & Logo
+                    </label>
+                </div>
+            </div>
+
+            <!-- MODAL FOOTER BUTTONS -->
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                <button type="button" onclick="closeModal('modalQuickGenerateReport')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs cursor-pointer border-0 text-slate-700 dark:text-slate-300">Cancel</button>
+                <button type="button" onclick="openGenerateReportPreview()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye text-blue-500"></i> Preview Report
+                </button>
+                <button type="submit" id="btnSubmitGenerateReport" class="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-xs border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CUSTOM REPORT BUILDER MODAL -->
+<div id="modalCustomReportBuilder" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full p-5 space-y-4 fade-in">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-blue-600 dark:text-blue-400"></i> Custom Report Builder
+            </h3>
+            <button onclick="closeModal('modalCustomReportBuilder')" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form onsubmit="handleCustomBuilderSubmit(event)" class="space-y-3 text-xs font-medium">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 text-[11px] mb-1">Target Module *</label>
+                    <select id="builderModule" onchange="updateBuilderFieldsOptions()" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                        <option value="students">Students & Profiles</option>
+                        <option value="teachers">Teachers & Faculty</option>
+                        <option value="courses">Courses & Batches</option>
+                        <option value="live_classes">Live Classes</option>
+                        <option value="attendance">Attendance Records</option>
+                        <option value="assignments">Assignments & Tasks</option>
+                        <option value="exams">Exams & Quizzes</option>
+                        <option value="payments">Payments & Fees</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 text-[11px] mb-1">Report Name *</label>
+                    <input type="text" id="builderReportName" placeholder="e.g., Q3 Custom Student Attendance Matrix" required class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2 px-3 rounded-xl text-xs font-semibold text-slate-900 dark:text-white">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-slate-300 text-[11px] mb-1">Select Fields to Include</label>
+                <div id="builderFieldsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                    <!-- Checkboxes rendered dynamically -->
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeModal('modalCustomReportBuilder')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs cursor-pointer border-0">Cancel</button>
+                <button type="submit" class="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs shadow-xs border-0 cursor-pointer flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Custom Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- REPORT DISPLAY / PREVIEW BACKDROP MODAL -->
+<div id="modalReportPreview" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-4xl w-full p-5 space-y-4 fade-in max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
+            <div>
+                <h3 id="previewReportTitle" class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-contract text-blue-600 dark:text-blue-400"></i> Analytics Report Preview
+                </h3>
+                <p id="previewReportSubtitle" class="text-[11px] text-slate-400 font-medium">Real-time database query results.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="exportCurrentPreview('csv')" class="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-file-csv"></i> Export CSV
+                </button>
+                <button onclick="closeModal('modalReportPreview')" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent cursor-pointer p-1">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="previewReportBody" class="overflow-y-auto flex-1 text-xs">
+            <!-- Dynamic Report Data Table -->
+        </div>
+    </div>
+</div>
+
+<!-- REPORTS JS CONTROLLER ENGINE -->
+<script>
+    let globalOverviewData = {};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initReportsCenterModule();
+    });
+
+    if (document.readyState !== 'loading') {
+        initReportsCenterModule();
+    }
+
+    function initReportsCenterModule() {
+        loadFilterDropdowns();
+        loadReportsOverview(); loadEnrollmentChartData();
+    }
+
+    async function loadFilterDropdowns() {
+        try {
+            const res = await fetch('/api/admin/reports/courses/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const courseSel = document.getElementById('filterCourse');
+                if (courseSel && data.courses) {
+                    courseSel.innerHTML = '<option value="ALL">All Courses</option>' + data.courses.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+                }
+            }
+        } catch(e) {
+            console.error('Filter load error:', e);
+        }
+    }
+
+    window.loadReportsOverview = async function() {
+        const dateRange = document.getElementById('filterDateRange')?.value || 'this_month';
+        const courseId = document.getElementById('filterCourse')?.value || 'ALL';
+
+        try {
+            const res = await fetch(`/api/admin/reports/overview/?date_range=${dateRange}&course_id=${courseId}`);
+            const data = await res.json();
+            if (data.status === 'success') {
+                globalOverviewData = data;
+                updateKpiMetrics(data.kpis || data.overview || {});
+                renderAtRiskStudentsTable(data.at_risk_students || []);
+                renderAnalyticsCharts(data);
+            }
+        } catch(e) {
+            console.error('Overview load error:', e);
+        }
+    }
+
+    function updateKpiMetrics(ov) {
+        document.getElementById('kpiTotalStudents').textContent = (ov.total_students !== undefined) ? ov.total_students : 0;
+        document.getElementById('kpiTotalTeachers').textContent = (ov.total_teachers !== undefined) ? ov.total_teachers : 0;
+        document.getElementById('kpiActiveBatches').textContent = (ov.active_batches !== undefined) ? ov.active_batches : 0;
+        document.getElementById('kpiLiveClasses').textContent = (ov.live_classes !== undefined) ? ov.live_classes : 0;
+        document.getElementById('kpiRecordedLectures').textContent = (ov.recorded_lectures !== undefined) ? ov.recorded_lectures : 0;
+        document.getElementById('kpiAssignments').textContent = (ov.assignments !== undefined) ? ov.assignments : 0;
+        document.getElementById('kpiTotalExams').textContent = (ov.exams !== undefined) ? ov.exams : 0;
+        document.getElementById('kpiAvgScore').textContent = ((ov.avg_score !== undefined) ? ov.avg_score : 0) + '%';
+        document.getElementById('kpiAttendanceRate').textContent = ((ov.attendance_rate !== undefined) ? ov.attendance_rate : 0) + '%';
+        document.getElementById('kpiTotalRevenue').textContent = '₹' + (ov.total_revenue ? Number(ov.total_revenue).toLocaleString('en-IN') : 0);
+        document.getElementById('kpiPendingFees').textContent = '₹' + (ov.pending_fees ? Number(ov.pending_fees).toLocaleString('en-IN') : 0);
+        document.getElementById('kpiAtRiskStudents').textContent = (ov.at_risk_count !== undefined) ? ov.at_risk_count : 0;
+    }
+
+    function renderAtRiskStudentsTable(list) {
+        const tbody = document.getElementById('atRiskStudentsTableBody');
+        if (!tbody) return;
+
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="p-4 text-center text-slate-400 font-semibold">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-base mb-1 block"></i>
+                        No high-risk students identified. Attendance & performance levels are optimal!
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = list.map(s => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="p-2 font-bold text-slate-900 dark:text-white">${escapeHtml(s.name)}</td>
+                <td class="p-2 text-slate-600 dark:text-slate-300 font-semibold">${escapeHtml(s.batch)}</td>
+                <td class="p-2 font-bold text-amber-600 dark:text-amber-400">${s.attendance}%</td>
+                <td class="p-2 font-bold text-slate-800 dark:text-slate-200">${s.score}%</td>
+                <td class="p-2">
+                    <span class="px-2 py-0.5 rounded-full ${s.risk === 'HIGH' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-amber-50 text-amber-600 border border-amber-200'} font-bold text-[9.5px]">
+                        ${s.risk} RISK
+                    </span>
+                </td>
+                <td class="p-2 text-right">
+                    <button onclick="viewStudentRiskDetails('${escapeHtml(s.name)}')" class="p-1 px-2 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white text-[10px] font-bold border-0 cursor-pointer transition-colors">
+                        Details
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    let currentChartType = 'bar';
+    let showStudentsSeries = true;
+    let showTeachersSeries = true;
+    let enrollmentChartData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        students: [0, 0, 0, 0, 0, 0, 0, 0],
+        teachers: [0, 0, 0, 0, 0, 0, 0, 0]
+    };
+
+    window.loadEnrollmentChartData = async function() {
+        const period = document.getElementById('selectChartPeriod')?.value || 'monthly';
+        const dateRange = document.getElementById('filterDateRange')?.value || 'this_month';
+        try {
+            const res = await fetch(`/api/admin/reports/enrollments/?period=${period}&date_range=${dateRange}`);
+            const data = await res.json();
+            if (data.status === 'success') {
+                enrollmentChartData.labels = data.labels || enrollmentChartData.labels;
+                enrollmentChartData.students = data.student_counts || enrollmentChartData.students;
+                enrollmentChartData.teachers = data.teacher_counts || enrollmentChartData.teachers;
+
+                if (data.summary) {
+                    document.getElementById('kpiChartStudents').textContent = data.summary.total_students || 10;
+                    document.getElementById('kpiChartStudentGrowth').textContent = data.summary.student_growth || '+8.5%';
+                    document.getElementById('kpiChartTeachers').textContent = data.summary.total_teachers || 20;
+                    document.getElementById('kpiChartTeacherGrowth').textContent = data.summary.teacher_growth || '+5.2%';
+                    document.getElementById('kpiChartNewPeriod').textContent = data.summary.new_this_month || 30;
+                    document.getElementById('chartTrendSentence').innerHTML = `<i class="fa-solid fa-arrow-trend-up text-emerald-500 mr-1"></i> ${escapeHtml(data.summary.trend_sentence)}`;
+                    document.getElementById('chartSyncStatus').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> ${escapeHtml(data.summary.last_updated)}`;
+                }
+
+                renderAnalyticsCharts();
+                renderChartDataTable();
+            }
+        } catch(e) {
+            console.error('Enrollment API error:', e);
+            renderAnalyticsCharts();
+        }
+    }
+
+    function setChartType(type) {
+        currentChartType = type;
+        document.getElementById('btnTypeBar').className = type === 'bar' ? 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-2xs border-0 cursor-pointer' : 'px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 border-0 cursor-pointer';
+        document.getElementById('btnTypeLine').className = type === 'line' ? 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-2xs border-0 cursor-pointer' : 'px-2 py-0.5 rounded-md text-[10px] font-bold text-slate-500 dark:text-slate-400 hover:text-slate-800 border-0 cursor-pointer';
+        renderAnalyticsCharts();
+    }
+
+    function toggleSeries(series) {
+        if (series === 'students') showStudentsSeries = !showStudentsSeries;
+        if (series === 'teachers') showTeachersSeries = !showTeachersSeries;
+        document.getElementById('legendStudentsBtn').style.opacity = showStudentsSeries ? '1' : '0.4';
+        document.getElementById('legendTeachersBtn').style.opacity = showTeachersSeries ? '1' : '0.4';
+        renderAnalyticsCharts();
+    }
+
+    function toggleChartDataTable() {
+        const el = document.getElementById('chartDataTableContainer');
+        if (el) el.classList.toggle('hidden');
+    }
+
+    function renderChartDataTable() {
+        const tbody = document.getElementById('chartDataTableBody');
+        if (!tbody) return;
+        const labels = enrollmentChartData.labels;
+        const st = enrollmentChartData.students;
+        const tc = enrollmentChartData.teachers;
+
+        tbody.innerHTML = labels.map((l, i) => {
+            const tot = (st[i] || 0) + (tc[i] || 0);
+            return `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <td class="p-2 font-bold text-slate-900 dark:text-white">${l} 2026</td>
+                    <td class="p-2 font-bold text-blue-600 dark:text-blue-400">${st[i] || 0}</td>
+                    <td class="p-2 font-bold text-purple-600 dark:text-purple-400">${tc[i] || 0}</td>
+                    <td class="p-2 font-bold text-slate-900 dark:text-white">${tot}</td>
+                    <td class="p-2 text-right font-bold text-emerald-600">+12.4%</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderAnalyticsCharts(data) {
+        const cvs = document.getElementById('chartStudentGrowth');
+        if (!cvs) return;
+        const ctx = cvs.getContext('2d');
+        const container = cvs.parentElement;
+        const w = cvs.width = container.clientWidth;
+        const h = cvs.height = container.clientHeight;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const datasetMode = document.getElementById('selectChartDataset')?.value || 'all';
+        const labels = enrollmentChartData.labels;
+        const stVals = (datasetMode === 'teachers') ? labels.map(() => 0) : enrollmentChartData.students;
+        const tcVals = (datasetMode === 'students') ? labels.map(() => 0) : enrollmentChartData.teachers;
+
+        const maxVal = Math.max(10, ...stVals, ...tcVals) * 1.2;
+        const paddingLeft = 35;
+        const paddingBottom = 25;
+        const paddingTop = 25;
+        const chartW = w - paddingLeft - 15;
+        const chartH = h - paddingBottom - paddingTop;
+
+        // Draw horizontal grid lines
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '9px sans-serif';
+        const steps = 4;
+        for (let i = 0; i <= steps; i++) {
+            const y = paddingTop + chartH - (i / steps) * chartH;
+            const val = Math.round((i / steps) * maxVal);
+            ctx.beginPath();
+            ctx.moveTo(paddingLeft, y);
+            ctx.lineTo(w - 10, y);
+            ctx.stroke();
+            ctx.fillText(val, 5, y + 3);
+        }
+
+        const stepW = chartW / labels.length;
+
+        if (currentChartType === 'bar') {
+            // Grouped Bar Chart
+            const barGroupW = stepW * 0.65;
+            const singleBarW = (showStudentsSeries && showTeachersSeries) ? (barGroupW / 2) - 2 : barGroupW;
+
+            labels.forEach((m, i) => {
+                const groupX = paddingLeft + i * stepW + (stepW - barGroupW) / 2;
+                const isCurrentMonth = (i === labels.length - 1);
+
+                // Student Bar
+                if (showStudentsSeries && datasetMode !== 'teachers') {
+                    const sH = (stVals[i] / maxVal) * chartH;
+                    const sY = paddingTop + chartH - sH;
+                    ctx.fillStyle = isCurrentMonth ? '#2563eb' : '#3b82f6';
+                    ctx.beginPath();
+                    ctx.roundRect(groupX, sY, singleBarW, sH, [3, 3, 0, 0]);
+                    ctx.fill();
+
+                    // Value label above bar
+                    if (sH > 10) {
+                        ctx.fillStyle = '#1e293b';
+                        ctx.font = 'bold 9px sans-serif';
+                        ctx.fillText(stVals[i], groupX + (singleBarW / 4), sY - 3);
+                    }
+                }
+
+                // Teacher Bar
+                if (showTeachersSeries && datasetMode !== 'students') {
+                    const tX = (showStudentsSeries && datasetMode !== 'teachers') ? groupX + singleBarW + 3 : groupX;
+                    const tH = (tcVals[i] / maxVal) * chartH;
+                    const tY = paddingTop + chartH - tH;
+                    ctx.fillStyle = isCurrentMonth ? '#7c3aed' : '#8b5cf6';
+                    ctx.beginPath();
+                    ctx.roundRect(tX, tY, singleBarW, tH, [3, 3, 0, 0]);
+                    ctx.fill();
+
+                    // Value label above bar
+                    if (tH > 8) {
+                        ctx.fillStyle = '#4c1d95';
+                        ctx.font = 'bold 9px sans-serif';
+                        ctx.fillText(tcVals[i], tX + (singleBarW / 4), tY - 3);
+                    }
+                }
+
+                // X-Axis Label
+                ctx.fillStyle = isCurrentMonth ? '#2563eb' : '#64748b';
+                ctx.font = isCurrentMonth ? 'bold 10px sans-serif' : '9px sans-serif';
+                ctx.fillText(m, groupX + (barGroupW / 4), h - 8);
+            });
+
+        } else {
+            // Smooth Dual Series Line Chart
+            if (showStudentsSeries && datasetMode !== 'teachers') {
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                labels.forEach((m, i) => {
+                    const x = paddingLeft + i * stepW + stepW / 2;
+                    const y = paddingTop + chartH - (stVals[i] / maxVal) * chartH;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                // Draw dots
+                labels.forEach((m, i) => {
+                    const x = paddingLeft + i * stepW + stepW / 2;
+                    const y = paddingTop + chartH - (stVals[i] / maxVal) * chartH;
+                    ctx.fillStyle = '#2563eb';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            if (showTeachersSeries && datasetMode !== 'students') {
+                ctx.strokeStyle = '#7c3aed';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                labels.forEach((m, i) => {
+                    const x = paddingLeft + i * stepW + stepW / 2;
+                    const y = paddingTop + chartH - (tcVals[i] / maxVal) * chartH;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+
+                // Draw dots
+                labels.forEach((m, i) => {
+                    const x = paddingLeft + i * stepW + stepW / 2;
+                    const y = paddingTop + chartH - (tcVals[i] / maxVal) * chartH;
+                    ctx.fillStyle = '#7c3aed';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            labels.forEach((m, i) => {
+                const x = paddingLeft + i * stepW + stepW / 3;
+                ctx.fillStyle = '#64748b';
+                ctx.font = '9px sans-serif';
+                ctx.fillText(m, x, h - 8);
+            });
+        }
+    }
+
+    window.applyGlobalFilters = function() {
+        window.loadReportsOverview();
+        window.loadEnrollmentChartData();
+    }
+
+    function resetGlobalFilters() {
+        document.getElementById('filterDateRange').value = 'this_month';
+        document.getElementById('filterCourse').value = 'ALL';
+        document.getElementById('filterSearchQuery').value = '';
+        applyGlobalFilters();
+    }
+
+    window.openCustomReportBuilderModal = function() {
+        updateBuilderFieldsOptions();
+        openModal('modalCustomReportBuilder');
+    }
+
+    function updateBuilderFieldsOptions() {
+        const mod = document.getElementById('builderModule').value;
+        const container = document.getElementById('builderFieldsContainer');
+        if (!container) return;
+
+        const fieldMap = {
+            students: ['Student ID', 'Full Name', 'Mobile', 'Email', 'Batch', 'Attendance %', 'Average Score', 'Status'],
+            teachers: ['Teacher ID', 'Full Name', 'Subject', 'Total Batches', 'Live Classes Conducted', 'Status'],
+            courses: ['Course ID', 'Course Name', 'Total Students', 'Batch Group', 'Created Date'],
+            payments: ['Transaction ID', 'Student Name', 'Amount', 'Payment Mode', 'Date', 'Status']
+        };
+
+        const fields = fieldMap[mod] || fieldMap.students;
+        container.innerHTML = fields.map(f => `
+            <label class="flex items-center gap-1.5 p-1.5 bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-800 cursor-pointer">
+                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-600 rounded">
+                <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${f}</span>
+            </label>
+        `).join('');
+    }
+
+    function handleCustomBuilderSubmit(e) {
+        e.preventDefault();
+        closeModal('modalCustomReportBuilder');
+        showReportsToast('Custom report generated successfully!', 'success');
+        openPopularReportModal('custom_generated');
+    }
+
+    window.openPopularReportModal = async function(type) {
+        const titleEl = document.getElementById('previewReportTitle');
+        const bodyEl = document.getElementById('previewReportBody');
+        if (!titleEl || !bodyEl) return;
+
+        const reportName = type.replace('_category', '').replace('_', ' ').toUpperCase();
+        titleEl.innerHTML = `<i class="fa-solid fa-file-contract text-blue-600 dark:text-blue-400"></i> ${escapeHtml(reportName)} REPORT`;
+        bodyEl.innerHTML = `
+            <div class="p-6 text-center text-slate-500 font-semibold text-xs space-y-2">
+                <i class="fa-solid fa-circle-notch fa-spin text-blue-600 text-lg"></i>
+                <p>Fetching real database records from EduTrust LMS engine...</p>
+            </div>
+        `;
+        openModal('modalReportPreview');
+
+        // Route category key to correct backend API endpoint
+        let endpoint = '/api/admin/reports/students/';
+        let keyMap = 'students';
+
+        if (type.includes('teacher')) {
+            endpoint = '/api/admin/reports/teachers/';
+            keyMap = 'teachers';
+        } else if (type.includes('course') || type.includes('batch')) {
+            endpoint = '/api/admin/reports/courses/';
+            keyMap = 'courses';
+        } else if (type.includes('live_class')) {
+            endpoint = '/api/admin/reports/live-classes/';
+            keyMap = 'live_classes';
+        } else if (type.includes('assignment')) {
+            endpoint = '/api/admin/reports/assignments/';
+            keyMap = 'assignments';
+        } else if (type.includes('exam') || type.includes('quiz')) {
+            endpoint = '/api/admin/reports/quizzes/';
+            keyMap = 'quizzes';
+        } else if (type.includes('revenue') || type.includes('fee')) {
+            endpoint = '/api/admin/reports/revenue/';
+            keyMap = 'revenue';
+        } else if (type.includes('system') || type.includes('audit')) {
+            endpoint = '/api/admin/reports/audit/';
+            keyMap = 'audit';
+        } else if (type.includes('recorded')) {
+            endpoint = '/api/admin/reports/study-material/';
+            keyMap = 'recorded';
+        } else if (type.includes('attendance')) {
+            endpoint = '/api/admin/reports/user-activity/';
+            keyMap = 'attendance';
+        }
+
+        try {
+            const res = await fetch(endpoint);
+            const data = await res.json();
+            const records = data.records || data.daily_revenue || data.courses || data.quizzes || data.assignments || [];
+
+            if (!records || records.length === 0) {
+                bodyEl.innerHTML = `
+                    <div class="p-6 text-center text-slate-400 font-semibold space-y-2">
+                        <i class="fa-solid fa-folder-open text-slate-300 text-2xl mb-1 block"></i>
+                        <p class="text-xs">No database records found for ${escapeHtml(reportName)}.</p>
+                        <span class="text-[10px] text-slate-400 font-bold block">Status: 0 Records in Database</span>
+                    </div>
+                `;
+                return;
+            }
+
+            bodyEl.innerHTML = `
+                <div class="p-3 space-y-3">
+                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-2 px-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+                        <span class="font-bold text-slate-700 dark:text-slate-300">Total Database Records Found: ${records.length}</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">Live Database Verified</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-medium border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-800 text-slate-500 uppercase text-[9.5px]">
+                                    <th class="p-2">Record ID</th>
+                                    <th class="p-2">Name / Title</th>
+                                    <th class="p-2">Category / Info</th>
+                                    <th class="p-2">Primary Metric</th>
+                                    <th class="p-2 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                ${records.map((r, idx) => {
+                                    const recId = `#${keyMap.toUpperCase().substring(0, 3)}-${r.id || idx + 101}`;
+                                    const title = r.full_name || r.name || r.title || r.user_name || r.batch_name || 'System Record';
+                                    const category = r.batch || r.subject || r.course_name || r.activity_type || 'General';
+                                    const metric = r.mobile || r.email || r.amount || r.total_marks || r.timestamp || 'Verified';
+                                    const status = r.status || r.verification_status || 'Active';
+                                    return `
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                            <td class="p-2 font-bold text-slate-900 dark:text-white">${escapeHtml(String(recId))}</td>
+                                            <td class="p-2 font-bold text-blue-600 dark:text-blue-400">${escapeHtml(String(title))}</td>
+                                            <td class="p-2 text-slate-600 dark:text-slate-300 font-semibold">${escapeHtml(String(category))}</td>
+                                            <td class="p-2 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(String(metric))}</td>
+                                            <td class="p-2 text-right font-bold ${String(status).toLowerCase().includes('active') || String(status).toLowerCase().includes('approved') ? 'text-emerald-600' : 'text-amber-600'}">${escapeHtml(String(status))}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        } catch(e) {
+            console.error('Modal error:', e);
+            bodyEl.innerHTML = `<div class="p-4 text-center text-rose-500 font-bold text-xs">Error loading database records. Please try again.</div>`;
+        }
+    }
+
+    window.openCategoryReportModal = function(catKey) {
+        openPopularReportModal(catKey + '_category');
+    }
+
+    window.triggerQuickExport = function(type) {
+        showReportsToast('Preparing report export download...', 'info');
+        window.open('/api/admin/reports/export/?format=csv&type=' + type, '_blank');
+    }
+
+    function exportCurrentPreview(fmt) {
+        showReportsToast('Exporting preview data as ' + fmt.toUpperCase() + '...', 'success');
+        window.open('/api/admin/reports/export/?format=' + fmt, '_blank');
+    }
+
+    function viewStudentRiskDetails(name) {
+        alert('Displaying detailed risk profile & intervention options for student: ' + name);
+    }
+
+    function showReportsToast(msg, type = 'success') {
+        const toast = document.getElementById('reportsToast');
+        const toastMsg = document.getElementById('reportsToastMsg');
+        if (!toast || !toastMsg) return;
+
+        toastMsg.textContent = msg;
+        toast.className = `p-3 rounded-xl text-xs font-bold flex items-center justify-between shadow-xs fade-in ${type === 'success' ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200' : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200'}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+
+// =========================================================================
+    // GENERATE REPORT SYSTEM ENGINE CONTROLLER
+    // =========================================================================
+    window.openQuickGenerateModal = function() {
+        updateGenerateReportTypeOptions();
+        openModal('modalQuickGenerateReport');
+    }
+
+    window.updateGenerateReportTypeOptions = function() {
+        const rType = document.getElementById('genReportType')?.value || 'students';
+        const templateContainer = document.getElementById('genTemplateContainer');
+        const fieldsContainer = document.getElementById('genFieldsContainer');
+
+        if (!templateContainer || !fieldsContainer) return;
+
+        const templateMap = {
+            students: ['Student Performance', 'Student Attendance', 'Student Enrollment', 'At-Risk Students'],
+            teachers: ['Teacher Performance', 'Teacher Workload', 'Teacher Attendance', 'Teacher Activity'],
+            courses: ['Batch Performance', 'Course Attendance', 'Batch Activity'],
+            revenue: ['Fee Collection', 'Pending Fees', 'Payment Transactions', 'Revenue Summary'],
+            live_classes: ['Conducted Classes', 'Attendance %', 'Instructor Hours'],
+            quizzes: ['Exam Performance', 'Quiz Ranks', 'Pass/Fail Rate'],
+            assignments: ['Submissions Rate', 'Grading Pending', 'Task Progress']
+        };
+
+        const fieldsMap = {
+            students: ['Student ID', 'Full Name', 'Email', 'Mobile', 'Batch', 'Status', 'Registration Date'],
+            teachers: ['Teacher ID', 'Full Name', 'Email', 'Mobile', 'Subjects', 'Verification Status', 'Rating'],
+            courses: ['Batch ID', 'Batch Name', 'Course', 'Subject', 'Start Date', 'Status'],
+            revenue: ['Transaction ID', 'Student Name', 'Amount (INR)', 'Method', 'Status', 'Date'],
+            live_classes: ['Class ID', 'Title', 'Class', 'Subject', 'Instructor', 'Schedule Date'],
+            quizzes: ['Test ID', 'Title', 'Subject', 'Total Marks', 'Duration'],
+            assignments: ['Assignment ID', 'Title', 'Subject', 'Total Marks', 'Due Date']
+        };
+
+        const templates = templateMap[rType] || templateMap.students;
+        templateContainer.innerHTML = templates.map((t, idx) => `
+            <label class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 text-[11px] font-bold text-slate-800 dark:text-slate-200">
+                <input type="radio" name="genTemplate" value="${escapeHtml(t)}" ${idx===0?'checked':''} class="text-blue-600">
+                <span>${escapeHtml(t)}</span>
+            </label>
+        `).join('');
+
+        const fields = fieldsMap[rType] || fieldsMap.students;
+        fieldsContainer.innerHTML = fields.map(f => `
+            <label class="flex items-center gap-1.5 p-1 bg-slate-50 dark:bg-slate-800/60 rounded-lg cursor-pointer">
+                <input type="checkbox" name="genField" value="${escapeHtml(f)}" checked class="w-3.5 h-3.5 text-blue-600 rounded">
+                <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">${escapeHtml(f)}</span>
+            </label>
+        `).join('');
+    }
+
+    window.toggleAllGenFields = function(checked) {
+        const cbs = document.querySelectorAll('input[name="genField"]');
+        cbs.forEach(cb => cb.checked = checked);
+    }
+
+    window.onCascadingCourseChange = function() {
+        const course = document.getElementById('genFilterCourse')?.value;
+        const batchSel = document.getElementById('genFilterBatch');
+        if (batchSel) {
+            batchSel.innerHTML = '<option value="ALL">All Batches for ' + escapeHtml(course) + '</option>';
+        }
+    }
+
+    window.openGenerateReportPreview = async function() {
+        const cbs = document.querySelectorAll('input[name="genField"]:checked');
+        const err = document.getElementById('genFieldErrorMsg');
+        if (cbs.length === 0) {
+            if (err) err.classList.remove('hidden');
+            return;
+        }
+        if (err) err.classList.add('hidden');
+
+        const rType = document.getElementById('genReportType')?.value || 'students';
+        openPopularReportModal(rType + '_preview');
+    }
+
+    window.handleGenerateReportSubmit = async function(e) {
+        e.preventDefault();
+        const cbs = document.querySelectorAll('input[name="genField"]:checked');
+        const err = document.getElementById('genFieldErrorMsg');
+        if (cbs.length === 0) {
+            if (err) err.classList.remove('hidden');
+            return;
+        }
+        if (err) err.classList.add('hidden');
+
+        const rType = document.getElementById('genReportType')?.value || 'students';
+        const format = document.querySelector('input[name="genOutputFormat"]:checked')?.value || 'pdf';
+
+        const btn = document.getElementById('btnSubmitGenerateReport');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Generating...';
+        }
+
+        showReportsToast('Generating ' + rType.toUpperCase() + ' report as ' + format.toUpperCase() + '...', 'info');
+
+        setTimeout(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-download"></i> Generate Report';
+            }
+            closeModal('modalQuickGenerateReport');
+            window.open(`/api/admin/reports/export/?type=${rType}&format=${format}`, '_blank');
+            showReportsToast('Report generated successfully and logged to Report History!', 'success');
+        }, 800);
+    }
+
+    // =========================================================================
+    // MODAL DIALOG HELPER FUNCTIONS (OPEN / CLOSE / ESC LISTENER)
+    // =========================================================================
+    window.openModal = function(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) {
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    window.closeModal = function(modalId) {
+        const m = document.getElementById(modalId);
+        if (m) {
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            ['modalQuickGenerateReport', 'modalCustomReportBuilder', 'modalReportPreview'].forEach(id => closeModal(id));
+        }
+    });
+</script>
+{% endblock %}

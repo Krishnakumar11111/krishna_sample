@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hire a Tutor | EduTrust Tuition Platform</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 50px -12px rgba(37, 99, 235, 0.12)',
+                        'floating': '0 30px 60px -15px rgba(37, 99, 235, 0.25)',
+                        'glow': '0 0 35px rgba(59, 130, 246, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1329;
+            color: #f8fafc;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Glowing Aurora Background Blobs */
+        .aurora-blob-1 {
+            position: fixed;
+            top: -150px;
+            left: -100px;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(6, 182, 212, 0.15) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(70px);
+            animation: pulseAurora 12s infinite alternate ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .aurora-blob-2 {
+            position: fixed;
+            bottom: -150px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, rgba(37, 99, 235, 0.15) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: pulseAurora 15s infinite alternate-reverse ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes pulseAurora {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.15) translate(30px, -20px); }
+            100% { transform: scale(0.95) translate(-20px, 30px); }
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .animated-card-border {
+            position: relative;
+            border-radius: 1.5rem;
+        }
+
+        .animated-card-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1.6rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.3), rgba(6, 182, 212, 0.4));
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.7;
+            transition: opacity 0.4s ease;
+        }
+
+        .animated-card-border:hover::before {
+            opacity: 1;
+        }
+
+        /* Custom Dark Inputs */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        select:-webkit-autofill {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-3 sm:p-5 relative">
+
+    <!-- Background Aurora Effect -->
+    <div class="aurora-blob-1"></div>
+    <div class="aurora-blob-2"></div>
+
+    <!-- SUCCESS MODAL (DARK THEME GLASSMORPHISM) -->
+    <div id="successModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 hidden transition-all duration-300 p-4">
+        <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center transform scale-95 transition-transform duration-300 border border-slate-700/80" id="modalContent">
+            <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full flex items-center justify-center text-2xl mx-auto mb-3.5">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white mb-2">Congratulations!</h3>
+            <p class="text-slate-300 text-xs sm:text-sm mb-5 leading-relaxed" id="successText">Your tutor request has been submitted successfully. We will connect with you soon!</p>
+            <button onclick="closeSuccessPopup()" class="w-full py-3 bg-gradient-to-r from-brand-600 via-indigo-600 to-cyan-500 hover:from-brand-700 hover:to-cyan-600 text-white font-extrabold rounded-2xl border-0 cursor-pointer shadow-lg shadow-brand-500/30 transition-all text-xs sm:text-sm">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN HIRE CONTAINER CARD (COMPACT MAX-W-3XL) -->
+    <div class="w-full max-w-3xl animated-card-border z-10 my-4 sm:my-6">
+        <div class="w-full glass-card rounded-3xl p-5 sm:p-7 shadow-floating text-white space-y-5 relative overflow-hidden">
+            
+            <!-- HEADER & BRAND LOGO (COMPACT) -->
+            <div class="text-center">
+                <a href="{% url 'home' %}" class="inline-flex items-center justify-center gap-2.5 mb-3.5 group no-underline">
+                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/40 group-hover:scale-110 transition-all duration-300">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-white">
+                        Edu<span class="text-brand-500">Trust</span>
+                    </span>
+                </a>
+                <h2 class="text-xl sm:text-3xl font-extrabold text-white tracking-tight">Hire a <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400">Tutor</span></h2>
+                <p class="text-slate-400 text-xs sm:text-xs mt-1 font-medium max-w-lg mx-auto">Fill out the details below to find and hire the best verified tutor for your academic needs.</p>
+            </div>
+
+            <!-- FORM START (COMPACT SPACE-Y-4) -->
+            <form id="tutorForm" onsubmit="handleFormSubmit(event)" class="space-y-4" novalidate>
+                {% csrf_token %}
+                
+                <!-- 1. PERSONAL DETAILS SECTION -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-extrabold uppercase text-brand-400 tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+                        <i class="fas fa-user text-cyan-400"></i> Personal Details
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Your Name <span class="text-rose-400">*</span></label>
+                            <input type="text" id="fullName" name="student_name" placeholder="Enter your full name" required
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                            <p id="error-fullName" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Phone Number <span class="text-rose-400">*</span></label>
+                            <input type="tel" id="phoneNumber" name="mobile" placeholder="Enter 10-digit mobile number" required maxlength="10"
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                            <p id="error-phoneNumber" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. ACADEMIC REQUIREMENTS SECTION -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-extrabold uppercase text-brand-400 tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+                        <i class="fas fa-graduation-cap text-cyan-400"></i> Academic Requirements
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="academicGrid">
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Class / Grade <span class="text-rose-400">*</span></label>
+                            <select id="classSelect" name="student_class" required
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner cursor-pointer">
+                                <option value="" disabled selected class="bg-slate-900 text-slate-400">Select class level</option>
+                                <option value="Class 1" class="bg-slate-900 text-white">Class 1</option>
+                                <option value="Class 2" class="bg-slate-900 text-white">Class 2</option>
+                                <option value="Class 3" class="bg-slate-900 text-white">Class 3</option>
+                                <option value="Class 4" class="bg-slate-900 text-white">Class 4</option>
+                                <option value="Class 5" class="bg-slate-900 text-white">Class 5</option>
+                                <option value="Class 6" class="bg-slate-900 text-white">Class 6</option>
+                                <option value="Class 7" class="bg-slate-900 text-white">Class 7</option>
+                                <option value="Class 8" class="bg-slate-900 text-white">Class 8</option>
+                                <option value="Class 9" class="bg-slate-900 text-white">Class 9</option>
+                                <option value="Class 10" class="bg-slate-900 text-white">Class 10</option>
+                                <option value="Class 11" class="bg-slate-900 text-white">Class 11</option>
+                                <option value="Class 12" class="bg-slate-900 text-white">Class 12</option>
+                            </select>
+                            <p id="error-classSelect" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+
+                        <div id="streamContainer" class="hidden">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Stream <span class="text-rose-400">*</span></label>
+                            <select id="streamSelect" name="stream"
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner cursor-pointer">
+                                <option value="" disabled selected class="bg-slate-900 text-slate-400">Select stream</option>
+                                <option value="Science" class="bg-slate-900 text-white">Science</option>
+                                <option value="Commerce" class="bg-slate-900 text-white">Commerce</option>
+                                <option value="Arts / Humanities" class="bg-slate-900 text-white">Arts / Humanities</option>
+                            </select>
+                            <p id="error-streamSelect" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+
+                        <div id="subjectWrapper" class="md:col-span-1">
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Subject <span class="text-rose-400">*</span></label>
+                            <input type="text" id="subjectSelect" name="subject" list="subjectOptions" placeholder="Select or type subject..." required
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <datalist id="subjectOptions"></datalist>
+                            <p id="error-subjectSelect" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. CONTACT DETAILS SECTION (Pincode & Email IMMEDIATELY after Subject) -->
+                <div class="space-y-3">
+                    <h3 class="text-xs font-extrabold uppercase text-brand-400 tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+                        <i class="fas fa-envelope text-cyan-400"></i> Contact Details
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Pincode <span class="text-rose-400">*</span></label>
+                            <input type="text" id="pincodeInput" name="pincode" placeholder="Enter 6-digit pincode" required maxlength="6"
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                            <p id="error-pincodeInput" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Email Address <span class="text-rose-400">*</span></label>
+                            <input type="email" id="emailAddress" name="email" placeholder="Enter your email address" required
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                            <p id="error-emailAddress" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. ADDRESS DETAILS SECTION -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <h3 class="text-xs font-extrabold uppercase text-brand-400 tracking-wider flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-cyan-400"></i> Address Details
+                        </h3>
+                        <button type="button" id="hireDetectLocationBtn" title="Auto-detect current location" class="text-cyan-400 hover:text-cyan-300 text-xs font-extrabold px-3 py-1.5 bg-slate-800/90 hover:bg-slate-800 rounded-xl border border-slate-700 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs">
+                            <i class="fas fa-crosshairs text-cyan-400"></i> Auto Detect Location
+                        </button>
+                    </div>
+
+                    <div class="space-y-4 relative">
+                        <!-- Row 1: State | City -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">State <span class="text-rose-400">*</span></label>
+                                <input type="text" id="stateInput" name="state" list="stateOptions" placeholder="Select or type state" required
+                                    class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                                <datalist id="stateOptions"></datalist>
+                                <p id="error-stateInput" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">City <span class="text-rose-400">*</span></label>
+                                <input type="text" id="cityInput" name="city" list="cityOptions" placeholder="Select or type city" required
+                                    class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                                <datalist id="cityOptions"></datalist>
+                                <p id="error-cityInput" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Area / Locality | Landmark -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Area / Locality <span class="text-rose-400">*</span></label>
+                                <input type="text" id="areaInput" name="area" placeholder="e.g. Gomti Nagar" required
+                                    class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                                <p id="error-areaInput" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Landmark <span class="text-xs text-slate-500 font-normal lowercase">(optional)</span></label>
+                                <input type="text" id="landmarkInput" name="landmark" placeholder="e.g. Near City Mall"
+                                    class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner">
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Your Complete Address (Textarea rows="2") -->
+                        <div>
+                            <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Your Complete Address <span class="text-rose-400">*</span></label>
+                            <textarea id="completeAddress" name="complete_address" rows="2" required placeholder="House/Flat No., Street, Colony, Building name, etc."
+                                class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner resize-none"></textarea>
+                            <p id="error-completeAddress" class="text-rose-400 text-xs mt-1 font-medium hidden"></p>
+                        </div>
+                        
+                        <!-- Location suggestions dropdown -->
+                        <div id="hireLocationSuggestions" class="hidden absolute left-0 right-0 top-12 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl z-50 max-h-56 overflow-y-auto text-xs"></div>
+                    </div>
+                </div>
+
+                <!-- 5. OTHER REQUIREMENTS SECTION (Textarea rows="2") -->
+                <div>
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-300 mb-1.5">Additional Requirements <span class="text-xs text-slate-500 font-normal lowercase">(optional)</span></label>
+                    <textarea id="additionalRequirements" name="additional_requirements" rows="2" placeholder="Mention preferred timing, online/home tuition, tutor gender preference, or specific needs..."
+                        class="w-full bg-slate-900/80 border border-slate-700/80 text-white placeholder-slate-500 px-3.5 py-3 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all shadow-inner resize-none"></textarea>
+                </div>
+
+                <!-- Global Form Error Banner -->
+                <div id="formErrorBanner" class="hidden p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-2xl text-xs font-semibold flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle text-rose-400 text-base shrink-0"></i>
+                    <span id="formErrorMessage">Please correct the highlighted errors before submitting.</span>
+                </div>
+
+                <!-- 6. ACTIONS SECTION (py-3.5) -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+                    <button type="submit" id="submitBtn"
+                        class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-brand-600 via-indigo-600 to-cyan-500 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl text-xs sm:text-sm transition-all duration-300 shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:scale-[1.02] border-0 cursor-pointer flex items-center justify-center gap-2">
+                        <span id="btnText">Request a Tutor</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                    
+                    <a href="{% url 'home' %}"
+                        class="w-full sm:w-auto px-8 py-3.5 bg-slate-800/80 hover:bg-slate-800 text-slate-300 font-extrabold rounded-2xl text-xs sm:text-sm transition-all duration-300 border border-slate-700/80 hover:text-white text-center no-underline">
+                        ← Back to Home
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT SECTION -->
+    <script>
+        // 1. CLASS-WISE & STREAM-WISE SUBJECT MAPPING DATA
+        const classSubjectMapping = {
+            'Class 1': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 2': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 3': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 4': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 5': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 6': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer', 'Sanskrit'],
+            'Class 7': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer', 'Sanskrit'],
+            'Class 8': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer', 'Sanskrit'],
+            'Class 9': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer Science', 'Sanskrit'],
+            'Class 10': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer Science', 'Sanskrit'],
+            'Class 11': {
+                'Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'English'],
+                'Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Entrepreneurship', 'English'],
+                'Arts / Humanities': ['History', 'Geography', 'Political Science', 'Sociology', 'Psychology', 'Economics', 'English', 'Hindi']
+            },
+            'Class 12': {
+                'Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'English'],
+                'Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Entrepreneurship', 'English'],
+                'Arts / Humanities': ['History', 'Geography', 'Political Science', 'Sociology', 'Psychology', 'Economics', 'English', 'Hindi']
+            }
+        };
+
+        // 2. INDIAN STATES AND CITIES MAPPING
+        const indianStatesAndCities = {
+            'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Kakinada', 'Tirupati', 'Rajahmundry', 'Kadapa', 'Anantapur'],
+            'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Pasighat', 'Tawang', 'Ziro'],
+            'Assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur'],
+            'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif', 'Arrah', 'Begusarai'],
+            'Chandigarh': ['Chandigarh'],
+            'Chhattisgarh': ['Raipur', 'Bhilai', 'Bilaspur', 'Korba', 'Durg', 'Rajnandgaon'],
+            'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi', 'Central Delhi', 'Dwarka', 'Rohini'],
+            'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Mapusa', 'Ponda'],
+            'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar', 'Junagadh', 'Anand'],
+            'Haryana': ['Gurugram', 'Faridabad', 'Panipat', 'Ambala', 'Karnal', 'Hisar', 'Rohtak', 'Sonipat', 'Panchkula'],
+            'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Mandi', 'Solan', 'Kullu', 'Hamirpur'],
+            'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Anantnag', 'Baramulla', 'Udhampur'],
+            'Jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro', 'Hazaribagh', 'Deoghar'],
+            'Karnataka': ['Bengaluru', 'Mysuru', 'Hubballi', 'Mangaluru', 'Belagavi', 'Davangere', 'Ballari', 'Tumakuru'],
+            'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kollam', 'Kannur', 'Alappuzha', 'Kottayam'],
+            'Madhya Pradesh': ['Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Satna', 'Ratlam'],
+            'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Chhatrapati Sambhajinagar', 'Solapur', 'Amravati', 'Navi Mumbai', 'Kolhapur'],
+            'Manipur': ['Imphal', 'Churachandpur', 'Thoubal'],
+            'Meghalaya': ['Shillong', 'Tura', 'Jowai'],
+            'Mizoram': ['Aizawl', 'Lunglei'],
+            'Nagaland': ['Kohima', 'Dimapur', 'Mokokchung'],
+            'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur', 'Puri', 'Balasore'],
+            'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Pathankot', 'Hoshiarpur'],
+            'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Ajmer', 'Bhilwara', 'Alwar', 'Sikar'],
+            'Sikkim': ['Gangtok', 'Namchi', 'Gyalshing'],
+            'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tiruppur', 'Erode', 'Vellore', 'Thanjavur'],
+            'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Khammam', 'Ramagundam'],
+            'Tripura': ['Agartala', 'Udaipur', 'Dharmanagar'],
+            'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Varanasi', 'Noida', 'Greater Noida', 'Ghaziabad', 'Agra', 'Prayagraj', 'Meerut', 'Bareilly', 'Aligarh', 'Moradabad', 'Gorakhpur', 'Jhansi', 'Mathura', 'Saharanpur'],
+            'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Nainital', 'Rishikesh'],
+            'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Bardhaman', 'Malda', 'Kharagpur']
+        };
+
+        // Populate State Datalist
+        document.addEventListener('DOMContentLoaded', () => {
+            const stateDatalist = document.getElementById('stateOptions');
+            if (stateDatalist) {
+                stateDatalist.innerHTML = '';
+                Object.keys(indianStatesAndCities).sort().forEach(st => {
+                    const opt = document.createElement('option');
+                    opt.value = st;
+                    stateDatalist.appendChild(opt);
+                });
+            }
+        });
+
+        // State Change Event -> Populate City Datalist
+        document.getElementById('stateInput').addEventListener('input', function() {
+            const stateVal = this.value.trim();
+            const cityDatalist = document.getElementById('cityOptions');
+            if (!cityDatalist) return;
+            cityDatalist.innerHTML = '';
+
+            if (indianStatesAndCities[stateVal]) {
+                indianStatesAndCities[stateVal].forEach(ct => {
+                    const opt = document.createElement('option');
+                    opt.value = ct;
+                    cityDatalist.appendChild(opt);
+                });
+            }
+        });
+
+        // 3. CLASS & STREAM DYNAMIC CONTROLLER
+        const classSelect = document.getElementById('classSelect');
+        const streamContainer = document.getElementById('streamContainer');
+        const streamSelect = document.getElementById('streamSelect');
+        const subjectInput = document.getElementById('subjectSelect');
+        const subjectOptions = document.getElementById('subjectOptions');
+        const academicGrid = document.getElementById('academicGrid');
+
+        function updateSubjects(subjectsList) {
+            subjectOptions.innerHTML = '';
+            subjectInput.value = '';
+            subjectInput.disabled = false;
+
+            if (Array.isArray(subjectsList)) {
+                subjectsList.forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    subjectOptions.appendChild(opt);
+                });
+            }
+        }
+
+        classSelect.addEventListener('change', function() {
+            const selectedClass = this.value;
+
+            if (selectedClass === 'Class 11' || selectedClass === 'Class 12') {
+                streamContainer.classList.remove('hidden');
+                streamSelect.required = true;
+                streamSelect.value = '';
+                academicGrid.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
+                subjectInput.value = '';
+                subjectInput.disabled = true;
+                subjectOptions.innerHTML = '';
+            } else {
+                streamContainer.classList.add('hidden');
+                streamSelect.required = false;
+                streamSelect.value = '';
+                academicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+                if (classSubjectMapping[selectedClass]) {
+                    updateSubjects(classSubjectMapping[selectedClass]);
+                } else {
+                    subjectInput.disabled = false;
+                    subjectOptions.innerHTML = '';
+                }
+            }
+        });
+
+        streamSelect.addEventListener('change', function() {
+            const selectedClass = classSelect.value;
+            const selectedStream = this.value;
+
+            if ((selectedClass === 'Class 11' || selectedClass === 'Class 12') && classSubjectMapping[selectedClass] && classSubjectMapping[selectedClass][selectedStream]) {
+                updateSubjects(classSubjectMapping[selectedClass][selectedStream]);
+            }
+        });
+
+        // 4. FRONTEND VALIDATIONS & SUBMISSION HANDLER
+        function showFieldError(fieldId, errorMsg) {
+            const errEl = document.getElementById('error-' + fieldId);
+            const inputEl = document.getElementById(fieldId);
+            if (errEl) {
+                errEl.innerText = errorMsg;
+                errEl.classList.remove('hidden');
+            }
+            if (inputEl) {
+                inputEl.classList.add('border-rose-500', 'focus:ring-rose-500/30');
+                inputEl.classList.remove('border-slate-700/80');
+            }
+        }
+
+        function clearFieldErrors() {
+            document.querySelectorAll('[id^="error-"]').forEach(el => {
+                el.innerText = '';
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('input, select, textarea').forEach(inputEl => {
+                inputEl.classList.remove('border-rose-500', 'focus:ring-rose-500/30');
+                inputEl.classList.add('border-slate-700/80');
+            });
+            const banner = document.getElementById('formErrorBanner');
+            if (banner) banner.classList.add('hidden');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue || '';
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            clearFieldErrors();
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const emailAddress = document.getElementById('emailAddress').value.trim();
+            const studentClass = document.getElementById('classSelect').value;
+            const stream = document.getElementById('streamSelect').value;
+            const subject = document.getElementById('subjectSelect').value.trim();
+            const state = document.getElementById('stateInput').value.trim();
+            const city = document.getElementById('cityInput').value.trim();
+            const area = document.getElementById('areaInput').value.trim();
+            const landmark = document.getElementById('landmarkInput').value.trim();
+            const pincode = document.getElementById('pincodeInput').value.trim();
+            const completeAddress = document.getElementById('completeAddress').value.trim();
+            const additionalRequirements = document.getElementById('additionalRequirements').value.trim();
+
+            let isValid = true;
+
+            if (!fullName || fullName.length < 2) {
+                showFieldError('fullName', 'Please enter your full name (minimum 2 characters).');
+                isValid = false;
+            }
+
+            if (!phoneNumber || !/^[6-9]\d{9}$/.test(phoneNumber)) {
+                showFieldError('phoneNumber', 'Please enter a valid 10-digit Indian mobile number.');
+                isValid = false;
+            }
+
+            if (!studentClass) {
+                showFieldError('classSelect', 'Please select a class (Class 1 to Class 12).');
+                isValid = false;
+            }
+
+            if ((studentClass === 'Class 11' || studentClass === 'Class 12') && !stream) {
+                showFieldError('streamSelect', 'Please select your stream.');
+                isValid = false;
+            }
+
+            if (!subject) {
+                showFieldError('subjectSelect', 'Please select or type a subject.');
+                isValid = false;
+            }
+
+            if (!pincode || !/^\d{6}$/.test(pincode)) {
+                showFieldError('pincodeInput', 'Pincode must be exactly 6 numeric digits.');
+                isValid = false;
+            }
+
+            if (!emailAddress || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailAddress)) {
+                showFieldError('emailAddress', 'Please enter a valid email address (e.g. name@gmail.com).');
+                isValid = false;
+            }
+
+            if (!state) {
+                showFieldError('stateInput', 'Please enter or select your state.');
+                isValid = false;
+            }
+
+            if (!city) {
+                showFieldError('cityInput', 'Please enter or select your city.');
+                isValid = false;
+            }
+
+            if (!area) {
+                showFieldError('areaInput', 'Please enter your area / locality.');
+                isValid = false;
+            }
+
+            if (!completeAddress) {
+                showFieldError('completeAddress', 'Please enter your complete address.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                const banner = document.getElementById('formErrorBanner');
+                if (banner) {
+                    document.getElementById('formErrorMessage').innerText = 'Please correct the highlighted errors before submitting.';
+                    banner.classList.remove('hidden');
+                }
+                return;
+            }
+
+            // AJAX Submission
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Submitting...';
+
+            const payload = {
+                student_name: fullName,
+                mobile: phoneNumber,
+                email: emailAddress,
+                student_class: studentClass,
+                stream: (studentClass === 'Class 11' || studentClass === 'Class 12') ? stream : '',
+                subject: subject,
+                state: state,
+                city: city,
+                area: area,
+                landmark: landmark,
+                pincode: pincode,
+                complete_address: completeAddress,
+                additional_requirements: additionalRequirements
+            };
+
+            try {
+                const response = await fetch('/hire/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // Show Success Popup
+                    const modal = document.getElementById('successModal');
+                    const modalContent = document.getElementById('modalContent');
+                    document.getElementById('successText').innerText = data.message || 'Your tutor request has been submitted successfully.';
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalContent.classList.remove('scale-95');
+                        modalContent.classList.add('scale-100');
+                    }, 10);
+                } else {
+                    submitBtn.disabled = false;
+                    btnText.innerHTML = '<span>Request a Tutor</span><i class="fas fa-arrow-right text-xs"></i>';
+                    const banner = document.getElementById('formErrorBanner');
+                    if (banner) {
+                        document.getElementById('formErrorMessage').innerText = data.message || 'Submission failed. Please check your details.';
+                        banner.classList.remove('hidden');
+                    }
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(key => {
+                            let targetId = key;
+                            if (key === 'student_name') targetId = 'fullName';
+                            if (key === 'mobile') targetId = 'phoneNumber';
+                            if (key === 'email') targetId = 'emailAddress';
+                            if (key === 'student_class') targetId = 'classSelect';
+                            if (key === 'stream') targetId = 'streamSelect';
+                            if (key === 'subject') targetId = 'subjectSelect';
+                            if (key === 'state') targetId = 'stateInput';
+                            if (key === 'city') targetId = 'cityInput';
+                            if (key === 'area') targetId = 'areaInput';
+                            if (key === 'pincode') targetId = 'pincodeInput';
+                            if (key === 'complete_address') targetId = 'completeAddress';
+                            showFieldError(targetId, data.errors[key]);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Form submission error:', err);
+                submitBtn.disabled = false;
+                btnText.innerHTML = '<span>Request a Tutor</span><i class="fas fa-arrow-right text-xs"></i>';
+                const banner = document.getElementById('formErrorBanner');
+                if (banner) {
+                    document.getElementById('formErrorMessage').innerText = 'Network/Server error. Please try again.';
+                    banner.classList.remove('hidden');
+                }
+            }
+        }
+
+        function closeSuccessPopup() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('hidden');
+            document.getElementById('tutorForm').reset();
+            clearFieldErrors();
+            streamContainer.classList.add('hidden');
+            streamSelect.required = false;
+            academicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+            subjectInput.disabled = true;
+            subjectOptions.innerHTML = '';
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            submitBtn.disabled = false;
+            btnText.innerHTML = '<span>Request a Tutor</span><i class="fas fa-arrow-right text-xs"></i>';
+        }
+
+        // 5. LOCATION DETECTION ENGINE (Autocompletion & Reverse Geocoding Integration)
+        function setupDynamicLocationSearch() {
+            const inputEl = document.getElementById('completeAddress');
+            const dropdownEl = document.getElementById('hireLocationSuggestions');
+            const detectBtnEl = document.getElementById('hireDetectLocationBtn');
+
+            if (!inputEl || !dropdownEl) return;
+
+            function showDropdown() {
+                dropdownEl.classList.remove('hidden');
+            }
+
+            function hideDropdown() {
+                dropdownEl.classList.add('hidden');
+            }
+
+            function fillAddressFields(loc) {
+                if (!loc) return;
+                const formatted = loc.display_name || loc.formatted || '';
+                const city = loc.city || loc.town || loc.village || loc.county || '';
+                const state = loc.state || '';
+                const pincode = loc.postcode || loc.pincode || '';
+                const area = loc.suburb || loc.neighbourhood || loc.primary || formatted.split(',')[0] || '';
+
+                if (state) document.getElementById('stateInput').value = state;
+                if (city) {
+                    document.getElementById('cityInput').value = city;
+                    const stateVal = document.getElementById('stateInput').value;
+                    if (indianStatesAndCities[stateVal]) {
+                        const cityDatalist = document.getElementById('cityOptions');
+                        cityDatalist.innerHTML = '';
+                        indianStatesAndCities[stateVal].forEach(ct => {
+                            const opt = document.createElement('option');
+                            opt.value = ct;
+                            cityDatalist.appendChild(opt);
+                        });
+                    }
+                }
+                if (area) document.getElementById('areaInput').value = area;
+                if (pincode && /^\d{6}$/.test(pincode)) document.getElementById('pincodeInput').value = pincode;
+                if (formatted) document.getElementById('completeAddress').value = formatted;
+                hideDropdown();
+            }
+
+            if (detectBtnEl) {
+                detectBtnEl.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!navigator.geolocation) {
+                        alert("Geolocation is not supported by your browser.");
+                        return;
+                    }
+                    detectBtnEl.disabled = true;
+                    detectBtnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting...';
+
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            fetch(`/api/location/reverse-geocode/?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    detectBtnEl.disabled = false;
+                                    detectBtnEl.innerHTML = '<i class="fas fa-crosshairs text-cyan-400"></i> Auto Detect Location';
+                                    if (data && data.status === 200 && data.location) {
+                                        fillAddressFields(data.location);
+                                    } else {
+                                        alert("Could not detect full address details. Please enter manually.");
+                                    }
+                                })
+                                .catch(() => {
+                                    detectBtnEl.disabled = false;
+                                    detectBtnEl.innerHTML = '<i class="fas fa-crosshairs text-cyan-400"></i> Auto Detect Location';
+                                    alert("Location detection failed. Please enter manually.");
+                                });
+                        },
+                        () => {
+                            detectBtnEl.disabled = false;
+                            detectBtnEl.innerHTML = '<i class="fas fa-crosshairs text-cyan-400"></i> Auto Detect Location';
+                            alert("Location access denied. Please enter manually.");
+                        }
+                    );
+                });
+            }
+        }
+
+        setupDynamicLocationSearch();
+    </script>
+</body>
+</html>

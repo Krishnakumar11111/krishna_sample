@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes | EduTrust LMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Early Theme Initializer -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- HEADER BAR -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-4 lg:px-8 py-3.5 sticky top-0 z-30 shadow-2xs">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Brand -->
+            <div class="flex items-center gap-3">
+                <a href="/studymaterial/" class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/30 no-underline">
+                    E
+                </a>
+                <div>
+                    <h1 class="text-base font-black text-slate-900 dark:text-white leading-none tracking-tight">EduTrust</h1>
+                    <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 block tracking-wide mt-0.5">Study Notes & Reference Material</span>
+                </div>
+            </div>
+
+            <!-- Global Search -->
+            <div class="relative max-w-md w-full hidden md:block">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs"></i>
+                <input type="text" id="notesGlobalSearch" onkeyup="handleNotesSearch(this.value)" placeholder="Search for chapter notes, formulas, topics..." class="w-full bg-slate-100/90 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-semibold">
+            </div>
+
+            <!-- Right Controls -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleDarkMode()" type="button" aria-label="Toggle theme" title="Toggle theme" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-amber-500 dark:text-amber-400 flex items-center justify-center relative hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200/80 dark:border-slate-700">
+                    <i id="themeIcon" class="fas fa-sun text-xs"></i>
+                </button>
+
+                <!-- Profile Badge -->
+                <a href="/studymaterial/" class="flex items-center gap-3 pl-1 pr-2 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors no-underline">
+                    <img src="https://ui-avatars.com/api/?name=Student+User&background=2563eb&color=fff&size=200" alt="Student Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-blue-500/30">
+                    <div class="hidden lg:block text-left">
+                        <strong class="block text-xs font-bold text-slate-900 dark:text-white leading-tight">{{ student_name|default:"Student User" }}</strong>
+                        <span class="text-[10px] font-semibold text-slate-400">Class 10 CBSE</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+        <!-- DYNAMIC BREADCRUMB NAVIGATION -->
+        <nav class="flex items-center text-xs text-slate-500 dark:text-slate-400 font-semibold gap-2 overflow-x-auto whitespace-nowrap custom-scrollbar pb-1">
+            <a href="/studymaterial/" class="hover:text-blue-600 transition-colors flex items-center gap-1 no-underline">
+                <i class="fas fa-home text-slate-400"></i> Dashboard
+            </a>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span>My Courses</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbClass">Class 10</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbSubject" class="text-blue-600 dark:text-blue-400 font-bold">Mathematics</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbChapter">Real Numbers</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span class="text-slate-900 dark:text-white font-extrabold">Notes</span>
+        </nav>
+
+        <!-- DYNAMIC SUBJECT CARDS HORIZONTAL BAR -->
+        <div id="subjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <!-- Loaded dynamically via JS -->
+            <div class="col-span-full py-4 text-center text-xs text-slate-400">
+                <i class="fas fa-spinner fa-spin text-blue-600 text-lg mr-2"></i> Loading subjects...
+            </div>
+        </div>
+
+        <!-- THREE COLUMN MAIN LAYOUT GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- COLUMN 1: LEFT SIDEBAR - CHAPTERS (3 COLS) -->
+            <aside class="lg:col-span-3 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center justify-between px-2 py-1">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-book text-blue-600"></i> Chapters
+                    </h3>
+                </div>
+
+                <div id="chaptersList" class="space-y-1.5 font-medium text-xs">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </aside>
+
+            <!-- COLUMN 2: CENTER CONTENT - NOTES CARDS LIST (9 COLS) -->
+            <section class="lg:col-span-9 space-y-4">
+                
+                <!-- Center Header -->
+                <div class="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fas fa-file-alt text-blue-600 text-base"></i>
+                        <h2 id="centerHeading" class="font-extrabold text-sm text-slate-900 dark:text-white">Notes - Real Numbers</h2>
+                        <span id="centerCountBadge" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-[10px] rounded-full">1 Notes</span>
+                    </div>
+                </div>
+
+                <!-- NOTES CARDS CONTAINER -->
+                <div id="notesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- JAVASCRIPT CONTROLLER -->
+    <script>
+        let pageState = {
+            subjectName: 'Mathematics',
+            chapterTitle: 'Real Numbers'
+        };
+
+        let allSubjectsData = [];
+        let allNotesData = [];
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        async function initPage() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('subject')) pageState.subjectName = params.get('subject');
+            if (params.get('chapter')) pageState.chapterTitle = params.get('chapter');
+
+            await loadSubjects();
+        }
+
+        async function loadSubjects() {
+            try {
+                const res = await fetch('/api/dpp/subjects/');
+                const data = await res.json();
+                if (data.subjects) {
+                    allSubjectsData = data.subjects;
+                    renderSubjectCards();
+                    await loadChapters();
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function renderSubjectCards() {
+            const grid = document.getElementById('subjectCardsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = allSubjectsData.map(s => {
+                const isActive = s.name.toLowerCase() === pageState.subjectName.toLowerCase();
+                const activeClass = isActive 
+                    ? 'border-2 border-blue-600 shadow-md bg-white dark:bg-slate-900' 
+                    : 'border border-slate-200/80 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900 bg-white dark:bg-slate-900';
+
+                return `
+                    <div onclick="selectSubject('${s.name.replace(/'/g, "\\'")}')" class="${activeClass} rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer transition-all">
+                        <div class="w-10 h-10 rounded-xl ${s.badge_bg} flex items-center justify-center font-black text-sm">
+                            <i class="${s.icon}"></i>
+                        </div>
+                        <div>
+                            <strong class="block text-xs font-bold text-slate-900 dark:text-white">${s.name}</strong>
+                            <span class="text-[10px] font-semibold text-slate-400">Class 10</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function selectSubject(subjName) {
+            if (pageState.subjectName === subjName) return;
+            pageState.subjectName = subjName;
+            pageState.chapterTitle = null;
+
+            renderSubjectCards();
+            await loadChapters();
+        }
+
+        async function loadChapters() {
+            try {
+                const res = await fetch(`/api/dpp/chapters/?subject=${encodeURIComponent(pageState.subjectName)}`);
+                const data = await res.json();
+                const list = document.getElementById('chaptersList');
+
+                if (!data.chapters || data.chapters.length === 0) {
+                    if (list) list.innerHTML = `<div class="py-4 text-center text-xs text-slate-400">No chapters found</div>`;
+                    renderNotes([]);
+                    return;
+                }
+
+                if (!pageState.chapterTitle) pageState.chapterTitle = data.chapters[0].chapter_title;
+
+                if (list) {
+                    list.innerHTML = data.chapters.map(c => {
+                        const isActive = c.chapter_title.toLowerCase() === pageState.chapterTitle.toLowerCase();
+                        const activeClass = isActive 
+                            ? 'bg-blue-50/80 dark:bg-blue-950/60 border-blue-200 text-blue-950 dark:text-blue-100 font-bold' 
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-semibold';
+                        
+                        return `
+                            <div onclick="selectChapter('${c.chapter_title.replace(/'/g, "\\'")}')" class="p-2.5 rounded-2xl border ${activeClass} cursor-pointer flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center">${c.chapter_number}</span>
+                                <span>${c.chapter_title}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                await loadNotes();
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function selectChapter(chapTitle) {
+            pageState.chapterTitle = chapTitle;
+            await loadChapters();
+        }
+
+        async function loadNotes() {
+            try {
+                document.getElementById('breadcrumbSubject').textContent = pageState.subjectName;
+                document.getElementById('breadcrumbChapter').textContent = pageState.chapterTitle;
+                document.getElementById('centerHeading').textContent = `Notes - ${pageState.chapterTitle}`;
+
+                const res = await fetch(`/api/notes/list/?subject=${encodeURIComponent(pageState.subjectName)}&chapter=${encodeURIComponent(pageState.chapterTitle)}`);
+                const data = await res.json();
+                
+                allNotesData = data.notes || [];
+                document.getElementById('centerCountBadge').textContent = `${allNotesData.length} Notes`;
+                renderNotes(allNotesData);
+
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function renderNotes(notes) {
+            const container = document.getElementById('notesCardsContainer');
+            if (!container) return;
+
+            if (notes.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400">
+                        <i class="fas fa-folder-open text-3xl mb-2 block"></i>
+                        <p class="text-xs font-bold">No notes available for ${pageState.chapterTitle}.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = notes.map(n => `
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-xl border border-blue-100 dark:border-blue-900">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900 dark:text-white leading-tight">${n.title}</h3>
+                            <span class="text-[11px] font-semibold text-slate-400">${n.subject} • ${n.chapter}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <span><i class="fas fa-user-tie text-blue-500 mr-1"></i> ${n.teacher}</span>
+                        <span><i class="far fa-file-alt text-blue-500 mr-1"></i> ${n.pages} Pages (${n.file_size})</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <button onclick="viewPdf('${n.title}')" class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl transition-colors border-0 cursor-pointer text-center">
+                            View Notes
+                        </button>
+                        <button onclick="downloadPdf('${n.title}')" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors flex items-center justify-center border-0 cursor-pointer">
+                            <i class="fas fa-download text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleNotesSearch(query) {
+            if (!query) {
+                renderNotes(allNotesData);
+                return;
+            }
+            const q = query.toLowerCase();
+            const filtered = allNotesData.filter(n => n.title.toLowerCase().includes(q) || n.chapter.toLowerCase().includes(q));
+            renderNotes(filtered);
+        }
+
+        function viewPdf(title) {
+            alert(`📄 Opening PDF viewer for "${title}"...`);
+        }
+
+        function downloadPdf(title) {
+            alert(`📥 Downloading "${title}"...`);
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

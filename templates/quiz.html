@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter Quiz | EduTrust LMS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Early Theme Initializer -->
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <!-- HEADER BAR -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 px-4 lg:px-8 py-3.5 sticky top-0 z-30 shadow-2xs">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <a href="/studymaterial/" class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-purple-500/30 no-underline">
+                    E
+                </a>
+                <div>
+                    <h1 class="text-base font-black text-slate-900 dark:text-white leading-none tracking-tight">EduTrust</h1>
+                    <span class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 block tracking-wide mt-0.5">Chapter Quiz & Speed Tests</span>
+                </div>
+            </div>
+
+            <div class="relative max-w-md w-full hidden md:block">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs"></i>
+                <input type="text" id="quizSearch" onkeyup="handleSearch(this.value)" placeholder="Search quizzes by title..." class="w-full bg-slate-100/90 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/30">
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleDarkMode()" type="button" aria-label="Toggle theme" title="Toggle theme" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-amber-500 flex items-center justify-center relative hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer border border-slate-200/80 dark:border-slate-700">
+                    <i id="themeIcon" class="fas fa-sun text-xs"></i>
+                </button>
+
+                <a href="/studymaterial/" class="flex items-center gap-3 pl-1 pr-2 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors no-underline">
+                    <img src="https://ui-avatars.com/api/?name=Student+User&background=9333ea&color=fff&size=200" alt="Student Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-purple-500/30">
+                    <div class="hidden lg:block text-left">
+                        <strong class="block text-xs font-bold text-slate-900 dark:text-white leading-tight">{{ student_name|default:"Student User" }}</strong>
+                        <span class="text-[10px] font-semibold text-slate-400">Class 10 CBSE</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+        <nav class="flex items-center text-xs text-slate-500 dark:text-slate-400 font-semibold gap-2 overflow-x-auto whitespace-nowrap custom-scrollbar pb-1">
+            <a href="/studymaterial/" class="hover:text-purple-600 transition-colors flex items-center gap-1 no-underline">
+                <i class="fas fa-home text-slate-400"></i> Dashboard
+            </a>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span>My Courses</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbClass">Class 10</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbSubject" class="text-purple-600 dark:text-purple-400 font-bold">Mathematics</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span id="breadcrumbChapter">Real Numbers</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+            <span class="text-slate-900 dark:text-white font-extrabold">Quiz</span>
+        </nav>
+
+        <div id="subjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <!-- Loaded dynamically -->
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <aside class="lg:col-span-3 bg-white dark:bg-slate-900 rounded-3xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center justify-between px-2 py-1">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fas fa-question-circle text-purple-600"></i> Chapters
+                    </h3>
+                </div>
+
+                <div id="chaptersList" class="space-y-1.5 font-medium text-xs">
+                    <!-- Loaded dynamically -->
+                </div>
+            </aside>
+
+            <section class="lg:col-span-9 space-y-4">
+                <div class="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fas fa-stopwatch text-purple-600 text-base"></i>
+                        <h2 id="centerHeading" class="font-extrabold text-sm text-slate-900 dark:text-white">Quizzes - Real Numbers</h2>
+                        <span id="centerCountBadge" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold text-[10px] rounded-full">1 Quizzes</span>
+                    </div>
+                </div>
+
+                <div id="quizCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Loaded dynamically -->
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <script>
+        let pageState = { subjectName: 'Mathematics', chapterTitle: 'Real Numbers' };
+        let allSubjectsData = [];
+        let allQuizData = [];
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        async function initPage() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('subject')) pageState.subjectName = params.get('subject');
+            if (params.get('chapter')) pageState.chapterTitle = params.get('chapter');
+
+            await loadSubjects();
+        }
+
+        async function loadSubjects() {
+            try {
+                const res = await fetch('/api/dpp/subjects/');
+                const data = await res.json();
+                if (data.subjects) {
+                    allSubjectsData = data.subjects;
+                    renderSubjectCards();
+                    await loadChapters();
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function renderSubjectCards() {
+            const grid = document.getElementById('subjectCardsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = allSubjectsData.map(s => {
+                const isActive = s.name.toLowerCase() === pageState.subjectName.toLowerCase();
+                const activeClass = isActive 
+                    ? 'border-2 border-purple-600 shadow-md bg-white dark:bg-slate-900' 
+                    : 'border border-slate-200/80 dark:border-slate-800 hover:border-purple-200 bg-white dark:bg-slate-900';
+
+                return `
+                    <div onclick="selectSubject('${s.name.replace(/'/g, "\\'")}')" class="${activeClass} rounded-2xl p-3.5 flex items-center gap-3 cursor-pointer transition-all">
+                        <div class="w-10 h-10 rounded-xl ${s.badge_bg} flex items-center justify-center font-black text-sm">
+                            <i class="${s.icon}"></i>
+                        </div>
+                        <div>
+                            <strong class="block text-xs font-bold text-slate-900 dark:text-white">${s.name}</strong>
+                            <span class="text-[10px] font-semibold text-slate-400">Class 10</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function selectSubject(subjName) {
+            pageState.subjectName = subjName;
+            pageState.chapterTitle = null;
+            renderSubjectCards();
+            await loadChapters();
+        }
+
+        async function loadChapters() {
+            try {
+                const res = await fetch(`/api/dpp/chapters/?subject=${encodeURIComponent(pageState.subjectName)}`);
+                const data = await res.json();
+                const list = document.getElementById('chaptersList');
+
+                if (!data.chapters || data.chapters.length === 0) {
+                    if (list) list.innerHTML = `<div class="py-4 text-center text-xs text-slate-400">No chapters found</div>`;
+                    renderQuizzes([]);
+                    return;
+                }
+
+                if (!pageState.chapterTitle) pageState.chapterTitle = data.chapters[0].chapter_title;
+
+                if (list) {
+                    list.innerHTML = data.chapters.map(c => {
+                        const isActive = c.chapter_title.toLowerCase() === pageState.chapterTitle.toLowerCase();
+                        const activeClass = isActive 
+                            ? 'bg-purple-50/80 dark:bg-purple-950/60 border-purple-200 text-purple-950 dark:text-purple-100 font-bold' 
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-semibold';
+                        
+                        return `
+                            <div onclick="selectChapter('${c.chapter_title.replace(/'/g, "\\'")}')" class="p-2.5 rounded-2xl border ${activeClass} cursor-pointer flex items-center gap-3">
+                                <span class="w-6 h-6 rounded-lg bg-purple-600 text-white font-extrabold text-xs flex items-center justify-center">${c.chapter_number}</span>
+                                <span>${c.chapter_title}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                await loadQuizzes();
+            } catch(e) { console.error(e); }
+        }
+
+        async function selectChapter(chapTitle) {
+            pageState.chapterTitle = chapTitle;
+            await loadChapters();
+        }
+
+        async function loadQuizzes() {
+            try {
+                document.getElementById('breadcrumbSubject').textContent = pageState.subjectName;
+                document.getElementById('breadcrumbChapter').textContent = pageState.chapterTitle;
+                document.getElementById('centerHeading').textContent = `Quizzes - ${pageState.chapterTitle}`;
+
+                const res = await fetch(`/api/quizzes/list/?subject=${encodeURIComponent(pageState.subjectName)}&chapter=${encodeURIComponent(pageState.chapterTitle)}`);
+                const data = await res.json();
+                
+                allQuizData = data.quizzes || [];
+                document.getElementById('centerCountBadge').textContent = `${allQuizData.length} Quizzes`;
+                renderQuizzes(allQuizData);
+
+            } catch(e) { console.error(e); }
+        }
+
+        function renderQuizzes(items) {
+            const container = document.getElementById('quizCardsContainer');
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800">
+                        <i class="fas fa-trophy text-3xl mb-2 block"></i>
+                        <p class="text-xs font-bold">No quizzes available for ${pageState.chapterTitle}.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(q => `
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 font-extrabold text-[10px] rounded-full uppercase">
+                            ${q.difficulty}
+                        </span>
+                        <span class="text-[11px] font-bold text-slate-400">Best: <strong class="text-emerald-600">${q.best_score}</strong></span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white leading-tight">${q.title}</h3>
+                        <p class="text-[11px] text-slate-400 font-semibold mt-1">${q.subject} • ${q.chapter}</p>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-1 pt-2 border-t border-slate-100 dark:border-slate-800 text-center text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                        <div>
+                            <span class="text-slate-400 block">Questions</span>
+                            <strong>${q.questions} Qs</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block">Duration</span>
+                            <strong>${q.duration_mins} mins</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block">Total Marks</span>
+                            <strong>${q.marks} M</strong>
+                        </div>
+                    </div>
+
+                    <button onclick="startQuiz('${q.title.replace(/'/g, "\\'")}')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl shadow-xs border-0 cursor-pointer transition-colors">
+                        Start Quiz Now 🚀
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function handleSearch(query) {
+            if (!query) { renderQuizzes(allQuizData); return; }
+            const q = query.toLowerCase();
+            const filtered = allQuizData.filter(item => item.title.toLowerCase().includes(q));
+            renderQuizzes(filtered);
+        }
+
+        function startQuiz(title) {
+            alert(`⏱️ Launching Quiz: "${title}"...\n\nTimer will start automatically.`);
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
