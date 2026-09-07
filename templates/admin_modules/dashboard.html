@@ -1,10 +1,10 @@
 {% extends base_template|default:"admin_partial_base.html" %}
 
 {% block admin_content %}
-<div class="space-y-6 fade-in text-slate-800">
+<div class="space-y-8 fade-in text-slate-800">
     <!-- ROW 1: COMPACT HERO BANNER + SYSTEM OVERVIEW -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div class="lg:col-span-2 hero-card-bg rounded-3xl p-4 sm:p-5 text-white relative overflow-hidden shadow-md flex flex-col justify-between min-h-[170px]">
+        <div class="lg:col-span-2 hero-card-bg rounded-3xl p-4 sm:p-5 text-white relative overflow-hidden shadow-md flex flex-col justify-between h-auto">
             <div class="relative z-10 space-y-1.5 max-w-xl">
                 <h2 class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight flex items-center gap-2 leading-tight">
                     <span id="heroGreetingText">Good Morning</span>, <span id="heroAdminName">{{ request.user.first_name|default:request.user.username|default:"Super Admin" }}</span>! 👋
@@ -145,7 +145,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-2.5 text-xs flex flex-col justify-between min-h-[170px]">
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-2.5 text-xs flex flex-col justify-between h-auto">
             <div class="flex items-center justify-between">
                 <h3 class="font-black text-slate-900 text-xs sm:text-sm">System Overview</h3>
                 <a href="#system_logs" onclick="navTo('system_logs')" class="text-blue-600 font-bold text-[10px] no-underline">View All</a>
@@ -164,194 +164,191 @@
     <div class="space-y-2">
         
         <!-- ROW 2A: 6 CARDS (Total Students, Active Students, Total Teachers, Active Teachers, Total Courses, Total Live Classes) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             <!-- 1. Total Students -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-graduation-cap"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Total Students</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-graduation-cap"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Students">Total Students</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-none" id="dashTotalStudents">{{ total_students|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-blue-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 5, 50 15 T 100 5" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalStudents">{{ total_students|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-blue-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 5, 50 15 T 100 5" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 2. Active Students -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-user-check"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Active Students</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-user-check"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Active Students">Active Students</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-emerald-600 leading-none" id="dashActiveStudents">{{ active_students|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 10, 50 15 T 100 5" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-emerald-600 leading-none" id="dashActiveStudents">{{ active_students|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 10, 50 15 T 100 5" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 3. Total Teachers -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-chalkboard-teacher"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Total Teachers</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Teachers">Total Teachers</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-none" id="dashTotalTeachers">{{ total_teachers|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-indigo-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 22, 50 10 T 100 8" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalTeachers">{{ total_teachers|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-indigo-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 22, 50 10 T 100 8" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 4. Active Teachers -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-user-shield"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Active Teachers</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-teal-50 text-teal-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-user-shield"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Active Teachers">Active Teachers</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-teal-600 leading-none" id="dashActiveTeachers">{{ active_teachers|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-teal-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 12, 50 8 T 100 5" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-teal-600 leading-none" id="dashActiveTeachers">{{ active_teachers|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-teal-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 12, 50 8 T 100 5" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 5. Total Courses -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-book"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Total Courses</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-book"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Courses">Total Courses</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-none" id="dashTotalCourses">{{ total_courses|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 10, 50 18 T 100 4" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalCourses">{{ total_courses|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 15, 50 18 T 100 8" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 6. Total Live Classes -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-satellite-dish"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Total Live Classes</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-cyan-50 text-cyan-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-video"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Live Classes">Total Live Classes</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-none" id="dashTotalLiveClasses">{{ total_live_classes|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-sky-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 22, 50 12 T 100 8" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalLiveClasses">{{ total_live_classes|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-cyan-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 8, 50 20 T 100 12" fill="none"/></svg></div>
                 </div>
             </div>
-        </div>
 
-        <!-- ROW 2B: 6 CARDS (Live Today, Upcoming, Cancelled, Recorded, Demo Bookings, Revenue) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-            <!-- 7. Live Classes Today -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <!-- 7. Live Classes Now -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-video"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Live Classes Today</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-broadcast-tower animate-pulse"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Live Classes Now">Live Classes Now</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-circle text-[5px]"></i> LIVE</span>
+                    <span class="text-[7.5px] font-black text-rose-600 bg-rose-50 px-1 py-0.2 rounded-md shrink-0 flex items-center gap-0.5"><span class="w-1 h-1 rounded-full bg-rose-600 animate-ping"></span>LIVE</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-rose-600 leading-none" id="dashLiveTodayCount">{{ live_today_count|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-rose-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 25, 50 8 T 100 10" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-rose-600 leading-none" id="dashLiveClassesNow">{{ active_live_classes_count|default:"4" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-rose-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 5, 50 15 T 100 8" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 8. Upcoming Classes -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-calendar-alt"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Upcoming Classes</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-calendar-alt"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Upcoming Classes">Upcoming Classes</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full shrink-0">Upcoming</span>
+                    <span class="text-[7.5px] font-black text-blue-600 bg-blue-50 px-1 py-0.2 rounded-md shrink-0">Upcoming</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-blue-600 leading-none" id="dashUpcomingClasses">{{ upcoming_classes_count|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-blue-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 12, 50 16 T 100 6" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashUpcomingClasses">{{ upcoming_classes_count|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-blue-400" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 22, 50 10 T 100 18" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 9. Cancelled Classes -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-ban"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Cancelled Classes</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-ban"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Cancelled Classes">Cancelled Classes</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-full shrink-0">Status</span>
+                    <span class="text-[7.5px] font-black text-amber-600 bg-amber-50 px-1 py-0.2 rounded-md shrink-0">Status</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-amber-600 leading-none" id="dashCancelledClasses">{{ cancelled_classes_count|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-amber-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 10 Q 25 20, 50 12 T 100 22" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-amber-600 leading-none" id="dashCancelledClasses">{{ cancelled_classes_count|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-amber-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 12 Q 25 18, 50 8 T 100 20" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 10. Recorded Lectures -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-play-circle"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Recorded Lectures</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-play-circle"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Recorded Lectures">Recorded Lectures</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-none" id="dashRecordedCount">{{ recorded_count|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-indigo-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 12, 50 15 T 100 6" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashRecordedLectures">{{ recorded_lectures|default:"4" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-indigo-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 10, 50 16 T 100 6" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 11. Demo Bookings -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-graduation-cap"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Demo Bookings</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-user-graduate"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Demo Bookings">Demo Bookings</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-sparkles text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-purple-600 bg-purple-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-purple-600 leading-none" id="dashDemoBookingsCount">{{ total_demo_bookings|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 8, 50 15 T 100 5" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashDemoBookings">{{ demo_bookings|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 12, 50 22 T 100 10" fill="none"/></svg></div>
                 </div>
             </div>
 
             <!-- 12. Total Revenue -->
-            <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-1">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                        <div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-wallet"></i></div>
-                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider block truncate">Total Revenue</span>
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-wallet"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Revenue">Total Revenue</span>
                     </div>
-                    <span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
                 </div>
                 <div class="flex items-end justify-between gap-1">
-                    <h3 class="text-lg sm:text-xl font-black text-emerald-600 leading-none" id="dashTotalRevenue">₹{{ total_revenue|default:"0" }}</h3>
-                    <div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 24 Q 25 18, 50 8 T 100 4" fill="none"/></svg></div>
+                    <h3 class="text-base sm:text-lg font-black text-emerald-600 leading-none" id="dashTotalRevenue">₹{{ total_revenue|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 15, 50 8 T 100 5" fill="none"/></svg></div>
                 </div>
             </div>
-        </div>
+        </div> </div>
 
     </div>
     <!-- ROW 3: ANALYTICS + ENROLLMENTS + TOP COURSES + QUICK ACTIONS (COMPACT & REAL DB DATA) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 my-6">
         <!-- 1. ANALYTICS OVERVIEW -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Analytics Overview</h3><select class="bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg px-2 py-0.5 outline-none"><option>This Year</option></select></div>
@@ -362,7 +359,7 @@
         <!-- 2. RECENT ENROLLMENTS (REAL DB DATA & REAL-TIME TIMESTAMP) -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Recent Enrollments</h3><a href="#students" onclick="navTo('students')" class="text-blue-600 font-bold text-[10px] no-underline hover:underline">View All</a></div>
-            <div class="space-y-1.5 max-h-[160px] overflow-y-auto custom-scrollbar pr-0.5">
+            <div class="space-y-1.5 max-h-[200px] overflow-y-auto custom-scrollbar pr-0.5">
                 {% if all_students %}
                     {% for s in all_students|slice:":5" %}
                     <div class="flex items-center justify-between hover:bg-slate-50 p-1.5 rounded-lg transition-colors border border-transparent hover:border-slate-100">
@@ -391,7 +388,7 @@
         <!-- 3. TOP COURSES (REAL DB COURSES & ACTUAL PRICES) -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Top Courses</h3><a href="#courses" onclick="navTo('courses')" class="text-blue-600 font-bold text-[10px] no-underline hover:underline">View All</a></div>
-            <div class="space-y-1.5 max-h-[160px] overflow-y-auto custom-scrollbar pr-0.5">
+            <div class="space-y-1.5 max-h-[200px] overflow-y-auto custom-scrollbar pr-0.5">
                 {% if all_courses %}
                     {% for c in all_courses|slice:":5" %}
                     <div class="flex items-center gap-2 hover:bg-slate-50 p-1.5 rounded-lg transition-colors border border-transparent hover:border-slate-100">
@@ -415,7 +412,7 @@
         <!-- 4. QUICK ACTIONS (COMPACT SLEEK GRID) -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <h3 class="font-extrabold text-slate-900 text-xs">Quick Actions</h3>
-            <div class="grid grid-cols-3 gap-1.5">
+            <div class="grid grid-cols-3 gap-1.5 p-0.5">
                 <button onclick="openModal('modalAddStudent')" class="p-1.5 rounded-xl bg-blue-50/80 hover:bg-blue-100 text-blue-700 flex flex-col items-center gap-0.5 border border-blue-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-user-plus text-[11px]"></i><span class="text-[8.5px] font-bold">Add Student</span></button>
                 <button onclick="openModal('modalAddTeacher')" class="p-1.5 rounded-xl bg-emerald-50/80 hover:bg-emerald-100 text-emerald-700 flex flex-col items-center gap-0.5 border border-emerald-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-chalkboard-teacher text-[11px]"></i><span class="text-[8.5px] font-bold">Add Teacher</span></button>
                 <button onclick="navTo('courses')" class="p-1.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-amber-700 flex flex-col items-center gap-0.5 border border-amber-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-book text-[11px]"></i><span class="text-[8.5px] font-bold">Add Course</span></button>
@@ -425,23 +422,24 @@
                 <button onclick="navTo('study_material')" class="p-1.5 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 flex flex-col items-center gap-0.5 border border-indigo-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-folder-open text-[11px]"></i><span class="text-[8.5px] font-bold">Material</span></button>
                 <button onclick="navTo('notices')" class="p-1.5 rounded-xl bg-pink-50/80 hover:bg-pink-100 text-pink-700 flex flex-col items-center gap-0.5 border border-pink-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-bullhorn text-[11px]"></i><span class="text-[8.5px] font-bold">Create Notice</span></button>
                 <button onclick="navTo('reports')" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex flex-col items-center gap-0.5 border border-slate-200 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-chart-line text-[11px]"></i><span class="text-[8.5px] font-bold">View Reports</span></button>
+                <button onclick="openSmModal('modalAddClassSubject')" class="p-1.5 rounded-xl bg-purple-50/80 hover:bg-purple-100 text-purple-700 flex flex-col items-center gap-0.5 border border-purple-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-graduation-cap text-[11px]"></i><span class="text-[8.5px] font-bold">Class & Subject</span></button>
             </div>
         </div>
     </div>
 
     <!-- ROW 4 & ROW 5 SUMMARY CARDS (COMPACT & 100% REAL DATABASE DATA WITH REAL-TIME DATES) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 my-6">
         <!-- 1. REVENUE OVERVIEW CARD -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Revenue Overview</h3><select class="bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg px-2 py-0.5 outline-none"><option>This Month</option></select></div>
-            <div><h4 class="text-base font-black text-slate-900">₹{{ total_revenue|default:"0" }}</h4><span class="text-[9.5px] text-emerald-600 font-bold">↑ Live Revenue</span></div>
+            <div><h4 class="text-sm font-black text-slate-900 leading-tight">₹{{ total_revenue|default:"0" }}</h4><span class="text-[9.5px] text-emerald-600 font-bold">↑ Live Revenue</span></div>
             <div class="h-32 sm:h-34 relative"><canvas id="revenueBarChart"></canvas></div>
         </div>
 
         <!-- 2. RECENT ACTIVITIES CARD (REAL LOGS & REAL-TIME DATES) -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Recent Activities</h3><a href="#user_logs" onclick="navTo('user_logs')" class="text-blue-600 font-bold text-[10px] no-underline hover:underline">View All</a></div>
-            <div class="space-y-1.5 max-h-[160px] overflow-y-auto custom-scrollbar pr-0.5">
+            <div class="space-y-1.5 max-h-[200px] overflow-y-auto custom-scrollbar pr-0.5">
                 {% if recent_logs %}
                     {% for l in recent_logs %}
                     <div class="flex gap-2 items-start hover:bg-slate-50 p-1 rounded-lg transition-colors border border-transparent hover:border-slate-100">
@@ -461,7 +459,7 @@
         <!-- 3. TOP PERFORMING TEACHERS CARD (REAL DB TEACHERS) -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Top Performing Teachers</h3><a href="#teachers" onclick="navTo('teachers')" class="text-blue-600 font-bold text-[10px] no-underline hover:underline">View All</a></div>
-            <div class="space-y-1.5 max-h-[160px] overflow-y-auto custom-scrollbar pr-0.5">
+            <div class="space-y-1.5 max-h-[200px] overflow-y-auto custom-scrollbar pr-0.5">
                 {% if all_teachers %}
                     {% for t in all_teachers|slice:":5" %}
                     <div class="flex items-center justify-between hover:bg-slate-50 p-1.5 rounded-lg transition-colors border border-transparent hover:border-slate-100">
@@ -496,7 +494,7 @@
         <!-- 5. NOTIFICATIONS CARD (REAL DB NOTIFICATIONS & REAL-TIME DATES) -->
         <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 text-xs">
             <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Notifications</h3><a href="#notifications" onclick="navTo('notifications')" class="text-blue-600 font-bold text-[10px] no-underline hover:underline">View All</a></div>
-            <div class="space-y-1.5 max-h-[160px] overflow-y-auto custom-scrollbar pr-0.5">
+            <div class="space-y-1.5 max-h-[200px] overflow-y-auto custom-scrollbar pr-0.5">
                 {% if admin_notifications %}
                     {% for n in admin_notifications|slice:":5" %}
                     <div class="flex gap-2 items-start hover:bg-slate-50 p-1.5 rounded-lg transition-colors border border-transparent hover:border-slate-100">
@@ -515,17 +513,17 @@
     </div>
 
     <!-- ROW 5: 8 PLATFORM CONTENT OVERVIEW CARDS -->
-    <div class="space-y-3">
+    <div class="space-y-3 mt-6">
         <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Platform Content Overview</h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-blue-600"><i class="fas fa-play-circle text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total Videos</span><h4 class="text-base font-black text-slate-900">{{ total_videos|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-purple-600"><i class="fas fa-file-pdf text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">PDFs / Notes</span><h4 class="text-base font-black text-slate-900">{{ total_study_materials|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-amber-600"><i class="fas fa-tasks text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Assignments</span><h4 class="text-base font-black text-slate-900">{{ total_assignments|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-indigo-600"><i class="fas fa-question-circle text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total Quizzes</span><h4 class="text-base font-black text-slate-900">{{ total_quizzes|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-emerald-600"><i class="fas fa-vial text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total Tests</span><h4 class="text-base font-black text-slate-900">{{ total_tests|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-orange-600"><i class="fas fa-pen-nib text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total DPPs</span><h4 class="text-base font-black text-slate-900">{{ total_dpps|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-teal-600"><i class="fas fa-book-open text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total Books</span><h4 class="text-base font-black text-slate-900">{{ total_books|default:"0" }}</h4></div>
-            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1"><div class="flex items-center justify-between text-rose-600"><i class="fas fa-bullhorn text-sm"></i></div><span class="text-[9px] text-slate-400 font-extrabold uppercase block">Total Notices</span><h4 class="text-base font-black text-slate-900">{{ total_notices|default:"0" }}</h4></div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2">
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-blue-600"><i class="fas fa-play-circle text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Total Videos</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_videos|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-purple-600"><i class="fas fa-file-pdf text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">PDFs / Notes</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_study_materials|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-amber-600"><i class="fas fa-tasks text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Assignments</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_assignments|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-indigo-600"><i class="fas fa-question-circle text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Total Quizzes</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_quizzes|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-emerald-600"><i class="fas fa-vial text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Total Tests</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_tests|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-orange-600"><i class="fas fa-pen-nib text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Total DPPs</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_dpps|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-teal-600"><i class="fas fa-book-open text-sm"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Total Books</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_books|default:"0" }}</h4></div>
+            <div class="bg-white p-2 rounded-xl border border-slate-200 space-y-0.5 shadow-2xs"><div class="flex items-center justify-between text-rose-600"><i class="fas fa-bullhorn text-xs"></i></div><span class="text-[8.5px] text-slate-400 font-extrabold uppercase block truncate">Total Notices</span><h4 class="text-sm font-black text-slate-900 leading-tight">{{ total_notices|default:"0" }}</h4></div>
         </div>
     </div>
 </div>
@@ -747,5 +745,30 @@
     } else {
         document.addEventListener('DOMContentLoaded', initDashboardRealtimeSystem);
     }
+
+    function refreshAdminDashboardLiveStats() {
+        fetch('/api/admin/live-classes/stats/')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const setV = (id, val) => {
+                        const el = document.getElementById(id);
+                        if (el) el.innerText = val !== undefined ? val : '0';
+                    };
+                    setV('dashTotalLiveClasses', data.total_live_classes);
+                    setV('dashLiveNowCount', data.live_now);
+                    setV('dashLiveTodayCount', data.today_count || data.live_now);
+                    setV('dashUpcomingClasses', data.upcoming);
+                    setV('dashCancelledClasses', data.cancelled);
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        refreshAdminDashboardLiveStats();
+        setInterval(refreshAdminDashboardLiveStats, 10000);
+    });
+
 </script>
 {% endblock %}

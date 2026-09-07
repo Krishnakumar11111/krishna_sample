@@ -45,71 +45,71 @@
         </div>
 
         <div id="detail-demo-actions-container" class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-            <button id="btn-confirm-detail-demo-{{ booking.id }}" onclick="promptConfirmDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 {% if booking.booking_status|lower == 'approved' or booking.booking_status|lower == 'confirmed' %}hidden{% endif %}"><i class="fas fa-check"></i> CONFIRM</button>
-            <button onclick="promptCompleteDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-graduation-cap"></i> COMPLETE</button>
-            <button onclick="promptRejectDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-times"></i> REJECT</button>
-            <button onclick="promptRemoveDemoBooking({{ booking.id }})" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
+            <button id="btn-confirm-detail-demo-{{ booking.id }}" onclick="promptConfirmDemoBooking('{{ booking.id }}')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 {% if booking.booking_status|lower == 'approved' or booking.booking_status|lower == 'confirmed' or booking.booking_status|lower == 'completed' %}hidden{% endif %}"><i class="fas fa-check"></i> CONFIRM</button>
+            <button id="btn-complete-detail-demo-{{ booking.id }}" onclick="promptCompleteDemoBooking('{{ booking.id }}')" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 {% if booking.booking_status|lower == 'completed' %}hidden{% endif %}"><i class="fas fa-graduation-cap"></i> COMPLETE</button>
+            <button id="btn-reject-detail-demo-{{ booking.id }}" onclick="promptRejectDemoBooking('{{ booking.id }}')" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 {% if booking.booking_status|lower == 'rejected' or booking.booking_status|lower == 'cancelled' %}hidden{% endif %}"><i class="fas fa-times"></i> REJECT</button>
+            <button id="btn-remove-detail-demo-{{ booking.id }}" onclick="promptRemoveDemoBooking('{{ booking.id }}')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
         </div>
     </div>
 
     <!-- SECTIONS GRID -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
 
         <!-- STUDENT & CONTACT INFORMATION -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-user-graduate text-purple-500"></i> STUDENT & CONTACT DETAILS</h4>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Student Name</span><strong class="text-slate-800">{{ booking.student_name }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Parent Name</span><strong class="text-slate-800">{{ booking.parent_name|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Mobile Number</span><strong class="text-slate-800">{{ booking.student_mobile|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Email Address</span><strong class="text-slate-800">{{ booking.student_email|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Gender</span><strong class="text-slate-800">{{ booking.student_gender|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Class / Grade</span><strong class="text-slate-800">{{ booking.student_class|default:"N/A" }}</strong></div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Student Name</span><strong class="text-slate-800">{{ booking.student_name }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Parent Name</span><strong class="text-slate-800">{{ booking.parent_name|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Mobile Number</span><strong class="text-slate-800">{{ booking.student_mobile|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Email Address</span><strong class="text-slate-800">{{ booking.student_email|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Gender</span><strong class="text-slate-800">{{ booking.student_gender|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Class / Grade</span><strong class="text-slate-800">{{ booking.student_class|default:"N/A" }}</strong></div>
             </div>
         </div>
 
         <!-- TUITION & DEMO PREFERENCES -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-book-open text-blue-500"></i> TUITION & DEMO PREFERENCES</h4>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Subject</span><strong class="text-slate-800">{{ booking.subject|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Board</span><strong class="text-slate-800">{{ booking.board|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tuition Mode</span><strong class="text-slate-800">{{ booking.tuition_mode|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Preferred Demo Date</span><strong class="text-slate-800">{{ booking.preferred_demo_date|date:"M d, Y"|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Time Slot</span><strong class="text-slate-800">{{ booking.preferred_time_slot|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Demo Sessions</span><strong class="text-slate-800">{{ booking.number_of_demo_sessions|default:"1" }} Session(s)</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Preferred Language</span><strong class="text-slate-800">{{ booking.preferred_language|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Learning Goal</span><strong class="text-slate-800">{{ booking.learning_goal|default:"N/A" }}</strong></div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Subject</span><strong class="text-slate-800">{{ booking.subject|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Board</span><strong class="text-slate-800">{{ booking.board|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tuition Mode</span><strong class="text-slate-800">{{ booking.tuition_mode|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Preferred Demo Date</span><strong class="text-slate-800">{{ booking.preferred_demo_date|date:"M d, Y"|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Time Slot</span><strong class="text-slate-800">{{ booking.preferred_time_slot|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Demo Sessions</span><strong class="text-slate-800">{{ booking.number_of_demo_sessions|default:"1" }} Session(s)</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Preferred Language</span><strong class="text-slate-800">{{ booking.preferred_language|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Learning Goal</span><strong class="text-slate-800">{{ booking.learning_goal|default:"N/A" }}</strong></div>
             </div>
         </div>
 
         <!-- ASSIGNED TUTOR INFORMATION -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-chalkboard-teacher text-amber-500"></i> ASSIGNED TUTOR INFORMATION</h4>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tutor Name</span><strong class="text-slate-800">{% if booking.tutor_name %}{{ booking.tutor_name }}{% elif booking.assigned_teacher %}{{ booking.assigned_teacher.full_name }}{% else %}Unassigned{% endif %}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Qualification</span><strong class="text-slate-800">{{ booking.tutor_qualification|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Experience</span><strong class="text-slate-800">{{ booking.tutor_experience|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Location</span><strong class="text-slate-800">{{ booking.tutor_location|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Rating</span><strong class="text-amber-600 font-bold"><i class="fas fa-star text-[9px] mr-0.5"></i>{{ booking.tutor_rating|default:"5.0" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tutor Mode</span><strong class="text-slate-800">{{ booking.tutor_mode|default:"N/A" }}</strong></div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tutor Name</span><strong class="text-slate-800">{% if booking.tutor_name %}{{ booking.tutor_name }}{% elif booking.assigned_teacher %}{{ booking.assigned_teacher.full_name }}{% else %}Unassigned{% endif %}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Qualification</span><strong class="text-slate-800">{{ booking.tutor_qualification|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Experience</span><strong class="text-slate-800">{{ booking.tutor_experience|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Location</span><strong class="text-slate-800">{{ booking.tutor_location|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Rating</span><strong class="text-amber-600 font-bold"><i class="fas fa-star text-[9px] mr-0.5"></i>{{ booking.tutor_rating|default:"5.0" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Tutor Mode</span><strong class="text-slate-800">{{ booking.tutor_mode|default:"N/A" }}</strong></div>
             </div>
         </div>
 
         <!-- HOME TUITION ADDRESS -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-map-marker-alt text-rose-500"></i> HOME TUITION ADDRESS</h4>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">State</span><strong class="text-slate-800">{{ booking.state|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">City</span><strong class="text-slate-800">{{ booking.city|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Locality / Area</span><strong class="text-slate-800">{{ booking.locality|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Landmark</span><strong class="text-slate-800">{{ booking.landmark|default:"N/A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 col-span-2"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Complete Address</span><strong class="text-slate-800">{{ booking.complete_address|default:"N/A" }}</strong></div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">State</span><strong class="text-slate-800">{{ booking.state|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">City</span><strong class="text-slate-800">{{ booking.city|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Locality / Area</span><strong class="text-slate-800">{{ booking.locality|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Landmark</span><strong class="text-slate-800">{{ booking.landmark|default:"N/A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100 col-span-2"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Complete Address</span><strong class="text-slate-800">{{ booking.complete_address|default:"N/A" }}</strong></div>
             </div>
         </div>
 
         <!-- ADDITIONAL NOTES & REJECTION REASON -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3 md:col-span-2">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 md:col-span-2">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-comment-alt text-emerald-500"></i> ADDITIONAL NOTES & REQUIREMENTS</h4>
             <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs space-y-3">
                 <p class="text-slate-700 font-semibold leading-relaxed">{{ booking.additional_notes|default:"No additional notes provided." }}</p>
@@ -120,13 +120,13 @@
         </div>
 
         <!-- BOOKING SYSTEM METADATA -->
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3 md:col-span-2">
+        <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2 md:col-span-2">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-info-circle text-slate-400"></i> SYSTEM METADATA</h4>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Booking ID</span><strong class="text-purple-600 font-bold">{% if booking.booking_id %}{{ booking.booking_id }}{% else %}#DEMO-{{ booking.id }}{% endif %}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Submission Date</span><strong class="text-slate-800">{{ booking.created_at|date:"M d, Y I:i A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ booking.updated_at|date:"M d, Y I:i A" }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Device Type</span><strong class="text-slate-800">{{ booking.device_type|default:"Desktop" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Booking ID</span><strong class="text-purple-600 font-bold">{% if booking.booking_id %}{{ booking.booking_id }}{% else %}#DEMO-{{ booking.id }}{% endif %}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Submission Date</span><strong class="text-slate-800">{{ booking.created_at|date:"M d, Y h:i A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ booking.updated_at|date:"M d, Y h:i A" }}</strong></div>
+                <div class="bg-slate-50 p-2 px-2.5 rounded-lg border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Device Type</span><strong class="text-slate-800">{{ booking.device_type|default:"Desktop" }}</strong></div>
             </div>
         </div>
 
@@ -235,8 +235,10 @@
     }
 
     window.sendDemoBookingAction = async function(id, action, reason = '') {
-        const confirmBtn = document.getElementById('btn-confirm-' + id) || document.getElementById('btn-confirm-detail-demo-' + id);
-        const rejectBtn = document.getElementById('btn-reject-' + id);
+        const confirmBtn = document.getElementById('btn-confirm-detail-demo-' + id) || document.getElementById('btn-confirm-' + id);
+        const rejectBtn = document.getElementById('btn-reject-detail-demo-' + id) || document.getElementById('btn-reject-' + id);
+        const completeBtn = document.getElementById('btn-complete-detail-demo-' + id) || document.getElementById('btn-complete-' + id);
+        const removeBtn = document.getElementById('btn-remove-detail-demo-' + id) || document.getElementById('btn-remove-' + id);
         const badgeEl = document.getElementById('detail-demo-status-badge') || document.getElementById('demo-booking-status-' + id);
 
         let targetBtn = null;
@@ -246,6 +248,10 @@
             targetBtn = confirmBtn;
         } else if (action === 'reject' && rejectBtn) {
             targetBtn = rejectBtn;
+        } else if (action === 'complete' && completeBtn) {
+            targetBtn = completeBtn;
+        } else if (action === 'remove' && removeBtn) {
+            targetBtn = removeBtn;
         }
 
         if (targetBtn) {
@@ -269,6 +275,7 @@
                 if (action === 'confirm' || newStatus === 'approved' || newStatus === 'confirmed') {
                     if (confirmBtn) confirmBtn.classList.add('hidden');
                     if (rejectBtn) rejectBtn.classList.remove('hidden');
+                    if (completeBtn) completeBtn.classList.remove('hidden');
                     if (badgeEl) {
                         badgeEl.className = 'bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]';
                         badgeEl.textContent = 'CONFIRMED';
@@ -276,6 +283,7 @@
                     showActionPopup('Booking Confirmed! 🎉', 'Demo class booking has been confirmed successfully.', 'success');
                 } else if (action === 'reject' || newStatus === 'rejected') {
                     if (rejectBtn) rejectBtn.classList.add('hidden');
+                    if (completeBtn) completeBtn.classList.add('hidden');
                     if (confirmBtn) confirmBtn.classList.remove('hidden');
                     if (badgeEl) {
                         badgeEl.className = 'bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]';
@@ -284,6 +292,9 @@
                     const reasonMsg = reason ? ` (Reason: "${reason}")` : '';
                     showActionPopup('Booking Rejected ❌', `Demo class booking has been rejected${reasonMsg}.`, 'reject');
                 } else if (action === 'complete' || newStatus === 'completed') {
+                    if (completeBtn) completeBtn.classList.add('hidden');
+                    if (confirmBtn) confirmBtn.classList.add('hidden');
+                    if (rejectBtn) rejectBtn.classList.add('hidden');
                     if (badgeEl) {
                         badgeEl.className = 'bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]';
                         badgeEl.textContent = 'COMPLETED';

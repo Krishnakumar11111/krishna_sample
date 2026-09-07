@@ -104,6 +104,7 @@ class SuperAdminAccessMiddleware:
         '/api/admin/communication/stats/',
         '/api/admin/communication/conversations/',
         '/api/admin/communication/thread/',
+        '/api/admin/communication/messages/',
         '/api/admin/communication/send/',
         '/api/admin/communication/broadcast/',
         '/api/admin/communication/notices/',

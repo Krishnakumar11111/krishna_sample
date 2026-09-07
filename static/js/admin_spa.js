@@ -11,59 +11,16 @@ window.AdminSPA = {
     init: function() {
         this.bindEvents();
         this.initTheme();
-
-        const hash = window.location.hash.replace('#', '');
-        const mainContent = document.getElementById('main-content');
-        const isServerRendered = mainContent && mainContent.getAttribute('data-server-rendered') === 'true';
-
-        // If page is server-rendered for a dedicated route, preserve server HTML
-        if (isServerRendered) {
-            const activeModule = mainContent.getAttribute('data-active-module') || 'dashboard';
-            if (activeModule === 'student_parent_enquiries' || activeModule === 'teacher_enquiries' || activeModule === 'demo_enquiries') {
-                if (hash && hash !== activeModule) {
-                    history.replaceState(null, '', window.location.pathname);
-                }
-                this.currentModule = activeModule;
-                this.highlightSidebar(activeModule);
-                return;
-            }
-            if (!hash || hash === activeModule) {
-                this.currentModule = activeModule;
-                this.highlightSidebar(activeModule);
-                return;
-            }
-        }
-
-        this.navTo(hash || 'dashboard');
     },
 
     highlightSidebar: function(moduleId) {
-        let primaryModule = moduleId;
-        if (moduleId.startsWith('reports/')) {
-            primaryModule = 'reports';
-        }
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.classList.remove('sidebar-active-item');
-        });
-        const activeNav = document.getElementById('nav-' + primaryModule);
-        if (activeNav) {
-            activeNav.classList.add('sidebar-active-item');
-        }
-        if (primaryModule === 'teacher_enquiries' || primaryModule === 'student_parent_enquiries' || primaryModule === 'demo_enquiries') {
-            const menu = document.getElementById('enquiryDropdownMenu');
-            const chevron = document.getElementById('enquiryChevron');
-            if (menu) menu.classList.remove('hidden');
-            if (chevron) chevron.classList.add('rotate-180');
+        if (typeof window.highlightSidebar === 'function') {
+            window.highlightSidebar(moduleId);
         }
     },
 
     bindEvents: function() {
         const self = this;
-        window.addEventListener('popstate', function() {
-            const hash = window.location.hash.replace('#', '');
-            self.navTo(hash || 'dashboard', false);
-        });
-
         // Global search input listener
         const searchInput = document.getElementById('globalSearchInput');
         if (searchInput) {
@@ -91,65 +48,15 @@ window.AdminSPA = {
         this.showToast(isDark ? 'Dark Mode Enabled' : 'Light Mode Enabled');
     },
 
-    navTo: function(moduleId, updateHistory = true) {
-        if (!moduleId) moduleId = 'dashboard';
-        if (moduleId === 'recorded_lectures' || moduleId === 'recorded-lectures') {
-            moduleId = 'study_material';
+    navTo: function(moduleId, updateHistory = true, event) {
+        const e = event || window.event;
+        if (e) {
+            if (typeof e.preventDefault === 'function') e.preventDefault();
+            if (typeof e.stopPropagation === 'function') e.stopPropagation();
         }
-        this.currentModule = moduleId;
-
-        let primaryModule = moduleId;
-        let subRoute = '';
-        if (moduleId.startsWith('reports/')) {
-            const parts = moduleId.split('/');
-            primaryModule = parts[0];
-            subRoute = parts[1] || 'overview';
-        } else if (moduleId === 'reports') {
-            primaryModule = 'reports';
-            subRoute = 'overview';
+        if (typeof window.loadAdminModule === 'function') {
+            return window.loadAdminModule(moduleId, updateHistory);
         }
-
-        const renderers = window.MODULE_RENDERERS || (typeof MODULE_RENDERERS !== 'undefined' ? MODULE_RENDERERS : null);
-
-        if (!renderers || !renderers[primaryModule]) {
-            if (typeof window.loadAdminModule === 'function') {
-                window.loadAdminModule(primaryModule, updateHistory);
-                return;
-            }
-            console.error(`[AdminSPA] Unknown or unregistered admin module: ${primaryModule}`);
-            return;
-        }
-
-        if (updateHistory) {
-            const rawMod = primaryModule || moduleId || 'dashboard';
-            const cleanPath = '/admin/' + rawMod.replace(/_/g, '-') + '/';
-            if (window.location.hash || window.location.pathname !== cleanPath) {
-                history.pushState(null, null, cleanPath);
-            }
-        }
-
-        // Highlight Active Sidebar Item & Keep Dropdown Open
-        this.highlightSidebar(primaryModule);
-
-        const mainContent = document.getElementById('main-content');
-        if (mainContent) {
-            mainContent.setAttribute('data-active-module', primaryModule);
-            mainContent.removeAttribute('data-server-rendered');
-            mainContent.innerHTML = renderers[primaryModule](subRoute);
-
-            // Re-evaluate embedded <script> tags so dynamically injected SPA modules execute JS
-            const scripts = mainContent.querySelectorAll('script');
-            scripts.forEach(oldScript => {
-                const newScript = document.createElement('script');
-                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                newScript.appendChild(document.createTextNode(oldScript.textContent));
-                if (oldScript.parentNode) {
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                }
-            });
-        }
-        this.onModuleLoaded(primaryModule);
-        this.toggleSidebar(false);
     },
 
     onModuleLoaded: function(moduleId) {
@@ -172,6 +79,11 @@ window.AdminSPA = {
         }
         if (moduleId === 'payments') {
             initPaymentsModule();
+        }
+        if (moduleId === 'settings') {
+            if (typeof initSettingsModule === 'function') {
+                initSettingsModule();
+            }
         }
     },
 
@@ -262,18 +174,15 @@ window.AdminSPA = {
         if (el) el.classList.add('hidden');
     },
 
-    showToast: function(msg, isError = false) {
-        const toast = document.getElementById('toastNotification');
-        const toastMsg = document.getElementById('toastMessage');
-        if (toast && toastMsg) {
-            toastMsg.innerText = msg;
-            if (isError) {
-                toast.classList.replace('bg-slate-900', 'bg-rose-900');
-            } else {
-                toast.classList.replace('bg-rose-900', 'bg-slate-900');
-            }
-            toast.classList.remove('hidden');
-            setTimeout(() => { toast.classList.add('hidden'); }, 3500);
+    showToast: function(msg, type = 'success', duration = 3500) {
+        let toastType = type;
+        if (typeof type === 'boolean') {
+            toastType = type ? 'error' : 'success';
+        }
+        if (typeof window.renderGlobalAdminToast === 'function') {
+            window.renderGlobalAdminToast(msg, toastType, duration);
+        } else if (typeof window.showToast === 'function') {
+            window.showToast(msg, toastType, duration);
         }
     },
 
@@ -320,7 +229,14 @@ window.AdminSPA = {
 };
 
 // Global Helper Functions
-function navTo(id) { AdminSPA.navTo(id); }
+if (typeof window.navTo === 'undefined') {
+    window.navTo = function(id, e) {
+        if (typeof window.loadAdminModule === 'function') {
+            return window.loadAdminModule(id, true);
+        }
+        AdminSPA.navTo(id, true, e);
+    };
+}
 function toggleSidebar(show) { AdminSPA.toggleSidebar(show); }
 function toggleDropdown(id) { AdminSPA.toggleDropdown(id); }
 function openModal(id) { AdminSPA.openModal(id); }

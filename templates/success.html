@@ -45,68 +45,9 @@
 
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
 
-    <header id="navbar" class="fixed w-full top-0 z-50 py-5 bg-white/80 backdrop-blur-md transition-all duration-300 border-b border-gray-100">
-        <div class="container mx-auto px-4 md:px-6 lg:px-2">
-            <div class="flex items-center justify-between">
-                <a href="{% url 'home' %}" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <span class="text-2xl font-extrabold tracking-tight text-gray-900">
-                        Edu<span class="text-brand-600">Trust</span>
-                    </span>
-                </a>
+    {% include "components/public_header.html" %}
 
-                <nav class="hidden lg:flex items-center gap-2 font-medium text-gray-600">
-                    <a href="{% url 'home' %}" class="hover:text-brand-600 transition-colors">Home</a>
-                    <a href="{% url 'find_tutor' %}" class="hover:text-brand-600 transition-colors">Search Tutors</a>
-                    <a href="{% url 'latest_tuition_job' %}" class="hover:text-brand-600 transition-colors">Search Tutors Jobs</a>
-                    <a href="{% url 'study_material' %}" class="hover:text-brand-600 transition-colors">Study Material</a>
-                    <a href="{% url 'success' %}" class="text-brand-600 font-bold transition-colors">Success Stories</a>
-                    <a href="{% url 'teacher_registration' %}" class="hover:text-brand-600 transition-colors text-brand-600 font-semibold">Teacher Registration</a>
-                    <a href="{% url 'faqs' %}" class="hover:text-brand-600 transition-colors">FAQs</a>
-                </nav>
-
-                <div class="hidden lg:flex items-center gap-4">
-                    <a href="{% url 'login' %}" class="font-medium text-gray-700 hover:text-brand-600 transition-colors px-4 py-2">
-                        Login
-                    </a>
-
-                    <a href="{% url 'student_registration' %}" class="bg-brand-600 text-white px-6 py-3 rounded-xl font-medium text-center hover:bg-brand-700 shadow-md transition-colors">
-                        Register/Student
-                    </a>
-                </div>
-
-                <button id="mobile-menu-btn" class="lg:hidden text-gray-600 hover:text-brand-600 text-2xl focus:outline-none">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden lg:hidden absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100">
-            <div class="flex flex-col p-6 gap-4 font-medium text-gray-700">
-                <a href="{% url 'home' %}" class="hover:text-brand-600">Home</a>
-                <a href="{% url 'find_tutor' %}" class="hover:text-brand-600">Search Tutors</a>
-                <a href="{% url 'latest_tuition_job' %}" class="hover:text-brand-600">Search Tutors Jobs</a>
-                <a href="{% url 'study_material' %}" class="hover:text-brand-600">Study Material</a>
-                <a href="{% url 'success' %}" class="text-brand-600 font-bold">Success Stories</a>
-                <a href="{% url 'teacher_registration' %}" class="text-brand-600 font-semibold">Teacher Registration</a>
-                <a href="{% url 'faqs' %}" class="hover:text-brand-600">FAQs</a>
-
-                <hr class="my-2 border-gray-100">
-
-                <a href="{% url 'login' %}" class="w-full text-center py-2 font-medium text-gray-700">
-                    Login
-                </a>
-
-                <a href="{% url 'student_registration' %}" class="w-full bg-brand-600 text-white px-6 py-3 rounded-xl font-medium text-center">
-                    Register/Student
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <main class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div class="text-center mb-16">
             <span class="bg-brand-50 text-brand-600 text-xs font-extrabold uppercase px-3 py-1.5 rounded-full tracking-wider border border-brand-100">Student & Tutor Journeys</span>
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mt-3">Inspiring Success Stories</h1>

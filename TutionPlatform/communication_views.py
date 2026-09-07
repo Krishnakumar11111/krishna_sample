@@ -211,7 +211,7 @@ def api_admin_comm_thread_messages(request):
                     'subject': m.subject,
                     'message_text': m.message_text,
                     'attachment_url': m.attachment.url if m.attachment else '',
-                    'attachment_name': m.attachment_name,
+                    'attachment_name': getattr(m, 'attachment_name', (m.attachment.name.split('/')[-1] if m.attachment else '')),
                     'status': m.status,
                     'timestamp': m.created_at.strftime('%I:%M %p, %b %d'),
                     'is_starred': m.is_starred

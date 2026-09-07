@@ -2,10 +2,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from TutionPlatform import views, admin_api_views
+from TutionPlatform import views, admin_api_views, settings_views
 from bookings import views as booking_views
 
 urlpatterns = [
+    path('favicon.ico', settings_views.serve_favicon, name='favicon'),
     path('student/', views.study_material, name='student_dashboard'),
     path('student-dashboard/', views.study_material),
     path('admin-dashboard/', views.custom_admin, name='admin_dashboard'),
@@ -52,6 +53,8 @@ urlpatterns = [
     path('admin/teacher-enquiries/<int:pk>/', views.admin_teacher_enquiry_detail, name='admin_teacher_enquiry_detail'),
     path('admin/student-parent-enquiries/', views.admin_student_parent_enquiries, name='admin_student_parent_enquiries'),
     path('admin/student-parent-enquiries/<int:pk>/', views.admin_student_parent_enquiry_detail, name='admin_student_parent_enquiry_detail'),
+    path('admin/both/', views.custom_admin, name='admin_both_slash'),
+    path('admin/both', views.custom_admin, name='admin_both'),
     path('admin/', views.custom_admin, name='custom_admin'),
     path('django-admin/', admin.site.urls),
     path('', include('TutionPlatform.urls')),
@@ -84,4 +87,5 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

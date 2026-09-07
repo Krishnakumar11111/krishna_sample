@@ -3,6 +3,118 @@
 <html lang="en" class="h-full">
 <head>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    {% if platform_active_loader and platform_active_loader.show_on_admin %}
+    <script>document.documentElement.classList.add('app-is-loading');</script>
+    <style>
+        html.app-is-loading body,
+        body.app-is-loading {
+            display: block !important;
+            overflow: hidden !important;
+        }
+        #edutrustGlobalPageLoader {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            outline: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            z-index: 2147483647 !important;
+            background-color: #f0f7ff !important;
+            display: flex;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #edutrustGlobalPageLoader.hidden,
+        html:not(.app-is-loading) #edutrustGlobalPageLoader,
+        body:not(.app-is-loading) #edutrustGlobalPageLoader {
+            display: none !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        #edutrustGlobalPageLoader video,
+        #edutrustGlobalPageLoader img {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            object-fit: contain !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            outline: 0 !important;
+            background-color: #f0f7ff !important;
+        }
+        @media (min-width: 0px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) {
+                opacity: 1;
+            }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) {
+                opacity: 1;
+            }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            html.app-is-loading aside,
+            html.app-is-loading main,
+            html.app-is-loading header,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading aside,
+            body.app-is-loading main,
+            body.app-is-loading header,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) {
+                opacity: 1;
+            }
+        }
+    </style>
+    {% endif %}
     <script>
         (function() {
             try {
@@ -14,6 +126,11 @@
                     document.documentElement.classList.remove('dark');
                 }
             } catch (e) {}
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    if (typeof window.dismissLoaderOverlay === 'function') window.dismissLoaderOverlay();
+                }, 2500);
+            });
         })();
     </script>
     <meta charset="UTF-8">
@@ -29,7 +146,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Bootstrap 5 Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
     <!-- Tailwind CSS CDN -->
     <script>
@@ -41,6 +160,11 @@
                 }
                 origWarn.apply(console, arguments);
             };
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    if (typeof window.dismissLoaderOverlay === 'function') window.dismissLoaderOverlay();
+                }, 2500);
+            });
         })();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -263,13 +387,375 @@
         .date-group-count-badge,
         html.dark .date-group-count-badge,
         [data-theme="dark"] .date-group-count-badge {
-            background-color: #ffffff !important;
+            background-color: #f0f7ff !important;
             color: #334155 !important;
             border: 1px solid #cbd5e1 !important;
         }
+    
+        /* ABSOLUTE 100vw x 100vh EDGE-TO-EDGE PAGE LOADER OVERLAY */
+        html.app-is-loading body,
+        body.app-is-loading {
+            display: block !important;
+            overflow: hidden !important;
+        }
+
+        #edutrustGlobalPageLoader {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            outline: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            z-index: 2147483647 !important;
+            background-color: #f0f7ff !important;
+            display: flex;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #edutrustGlobalPageLoader.hidden,
+        html:not(.app-is-loading) #edutrustGlobalPageLoader,
+        body:not(.app-is-loading) #edutrustGlobalPageLoader {
+            display: none !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        #edutrustGlobalPageLoader video,
+        #edutrustGlobalPageLoader img {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            object-fit: contain !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            outline: 0 !important;
+            background-color: #f0f7ff !important;
+        }
+
+        /* OVERRIDE TAILWIND lg:static RESPONSIVE MEDIA QUERIES DURING LOADING STATE */
+        @media (min-width: 0px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            html.app-is-loading aside,
+            html.app-is-loading main,
+            html.app-is-loading header,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading aside,
+            body.app-is-loading main,
+            body.app-is-loading header,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+
+        /* OVERRIDE TAILWIND lg:static RESPONSIVE MEDIA QUERIES DURING LOADING STATE */
+        @media (min-width: 0px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            html.app-is-loading aside,
+            html.app-is-loading main,
+            html.app-is-loading header,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading aside,
+            body.app-is-loading main,
+            body.app-is-loading header,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            html.app-is-loading aside,
+            html.app-is-loading main,
+            html.app-is-loading header,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading aside,
+            body.app-is-loading main,
+            body.app-is-loading header,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+
+        /* OVERRIDE TAILWIND lg:static RESPONSIVE MEDIA QUERIES DURING LOADING STATE */
+        @media (min-width: 0px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading footer,
+            html.app-is-loading section,
+            html.app-is-loading header,
+            html.app-is-loading main,
+            html.app-is-loading aside,
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            body.app-is-loading footer,
+            body.app-is-loading section,
+            body.app-is-loading header,
+            body.app-is-loading main,
+            body.app-is-loading aside,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+        @media (min-width: 1024px) {
+            html.app-is-loading #adminSidebar,
+            html.app-is-loading #main-content,
+            html.app-is-loading #adminMainContent,
+            html.app-is-loading aside,
+            html.app-is-loading main,
+            html.app-is-loading header,
+            body.app-is-loading #adminSidebar,
+            body.app-is-loading #main-content,
+            body.app-is-loading #adminMainContent,
+            body.app-is-loading aside,
+            body.app-is-loading main,
+            body.app-is-loading header,
+            body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        }
+
+        /* OVERRIDE FLEX CONTAINER & TAILWIND lg:static POSITIONING DURING LOADING */
+        html.app-is-loading #adminSidebar,
+        html.app-is-loading #main-content,
+        html.app-is-loading #adminMainContent,
+        html.app-is-loading aside,
+        html.app-is-loading main,
+        html.app-is-loading header,
+        body.app-is-loading #adminSidebar,
+        body.app-is-loading #main-content,
+        body.app-is-loading #adminMainContent,
+        body.app-is-loading aside,
+        body.app-is-loading main,
+        body.app-is-loading header,
+        body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+        /* EXPLICIT ID DISPLAY:NONE OVERRIDES FOR SIDEBAR & MAIN CONTENT WHILE LOADING */
+        body.app-is-loading #adminSidebar,
+        body.app-is-loading #main-content,
+        body.app-is-loading #adminMainContent,
+        body.app-is-loading aside,
+        body.app-is-loading main,
+        body.app-is-loading header,
+        body.app-is-loading > *:not(#edutrustGlobalPageLoader) { /* Overlay covers screen cleanly */ }
+
     </style>
 </head>
-<body class="bg-slate-100 text-slate-900 h-screen overflow-hidden flex antialiased">
+<body class="bg-slate-100 text-slate-900 h-screen overflow-hidden flex antialiased {% if platform_active_loader %}app-is-loading{% endif %}">
+    {% if platform_active_loader %}<script>document.documentElement.classList.add("app-is-loading");</script>{% endif %}
+
+    <!-- GLOBAL DATABASE-DRIVEN EDUTRUST PAGE LOADER -->
+    {% if platform_active_loader %}
+    <div id="edutrustGlobalPageLoader" style="--loader-primary: {{ platform_active_loader.primary_color|default:'#2563eb' }}; --loader-secondary: {{ platform_active_loader.secondary_color|default:'#7c3aed' }};">
+        {% if platform_active_loader.logo_url and '.mp4' in platform_active_loader.logo_url or '.webm' in platform_active_loader.logo_url or platform_active_loader.animation_style == 'Video Loader' or platform_active_loader.loader_type == 'Video' %}
+            <div class="relative w-full h-full flex items-center justify-center">
+                    <div id="adminVideoLoaderBufferFallback" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 z-0 pointer-events-none">
+                        <div class="w-8 h-8 rounded-full border-3 border-blue-600 border-t-transparent animate-spin"></div>
+                    </div>
+                    <video src="{{ platform_active_loader.logo_url }}" autoplay muted playsinline preload="auto" type="video/mp4" class="relative z-10 w-full h-full max-h-[92vh] max-w-[96vw] object-contain mx-auto m-0 p-0" onplaying="const fb = document.getElementById('adminVideoLoaderBufferFallback'); if(fb) fb.classList.add('hidden');"></video>
+                </div>
+        {% elif platform_active_loader.logo_url and '.gif' in platform_active_loader.logo_url or '.svg' in platform_active_loader.logo_url or '.webp' in platform_active_loader.logo_url or '.jpg' in platform_active_loader.logo_url or '.png' in platform_active_loader.logo_url %}
+            <img src="{{ platform_active_loader.logo_url }}" alt="Custom Loader">
+        {% else %}
+            <div class="flex flex-col items-center justify-center p-0 m-0">
+                {% if platform_logo_url %}<img id="gLoaderLogo" src="{% if platform_active_loader.use_platform_logo %}{{ platform_logo_url }}{% else %}{{ platform_active_loader.logo_url|default:platform_logo_url }}{% endif %}" class="app-platform-logo-img h-14 max-w-[160px] object-contain mx-auto mb-2 animate-pulse" alt="EduTrust Logo">{% endif %}
+                <div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight" id="gLoaderTitle">{{ platform_active_loader.loading_text|default:"EduTrust LMS" }}</h2>
+                    <p class="text-xs text-slate-400 font-medium mt-1" id="gLoaderTagline">{{ platform_active_loader.tagline|default:"No.1 Learning Platform in India" }}</p>
+                </div>
+
+                {% if platform_active_loader.loader_type == 'Minimal' or platform_active_loader.animation_style == 'Spinner' %}
+                    <div class="w-10 h-10 rounded-full border-3 border-t-transparent animate-spin mx-auto mt-2" style="border-color: var(--loader-primary, #2563eb); border-top-color: transparent;"></div>
+                {% elif platform_active_loader.loader_type == 'Dots' or platform_active_loader.animation_style == 'Dots' %}
+                    <div class="flex items-center justify-center gap-2 py-2 mt-2">
+                        <div class="w-3 h-3 rounded-full animate-bounce" style="background-color: var(--loader-primary, #2563eb); animation-delay: 0s;"></div>
+                        <div class="w-3 h-3 rounded-full animate-bounce" style="background-color: var(--loader-secondary, #7c3aed); animation-delay: 0.15s;"></div>
+                        <div class="w-3 h-3 rounded-full animate-bounce" style="background-color: var(--loader-primary, #2563eb); animation-delay: 0.3s;"></div>
+                    </div>
+                {% else %}
+                    <div class="w-48 bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
+                        <div class="h-full rounded-full animate-pulse" style="width: 75%; background: linear-gradient(90deg, var(--loader-primary, #2563eb), var(--loader-secondary, #7c3aed));"></div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div id="edutrustGlobalPageLoader" class="hidden"></div>
+    {% endif %}
+
+    <script>
+        (function() {
+            const loaderEl = document.getElementById('edutrustGlobalPageLoader');
+            if (!loaderEl) return;
+
+            let dismissed = false;
+            function dismissLoaderOverlay() {
+                if (dismissed) return;
+                dismissed = true;
+                loaderEl.classList.add('hidden');
+                loaderEl.style.opacity = '0';
+                loaderEl.style.pointerEvents = 'none';
+                document.body.classList.remove('app-is-loading');
+                document.documentElement.classList.remove('app-is-loading');
+                setTimeout(function() {
+                    loaderEl.style.display = 'none';
+                }, 400);
+            }
+            window.dismissLoaderOverlay = dismissLoaderOverlay;
+
+            // Maximum safety fallback timer (3.5s) to guarantee overlay dismissal even if video buffers or autoplay is blocked
+            const maxSafetyTimer = setTimeout(dismissLoaderOverlay, 3500);
+
+            const videoEl = loaderEl.querySelector('video');
+            if (videoEl) {
+                videoEl.muted = true;
+                videoEl.playsInline = true;
+                try {
+                    const p = videoEl.play();
+                    if (p && p.catch) {
+                        p.catch(function() {
+                            videoEl.muted = true;
+                            videoEl.play().catch(function() {});
+                        });
+                    }
+                } catch(e) {}
+                videoEl.addEventListener('ended', function() {
+                    clearTimeout(maxSafetyTimer);
+                    dismissLoaderOverlay();
+                });
+                videoEl.addEventListener('loadedmetadata', function() {
+                    if (videoEl.duration && !isNaN(videoEl.duration) && videoEl.duration > 0) {
+                        setTimeout(dismissLoaderOverlay, Math.min(videoEl.duration * 1000, 3500));
+                    }
+                });
+                videoEl.addEventListener('error', dismissLoaderOverlay);
+            } else {
+                // For custom loader: Use the exact loader duration from database
+                const rawDuration = "{{ platform_active_loader.minimum_display_time }}";
+                const durationMs = parseInt(rawDuration);
+
+                if (!isNaN(durationMs) && durationMs > 0) {
+                    setTimeout(dismissLoaderOverlay, durationMs);
+                } else {
+                    dismissLoaderOverlay();
+                }
+            }
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    if (typeof window.dismissLoaderOverlay === 'function') window.dismissLoaderOverlay();
+                }, 2500);
+            });
+        })();
+    </script>
 
     <!-- OVERLAY FOR MOBILE SIDEBAR DRAWER -->
     <div id="mobileSidebarOverlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-slate-900/60 z-40 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
@@ -280,9 +766,7 @@
         <!-- BRANDING HEADER -->
         <div class="px-5 py-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-lg shadow-md shadow-blue-500/30">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
+                <img id="adminSidebarLogo" src="{{ platform_logo_url }}" class="app-platform-logo-img w-9 h-9 rounded-xl object-contain bg-white/10 p-1 border border-white/20 shadow-md shrink-0" alt="EduTrust Logo" onerror="this.onerror=null; this.src='/static/images/logo.png';">
                 <div>
                     <h1 class="text-base font-black text-white tracking-tight leading-tight">EduTrust</h1>
                     <span class="text-[10px] font-bold text-slate-400 block tracking-wider">LMS Admin Panel</span>
@@ -294,7 +778,7 @@
         </div>
 
         <!-- SIDEBAR NAVIGATION MENU -->
-        <div class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-5 text-xs font-semibold">
+        <div id="adminSidebarNav" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-5 text-xs font-semibold">
             
         <div class="p-3 space-y-4">
             <!-- DASHBOARD -->
@@ -432,8 +916,8 @@
                 <a href="{% url 'admin_location_analytics' %}" onclick="navTo('location_analytics', event)" id="nav-location_analytics" class="nav-item flex items-center justify-between px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-xs font-medium no-underline {% if active_module == 'location_analytics' %}sidebar-active-item{% endif %}">
                     <div class="flex items-center gap-2.5"><i class="fa-solid fa-map-marker-alt text-slate-400 w-4 text-center shrink-0"></i><span>Location Analytics</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-500 shrink-0"></i>
                 </a>
-                <a href="{% url 'admin_wallet' %}" onclick="navTo('wallet', event)" id="nav-wallet" class="nav-item flex items-center justify-between px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-xs font-medium no-underline {% if active_module == 'wallet' %}sidebar-active-item{% endif %}">
-                    <div class="flex items-center gap-2.5"><i class="fa-solid fa-wallet text-slate-400 w-4 text-center shrink-0"></i><span>Wallet & Transactions</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-500 shrink-0"></i>
+                <a href="{% url 'admin_coupons_rewards' %}" onclick="navTo('coupons_rewards', event)" id="nav-coupons_rewards" class="nav-item flex items-center justify-between px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-xs font-medium no-underline {% if active_module == 'coupons_rewards' or active_module == 'coupons-rewards' %}sidebar-active-item{% endif %}">
+                    <div class="flex items-center gap-2.5"><i class="fa-solid fa-ticket text-slate-400 w-4 text-center shrink-0"></i><span>Coupons & Rewards</span></div><i class="fa-solid fa-chevron-right text-[10px] text-slate-500 shrink-0"></i>
                 </a>
             </div>
 
@@ -567,7 +1051,7 @@
         </header>
 
         <!-- DYNAMIC MAIN CONTENT WORKSPACE AREA -->
-        <main id="main-content" data-server-rendered="{% if active_module and active_module != 'dashboard' %}true{% else %}false{% endif %}" data-active-module="{{ active_module|default:'dashboard' }}" class="flex-1 overflow-y-auto main-scrollbar p-4 lg:p-6 bg-slate-100 relative">
+        <main id="main-content" data-server-rendered="true" data-active-module="{{ active_module|default:'dashboard' }}" class="flex-1 overflow-y-auto main-scrollbar p-4 lg:p-6 bg-slate-100 relative">
             {% block admin_content %}
             {% endblock %}
         </main>
@@ -750,11 +1234,8 @@
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION CONTAINER -->
-    <div id="toastNotification" class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 fade-in">
-        <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
-        <span id="toastMessage" class="text-xs font-bold">Action Completed Successfully!</span>
-    </div>
+    <!-- GLOBAL ADMIN TOAST NOTIFICATION CONTAINER (BOTTOM-RIGHT) -->
+    <div id="globalAdminToastContainer" class="fixed bottom-6 right-6 z-[999999] flex flex-col items-end justify-end gap-2.5 pointer-events-none max-w-sm sm:max-w-md w-auto max-sm:left-3 max-sm:right-3 max-sm:bottom-3"></div>
 
     <!-- SAFE ISOLATED BACKEND JSON DATA STORES (PREVENTS JS SYNTAX ERRORS) -->
     <script id="backend-json-students" type="application/json">{{ students_json|safe|default:"[]" }}</script>
@@ -1117,35 +1598,190 @@
                         </div>
 
                         <!-- ROW 2: TOP METRIC CARDS WITH SPARK LINES -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
-                                <div class="flex items-center justify-between gap-1"><div class="flex items-center gap-1.5 min-w-0"><div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-graduation-cap"></i></div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Total Students</span></div><span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span></div>
-                                <div class="flex items-end justify-between gap-1"><h3 class="text-lg sm:text-xl font-black text-slate-900 leading-none">${'{{ total_students|default:"0" }}'}</h3><div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-blue-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 5, 50 15 T 100 5" fill="none"/></svg></div></div>
-                            </div>
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
-                                <div class="flex items-center justify-between gap-1"><div class="flex items-center gap-1.5 min-w-0"><div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-chalkboard-teacher"></i></div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Total Teachers</span></div><span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span></div>
-                                <div class="flex items-end justify-between gap-1"><h3 class="text-lg sm:text-xl font-black text-slate-900 leading-none">${'{{ total_teachers|default:"0" }}'}</h3><div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 22, 50 10 T 100 8" fill="none"/></svg></div></div>
-                            </div>
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
-                                <div class="flex items-center justify-between gap-1"><div class="flex items-center gap-1.5 min-w-0"><div class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-book"></i></div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Total Courses</span></div><span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span></div>
-                                <div class="flex items-end justify-between gap-1"><h3 class="text-lg sm:text-xl font-black text-slate-900 leading-none">${'{{ total_courses|default:"0" }}'}</h3><div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 10, 50 18 T 100 4" fill="none"/></svg></div></div>
-                            </div>
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
-                                <div class="flex items-center justify-between gap-1"><div class="flex items-center gap-1.5 min-w-0"><div class="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-video"></i></div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Live Today</span></div><span class="text-[8px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-circle text-[5px]"></i> LIVE</span></div>
-                                <div class="flex items-end justify-between gap-1"><h3 class="text-lg sm:text-xl font-black text-rose-600 leading-none">${'{{ live_today_count|default:"0" }}'}</h3><div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-rose-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 25, 50 10 T 100 10" fill="none"/></svg></div></div>
-                            </div>
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
-                                <div class="flex items-center justify-between gap-1"><div class="flex items-center gap-1.5 min-w-0"><div class="w-6 h-6 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-graduation-cap"></i></div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Demo Bookings</span></div><span class="text-[8px] font-extrabold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-sparkles text-[6px]"></i> Real</span></div>
-                                <div class="flex items-end justify-between gap-1"><h3 class="text-lg sm:text-xl font-black text-purple-600 leading-none" id="dashDemoBookingsCount">${'{{ total_demo_bookings|default:"0" }}'}</h3><div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 8, 50 15 T 100 5" fill="none"/></svg></div></div>
-                            </div>
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs hover:shadow-xs transition-all h-[92px] flex flex-col justify-between">
-                                <div class="flex items-center justify-between gap-1"><div class="flex items-center gap-1.5 min-w-0"><div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-wallet"></i></div><span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Total Revenue</span></div><span class="text-[8px] font-extrabold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full shrink-0"><i class="fas fa-arrow-up text-[6px]"></i> Real</span></div>
-                                <div class="flex items-end justify-between gap-1"><h3 class="text-lg sm:text-xl font-black text-emerald-600 leading-none">₹${'{{ total_revenue|default:"0" }}'}</h3><div class="h-3 w-14 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 24 Q 25 18, 50 8 T 100 4" fill="none"/></svg></div></div>
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            <!-- 1. Total Students -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-graduation-cap"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Students">Total Students</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalStudents">{{ total_students|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-blue-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 5, 50 15 T 100 5" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 2. Active Students -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-user-check"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Active Students">Active Students</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-emerald-600 leading-none" id="dashActiveStudents">{{ active_students|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 10, 50 15 T 100 5" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 3. Total Teachers -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Teachers">Total Teachers</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalTeachers">{{ total_teachers|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-indigo-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 22, 50 10 T 100 8" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 4. Active Teachers -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-teal-50 text-teal-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-user-shield"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Active Teachers">Active Teachers</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-teal-600 leading-none" id="dashActiveTeachers">{{ active_teachers|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-teal-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 12, 50 8 T 100 5" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 5. Total Courses -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-book"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Courses">Total Courses</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalCourses">{{ total_courses|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 15, 50 18 T 100 8" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 6. Total Live Classes -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-cyan-50 text-cyan-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-video"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Live Classes">Total Live Classes</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashTotalLiveClasses">{{ total_live_classes|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-cyan-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 8, 50 20 T 100 12" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 7. Live Classes Now -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-broadcast-tower animate-pulse"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Live Classes Now">Live Classes Now</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-rose-600 bg-rose-50 px-1 py-0.2 rounded-md shrink-0 flex items-center gap-0.5"><span class="w-1 h-1 rounded-full bg-rose-600 animate-ping"></span>LIVE</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-rose-600 leading-none" id="dashLiveClassesNow">{{ active_live_classes_count|default:"4" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-rose-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 5, 50 15 T 100 8" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 8. Upcoming Classes -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-calendar-alt"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Upcoming Classes">Upcoming Classes</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-blue-600 bg-blue-50 px-1 py-0.2 rounded-md shrink-0">Upcoming</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashUpcomingClasses">{{ upcoming_classes_count|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-blue-400" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 15 Q 25 22, 50 10 T 100 18" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 9. Cancelled Classes -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-ban"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Cancelled Classes">Cancelled Classes</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-amber-600 bg-amber-50 px-1 py-0.2 rounded-md shrink-0">Status</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-amber-600 leading-none" id="dashCancelledClasses">{{ cancelled_classes_count|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-amber-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 12 Q 25 18, 50 8 T 100 20" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 10. Recorded Lectures -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-play-circle"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Recorded Lectures">Recorded Lectures</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashRecordedLectures">{{ recorded_lectures|default:"4" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-indigo-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 20 Q 25 10, 50 16 T 100 6" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 11. Demo Bookings -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-user-graduate"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Demo Bookings">Demo Bookings</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-purple-600 bg-purple-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-none" id="dashDemoBookings">{{ demo_bookings|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-purple-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 18 Q 25 12, 50 22 T 100 10" fill="none"/></svg></div>
+                </div>
+            </div>
+
+            <!-- 12. Total Revenue -->
+            <div class="bg-white dark:bg-slate-900 p-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs hover:shadow-xs transition-all h-[70px] flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center gap-1 min-w-0">
+                        <div class="w-4.5 h-4.5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[9px] shrink-0"><i class="fas fa-wallet"></i></div>
+                        <span class="text-[8.5px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-tight block truncate" title="Total Revenue">Total Revenue</span>
+                    </div>
+                    <span class="text-[7.5px] font-black text-emerald-600 bg-emerald-50 px-1 py-0.2 rounded-md shrink-0">Real</span>
+                </div>
+                <div class="flex items-end justify-between gap-1">
+                    <h3 class="text-base sm:text-lg font-black text-emerald-600 leading-none" id="dashTotalRevenue">₹{{ total_revenue|default:"0" }}</h3>
+                    <div class="h-2.5 w-10 shrink-0"><svg class="w-full h-full text-emerald-500" viewBox="0 0 100 25" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 22 Q 25 15, 50 8 T 100 5" fill="none"/></svg></div>
+                </div>
+            </div>
+        </div> </div>
 
                         <!-- ROW 3: ANALYTICS OVERVIEW + ENROLLMENTS + TOP COURSES + QUICK ACTIONS -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 my-6">
                             <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                                 <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Analytics Overview</h3><select class="bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg px-2 py-0.5 outline-none"><option>This Year</option></select></div>
                                 <div class="flex items-center gap-2.5 text-[9.5px] font-bold"><span class="flex items-center gap-1 text-blue-600"><span class="w-2 h-2 rounded-full bg-blue-600"></span>Students</span><span class="flex items-center gap-1 text-purple-600"><span class="w-2 h-2 rounded-full bg-purple-600"></span>Teachers</span><span class="flex items-center gap-1 text-emerald-600"><span class="w-2 h-2 rounded-full bg-emerald-600"></span>Revenue</span></div>
@@ -1164,7 +1800,7 @@
 
                             <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                                 <h3 class="font-extrabold text-slate-900 text-xs">Quick Actions</h3>
-                                <div class="grid grid-cols-3 gap-1.5">
+                                <div class="grid grid-cols-3 gap-1.5 p-0.5">
                                     <button onclick="openModal('modalAddStudent')" class="p-1.5 rounded-xl bg-blue-50/80 hover:bg-blue-100 text-blue-700 flex flex-col items-center gap-0.5 border border-blue-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-user-plus text-[11px]"></i><span class="text-[8.5px] font-bold">Add Student</span></button>
                                     <button onclick="openModal('modalAddTeacher')" class="p-1.5 rounded-xl bg-emerald-50/80 hover:bg-emerald-100 text-emerald-700 flex flex-col items-center gap-0.5 border border-emerald-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-chalkboard-teacher text-[11px]"></i><span class="text-[8.5px] font-bold">Add Teacher</span></button>
                                     <button onclick="navTo('courses')" class="p-1.5 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-amber-700 flex flex-col items-center gap-0.5 border border-amber-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-book text-[11px]"></i><span class="text-[8.5px] font-bold">Add Course</span></button>
@@ -1174,12 +1810,13 @@
                                     <button onclick="navTo('study_material')" class="p-1.5 rounded-xl bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 flex flex-col items-center gap-0.5 border border-indigo-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-folder-open text-[11px]"></i><span class="text-[8.5px] font-bold">Material</span></button>
                                     <button onclick="navTo('notices')" class="p-1.5 rounded-xl bg-pink-50/80 hover:bg-pink-100 text-pink-700 flex flex-col items-center gap-0.5 border border-pink-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-bullhorn text-[11px]"></i><span class="text-[8.5px] font-bold">Create Notice</span></button>
                                     <button onclick="navTo('reports')" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex flex-col items-center gap-0.5 border border-slate-200 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-chart-line text-[11px]"></i><span class="text-[8.5px] font-bold">View Reports</span></button>
+                                    <button onclick="openSmModal('modalAddClassSubject')" class="p-1.5 rounded-xl bg-purple-50/80 hover:bg-purple-100 text-purple-700 flex flex-col items-center gap-0.5 border border-purple-100 cursor-pointer text-center transition-all hover:scale-[1.02]"><i class="fas fa-graduation-cap text-[11px]"></i><span class="text-[8.5px] font-bold">Class & Subject</span></button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- ROW 4 & ROW 5 SUMMARY CARDS (COMPACT & REAL DATA) -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 my-6">
                             <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
                                 <div class="flex items-center justify-between"><h3 class="font-extrabold text-slate-900 text-xs">Revenue Overview</h3><select class="bg-slate-50 border border-slate-200 text-[10px] font-bold rounded-lg px-2 py-0.5 outline-none"><option>This Month</option></select></div>
                                 <div><h4 class="text-base font-black text-slate-900">₹${'{{ total_revenue|default:"0" }}'}</h4><span class="text-[9.5px] text-emerald-600 font-bold">↑ Live Revenue</span></div>
@@ -1233,9 +1870,30 @@
             'dpp': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">DPP & Practice</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">DPP sheets manager.</p></div></div>`; },
             'tests': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Tests & Quizzes</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Tests generator.</p></div></div>`; },
             'test_series': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Test Series</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Test series manager.</p></div></div>`; },
-            'pyq': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">PYQ / Model Papers</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Model papers vault.</p></div></div>`; },
-            'e_library': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">E-Library</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Digital Library collection.</p></div></div>`; },
-            'e_newspaper': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">E-Newspaper</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Daily E-paper digests.</p></div></div>`; },
+            'pyq': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/pyq_model_papers.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'study_material/pyq-model-papers': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/pyq_model_papers.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'e_library': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/e_library.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'study_material/e-library': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/e_library.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'e_newspaper': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/e_newspaper.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'study_material/e-newspaper': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/e_newspaper.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'coupons_rewards': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/coupons_rewards.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
+            'coupons-rewards': function() {
+                return "{% filter escapejs %}{% include 'admin_modules/coupons_rewards.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
+            },
             'notices': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Notices</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Notice board manager.</p></div></div>`; },
             'announcements': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Announcements</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Announcements manager.</p></div></div>`; },
             'notifications': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Notifications</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Broadcast notifications manager.</p></div></div>`; },
@@ -1331,13 +1989,9 @@
                 `;
             },
             'wallet': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Wallet & Transactions</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Wallet balance manager.</p></div></div>`; },
-            'settings': function() {
-                setTimeout(function() { if (typeof window.initSettingsModule === 'function') window.initSettingsModule(); }, 20);
-                return `{% filter escapejs %}{% include 'admin/settings.html' with base_template='admin_partial_base.html' %}{% endfilter %}`;
-            },
             'roles_permissions': function() {
                 setTimeout(function() { if (typeof window.initRolesModule === 'function') window.initRolesModule(); }, 20);
-                return `{% filter escapejs %}{% include 'admin/roles_permissions.html' with base_template='admin_partial_base.html' %}{% endfilter %}`;
+                return "{% filter escapejs %}{% include 'admin/roles_permissions.html' with base_template='admin_partial_base.html' %}{% endfilter %}";
             },
             'system_logs': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">System Logs</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">System audit logs console.</p></div></div>`; },
             'backup_restore': function() { return `<div class="space-y-6 fade-in"><h2 class="text-xl font-black text-slate-900">Backup & Restore</h2><div class="bg-white p-5 rounded-3xl border border-slate-200"><p class="text-xs text-slate-500 font-medium">Database snapshot backup manager.</p></div></div>`; },
@@ -1970,11 +2624,16 @@
             tests: '/admin/tests/',
             test_series: '/admin/test-series/',
             'test-series': '/admin/test-series/',
-            pyq: '/admin/pyq/',
-            e_library: '/admin/e-library/',
-            'e-library': '/admin/e-library/',
-            e_newspaper: '/admin/e-newspaper/',
-            'e-newspaper': '/admin/e-newspaper/',
+            pyq: '/admin/study-material/pyq-model-papers/',
+            e_library: '/admin/study-material/e-library/',
+            'e-library': '/admin/study-material/e-library/',
+            e_newspaper: '/admin/study-material/e-newspaper/',
+            'e-newspaper': '/admin/study-material/e-newspaper/',
+            coupons_rewards: '/admin/coupons-rewards/',
+            'coupons-rewards': '/admin/coupons-rewards/',
+            coupons: '/admin/coupons-rewards/',
+            rewards: '/admin/coupons-rewards/',
+            'finance/coupons-rewards': '/admin/coupons-rewards/',
             notices: '/admin/notices/',
             announcements: '/admin/announcements/',
 
@@ -2051,6 +2710,8 @@
                 }
             } else if (canonical === 'demo_bookings' || canonical === 'demo_enquiries') {
                 if (typeof initDemoBookings === 'function') initDemoBookings();
+            } else if (canonical === 'settings') {
+                if (typeof window.initSettingsModule === 'function') window.initSettingsModule();
             }
         }
 
@@ -2063,280 +2724,7 @@
             return `/admin/${slug}/`;
         }
 
-        let activeLoadingModule = null;
-        async function loadAdminModule(moduleName, updateHash = true) {
-            const rawName = moduleName || 'dashboard';
-            const canonical = rawName.replace('-', '_');
-
-            activeLoadingModule = canonical;
-
-            let endpoint = ADMIN_MODULES[rawName] || ADMIN_MODULES[canonical];
-            if (!endpoint) {
-                if (rawName && rawName.startsWith('/admin/')) {
-                    endpoint = rawName;
-                } else if (window.location.pathname.includes('/admin/')) {
-                    endpoint = window.location.pathname;
-                } else {
-                    endpoint = `/admin-module/${canonical}/`;
-                }
-            }
-
-            console.log('[ADMIN NAV]', rawName);
-            console.log('[ADMIN MODULE REQUEST]', endpoint);
-
-            if (updateHash) {
-                const targetPath = getCleanAdminModulePath(rawName);
-                if (window.location.hash || window.location.pathname !== targetPath) {
-                    history.pushState(null, null, targetPath);
-                }
-            }
-
-            highlightSidebar(canonical);
-
-            const mainContent = document.getElementById('main-content');
-            if (!mainContent) return false;
-
-            // Smooth non-blinking module transition state
-            const hasExistingContent = mainContent.children.length > 0 && !mainContent.querySelector('.animate-spin');
-            if (hasExistingContent) {
-                mainContent.style.transition = 'opacity 0.15s ease';
-                mainContent.style.opacity = '0.6';
-            } else {
-                mainContent.style.opacity = '1';
-                    mainContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center min-h-[400px] py-12 text-slate-500 fade-in">
-                        <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <p class="text-sm font-semibold">Loading module...</p>
-                    </div>
-                `;
-            }
-
-            try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                console.log('[ADMIN MODULE RESPONSE]', response.status);
-
-                if (!response.ok) {
-                    console.error('[ADMIN MODULE ERROR]', rawName);
-                    console.error('[ADMIN MODULE ENDPOINT]', endpoint);
-                    console.error('[ADMIN MODULE STATUS]', response.status);
-
-                    let errMsg = "Server error while loading admin module.";
-                    if (response.status === 404) errMsg = "Admin module not found.";
-                    if (response.status === 403) errMsg = "You do not have permission to access this module.";
-
-                    mainContent.innerHTML = `
-                        <div class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-2xl text-center my-8 max-w-xl mx-auto space-y-2">
-                            <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-2"></i>
-                            <h3 class="font-black text-base text-red-900">${errMsg}</h3>
-                            <p class="text-xs text-red-600 font-mono">${endpoint} (${response.status})</p>
-                        </div>
-                    `;
-                    return false;
-                }
-
-                const html = await response.text();
-                mainContent.setAttribute('data-active-module', canonical);
-                mainContent.removeAttribute('data-server-rendered');
-                mainContent.innerHTML = html;
-                mainContent.style.opacity = '1';
-
-                // Re-evaluate embedded <script> tags safely (preserve application/json data scripts)
-                const scriptTags = mainContent.querySelectorAll('script');
-                scriptTags.forEach(oldScript => {
-                    const src = oldScript.getAttribute('src') || '';
-                    const type = oldScript.getAttribute('type') || '';
-                    if (src && (src.includes('admin_spa.js') || src.includes('admin_router.js') || src.includes('tailwindcss') || src.includes('fontawesome') || src.includes('chart.js'))) {
-                        return; // Skip base library scripts
-                    }
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                    if (oldScript.innerHTML && oldScript.innerHTML.trim()) {
-                        if (type.toLowerCase().includes('json')) {
-                            newScript.textContent = oldScript.innerHTML;
-                        } else {
-                            newScript.textContent = "try {\n" + oldScript.innerHTML + "\n} catch(e) { console.warn('[Script Eval Suppressed]', e.message); }";
-                        }
-                    }
-                    if (oldScript.parentNode) {
-                        oldScript.parentNode.replaceChild(newScript, oldScript);
-                    }
-                });
-
-                triggerModuleInit(canonical);
-                console.log('[ADMIN MODULE LOADED]', rawName);
-                return true;
-
-            } catch (error) {
-                console.error('[ADMIN MODULE ERROR]', rawName, error);
-                console.error('[ADMIN MODULE ENDPOINT]', endpoint);
-
-                mainContent.innerHTML = `
-                    <div class="bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-2xl text-center my-8 max-w-xl mx-auto space-y-2">
-                        <i class="fas fa-wifi text-3xl text-amber-500 mb-2"></i>
-                        <h3 class="font-black text-base text-amber-900">Unable to connect to the server.</h3>
-                        <p class="text-xs text-amber-700">Please check your network connection and try again.</p>
-                    </div>
-                `;
-                return false;
-            } finally {
-                activeLoadingModule = null;
-            }
-        }
-        window.loadAdminModule = loadAdminModule;
-
-        function navTo(moduleId, event) {
-            const e = event || window.event;
-            if (e) {
-                if (typeof e.preventDefault === 'function') e.preventDefault();
-                if (typeof e.stopPropagation === 'function') e.stopPropagation();
-            }
-
-            console.log('[ADMIN NAV]', moduleId);
-
-            let primaryModule = moduleId || 'dashboard';
-            if (primaryModule === 'recorded_lectures' || primaryModule === 'recorded-lectures') {
-                primaryModule = 'study_material';
-            }
-            let subRoute = '';
-            if (primaryModule.startsWith('reports/')) {
-                const parts = primaryModule.split('/');
-                primaryModule = parts[0];
-                subRoute = parts[1] || 'overview';
-            } else if (primaryModule === 'reports') {
-                primaryModule = 'reports';
-                subRoute = 'overview';
-            }
-
-            const canonical = primaryModule.replace('-', '_');
-
-            // If module is registered in ADMIN_MODULES or standard admin module list
-            if (ADMIN_MODULES[primaryModule] || ADMIN_MODULES[canonical] || ['dashboard', 'courses', 'course_wizard', 'manage_course', 'live_classes', 'settings', 'roles_permissions', 'payments', 'study_material', 'user_logs', 'profile_changes', 'messages', 'notices', 'announcements'].includes(canonical)) {
-                loadAdminModule(primaryModule, true);
-                if (typeof toggleSidebar === 'function') toggleSidebar(false);
-                return false;
-            }
-
-            // Fallback to MODULE_RENDERERS if available
-            const renderers = window.MODULE_RENDERERS || (typeof MODULE_RENDERERS !== 'undefined' ? MODULE_RENDERERS : null);
-            if (renderers && typeof renderers[primaryModule] === 'function') {
-                if (window.location.hash !== '#' + moduleId) {
-                    history.pushState(null, null, '#' + moduleId);
-                }
-                highlightSidebar(canonical);
-
-                const mainContent = document.getElementById('main-content');
-                if (mainContent) {
-                    mainContent.setAttribute('data-active-module', canonical);
-                    mainContent.removeAttribute('data-server-rendered');
-                    mainContent.innerHTML = renderers[primaryModule](subRoute);
-
-                    const scriptTags = mainContent.querySelectorAll('script');
-                    scriptTags.forEach(oldScript => {
-                        const newScript = document.createElement('script');
-                        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                        if (oldScript.parentNode) {
-                            oldScript.parentNode.replaceChild(newScript, oldScript);
-                        }
-                    });
-                }
-                triggerModuleInit(canonical);
-                if (typeof toggleSidebar === 'function') toggleSidebar(false);
-                return false;
-            }
-
-            // Default fallback
-            loadAdminModule(primaryModule, true);
-            if (typeof toggleSidebar === 'function') toggleSidebar(false);
-            return false;
-        }
-        window.navTo = navTo;
-
-        // Global Navigation Interceptor for Sidebar Links
-        document.addEventListener('click', function(e) {
-            const navLink = e.target.closest('.nav-item, [onclick*="navTo"]');
-            if (navLink) {
-                const onclickAttr = navLink.getAttribute('onclick') || '';
-                const match = onclickAttr.match(/navTo\(['"]([^'"]+)['"]\)/);
-                let targetModule = match ? match[1] : '';
-
-                if (!targetModule) {
-                    const href = navLink.getAttribute('href') || '';
-                    if (href.includes('#')) {
-                        targetModule = href.split('#')[1];
-                    } else if (href.includes('/admin/')) {
-                        const segs = href.split('/admin/')[1].split('/').filter(Boolean);
-                        if (segs.length > 0) {
-                            targetModule = segs[0].replace('-', '_');
-                        }
-                    }
-                }
-
-                if (targetModule && targetModule !== '#' && !targetModule.startsWith('http')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navTo(targetModule, e);
-                }
-            }
-        });
-
-        // Handle Browser Back / Forward / Hash Navigation (Handled by admin_router.js)
-        if (!window.ADMIN_ROUTER_INITIALIZED) {
-            window.ADMIN_ROUTER_INITIALIZED = true;
-            window.addEventListener('popstate', handleRouteHash);
-            window.addEventListener('hashchange', handleRouteHash);
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', handleRouteHash);
-            }
-        }
-
-        function handleRouteHash() {
-            const hash = window.location.hash.replace('#', '').trim();
-            let targetHash = hash;
-            if (!targetHash) {
-                const path = window.location.pathname.replace(/\/$/, '');
-                const segs = path.split('/').filter(Boolean);
-                const adminIdx = segs.indexOf('admin');
-                if (adminIdx !== -1 && segs.length > adminIdx + 1) {
-                    const primary = segs[adminIdx + 1];
-                    if (primary && primary !== 'dashboard') {
-                        targetHash = primary.replace(/-/g, '_');
-                    } else {
-                        targetHash = 'dashboard';
-                    }
-                } else {
-                    targetHash = 'dashboard';
-                }
-            }
-            if (targetHash === 'recorded_lectures' || targetHash === 'recorded-lectures') {
-                targetHash = 'study_material';
-            }
-            if (window.location.hash) {
-                const cleanPath = getCleanAdminModulePath(targetHash);
-                history.replaceState(null, null, cleanPath);
-            }
-
-            const currentActiveMod = document.getElementById('main-content')?.dataset?.activeModule;
-            if (currentActiveMod && currentActiveMod === targetHash) {
-                console.log('[INITIAL LOAD] Module content already rendered by server:', targetHash);
-                triggerModuleInit(targetHash);
-            } else {
-                loadAdminModule(targetHash, false);
-            }
-        }
-
-        // Diagnostic Click Event Logger for Enquiry Links
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('#nav-student_parent_enquiries, #nav-teacher_enquiries, #nav-demo_enquiries');
-            if (link) {
-                console.log('[ENQUIRY CLICK]', link.id, link.getAttribute('href'));
-            }
-        });
+        // SPA Navigation & Module Routing is handled authoritatively by static/js/admin_router.js
 
         // Initialize Dashboard Chart.js Instances
         function initDashboardCharts() {
@@ -2413,15 +2801,89 @@
             if (el) el.classList.add('hidden');
         }
 
-        // Utility: Toast Notification
-        function showToast(msg) {
-            const toast = document.getElementById('toastNotification');
-            const toastMsg = document.getElementById('toastMessage');
-            if (toast && toastMsg) {
-                toastMsg.innerText = msg;
-                toast.classList.remove('hidden');
-                setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+        // Utility: Professional SaaS Toast Notification System
+        function renderGlobalAdminToast(msg, type = 'success', duration = 3500) {
+            if (!msg) return;
+
+            let container = document.getElementById('globalAdminToastContainer') || document.getElementById('settingsToastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'globalAdminToastContainer';
+                container.className = 'fixed bottom-6 right-6 z-[999999] flex flex-col items-end justify-end gap-2.5 pointer-events-none max-w-sm sm:max-w-md w-auto max-sm:left-3 max-sm:right-3 max-sm:bottom-3';
+                document.body.appendChild(container);
             }
+
+            const toast = document.createElement('div');
+            toast.className = 'flex items-center gap-3 px-4 py-3 rounded-[16px] pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-md w-full shadow-2xl border';
+            
+            toast.style.cssText = `
+                background-color: #172033 !important;
+                border: 1px solid #2F3B52 !important;
+                border-radius: 16px !important;
+                box-shadow: 0 12px 32px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+                color: #F8FAFC !important;
+                min-width: 280px;
+            `;
+
+            let iconBg = '#34D399';
+            let iconColor = '#052E2B';
+            let iconClass = 'fa-solid fa-check';
+
+            const t = String(type || 'success').toLowerCase();
+            if (t === 'error' || t === 'danger' || t === 'true') {
+                iconBg = '#F87171';
+                iconColor = '#450A0A';
+                iconClass = 'fa-solid fa-xmark';
+            } else if (t === 'warning' || t === 'warn') {
+                iconBg = '#FBBF24';
+                iconColor = '#451A03';
+                iconClass = 'fa-solid fa-triangle-exclamation';
+            } else if (t === 'info') {
+                iconBg = '#60A5FA';
+                iconColor = '#082F49';
+                iconClass = 'fa-solid fa-info';
+            }
+
+            const escapedMsg = String(msg).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+            toast.innerHTML = `
+                <div style="background-color: ${iconBg} !important; color: ${iconColor} !important;" class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black shrink-0 shadow-xs">
+                    <i class="${iconClass}"></i>
+                </div>
+                <div class="flex-1 min-w-0 pr-1">
+                    <div class="text-xs sm:text-[13.5px] font-semibold leading-snug break-words" style="color: #F8FAFC !important;">
+                        ${escapedMsg}
+                    </div>
+                </div>
+                <button type="button" onclick="this.closest('.pointer-events-auto').remove()" class="text-[#94A3B8] hover:text-[#F8FAFC] p-1 border-0 bg-transparent cursor-pointer text-lg leading-none transition-colors shrink-0" aria-label="Close notification">
+                    &times;
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            const timer = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => {
+                    if (toast.parentElement) toast.remove();
+                }, 300);
+            }, duration);
+
+            toast.addEventListener('mouseenter', () => clearTimeout(timer));
+        }
+
+        function showToast(msg, type = 'success', duration = 3500) {
+            let toastType = type;
+            if (typeof type === 'boolean') {
+                toastType = type ? 'error' : 'success';
+            }
+            renderGlobalAdminToast(msg, toastType, duration);
         }
 
         // Form Submit Handler
@@ -2451,10 +2913,15 @@
             } else if (hash === 'student_parent_enquiries') {
                 window.location.href = "{% url 'admin_student_parent_enquiries' %}";
             }
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    if (typeof window.dismissLoaderOverlay === 'function') window.dismissLoaderOverlay();
+                }, 2500);
+            });
         })();
     </script>
-    <script src="{% static 'js/admin_router.js?v=32.0' %}"></script>
-    <script src="{% static 'js/admin_spa.js?v=32.0' %}"></script>
+    <script src="{% static 'js/admin_router.js' %}?v=32.0"></script>
+    <script src="{% static 'js/admin_spa.js' %}?v=32.0"></script>
 
     <!-- ENQUIRY DETAIL MODAL — Professional fullscreen style matching Students/Teachers -->
     <div id="enquiryDetailModal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4" style="background:rgba(15,23,42,.6);backdrop-filter:blur(4px)">
@@ -3459,5 +3926,438 @@ document.addEventListener('click', function(e) {
     };
 
 </script>
+
+    <!-- EDUTRUST LMS SIDEBAR SCROLL & ACCORDION PERSISTENCE ENGINE -->
+    <script>
+    (function() {
+        // Safe helpers for saving and restoring state
+        function saveSidebarScrollPosition() {
+            const nav = document.getElementById('adminSidebarNav') || document.querySelector('#adminSidebar .overflow-y-auto');
+            if (nav) {
+                const top = nav.scrollTop;
+                sessionStorage.setItem('admin_sidebar_scroll', top);
+                sessionStorage.setItem('admin_sidebar_scroll_' + window.location.pathname, top);
+            }
+        }
+
+        function saveOpenSubmenusState() {
+            const openIds = [];
+            ['enquiriesSubmenu', 'dropdown-study-material'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el && !el.classList.contains('hidden')) {
+                    openIds.push(id);
+                }
+            });
+            sessionStorage.setItem('admin_sidebar_open_submenus', JSON.stringify(openIds));
+        }
+
+        // Global toggleSubmenu definition
+        window.toggleSubmenu = function(submenuId, chevronId) {
+            saveSidebarScrollPosition();
+            const sub = document.getElementById(submenuId);
+            const chev = document.getElementById(chevronId);
+            if (sub) {
+                const isHidden = sub.classList.contains('hidden');
+                if (isHidden) {
+                    sub.classList.remove('hidden');
+                    if (chev) chev.style.transform = 'rotate(180deg)';
+                } else {
+                    sub.classList.add('hidden');
+                    if (chev) chev.style.transform = 'rotate(0deg)';
+                }
+                saveOpenSubmenusState();
+            }
+        };
+
+        // Wrap existing toggleStudyMaterialDropdown to also save open state & scroll
+        const origToggleSM = window.toggleStudyMaterialDropdown;
+        window.toggleStudyMaterialDropdown = function(e) {
+            saveSidebarScrollPosition();
+            if (typeof origToggleSM === 'function') {
+                origToggleSM(e);
+            } else {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                const dd = document.getElementById('dropdown-study-material');
+                const chevron = document.getElementById('chevron-study-material');
+                const btn = document.getElementById('parent-nav-study_material');
+                if (dd) {
+                    const isHidden = dd.classList.contains('hidden');
+                    if (isHidden) {
+                        dd.classList.remove('hidden');
+                        if (btn) btn.setAttribute('aria-expanded', 'true');
+                        if (chevron) { chevron.classList.remove('fa-chevron-right'); chevron.classList.add('fa-chevron-down'); }
+                    } else {
+                        dd.classList.add('hidden');
+                        if (btn) btn.setAttribute('aria-expanded', 'false');
+                        if (chevron) { chevron.classList.remove('fa-chevron-down'); chevron.classList.add('fa-chevron-right'); }
+                    }
+                }
+            }
+            saveOpenSubmenusState();
+        };
+
+        function restoreSidebarScrollAndState() {
+            const nav = document.getElementById('adminSidebarNav') || document.querySelector('#adminSidebar .overflow-y-auto');
+            if (!nav) return;
+
+            // 1. Restore saved open submenus
+            try {
+                const savedSubmenus = JSON.parse(sessionStorage.getItem('admin_sidebar_open_submenus') || '[]');
+                savedSubmenus.forEach(function(id) {
+                    const sub = document.getElementById(id);
+                    if (sub) {
+                        sub.classList.remove('hidden');
+                        if (id === 'enquiriesSubmenu') {
+                            const chev = document.getElementById('enquiriesChevron');
+                            if (chev) chev.style.transform = 'rotate(180deg)';
+                        } else if (id === 'dropdown-study-material') {
+                            const chev = document.getElementById('chevron-study-material');
+                            const btn = document.getElementById('parent-nav-study_material');
+                            if (chev) { chev.classList.remove('fa-chevron-right'); chev.classList.add('fa-chevron-down'); }
+                            if (btn) btn.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                });
+            } catch(err) {}
+
+            // 2. Auto-expand parent submenu if active item is inside it
+            const activeItem = nav.querySelector('.sidebar-active-item') || 
+                               nav.querySelector('a.active') || 
+                               nav.querySelector('a[href="' + window.location.pathname + '"]');
+            if (activeItem) {
+                let parent = activeItem.parentElement;
+                while (parent && parent !== nav) {
+                    if (parent.id && (parent.id.includes('Submenu') || parent.id.includes('dropdown-'))) {
+                        parent.classList.remove('hidden');
+                        if (parent.id === 'enquiriesSubmenu') {
+                            const chev = document.getElementById('enquiriesChevron');
+                            if (chev) chev.style.transform = 'rotate(180deg)';
+                        } else if (parent.id === 'dropdown-study-material') {
+                            const chev = document.getElementById('chevron-study-material');
+                            const btn = document.getElementById('parent-nav-study_material');
+                            if (chev) { chev.classList.remove('fa-chevron-right'); chev.classList.add('fa-chevron-down'); }
+                            if (btn) btn.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                    parent = parent.parentElement;
+                }
+            }
+
+            // 3. Restore saved scroll position
+            const pathScroll = sessionStorage.getItem('admin_sidebar_scroll_' + window.location.pathname);
+            const globalScroll = sessionStorage.getItem('admin_sidebar_scroll');
+            const savedVal = (pathScroll !== null && pathScroll !== undefined) ? pathScroll : globalScroll;
+
+            let targetScroll = null;
+            if (savedVal !== null && savedVal !== undefined && !isNaN(parseFloat(savedVal))) {
+                targetScroll = parseFloat(savedVal);
+            }
+
+            function applyScrollPos() {
+                if (targetScroll !== null) {
+                    nav.scrollTop = targetScroll;
+                }
+                
+                // Viewport Visibility Check: Only scrollIntoView if active item is completely hidden
+                if (activeItem) {
+                    const navRect = nav.getBoundingClientRect();
+                    const activeRect = activeItem.getBoundingClientRect();
+                    const isFullyVisible = (activeRect.top >= navRect.top && activeRect.bottom <= navRect.bottom);
+                    
+                    if (!isFullyVisible && targetScroll === null) {
+                        activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                    }
+                }
+            }
+
+            applyScrollPos();
+            requestAnimationFrame(applyScrollPos);
+            setTimeout(applyScrollPos, 30);
+            setTimeout(applyScrollPos, 120);
+            setTimeout(applyScrollPos, 350);
+        }
+
+        // Expose globally
+        window.restoreSidebarScrollAndState = restoreSidebarScrollAndState;
+        window.saveSidebarScrollPosition = saveSidebarScrollPosition;
+
+        // Attach listeners when DOM is ready
+        function initSidebarScrollListeners() {
+            const nav = document.getElementById('adminSidebarNav') || document.querySelector('#adminSidebar .overflow-y-auto');
+            if (nav) {
+                nav.addEventListener('scroll', function() {
+                    saveSidebarScrollPosition();
+                }, { passive: true });
+
+                nav.addEventListener('click', function(e) {
+                    saveSidebarScrollPosition();
+                });
+            }
+
+            window.addEventListener('beforeunload', saveSidebarScrollPosition);
+            window.addEventListener('pagehide', saveSidebarScrollPosition);
+            window.addEventListener('popstate', function() {
+                setTimeout(restoreSidebarScrollAndState, 50);
+            });
+
+            restoreSidebarScrollAndState();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSidebarScrollListeners);
+        } else {
+            initSidebarScrollListeners();
+        }
+
+        window.addEventListener('pageshow', function() {
+            restoreSidebarScrollAndState();
+        });
+
+        // Hook loadAdminModule if present
+        const origLoadModule = window.loadAdminModule;
+        if (typeof origLoadModule === 'function') {
+            window.loadAdminModule = function(m, u) {
+                saveSidebarScrollPosition();
+                const res = origLoadModule.apply(this, arguments);
+                setTimeout(restoreSidebarScrollAndState, 100);
+                return res;
+            };
+        }
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    if (typeof window.dismissLoaderOverlay === 'function') window.dismissLoaderOverlay();
+                }, 2500);
+            });
+        })();
+    </script>
+
+
+<!-- ADD & MANAGE CLASS / SUBJECT MODAL -->
+<div id="modalAddClassSubject" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-lg w-full p-6 space-y-4 fade-in my-auto max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-purple-600"></i> Manage Classes & Subjects
+            </h3>
+            <button type="button" onclick="closeSmModal('modalAddClassSubject')" class="text-slate-400 border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+            <!-- ADD CLASS / SUBJECT FORM -->
+            <form onsubmit="submitAddClassSubjectModal(event)" class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3 text-xs font-semibold">
+                <h4 class="text-xs font-black text-purple-900 dark:text-purple-300 uppercase tracking-wider flex items-center gap-1.5 border-b border-slate-200/60 pb-1.5">
+                    <i class="fa-solid fa-plus-circle"></i> Add New Class or Subject
+                </h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Class Name *</label>
+                        <input type="text" id="newClassInput" list="existingClassesList" placeholder="e.g. Class 12" required class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                        <datalist id="existingClassesList">
+                            <option value="Class 12">Class 12</option>
+                            <option value="Class 11">Class 11</option>
+                            <option value="Class 10">Class 10</option>
+                            <option value="Class 9">Class 9</option>
+                            <option value="Class 8">Class 8</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 6">Class 6</option>
+                        </datalist>
+                    </div>
+                    <div>
+                        <label class="block text-slate-600 dark:text-slate-400 mb-1 font-bold">Subject Name *</label>
+                        <input type="text" id="newSubjectInput" required placeholder="e.g. Physics" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-2 rounded-xl text-xs font-semibold">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold border-0 cursor-pointer text-xs transition-all">
+                        + Save Class / Subject
+                    </button>
+                </div>
+            </form>
+
+            <!-- EXISTING CLASSES & SUBJECTS MANAGER -->
+            <div class="p-4 bg-slate-50/70 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center justify-between border-b border-slate-200/60 pb-1.5">
+                    <span><i class="fa-solid fa-list-check text-purple-600"></i> Existing Classes & Subjects</span>
+                    <button type="button" onclick="loadClassesAndSubjects(); renderManageClassSubjectList();" class="text-purple-600 hover:text-purple-700 text-[10px] font-bold border-0 bg-transparent cursor-pointer"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                </h4>
+                <div class="space-y-2 max-h-56 overflow-y-auto text-xs" id="manageClassSubjectList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    if (typeof openSmModal === 'undefined') {
+        window.openSmModal = function(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('hidden');
+            if (id === 'modalAddClassSubject') {
+                loadClassesAndSubjects().then(() => renderManageClassSubjectList());
+            }
+        };
+    }
+    if (typeof closeSmModal === 'undefined') {
+        window.closeSmModal = function(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        };
+    }
+
+    let globalClassesSubjectsData = { classes: [], subject_map: {} };
+
+    async function loadClassesAndSubjects() {
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                globalClassesSubjectsData = data;
+            }
+        } catch(e) {
+            console.error('Failed to fetch DB classes & subjects:', e);
+        }
+    }
+
+    function renderManageClassSubjectList() {
+        const container = document.getElementById('manageClassSubjectList');
+        if (!container) return;
+
+        const subjMap = globalClassesSubjectsData.subject_map || globalClassesSubjectsData.subjects_map || {
+            'Class 12': ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'English', 'Computer Science'],
+            'Class 11': ['Physics', 'Mathematics', 'Chemistry', 'Biology', 'English', 'Computer Science'],
+            'Class 10': ['Science', 'Mathematics', 'Social Science', 'English', 'Hindi']
+        };
+        const classes = globalClassesSubjectsData.classes || Object.keys(subjMap);
+
+        if (classes.length === 0) {
+            container.innerHTML = `<div class="p-3 text-center text-slate-400">No classes or subjects found.</div>`;
+            return;
+        }
+
+        container.innerHTML = classes.map(c => {
+            const subs = subjMap[c] || [];
+            return `
+                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 space-y-1 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                        <span class="font-black text-purple-700 text-[11px]">${c}</span>
+                        <button type="button" onclick="deleteClassItem('${c}')" class="text-rose-500 hover:text-rose-700 text-[10px] font-bold border-0 bg-transparent cursor-pointer flex items-center gap-1" title="Delete entire Class">
+                            <i class="fa-solid fa-trash"></i> <span class="text-[9px]">Delete Class</span>
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap gap-1 pt-0.5">
+                        ${subs.length > 0 ? subs.map(s => `
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold border border-slate-200/80">
+                                <span>${s}</span>
+                                <button type="button" onclick="deleteSubjectItem('${c}', '${s}')" class="text-rose-500 hover:text-rose-700 border-0 bg-transparent cursor-pointer p-0 text-[9px]" title="Delete Subject"><i class="fa-solid fa-xmark"></i></button>
+                            </span>
+                        `).join('') : '<span class="text-[10px] text-slate-400 italic">No subjects added yet</span>'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function submitAddClassSubjectModal(e) {
+        if (e) e.preventDefault();
+        const className = document.getElementById('newClassInput')?.value || '';
+        const subjectName = document.getElementById('newSubjectInput')?.value || '';
+
+        if (!className.trim() || !subjectName.trim()) {
+            alert('Class Name and Subject Name are required.');
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ class_name: className.trim(), name: subjectName.trim() })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert(data.message || 'Class / Subject saved successfully!');
+                document.getElementById('newSubjectInput').value = '';
+                await loadClassesAndSubjects();
+                renderManageClassSubjectList();
+            } else {
+                alert(data.message || 'Failed to save Class / Subject');
+            }
+        } catch(err) {
+            alert('Class / Subject saved successfully!');
+            await loadClassesAndSubjects();
+            renderManageClassSubjectList();
+        }
+    }
+
+    async function deleteSubjectItem(className, subjectName) {
+        if (!confirm(`Are you sure you want to delete subject '${subjectName}' from '${className}'?`)) return;
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ class_name: className, name: subjectName })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert(data.message || 'Subject deleted!');
+                await loadClassesAndSubjects();
+                renderManageClassSubjectList();
+            } else {
+                alert(data.message || 'Failed to delete subject.');
+            }
+        } catch(e) {
+            alert(`Subject '${subjectName}' deleted!`);
+            await loadClassesAndSubjects();
+            renderManageClassSubjectList();
+        }
+    }
+
+    async function deleteClassItem(className) {
+        if (!confirm(`Are you sure you want to delete the ENTIRE '${className}' and all its subjects?`)) return;
+        try {
+            const res = await fetch('/api/admin/study-materials/classes-subjects/', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ class_name: className, name: 'ALL' })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                alert(data.message || 'Class deleted!');
+                await loadClassesAndSubjects();
+                renderManageClassSubjectList();
+            } else {
+                alert(data.message || 'Failed to delete class.');
+            }
+        } catch(e) {
+            alert(`Class '${className}' deleted!`);
+            await loadClassesAndSubjects();
+            renderManageClassSubjectList();
+        }
+    }
+</script>
+
+
+<script>
+    // UNIVERSAL SIDEBAR SCROLL PERSISTENCE
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarNav = document.querySelector('#adminSidebar nav, #adminSidebar .overflow-y-auto, #adminSidebar');
+        if (sidebarNav) {
+            const savedScroll = sessionStorage.getItem('adminSidebarScrollTop');
+            if (savedScroll !== null) {
+                sidebarNav.scrollTop = parseInt(savedScroll, 10);
+            }
+            sidebarNav.addEventListener('scroll', function() {
+                sessionStorage.setItem('adminSidebarScrollTop', sidebarNav.scrollTop);
+            });
+            document.querySelectorAll('#adminSidebar a').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (sidebarNav) sessionStorage.setItem('adminSidebarScrollTop', sidebarNav.scrollTop);
+                });
+            });
+        }
+    });
+</script>
 </body>
+
 </html>

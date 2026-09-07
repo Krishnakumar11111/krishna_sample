@@ -1,0 +1,111 @@
+{% if platform_active_loader and platform_active_loader.show_on_website %}
+<div id="edutrustGlobalPageLoader" style="--loader-bg: {% if platform_active_loader.background_color and platform_active_loader.background_color != '#ffffff' %}{{ platform_active_loader.background_color }}{% else %}#f0f7ff{% endif %};" class="fixed inset-0 z-[2147483647] w-screen h-screen m-0 p-0 bg-[#f0f7ff] dark:bg-slate-950 flex items-center justify-center text-center transition-all duration-400 opacity-100 pointer-events-auto overflow-hidden">
+    <div class="w-full h-full flex items-center justify-center p-0 m-0">
+        
+        {% if platform_active_loader.logo_url and '.mp4' in platform_active_loader.logo_url or '.webm' in platform_active_loader.logo_url or platform_active_loader.animation_style == 'Video Loader' or platform_active_loader.loader_type == 'Video' %}
+            <div class="relative w-full h-full flex items-center justify-center">
+                <div id="videoLoaderBufferFallback" class="absolute inset-0 flex flex-col items-center justify-center space-y-3 z-0 pointer-events-none">
+                    {% if platform_logo_url %}<img src="{{ platform_logo_url }}" class="h-12 max-w-[140px] object-contain mx-auto animate-pulse" alt="EduTrust Logo">{% endif %}
+                    <div class="w-8 h-8 rounded-full border-3 border-blue-600 border-t-transparent animate-spin"></div>
+                </div>
+                <video src="{{ platform_active_loader.logo_url }}" autoplay muted playsinline preload="auto" type="video/mp4" class="relative z-10 w-full h-full max-h-[92vh] max-w-[96vw] object-contain mx-auto m-0 p-0" onplaying="const fb = document.getElementById('videoLoaderBufferFallback'); if(fb) fb.classList.add('hidden');"></video>
+            </div>
+        {% elif platform_active_loader.logo_url and '.gif' in platform_active_loader.logo_url or '.svg' in platform_active_loader.logo_url or '.webp' in platform_active_loader.logo_url or '.jpg' in platform_active_loader.logo_url or '.png' in platform_active_loader.logo_url %}
+            <img src="{{ platform_active_loader.logo_url }}" class="w-full h-full max-h-[92vh] max-w-[96vw] object-contain mx-auto m-0 p-0" alt="Custom Loader">
+        {% else %}
+            <div class="flex flex-col items-center justify-center space-y-3 p-4">
+                {% if platform_logo_url %}<img id="gLoaderLogo" src="{% if platform_active_loader.use_platform_logo %}{{ platform_logo_url }}{% else %}{{ platform_active_loader.logo_url|default:platform_logo_url }}{% endif %}" class="app-platform-logo-img h-14 max-w-[160px] object-contain mx-auto mb-2 animate-pulse" alt="EduTrust Logo">{% endif %}
+                
+                <div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight" id="gLoaderTitle">{{ platform_active_loader.loading_text|default:"EduTrust LMS" }}</h2>
+                    <p class="text-xs text-slate-400 font-medium mt-1" id="gLoaderTagline">{{ platform_active_loader.tagline|default:"No.1 Learning Platform in India" }}</p>
+                </div>
+
+                {% if platform_active_loader.loader_type == 'Minimal' or platform_active_loader.animation_style == 'Spinner' %}
+                    <div class="w-10 h-10 rounded-full border-3 border-t-transparent animate-spin mx-auto mt-2" style="border-color: var(--loader-primary, #2563eb); border-top-color: transparent;"></div>
+                {% elif platform_active_loader.loader_type == 'Dots' or platform_active_loader.animation_style == 'Dots' %}
+                    <div class="flex items-center justify-center gap-2 py-2 mt-2">
+                        <div class="w-3 h-3 rounded-full animate-bounce" style="background-color: var(--loader-primary, #2563eb); animation-delay: 0s;"></div>
+                        <div class="w-3 h-3 rounded-full animate-bounce" style="background-color: var(--loader-secondary, #7c3aed); animation-delay: 0.15s;"></div>
+                        <div class="w-3 h-3 rounded-full animate-bounce" style="background-color: var(--loader-primary, #2563eb); animation-delay: 0.3s;"></div>
+                    </div>
+                {% else %}
+                    <div class="w-48 bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-2">
+                        <div class="h-full rounded-full animate-pulse" style="width: 75%; background: linear-gradient(90deg, var(--loader-primary, #2563eb), var(--loader-secondary, #7c3aed));"></div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+<script>
+    (function() {
+        const loaderEl = document.getElementById('edutrustGlobalPageLoader');
+        if (!loaderEl) return;
+
+        let dismissed = false;
+        function dismissLoaderOverlay() {
+            if (dismissed) return;
+            dismissed = true;
+            loaderEl.classList.add('hidden', 'is-hidden');
+            loaderEl.style.opacity = '0';
+            loaderEl.style.pointerEvents = 'none';
+            document.body.classList.remove('app-is-loading', 'loader-active');
+            document.documentElement.classList.remove('app-is-loading', 'loader-active');
+            setTimeout(function() {
+                if (loaderEl && loaderEl.parentNode) {
+                    loaderEl.parentNode.removeChild(loaderEl);
+                }
+            }, 400);
+        }
+
+        const minDuration = parseInt("{{ platform_active_loader.minimum_display_time|default:500 }}") || 500;
+        const maxDuration = Math.min(parseInt("{{ platform_active_loader.maximum_display_time|default:3500 }}") || 3500, 3500);
+        
+        const maxSafetyTimer = setTimeout(dismissLoaderOverlay, maxDuration);
+
+        const videoEl = loaderEl.querySelector('video');
+        if (videoEl) {
+            videoEl.muted = true;
+            videoEl.playsInline = true;
+            
+            videoEl.addEventListener('ended', function() {
+                clearTimeout(maxSafetyTimer);
+                dismissLoaderOverlay();
+            });
+            videoEl.addEventListener('playing', function() {
+                const fb = document.getElementById('videoLoaderBufferFallback');
+                if (fb) fb.classList.add('hidden');
+            });
+            videoEl.addEventListener('loadedmetadata', function() {
+                if (videoEl.duration && !isNaN(videoEl.duration) && videoEl.duration > 0) {
+                    setTimeout(dismissLoaderOverlay, Math.min(videoEl.duration * 1000, maxDuration));
+                }
+            });
+            videoEl.addEventListener('error', dismissLoaderOverlay);
+
+            try {
+                const p = videoEl.play();
+                if (p && p.catch) {
+                    p.catch(function(err) {
+                        const fb = document.getElementById('videoLoaderBufferFallback');
+                        if (fb) fb.classList.remove('hidden');
+                        setTimeout(dismissLoaderOverlay, minDuration);
+                    });
+                }
+            } catch(e) {
+                setTimeout(dismissLoaderOverlay, minDuration);
+            }
+        } else {
+            window.addEventListener('load', function() {
+                setTimeout(dismissLoaderOverlay, minDuration);
+            });
+        }
+
+        window.addEventListener('load', function() {
+            setTimeout(dismissLoaderOverlay, minDuration + 500);
+        });
+    })();
+</script>
+{% endif %}

@@ -713,24 +713,12 @@ async function confirmExecuteDeleteRole() {
     }
 }
 
-function showToast(msg, type = 'success') {
-    const toast = document.getElementById('rolesToast');
-    const icon = document.getElementById('rolesToastIcon');
-    const msgEl = document.getElementById('rolesToastMsg');
-    if (!toast) return;
-
-    msgEl.textContent = msg;
-    toast.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'bg-rose-50', 'text-rose-700');
-    
-    if (type === 'success') {
-        toast.classList.add('bg-emerald-50', 'text-emerald-700', 'border', 'border-emerald-200');
-        icon.className = 'fas fa-check-circle text-base text-emerald-600';
-    } else {
-        toast.classList.add('bg-rose-50', 'text-rose-700', 'border', 'border-rose-200');
-        icon.className = 'fas fa-exclamation-triangle text-base text-rose-600';
+function showToast(msg, type = 'success', duration = 3500) {
+    if (typeof window.renderGlobalAdminToast === 'function') {
+        window.renderGlobalAdminToast(msg, type, duration);
+    } else if (typeof window.showToast === 'function') {
+        window.showToast(msg, type, duration);
     }
-
-    setTimeout(() => { toast.classList.add('hidden'); }, 4000);
 }
 
 function escapeHtml(str) {

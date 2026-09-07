@@ -115,8 +115,8 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-2.5">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5"><i class="fas fa-info-circle text-blue-500"></i> ENQUIRY DETAILS</h4>
             <div class="grid grid-cols-2 gap-2.5 text-xs">
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Submitted Date</span><strong class="text-slate-800">{{ enquiry.created_at|date:"M d, Y I:i A" }}</strong></div>
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ enquiry.updated_at|date:"M d, Y I:i A" }}</strong></div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Submitted Date</span><strong class="text-slate-800">{{ enquiry.created_at|date:"M d, Y h:i A" }}</strong></div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ enquiry.updated_at|date:"M d, Y h:i A" }}</strong></div>
             </div>
         </div>
 

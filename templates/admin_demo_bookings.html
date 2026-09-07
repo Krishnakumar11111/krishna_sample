@@ -195,16 +195,16 @@
                                 <a href="{% url 'admin_demo_booking_detail' item.id %}" title="View Details" aria-label="View Booking Details" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all no-underline inline-flex items-center justify-center p-0 border-0 shadow-2xs">
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
-                                <button id="btn-confirm-{{ item.id }}" onclick="promptConfirmDemoBooking({{ item.id }})" title="Confirm Booking" aria-label="Confirm Booking" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'approved' or item.booking_status|lower == 'confirmed' %}hidden{% endif %}">
+                                <button id="btn-confirm-{{ item.id }}" data-id="{{ item.id }}" onclick="promptConfirmDemoBooking(this.dataset.id)" title="Confirm Booking" aria-label="Confirm Booking" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'confirmed' or item.booking_status|lower == 'completed' or item.booking_status|lower == 'approved' %}hidden{% endif %}">
                                     <i class="fas fa-check text-xs"></i>
                                 </button>
-                                <button onclick="promptCompleteDemoBooking({{ item.id }})" title="Mark Completed" aria-label="Mark Completed" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs">
-                                    <i class="fas fa-graduation-cap text-xs"></i>
-                                </button>
-                                <button id="btn-reject-{{ item.id }}" onclick="promptRejectDemoBooking({{ item.id }})" title="Reject Booking" aria-label="Reject Booking" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'rejected' %}hidden{% endif %}">
+                                <button id="btn-reject-{{ item.id }}" data-id="{{ item.id }}" onclick="promptRejectDemoBooking(this.dataset.id)" title="Reject Booking" aria-label="Reject Booking" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'rejected' or item.booking_status|lower == 'cancelled' or item.booking_status|lower == 'completed' %}hidden{% endif %}">
                                     <i class="fas fa-times text-xs"></i>
                                 </button>
-                                <button onclick="promptRemoveDemoBooking({{ item.id }})" title="Remove Booking" aria-label="Remove Booking" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs">
+                                <button id="btn-complete-{{ item.id }}" data-id="{{ item.id }}" onclick="promptCompleteDemoBooking(this.dataset.id)" title="Complete Booking" aria-label="Complete Booking" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs {% if item.booking_status|lower == 'completed' or item.booking_status|lower == 'rejected' or item.booking_status|lower == 'cancelled' %}hidden{% endif %}">
+                                    <i class="fas fa-graduation-cap text-xs"></i>
+                                </button>
+                                <button id="btn-remove-{{ item.id }}" data-id="{{ item.id }}" onclick="promptRemoveDemoBooking(this.dataset.id)" title="Delete Record" aria-label="Delete Booking" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs">
                                     <i class="fas fa-trash-alt text-xs"></i>
                                 </button>
                             </div>
@@ -328,6 +328,8 @@
     window.sendDemoBookingAction = async function(id, action, reason = '') {
         const confirmBtn = document.getElementById('btn-confirm-' + id);
         const rejectBtn = document.getElementById('btn-reject-' + id);
+        const completeBtn = document.getElementById('btn-complete-' + id);
+        const removeBtn = document.getElementById('btn-remove-' + id);
         const statusBadge = document.getElementById('demo-booking-status-' + id);
 
         let targetBtn = null;
@@ -337,6 +339,10 @@
             targetBtn = confirmBtn;
         } else if (action === 'reject' && rejectBtn) {
             targetBtn = rejectBtn;
+        } else if (action === 'complete' && completeBtn) {
+            targetBtn = completeBtn;
+        } else if (action === 'remove' && removeBtn) {
+            targetBtn = removeBtn;
         }
 
         if (targetBtn) {
@@ -364,6 +370,7 @@
                     }
                     if (confirmBtn) confirmBtn.classList.add('hidden');
                     if (rejectBtn) rejectBtn.classList.remove('hidden');
+                    if (completeBtn) completeBtn.classList.remove('hidden');
 
                     showActionPopup('Booking Confirmed! 🎉', `Demo booking #DEMO-${id} has been confirmed successfully.`, 'success');
                 } else if (action === 'reject' || newStatus === 'rejected') {
@@ -373,6 +380,7 @@
                     }
                     if (rejectBtn) rejectBtn.classList.add('hidden');
                     if (confirmBtn) confirmBtn.classList.remove('hidden');
+                    if (completeBtn) completeBtn.classList.add('hidden');
 
                     const reasonMsg = reason ? ` (Reason: "${reason}")` : '';
                     showActionPopup('Booking Rejected ❌', `Demo class booking #DEMO-${id} has been rejected${reasonMsg}.`, 'reject');
@@ -381,6 +389,9 @@
                         statusBadge.className = 'bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-full text-[9px]';
                         statusBadge.textContent = 'COMPLETED';
                     }
+                    if (confirmBtn) confirmBtn.classList.add('hidden');
+                    if (rejectBtn) rejectBtn.classList.add('hidden');
+                    if (completeBtn) completeBtn.classList.add('hidden');
                     showActionPopup('Booking Completed! 🎓', `Demo class booking #DEMO-${id} marked as completed.`, 'complete');
                 } else if (action === 'remove') {
                     const rowEl = document.getElementById('demo-booking-row-' + id);

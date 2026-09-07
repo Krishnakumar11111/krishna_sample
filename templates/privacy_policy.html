@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | EduTrust Learning Platform</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+
+    {% include "components/public_header.html" %}
+
+    <!-- HEADER SECTION -->
+    <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center">
+        <span class="bg-brand-50 text-brand-600 text-xs font-extrabold uppercase px-3.5 py-1.5 rounded-full tracking-wider border border-brand-100 inline-block mb-3">
+            Legal & Compliance
+        </span>
+        <h1 class="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Privacy Policy</h1>
+        <p class="text-gray-500 mt-2 text-xs md:text-sm font-medium">Last updated: September 2026</p>
+    </section>
+
+    <!-- CONTENT SECTION -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 w-full">
+        <div class="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-sm space-y-8 text-sm text-gray-600 leading-relaxed">
+            
+            <section class="space-y-3">
+                <h2 class="text-lg font-black text-gray-900">1. Introduction & Overview</h2>
+                <p>
+                    EduTrust Tuition Platform ("EduTrust", "we", "our", or "us") is dedicated to protecting the privacy of students, parents, tutors, and visitors who access our website, applications, and learning management systems. This policy explains how we collect, process, store, and safeguard your personal data.
+                </p>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-lg font-black text-gray-900">2. Information We Collect</h2>
+                <p>We collect information necessary to provide tailored tutoring and online educational services, including:</p>
+                <ul class="list-disc pl-5 space-y-1.5 text-xs text-gray-600">
+                    <li><strong>Account Details:</strong> Full name, email address, mobile number, user role (Student, Parent, or Teacher), and hashed passwords.</li>
+                    <li><strong>Academic Profile:</strong> Class, grade level, school board (CBSE, ICSE, State), subjects of interest, and study goals.</li>
+                    <li><strong>Tutor Verification:</strong> Educational qualifications, teaching certifications, years of experience, city/location, and optional profile photos.</li>
+                    <li><strong>Demo Booking Information:</strong> Preferred time slots, tuition mode (Home or Online), address details for in-person tuition, and learning objectives.</li>
+                    <li><strong>Platform Activity:</strong> Test results, homework submissions, attendance in live classes, and log analytics.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-lg font-black text-gray-900">3. How We Use Your Data</h2>
+                <p>Your information is utilized solely to:</p>
+                <ul class="list-disc pl-5 space-y-1.5 text-xs text-gray-600">
+                    <li>Connect students with verified tutors based on subject, grade, and geographic proximity.</li>
+                    <li>Schedule and manage free trial demo classes.</li>
+                    <li>Facilitate batch enrollments and process payments via secure payment gateways.</li>
+                    <li>Provide academic tracking, test scores, DPP performance, and homework evaluations.</li>
+                    <li>Send relevant administrative notifications, class reminders, and safety updates.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-lg font-black text-gray-900">4. Data Security & Storage</h2>
+                <p>
+                    EduTrust implements robust technical and administrative security measures, including SSL encryption, database access restrictions, session timeout policies, and multi-factor authentication (MFA/OTP) for administrative accounts. We never sell or lease your personal information to third-party advertisers.
+                </p>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-lg font-black text-gray-900">5. Your Rights & Contact Details</h2>
+                <p>
+                    Users hold the right to review, update, or request the deletion of their personal profiles at any time. For questions or privacy requests, please contact our Data Protection Officer at <a href="mailto:privacy@edutrust.in" class="text-brand-600 font-bold underline">privacy@edutrust.in</a>.
+                </p>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-300 py-12 border-t border-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="space-y-4">
+                    <span class="text-2xl font-black text-white tracking-tight">Edu<span class="text-brand-500">Trust</span></span>
+                    <p class="text-gray-400 text-sm">Empowering students with verified tutors, live interactive classes, and comprehensive study materials.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="{% url 'courses' %}" class="hover:text-white transition-colors">Courses & Batches</a></li>
+                        <li><a href="{% url 'find_tutor' %}" class="hover:text-white transition-colors">Find a Tutor</a></li>
+                        <li><a href="{% url 'book_demo_page' %}" class="hover:text-white transition-colors">Book Free Demo</a></li>
+                        <li><a href="{% url 'faqs' %}" class="hover:text-white transition-colors">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Company</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="{% url 'about' %}" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" class="hover:text-white transition-colors">Contact Support</a></li>
+                        <li><a href="{% url 'privacy_policy' %}" class="hover:text-white transition-colors font-bold text-white">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms_of_service' %}" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Contact</h4>
+                    <p class="text-sm text-gray-400">support@edutrust.in</p>
+                    <p class="text-sm text-gray-400 mt-1">+91 98765 43210</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>&copy; 2026 EduTrust Platform. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="{% url 'privacy_policy' %}" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="{% url 'terms_of_service' %}" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

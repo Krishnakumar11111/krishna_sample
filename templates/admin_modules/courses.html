@@ -311,12 +311,12 @@
                     <i class="fas fa-layer-group"></i>
                 </div>
                 <div class="min-w-0">
-                    <h3 class="text-base font-black truncate text-white" id="modalBatchTitle">Loading...</h3>
-                    <p class="text-[10px] text-slate-400 font-bold truncate" id="modalBatchSub">Fetching batch details...</p>
+                    <span id="modalBatchTitle" class="text-base sm:text-lg font-black truncate block" style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Loading...</span>
+                    <span id="modalBatchSub" class="text-xs font-bold truncate block mt-0.5" style="color: #93c5fd !important; -webkit-text-fill-color: #93c5fd !important;">Fetching batch details...</span>
                 </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-                <span id="modalBatchStatusBadge" class="bg-slate-700 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">LOADING</span>
+                <span id="modalBatchStatusBadge" class="px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-amber-500 text-white border border-amber-400" style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background-color: #f59e0b;">PAUSED</span>
                 <button onclick="openEditBatchModal(selectedBatchId)" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer transition-colors inline-flex items-center gap-1 shadow-2xs">
                     <i class="fas fa-edit text-[10px]"></i> Edit Batch
                 </button>
@@ -1036,12 +1036,10 @@
                 }
 
                 teachersHTML = `
-                    <div class="text-[10px] text-slate-600 font-semibold leading-tight pt-1 border-t border-slate-100">
-                        <span class="text-slate-400 font-extrabold">Teachers:</span> ${teacherNames}${moreBtn}
-                    </div>
+                    <div class="text-[10px] text-slate-600 font-semibold pt-1 border-t border-slate-100 truncate overflow-hidden min-w-0 max-w-full" title="${first3.map(t => (t.subject_name ? t.subject_name + ': ' + t.full_name : t.full_name)).join(' | ')}"><span class="text-slate-400 font-extrabold shrink-0">Teachers:</span> ${teacherNames}${moreBtn}</div>
                 `;
             } else {
-                teachersHTML = `<div class="text-[10px] text-slate-400 font-semibold pt-1 border-t border-slate-100">Teachers: No teachers assigned</div>`;
+                teachersHTML = `<div class="text-[10px] text-slate-400 font-semibold pt-1 border-t border-slate-100 truncate overflow-hidden min-w-0">Teachers: No teachers assigned</div>`;
             }
 
             let streamBadge = (b.stream && b.stream !== 'N/A') ? ` • ${b.stream}` : '';
@@ -1062,7 +1060,7 @@
             }
 
             html += `
-                <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between" data-batch-id="${b.id}">
+                <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-2 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between overflow-hidden min-w-0" data-batch-id="${b.id}">
                     <div>
                         <!-- CARD TOP BAR -->
                         <div class="flex items-center justify-between gap-1 mb-1.5">
@@ -1158,10 +1156,26 @@
         if (modal) modal.classList.remove('hidden');
 
         // Render immediate loading state inside modal header & body
-        if (document.getElementById('modalBatchTitle')) document.getElementById('modalBatchTitle').innerText = 'Loading batch details...';
-        if (document.getElementById('modalBatchSub')) document.getElementById('modalBatchSub').innerText = `Batch ID #${batchId}`;
+        const tInit = document.getElementById('modalBatchTitle');
+        if (tInit) {
+            tInit.innerText = 'Loading batch details...';
+            tInit.style.setProperty('color', '#ffffff', 'important');
+            tInit.style.setProperty('-webkit-text-fill-color', '#ffffff', 'important');
+        }
+        const sInit = document.getElementById('modalBatchSub');
+        if (sInit) {
+            sInit.innerText = `Batch ID #${batchId}`;
+            sInit.style.setProperty('color', '#93c5fd', 'important');
+            sInit.style.setProperty('-webkit-text-fill-color', '#93c5fd', 'important');
+        }
         const badge = document.getElementById('modalBatchStatusBadge');
-        if (badge) badge.innerText = 'LOADING...';
+        if (badge) {
+            badge.innerText = 'LOADING...';
+            badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-slate-700 text-white border border-slate-600';
+            badge.style.backgroundColor = '#334155';
+            badge.style.setProperty('color', '#ffffff', 'important');
+            badge.style.setProperty('-webkit-text-fill-color', '#ffffff', 'important');
+        }
 
         const tabBody = document.getElementById('batchModalTabContent');
         if (tabBody) {
@@ -1192,11 +1206,43 @@
             if (res.ok && data.data && data.data.id == batchId) {
                 activeBatchDetail = data.data;
 
-                if (document.getElementById('modalBatchTitle')) document.getElementById('modalBatchTitle').innerText = activeBatchDetail.title;
-                if (document.getElementById('modalBatchSub')) document.getElementById('modalBatchSub').innerText = `${activeBatchDetail.course_id} • ${activeBatchDetail.class_name} ${activeBatchDetail.board}`;
+                const titleEl = document.getElementById('modalBatchTitle');
+                if (titleEl) {
+                    titleEl.innerText = activeBatchDetail.title;
+                    titleEl.style.setProperty('color', '#ffffff', 'important');
+                    titleEl.style.setProperty('-webkit-text-fill-color', '#ffffff', 'important');
+                }
+                const subEl = document.getElementById('modalBatchSub');
+                if (subEl) {
+                    subEl.innerText = `${activeBatchDetail.course_id} • ${activeBatchDetail.class_name} ${activeBatchDetail.board}`;
+                    subEl.style.setProperty('color', '#93c5fd', 'important');
+                    subEl.style.setProperty('-webkit-text-fill-color', '#93c5fd', 'important');
+                }
 
                 if (badge) {
-                    badge.innerText = (activeBatchDetail.status || 'ACTIVE').toUpperCase();
+                    const st = (activeBatchDetail.status || 'ACTIVE').toUpperCase();
+                    badge.innerText = st;
+                    badge.style.setProperty('color', '#ffffff', 'important');
+                    badge.style.setProperty('-webkit-text-fill-color', '#ffffff', 'important');
+                    if (st === 'PAUSED') {
+                        badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-amber-500 text-white border border-amber-400';
+                        badge.style.backgroundColor = '#f59e0b';
+                    } else if (st === 'ACTIVE' || st === 'PUBLISHED') {
+                        badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-emerald-600 text-white border border-emerald-500';
+                        badge.style.backgroundColor = '#059669';
+                    } else if (st === 'DRAFT') {
+                        badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-slate-600 text-white border border-slate-500';
+                        badge.style.backgroundColor = '#475569';
+                    } else if (st === 'COMPLETED' || st === 'FINISHED') {
+                        badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-blue-600 text-white border border-blue-500';
+                        badge.style.backgroundColor = '#2563eb';
+                    } else if (st === 'EXPIRED' || st === 'REJECTED') {
+                        badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-rose-600 text-white border border-rose-500';
+                        badge.style.backgroundColor = '#e11d48';
+                    } else {
+                        badge.className = 'px-3 py-1 rounded-full font-black text-xs uppercase tracking-wider shadow-2xs bg-indigo-600 text-white border border-indigo-500';
+                        badge.style.backgroundColor = '#4f46e5';
+                    }
                 }
 
                 // Render Overview tab for current batch

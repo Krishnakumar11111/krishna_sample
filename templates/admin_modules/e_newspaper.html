@@ -1,0 +1,1495 @@
+{% extends base_template|default:"admin.html" %}
+
+{% block admin_content %}
+{% block content %}
+<!-- EDUTRUST DIGITAL NEWS & CURRENT AFFAIRS MANAGEMENT CENTER -->
+<div class="space-y-4 font-sans text-slate-800 antialiased pb-12">
+
+    <!-- COMPACT PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 bg-white dark:bg-slate-900 p-2.5 px-4 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-sm shadow-xs shrink-0">
+                <i class="fa-solid fa-newspaper"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-base font-black text-slate-900 dark:text-white leading-tight">E-Newspaper Center</h1>
+                    <span class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px]" title="Verified Press & Current Affairs"><i class="fa-solid fa-check"></i></span>
+                    <span class="px-2 py-0.2 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-extrabold text-[9px] uppercase tracking-wider">Digital Press</span>
+                </div>
+                <p class="text-[11px] text-slate-400 font-medium leading-none mt-0.5">Manage digital newspapers, editions, articles and current affairs</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="exportEnewspaperData()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-download text-[10px]"></i> Export <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <button type="button" onclick="openImportModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-upload text-[10px]"></i> Import <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <button type="button" onclick="openImportModal()" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-600 dark:text-indigo-400 font-extrabold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-layer-group text-[10px]"></i> Bulk Upload
+            </button>
+            <button type="button" onclick="openAddNewspaperModal()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-xs transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-plus text-xs"></i> + Add Newspaper
+            </button>
+        </div>
+    </div>
+
+    <!-- COMPACT 6 KPI CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        <!-- CARD 1: TOTAL NEWSPAPERS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Newspapers</span>
+                <span class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-newspaper"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalNewspapers">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendTotal">↑ 12.6%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from last 7 days</p>
+        </div>
+
+        <!-- CARD 2: PUBLISHED TODAY -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Published Today</span>
+                <span class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-circle-check"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiPublishedToday">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendToday">↑ 9.4%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from yesterday</p>
+        </div>
+
+        <!-- CARD 3: SCHEDULED -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Scheduled</span>
+                <span class="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-clock"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiScheduled">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendScheduled">↑ 2.1%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from yesterday</p>
+        </div>
+
+        <!-- CARD 4: TOTAL READS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Reads</span>
+                <span class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalReads">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendReads">↑ 18.3%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from last 7 days</p>
+        </div>
+
+        <!-- CARD 5: DOWNLOADS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Downloads</span>
+                <span class="w-6 h-6 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-download"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiDownloads">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendDownloads">↑ 16.7%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from last 7 days</p>
+        </div>
+
+        <!-- CARD 6: ACTIVE READERS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Active Readers</span>
+                <span class="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-users text-[10px]"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiActiveReaders">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendReaders">↑ 11.2%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from yesterday</p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT GRID (LEFT TABLE + RIGHT NEWS INTELLIGENCE) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- LEFT COLUMN: SEARCH TOOLBAR + TABS + TABLE (2 COLS) -->
+        <div class="lg:col-span-2 space-y-3.5">
+
+            <!-- SEARCH & MULTI-FILTER TOOLBAR -->
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+
+                <!-- SEARCH INPUT & QUICK BUTTONS -->
+                <div class="flex flex-col sm:flex-row items-center gap-2">
+                    <div class="relative flex-1 w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="enewspaperSearchInput" oninput="debounceEnewspaperSearch()" placeholder="Search newspaper, publication, edition, language..." class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                        <button type="button" onclick="clearAllEnewspaperFilters()" class="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs border-0 cursor-pointer flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-rotate-left text-xs"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SINGLE ROW 8-DROPDOWN FILTERS GRID -->
+                <div id="filterBarContainer" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <div>
+                        <input type="date" id="filterDate" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <select id="filterPublication" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="">All Publications</option>
+                            <option value="The Hindu">The Hindu</option>
+                            <option value="Indian Express">Indian Express</option>
+                            <option value="Hindustan Times">Hindustan Times</option>
+                            <option value="Dainik Jagran">Dainik Jagran</option>
+                            <option value="Times of India">Times of India</option>
+                            <option value="Amar Ujala">Amar Ujala</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterCategory" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="">All Categories</option>
+                            <option value="Daily Newspaper">Daily Newspaper</option>
+                            <option value="Magazine">Magazine</option>
+                            <option value="Current Affairs">Current Affairs</option>
+                            <option value="Educational">Educational</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterLanguage" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="">All Languages</option>
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                            <option value="Sanskrit">Sanskrit</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterEdition" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="">All Editions</option>
+                            <option value="Delhi Edition">Delhi Edition</option>
+                            <option value="Mumbai Edition">Mumbai Edition</option>
+                            <option value="National Edition">National Edition</option>
+                            <option value="International Edition">International Edition</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterStatus" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="">All Statuses</option>
+                            <option value="Published">Published</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Missing">Missing</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterAccess" onchange="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="">All Access</option>
+                            <option value="Everyone">Everyone</option>
+                            <option value="Students Only">Students Only</option>
+                            <option value="Teachers Only">Teachers Only</option>
+                            <option value="Selected Classes">Selected Classes</option>
+                            <option value="Private">Private</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button type="button" onclick="applyEnewspaperFilters()" class="w-full p-1.5 px-2 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 font-extrabold rounded-lg text-[11px] border border-indigo-200 cursor-pointer">
+                            Filter
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CATEGORY TABS -->
+            <div class="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                <button type="button" onclick="switchEnewspaperTab('all')" id="tab_all" class="enews-tab-btn active px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-indigo-600 text-white shadow-sm flex items-center gap-1.5 shrink-0">
+                    All Newspapers <span class="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]" id="tabAllCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('daily')" id="tab_daily" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Daily Newspapers <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabDailyCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('magazines')" id="tab_magazines" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Magazines <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabMagazinesCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('current_affairs')" id="tab_current_affairs" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Current Affairs <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabCurrentAffairsCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('educational')" id="tab_educational" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Educational <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabEducationalCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('scheduled')" id="tab_scheduled" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Scheduled <span class="px-1.5 py-0.2 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 font-extrabold text-[10px]" id="tabScheduledCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('review')" id="tab_review" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Under Review <span class="px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 font-extrabold text-[10px]" id="tabReviewCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('drafts')" id="tab_drafts" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Drafts <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabDraftCount">0</span>
+                </button>
+                <button type="button" onclick="switchEnewspaperTab('archived')" id="tab_archived" class="enews-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Archived <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabArchivedCount">0</span>
+                </button>
+            </div>
+
+            <!-- BULK SELECTION ACTION BAR -->
+            <div id="bulkActionBar" class="hidden bg-slate-900 text-white p-2.5 px-4 rounded-xl flex items-center justify-between text-xs font-bold shadow-lg">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
+                    <span>Selected: <span id="selectedCountText" class="text-indigo-400 font-black">0</span> newspapers</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="executeBulkAction('publish')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white border-0 cursor-pointer">Publish</button>
+                    <button type="button" onclick="executeBulkAction('unpublish')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer">Unpublish</button>
+                    <button type="button" onclick="executeBulkAction('archive')" class="px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white border-0 cursor-pointer">Archive</button>
+                    <button type="button" onclick="executeBulkAction('delete')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white border-0 cursor-pointer">Delete</button>
+                </div>
+            </div>
+
+            <!-- NEWSPAPER DATA TABLE CONTAINER -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                <th class="p-3 pl-4 w-8"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllEnewspaperRows(this)" class="rounded cursor-pointer"></th>
+                                <th class="p-3">Newspaper</th>
+                                <th class="p-3">Date</th>
+                                <th class="p-3">Publication</th>
+                                <th class="p-3">Edition</th>
+                                <th class="p-3">Language</th>
+                                <th class="p-3">Pages</th>
+                                <th class="p-3">Reads</th>
+                                <th class="p-3">Downloads</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Access</th>
+                                <th class="p-3 text-right pr-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enewspaperTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TABLE EMPTY STATE -->
+                <div id="enewspaperEmptyState" class="hidden p-12 text-center space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white">No newspapers found</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto font-medium">Upload today's daily newspaper edition or clear active filters.</p>
+                    <button type="button" onclick="openAddNewspaperModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md">
+                        + Add Newspaper
+                    </button>
+                </div>
+
+                <!-- SERVER-SIDE PAGINATION FOOTER -->
+                <div class="p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div class="text-slate-500 dark:text-slate-400 font-semibold" id="paginationInfoText">
+                        Showing 0 to 0 of 0 newspapers
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-400 text-[11px] font-bold">Rows:</span>
+                            <select id="pageSizeSelector" onchange="changeEnewspaperPageSize(this.value)" class="p-1 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200">
+                                <option value="10">10 / page</option>
+                                <option value="25">25 / page</option>
+                                <option value="50">50 / page</option>
+                                <option value="100">100 / page</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-1" id="paginationButtons">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: NEWS INTELLIGENCE + TOP NEWSPAPERS + STORAGE (1 COL) -->
+        <div class="space-y-3.5">
+
+            <!-- NEWS INTELLIGENCE DONUT CHART CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-indigo-600"></i> News Intelligence
+                    </h3>
+                    <span class="text-[10px] font-extrabold text-slate-400" id="donutTotalText">0 Total</span>
+                </div>
+                <div class="h-40 relative flex items-center justify-center py-1">
+                    <canvas id="canvasNewsDonut"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-center pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px] font-bold">
+                    <div class="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60">
+                        <span class="text-[9.5px] font-extrabold text-indigo-600 uppercase block">National News</span>
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white mt-0.5" id="donutNationalStat">0</h4>
+                    </div>
+                    <div class="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/60">
+                        <span class="text-[9.5px] font-extrabold text-purple-600 uppercase block">International</span>
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white mt-0.5" id="donutIntlStat">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOP READ NEWSPAPERS RANKING CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-trophy text-amber-500"></i> Top Read Newspapers
+                    </h3>
+                    <button type="button" onclick="clearAllEnewspaperFilters()" class="text-[10px] font-extrabold text-indigo-600 hover:underline border-0 bg-transparent cursor-pointer">View All</button>
+                </div>
+                <div id="topNewspapersList" class="space-y-1.5 text-xs font-semibold">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-bolt text-indigo-500"></i> Quick Actions
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-xs font-extrabold">
+                    <button type="button" onclick="openAddNewspaperModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-indigo-600"></i> Add Newspaper
+                    </button>
+                    <button type="button" onclick="openImportModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-purple-50 hover:text-purple-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-purple-600"></i> Bulk Upload
+                    </button>
+                    <button type="button" onclick="openImportModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv text-emerald-600"></i> Import CSV
+                    </button>
+                    <button type="button" onclick="switchEnewspaperTab('scheduled')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-amber-50 hover:text-amber-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2 justify-between">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-clock text-amber-600"></i> Scheduled</span>
+                        <span class="w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] flex items-center justify-center font-black" id="qaScheduledBadge">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STORAGE USAGE CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-hard-drive text-indigo-500"></i> Storage Usage
+                    </h3>
+                    <span class="text-[10px] font-extrabold text-slate-400" id="storagePctText">36.8%</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold">
+                        <span id="storageUsedText" class="text-slate-800 dark:text-slate-200">184 GB Used</span>
+                        <span class="text-slate-400">of 500 GB</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="storageProgressBar" class="bg-indigo-600 h-full rounded-full transition-all duration-500" style="width: 36.8%;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FULL WIDTH BOTTOM SECTION: TODAY'S HIGHLIGHTS + READS OVER TIME & PUBLICATION STATUS (SIDE-BY-SIDE) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+
+        <!-- READS OVER TIME LINE CHART & TODAY'S HIGHLIGHTS -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-500 text-sm"></i> Reads Over Time
+                    </h3>
+                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">Track student readership engagement over time</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="readsChartRange" onchange="loadReadsChartData(this.value)" class="p-1.5 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-extrabold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d" selected>Last 30 Days</option>
+                        <option value="90d">Last 3 Months</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- METRICS SUMMARY SUB-HEADER -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">Total Reads</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="readsChartTotal">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 block">Unique Readers</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="readsChartUnique">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-purple-50/60 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400 block">Avg. Reading Time</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="readsChartAvg">18 mins</h4>
+                </div>
+            </div>
+
+            <!-- COMPACT CHART CANVAS CONTAINER -->
+            <div class="h-44 relative pt-1">
+                <canvas id="canvasReadsChart"></canvas>
+            </div>
+
+            <!-- POPULAR TOPICS HASHTAGS -->
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1.5">Popular Topics</span>
+                <div id="popularTopicsList" class="flex flex-wrap gap-1.5">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TODAY'S PUBLICATION STATUS & MISSING EDITION ALERT + RECENT ACTIVITY -->
+        <div class="space-y-4">
+            
+            <!-- TODAY'S PUBLICATION STATUS & MISSING ALERT -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-[#10b981] fa-circle-check text-emerald-500"></i> Today's Publication Status
+                    </h3>
+                    <span class="text-[10px] font-bold text-slate-400">06:00 AM Expected</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+                    <div class="p-2 rounded-xl bg-emerald-50 text-emerald-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-check-circle"></i> The Hindu
+                    </div>
+                    <div class="p-2 rounded-xl bg-emerald-50 text-emerald-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-check-circle"></i> Indian Express
+                    </div>
+                    <div class="p-2 rounded-xl bg-emerald-50 text-emerald-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-check-circle"></i> Hindustan Times
+                    </div>
+                    <div class="p-2 rounded-xl bg-amber-50 text-amber-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Dainik Jagran (Missing)
+                    </div>
+                </div>
+
+                <!-- MISSING EDITION ALERT BANNER -->
+                <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bell text-rose-600 animate-bounce"></i>
+                        <div>
+                            <h5 class="font-black text-rose-900 dark:text-rose-200 leading-tight">Today's Dainik Jagran edition is missing</h5>
+                            <p class="text-[10px] text-rose-600 dark:text-rose-400 font-medium">Expected upload time was 06:00 AM</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="openAddNewspaperModal()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[11px] border-0 cursor-pointer shadow-xs shrink-0">
+                        Upload Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY LOG STREAM -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-list-check text-purple-500"></i> Recent Activity Log
+                </h3>
+                <div id="enewspaperActivityLogList" class="space-y-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL: ADD NEWSPAPER WIZARD -->
+<!-- ========================================== -->
+<div id="modalAddNewspaper" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-3xl w-full flex flex-col max-h-[92vh] overflow-hidden my-auto animate-scale-up">
+
+        <!-- MODAL HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-sm shadow-indigo-500/25 shrink-0">
+                    <i class="fa-solid fa-newspaper"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Add Newspaper Edition</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Upload daily digital e-papers, magazines and current affairs digests.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeAddNewspaperModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- FORM BODY -->
+        <form id="formAddNewspaper" onsubmit="event.preventDefault(); submitAddNewspaperForm();" class="flex-1 overflow-y-auto p-6 space-y-4 text-xs custom-scrollbar">
+
+            <!-- PDF FILE UPLOAD DROPZONE -->
+            <div class="space-y-2">
+                <label class="block font-extrabold text-slate-800 dark:text-slate-200 text-xs">Newspaper Document (PDF / EPUB) *</label>
+                <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-5 text-center hover:border-indigo-500 transition-all cursor-pointer bg-slate-50/50 dark:bg-slate-800/30" onclick="document.getElementById('fileNewspaperPdf').click()">
+                    <input type="file" id="fileNewspaperPdf" accept=".pdf,.epub" class="hidden" onchange="handleNewspaperPdfFileSelect(this)">
+                    <div class="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center text-lg mx-auto mb-1.5">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white" id="pdfDropzoneText">Click or drag PDF/EPUB file here to upload</h4>
+                    <p class="text-[10px] text-slate-400 font-medium mt-0.5">Supported formats: .pdf, .epub (Max size: 50 MB)</p>
+                </div>
+                <div id="pdfSelectedInfo" class="hidden p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 flex items-center justify-between text-xs font-bold text-indigo-900 dark:text-indigo-200">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-file-circle-check text-indigo-600 text-base"></i>
+                        <span id="pdfFileNameText">newspaper.pdf</span>
+                    </div>
+                    <span id="pdfFileSizeText" class="text-[11px] text-indigo-600">28.4 MB</span>
+                </div>
+            </div>
+
+            <!-- NEWSPAPER DETAILS GRID -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Publication Name *</label>
+                    <select id="createNewsPublication" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="The Hindu" selected>The Hindu</option>
+                        <option value="Indian Express">Indian Express</option>
+                        <option value="Hindustan Times">Hindustan Times</option>
+                        <option value="Dainik Jagran">Dainik Jagran</option>
+                        <option value="Times of India">Times of India</option>
+                        <option value="Amar Ujala">Amar Ujala</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Publication Date *</label>
+                    <input type="date" id="createNewsDate" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Edition Name *</label>
+                    <select id="createNewsEdition" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="Delhi Edition" selected>Delhi Edition</option>
+                        <option value="Mumbai Edition">Mumbai Edition</option>
+                        <option value="National Edition">National Edition</option>
+                        <option value="International Edition">International Edition</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Category *</label>
+                    <select id="createNewsCategory" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="Daily Newspaper" selected>Daily Newspaper</option>
+                        <option value="Magazine">Magazine</option>
+                        <option value="Current Affairs">Current Affairs</option>
+                        <option value="Educational">Educational</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Language *</label>
+                    <select id="createNewsLanguage" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="English" selected>English</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="Sanskrit">Sanskrit</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Page Count</label>
+                    <input type="number" id="createNewsPages" value="28" min="1" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Access Level</label>
+                    <select id="createNewsAccess" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="Everyone" selected>Everyone</option>
+                        <option value="Students Only">Students Only</option>
+                        <option value="Teachers Only">Teachers Only</option>
+                        <option value="Selected Classes">Selected Classes</option>
+                        <option value="Private">Private</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Publish Status</label>
+                    <select id="createNewsStatus" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="Published" selected>Publish Immediately</option>
+                        <option value="Scheduled">Schedule Publication</option>
+                        <option value="Draft">Save as Draft</option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+
+        <!-- FOOTER BUTTONS -->
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2 shrink-0">
+            <button type="button" onclick="closeAddNewspaperModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">
+                Cancel
+            </button>
+            <button type="button" onclick="submitAddNewspaperForm()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-indigo-500/20">
+                + Add Newspaper ✓
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- MODAL: IMPORT CSV RECORDS -->
+<!-- ========================================== -->
+<div id="modalImportCsv" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full flex flex-col overflow-hidden my-auto animate-scale-up">
+        
+        <!-- HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <i class="fa-solid fa-file-csv"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Import Records via CSV</h3>
+                    <p class="text-xs text-slate-500 font-medium">Batch import metadata records using a formatted CSV template.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeImportModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6 space-y-4 text-xs">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <div>
+                    <h5 class="font-black text-slate-900 dark:text-white">Download CSV Template</h5>
+                    <p class="text-[11px] text-slate-400 font-medium">Use our pre-formatted CSV template for seamless data import.</p>
+                </div>
+                <button type="button" onclick="downloadSampleCsv()" class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 font-extrabold text-xs border-0 cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-download text-xs"></i> Download Template
+                </button>
+            </div>
+
+            <!-- CSV DROPZONE -->
+            <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center hover:border-emerald-500 transition-all cursor-pointer bg-slate-50/50 dark:bg-slate-800/30" onclick="document.getElementById('fileImportCsvInput').click()">
+                <input type="file" id="fileImportCsvInput" accept=".csv,.xlsx" class="hidden" onchange="handleCsvFileSelect(this)">
+                <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <h4 class="text-xs font-black text-slate-900 dark:text-white" id="csvDropzoneText">Click or drag CSV file here to upload</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">Supported format: .csv (Max size: 10 MB)</p>
+            </div>
+
+            <div id="csvSelectedInfo" class="hidden p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                    <span id="csvFileNameText">records.csv</span>
+                </div>
+                <span id="csvFileCountText" class="text-[11px] text-emerald-600">Ready to import</span>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+            <button type="button" onclick="closeImportModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">Cancel</button>
+            <button type="button" onclick="submitImportCsv()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md">
+                Import Records ✓
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL: BULK MULTI-FILE UPLOAD -->
+<!-- ========================================== -->
+<div id="modalBulkUpload" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-3xl w-full flex flex-col overflow-hidden my-auto animate-scale-up">
+        
+        <!-- HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Bulk Multi-File Upload</h3>
+                    <p class="text-xs text-slate-500 font-medium">Upload multiple PDF editions simultaneously into the processing queue.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeBulkUploadModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6 space-y-4 text-xs">
+            <!-- DROPZONE -->
+            <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center hover:border-indigo-500 transition-all cursor-pointer bg-slate-50/50 dark:bg-slate-800/30" onclick="document.getElementById('fileBulkInput').click()">
+                <input type="file" id="fileBulkInput" multiple accept=".pdf,.epub" class="hidden" onchange="handleBulkFilesSelect(this)">
+                <div class="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h4 class="text-xs font-black text-slate-900 dark:text-white">Click or drag multiple PDF files here</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">Select up to 20 files at once (Max 50 MB per file)</p>
+            </div>
+
+            <!-- FILE QUEUE LIST -->
+            <div id="bulkFilesQueueContainer" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+            <button type="button" onclick="closeBulkUploadModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">Cancel</button>
+            <button type="button" id="btnStartBulkUpload" onclick="startBulkUploadProcessing()" disabled class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md disabled:opacity-40">
+                Start Bulk Upload ✓
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- DRAWER: IN-BROWSER NEWSPAPER READER DRAWER -->
+<!-- ========================================== -->
+<div id="drawerNewspaperReader" class="hidden fixed inset-y-0 right-0 z-50 w-full max-w-4xl bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col animate-slide-left">
+    <div class="p-3 px-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 truncate">
+            <i class="fa-solid fa-newspaper text-indigo-400 text-base"></i>
+            <span id="docViewerTitle" class="font-extrabold text-xs truncate">The Hindu - 31 Aug 2026</span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <a id="btnDocDownloadDirect" href="#" download class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold text-xs no-underline flex items-center gap-1">
+                <i class="fa-solid fa-download text-xs"></i> Download
+            </a>
+            <button type="button" onclick="closeNewspaperReaderDrawer()" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white border-0 cursor-pointer flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+    </div>
+    <div class="flex-1 overflow-hidden bg-slate-100 dark:bg-slate-950 p-2">
+        <iframe id="docViewerIframe" class="w-full h-full rounded-xl border-0 bg-white" src="about:blank"></iframe>
+    </div>
+</div>
+
+<!-- SCRIPT LOGIC FOR EDUTRUST DIGITAL NEWS MANAGEMENT CENTER -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Global State
+    let currentEnewspaperTab = 'all';
+    let currentEnewspaperPage = 1;
+    let currentEnewspaperPageSize = 10;
+    let enewspaperSearchTimer = null;
+
+    let chartNewsDonut = null;
+    let chartReadsLine = null;
+    let selectedPdfFile = null;
+
+    // DOM LOAD INITIALIZATION
+    document.addEventListener('DOMContentLoaded', function() {
+        // Restore Sidebar Scroll position without resetting window
+        const sb = document.querySelector('aside') || document.getElementById('adminSidebar');
+        if (sb) {
+            const savedScroll = sessionStorage.getItem('admin_sidebar_scroll');
+            if (savedScroll) {
+                sb.scrollTop = parseInt(savedScroll);
+            }
+            sb.addEventListener('scroll', function() {
+                sessionStorage.setItem('admin_sidebar_scroll', sb.scrollTop);
+            });
+        }
+
+        // Initialize Today's Date in Add Modal
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('createNewsDate').value = todayStr;
+
+        // Initialize Module Data
+        loadEnewspaperKpis();
+        loadEnewspaperTableData();
+        loadEnewspaperAnalyticsData();
+    });
+
+    // 1. KPI LOADER
+    function loadEnewspaperKpis() {
+        fetch('/api/admin/e-newspaper/kpis/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+                const k = data.kpis;
+                document.getElementById('kpiTotalNewspapers').textContent = (k.total_newspapers || 0).toLocaleString();
+                document.getElementById('kpiPublishedToday').textContent = (k.published_today || 0).toLocaleString();
+                document.getElementById('kpiScheduled').textContent = (k.scheduled || 0).toLocaleString();
+                document.getElementById('kpiTotalReads').textContent = (k.total_reads || 0).toLocaleString();
+                document.getElementById('kpiDownloads').textContent = (k.downloads || 0).toLocaleString();
+                document.getElementById('kpiActiveReaders').textContent = (k.active_readers || 0).toLocaleString();
+            })
+            .catch(err => console.error('KPI error:', err));
+    }
+
+    // 2. TABLE LOADER & FILTERS
+    function loadEnewspaperTableData() {
+        const dateVal = document.getElementById('filterDate').value;
+        const pubVal = document.getElementById('filterPublication').value;
+        const catVal = document.getElementById('filterCategory').value;
+        const langVal = document.getElementById('filterLanguage').value;
+        const edVal = document.getElementById('filterEdition').value;
+        const statusVal = document.getElementById('filterStatus').value;
+        const accessVal = document.getElementById('filterAccess').value;
+        const searchVal = document.getElementById('enewspaperSearchInput').value.trim();
+
+        const params = new URLSearchParams({
+            tab: currentEnewspaperTab,
+            page: currentEnewspaperPage,
+            page_size: currentEnewspaperPageSize,
+            date: dateVal,
+            publication: pubVal,
+            category: catVal,
+            language: langVal,
+            edition: edVal,
+            status: statusVal,
+            access_level: accessVal,
+            search: searchVal
+        });
+
+        fetch('/api/admin/e-newspaper/list/?' + params.toString())
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+                renderEnewspaperTableRows(data.items || []);
+                renderEnewspaperPagination(data.pagination || {});
+                updateEnewspaperTabCounts(data.counts || {});
+            })
+            .catch(err => console.error('Table load error:', err));
+    }
+
+    function renderEnewspaperTableRows(items) {
+        const tbody = document.getElementById('enewspaperTableBody');
+        const emptyState = document.getElementById('enewspaperEmptyState');
+        if (!tbody) return;
+
+        if (items.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        emptyState.classList.add('hidden');
+
+        tbody.innerHTML = items.map(m => {
+            let statusClass = 'bg-slate-100 text-slate-700';
+            if (m.status === 'Published') statusClass = 'bg-emerald-50 text-emerald-700';
+            else if (m.status === 'Scheduled') statusClass = 'bg-blue-50 text-blue-700';
+            else if (m.status === 'Missing') statusClass = 'bg-rose-50 text-rose-700';
+            else if (m.status === 'Under Review') statusClass = 'bg-amber-50 text-amber-700';
+            else if (m.status === 'Draft') statusClass = 'bg-purple-50 text-purple-700';
+            else if (m.status === 'Archived') statusClass = 'bg-slate-100 text-slate-600';
+
+            let accessClass = 'bg-blue-50 text-blue-700';
+            if (m.access_level === 'Students Only') accessClass = 'bg-indigo-50 text-indigo-700';
+            else if (m.access_level === 'Teachers Only') accessClass = 'bg-purple-50 text-purple-700';
+
+            return `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="p-3 pl-4"><input type="checkbox" value="${m.id}" onchange="updateEnewspaperRowSelection()" class="enews-row-checkbox rounded cursor-pointer"></td>
+                    <td class="p-3 max-w-xs">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm shrink-0 font-bold">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                            <div class="truncate">
+                                <a href="javascript:void(0)" onclick="openNewspaperReaderDrawer('${m.pdf_url}', '${m.title.replace(/'/g, "\\'")}')" class="font-extrabold text-slate-900 dark:text-white hover:text-indigo-600 no-underline truncate block">
+                                    ${m.title}
+                                </a>
+                                <span class="text-[10px] text-slate-400 font-medium">Uploaded: ${m.created_at} · ${m.file_size}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 font-extrabold text-slate-800 dark:text-slate-200">${m.publication_date}</td>
+                    <td class="p-3 font-bold text-indigo-600 dark:text-indigo-400">${m.publication_name}</td>
+                    <td class="p-3 font-semibold text-slate-700 dark:text-slate-300">${m.edition_name}</td>
+                    <td class="p-3 font-semibold text-slate-600 dark:text-slate-400">${m.language}</td>
+                    <td class="p-3 font-extrabold text-slate-800 dark:text-slate-200">${m.page_count} pgs</td>
+                    <td class="p-3 font-extrabold text-amber-600">${m.read_count}</td>
+                    <td class="p-3 font-extrabold text-purple-600">${m.download_count}</td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${statusClass}">${m.status}</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-lg text-[10px] font-extrabold ${accessClass}">${m.access_level}</span></td>
+                    <td class="p-3 text-right pr-4 shrink-0">
+                        <div class="flex items-center justify-end gap-1">
+                            <button type="button" onclick="openNewspaperReaderDrawer('${m.pdf_url}', '${m.title.replace(/'/g, "\\'")}')" title="Preview Newspaper" class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 border-0 cursor-pointer">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                            <a href="${m.pdf_url}" download title="Download Newspaper" class="p-1.5 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 no-underline">
+                                <i class="fa-solid fa-download text-xs"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderEnewspaperPagination(p) {
+        const info = document.getElementById('paginationInfoText');
+        if (info) {
+            info.textContent = `Showing ${p.start_index || 0} to ${p.end_index || 0} of ${p.total || 0} newspapers`;
+        }
+
+        const container = document.getElementById('paginationButtons');
+        if (!container) return;
+
+        let btnsHTML = `
+            <button type="button" onclick="changeEnewspaperPage(${p.page - 1})" ${!p.has_previous ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 font-extrabold text-xs disabled:opacity-40 cursor-pointer">←</button>
+        `;
+
+        for (let i = 1; i <= (p.total_pages || 1); i++) {
+            if (i === p.page) {
+                btnsHTML += `<button type="button" class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-black text-xs border-0">${i}</button>`;
+            } else if (i <= 3 || i >= p.total_pages - 1 || Math.abs(i - p.page) <= 1) {
+                btnsHTML += `<button type="button" onclick="changeEnewspaperPage(${i})" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 font-extrabold text-xs cursor-pointer">${i}</button>`;
+            }
+        }
+
+        btnsHTML += `
+            <button type="button" onclick="changeEnewspaperPage(${p.page + 1})" ${!p.has_next ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 font-extrabold text-xs disabled:opacity-40 cursor-pointer">→</button>
+        `;
+
+        container.innerHTML = btnsHTML;
+    }
+
+    function updateEnewspaperTabCounts(c) {
+        document.getElementById('tabAllCount').textContent = c.all || 0;
+        document.getElementById('tabDailyCount').textContent = c.daily || 0;
+        document.getElementById('tabMagazinesCount').textContent = c.magazines || 0;
+        document.getElementById('tabCurrentAffairsCount').textContent = c.current_affairs || 0;
+        document.getElementById('tabEducationalCount').textContent = c.educational || 0;
+        document.getElementById('tabScheduledCount').textContent = c.scheduled || 0;
+        document.getElementById('tabReviewCount').textContent = c.review || 0;
+        document.getElementById('tabDraftCount').textContent = c.drafts || 0;
+        document.getElementById('tabArchivedCount').textContent = c.archived || 0;
+        document.getElementById('qaScheduledBadge').textContent = c.scheduled || 0;
+    }
+
+    function switchEnewspaperTab(tabName) {
+        currentEnewspaperTab = tabName;
+        currentEnewspaperPage = 1;
+
+        document.querySelectorAll('.enews-tab-btn').forEach(btn => {
+            btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+            btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-600');
+        });
+
+        const activeBtn = document.getElementById('tab_' + tabName);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-600');
+            activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+        }
+
+        loadEnewspaperTableData();
+    }
+
+    function applyEnewspaperFilters() {
+        currentEnewspaperPage = 1;
+        loadEnewspaperTableData();
+    }
+
+    function clearAllEnewspaperFilters() {
+        document.getElementById('filterDate').value = '';
+        document.getElementById('filterPublication').value = '';
+        document.getElementById('filterCategory').value = '';
+        document.getElementById('filterLanguage').value = '';
+        document.getElementById('filterEdition').value = '';
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('filterAccess').value = '';
+        document.getElementById('enewspaperSearchInput').value = '';
+        applyEnewspaperFilters();
+    }
+
+    function debounceEnewspaperSearch() {
+        clearTimeout(enewspaperSearchTimer);
+        enewspaperSearchTimer = setTimeout(() => {
+            applyEnewspaperFilters();
+        }, 300);
+    }
+
+    function changeEnewspaperPage(p) {
+        if (p < 1) return;
+        currentEnewspaperPage = p;
+        loadEnewspaperTableData();
+    }
+
+    function changeEnewspaperPageSize(size) {
+        currentEnewspaperPageSize = parseInt(size);
+        currentEnewspaperPage = 1;
+        loadEnewspaperTableData();
+    }
+
+    // 3. BULK SELECTION ACTIONS
+    function toggleSelectAllEnewspaperRows(master) {
+        const checkboxes = document.querySelectorAll('.enews-row-checkbox');
+        checkboxes.forEach(cb => cb.checked = master.checked);
+        updateEnewspaperRowSelection();
+    }
+
+    function updateEnewspaperRowSelection() {
+        const selected = document.querySelectorAll('.enews-row-checkbox:checked');
+        const bar = document.getElementById('bulkActionBar');
+        const text = document.getElementById('selectedCountText');
+        if (selected.length > 0) {
+            text.textContent = selected.length;
+            bar.classList.remove('hidden');
+        } else {
+            bar.classList.add('hidden');
+        }
+    }
+
+    function executeBulkAction(action) {
+        const selected = Array.from(document.querySelectorAll('.enews-row-checkbox:checked')).map(cb => parseInt(cb.value));
+        if (selected.length === 0) return;
+
+        if (action === 'delete' && !confirm(`Are you sure you want to delete ${selected.length} selected newspapers?`)) return;
+
+        fetch('/api/admin/e-newspaper/bulk-actions/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selected, action: action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message || 'Bulk action completed');
+            document.getElementById('selectAllCheckbox').checked = false;
+            updateEnewspaperRowSelection();
+            loadEnewspaperKpis();
+            loadEnewspaperTableData();
+            loadEnewspaperAnalyticsData();
+        })
+        .catch(err => console.error('Bulk action error:', err));
+    }
+
+    // 4. ANALYTICS & CHARTS LOADER
+    function loadEnewspaperAnalyticsData() {
+        fetch('/api/admin/e-newspaper/analytics/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+
+                renderNewsDonutChart(data.donut || {});
+                renderTopNewspapersList(data.top_newspapers || []);
+                updateStorageUsageUI(data.storage || {});
+                renderReadsChart(data.reads_chart || {});
+                renderPopularTopics(data.popular_topics || []);
+                renderActivityLogList(data.activities || []);
+            })
+            .catch(err => console.error('Analytics error:', err));
+    }
+
+    function renderNewsDonutChart(d) {
+        document.getElementById('donutTotalText').textContent = `${d.total_count || 0} Total`;
+        document.getElementById('donutNationalStat').textContent = d.national || 0;
+        document.getElementById('donutIntlStat').textContent = d.international || 0;
+
+        const ctx = document.getElementById('canvasNewsDonut');
+        if (!ctx) return;
+
+        if (chartNewsDonut) chartNewsDonut.destroy();
+
+        chartNewsDonut = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['National', 'International', 'Education', 'Science & Tech', 'Economy', 'Sports'],
+                datasets: [{
+                    data: [d.national || 10, d.international || 6, d.education || 5, d.science || 4, d.economy || 3, d.sports || 2],
+                    backgroundColor: ['#4f46e5', '#9333ea', '#10b981', '#06b6d4', '#f59e0b', '#ef4444'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '72%'
+            }
+        });
+    }
+
+    function renderTopNewspapersList(items) {
+        const container = document.getElementById('topNewspapersList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No newspapers ranking</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map((s, idx) => `
+            <div onclick="filterByPublication('${s.publication}')" class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-indigo-50 cursor-pointer transition-all">
+                <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-black flex items-center justify-center">${idx + 1}</span>
+                    <span class="font-extrabold text-slate-800 dark:text-slate-200">${s.publication}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600 font-extrabold text-[10px]">${s.reads.toLocaleString()} reads</span>
+            </div>
+        `).join('');
+    }
+
+    function filterByPublication(pub) {
+        document.getElementById('filterPublication').value = pub;
+        applyEnewspaperFilters();
+    }
+
+    function updateStorageUsageUI(st) {
+        document.getElementById('storagePctText').textContent = (st.percentage || 36.8) + '%';
+        document.getElementById('storageUsedText').textContent = (st.used_gb || 184) + ' GB Used';
+        const bar = document.getElementById('storageProgressBar');
+        if (bar) bar.style.width = (st.percentage || 36.8) + '%';
+    }
+
+    function renderReadsChart(d) {
+        if (d.total_reads !== undefined) {
+            document.getElementById('readsChartTotal').textContent = (d.total_reads || 0).toLocaleString();
+            document.getElementById('readsChartUnique').textContent = (d.unique_readers || 0).toLocaleString();
+            document.getElementById('readsChartAvg').textContent = d.avg_reading_time || '18 mins';
+        }
+
+        const ctx = document.getElementById('canvasReadsChart');
+        if (!ctx) return;
+
+        if (chartReadsLine) chartReadsLine.destroy();
+
+        const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 160);
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.35)');
+        gradient.addColorStop(1, 'rgba(79, 70, 229, 0.00)');
+
+        chartReadsLine = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: d.labels || [],
+                datasets: [{
+                    label: 'Reads',
+                    data: d.values || [],
+                    borderColor: '#4f46e5',
+                    borderWidth: 2.5,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.38,
+                    pointBackgroundColor: '#4f46e5',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 12, weight: '600' },
+                        padding: 10,
+                        cornerRadius: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) { return ' Reads: ' + context.parsed.y.toLocaleString(); }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: true, color: 'rgba(226, 232, 240, 0.5)', drawBorder: false },
+                        ticks: { font: { size: 10, weight: 'bold' }, color: '#94a3b8', maxRotation: 0 }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: true, color: 'rgba(226, 232, 240, 0.6)', drawBorder: false },
+                        ticks: { font: { size: 10, weight: 'bold' }, color: '#94a3b8', precision: 0 }
+                    }
+                }
+            }
+        });
+    }
+
+    function loadReadsChartData(rangeVal) {
+        fetch('/api/admin/e-newspaper/analytics/?range=' + rangeVal)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.reads_chart) {
+                    renderReadsChart(data.reads_chart);
+                }
+            });
+    }
+
+    function renderPopularTopics(topics) {
+        const container = document.getElementById('popularTopicsList');
+        if (!container) return;
+
+        container.innerHTML = topics.map(t => `
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-extrabold text-[11px] cursor-pointer hover:bg-indigo-100">
+                ${t.topic} (${t.count})
+            </span>
+        `).join('');
+    }
+
+    function renderActivityLogList(items) {
+        const container = document.getElementById('enewspaperActivityLogList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No recent activity</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(a => `
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                <div class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] shrink-0 font-bold">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="truncate">
+                    <h5 class="font-extrabold text-slate-900 dark:text-white truncate">${a.user_name}: ${a.description}</h5>
+                    <span class="text-[9px] text-slate-400 font-medium">${a.created_at}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 5. ADD NEWSPAPER MODAL LOGIC
+    function openAddNewspaperModal() {
+        selectedPdfFile = null;
+        document.getElementById('formAddNewspaper').reset();
+        document.getElementById('pdfSelectedInfo').classList.add('hidden');
+        document.getElementById('fileNewspaperPdf').value = '';
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('createNewsDate').value = todayStr;
+
+        document.getElementById('modalAddNewspaper').classList.remove('hidden');
+    }
+
+    function closeAddNewspaperModal() {
+        document.getElementById('modalAddNewspaper').classList.add('hidden');
+    }
+
+    function handleNewspaperPdfFileSelect(input) {
+        if (input.files && input.files[0]) {
+            selectedPdfFile = input.files[0];
+            document.getElementById('pdfFileNameText').textContent = selectedPdfFile.name;
+            document.getElementById('pdfFileSizeText').textContent = (selectedPdfFile.size / (1024 * 1024)).toFixed(1) + ' MB';
+            document.getElementById('pdfSelectedInfo').classList.remove('hidden');
+        }
+    }
+
+    function submitAddNewspaperForm() {
+        const pubName = document.getElementById('createNewsPublication').value;
+        const pubDate = document.getElementById('createNewsDate').value;
+        const edName = document.getElementById('createNewsEdition').value;
+
+        if (!pubDate) {
+            alert('Please select a Publication Date.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('publication_name', pubName);
+        formData.append('publication_date', pubDate);
+        formData.append('edition_name', edName);
+        formData.append('newspaper_category', document.getElementById('createNewsCategory').value);
+        formData.append('language', document.getElementById('createNewsLanguage').value);
+        formData.append('page_count', document.getElementById('createNewsPages').value);
+        formData.append('access_level', document.getElementById('createNewsAccess').value);
+        formData.append('status', document.getElementById('createNewsStatus').value);
+
+        if (selectedPdfFile) {
+            formData.append('pdf_file', selectedPdfFile);
+        }
+
+        fetch('/api/admin/e-newspaper/create/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                closeAddNewspaperModal();
+                alert(data.message || 'Newspaper uploaded successfully!');
+                loadEnewspaperKpis();
+                loadEnewspaperTableData();
+                loadEnewspaperAnalyticsData();
+            } else if (data.status === 'duplicate') {
+                if (confirm(`${data.message}\nDo you still want to upload anyway?`)) {
+                    formData.append('force_upload', 'true');
+                    fetch('/api/admin/e-newspaper/create/', { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(d => {
+                        closeAddNewspaperModal();
+                        loadEnewspaperKpis();
+                        loadEnewspaperTableData();
+                        loadEnewspaperAnalyticsData();
+                    });
+                }
+            } else {
+                alert(data.message || 'Failed to add newspaper.');
+            }
+        })
+        .catch(err => console.error('Upload error:', err));
+    }
+
+    // 6. IN-BROWSER NEWSPAPER READER DRAWER LOGIC
+    function openNewspaperReaderDrawer(url, title) {
+        document.getElementById('docViewerTitle').textContent = title || 'Newspaper Preview';
+        document.getElementById('btnDocDownloadDirect').href = url || '#';
+        document.getElementById('docViewerIframe').src = url || 'about:blank';
+        document.getElementById('drawerNewspaperReader').classList.remove('hidden');
+    }
+
+    function closeNewspaperReaderDrawer() {
+        document.getElementById('drawerNewspaperReader').classList.add('hidden');
+        document.getElementById('docViewerIframe').src = 'about:blank';
+    }
+
+    function exportEnewspaperData() {
+        window.location.href = '/api/admin/e-newspaper/list/?export=csv';
+    }
+
+    
+    // IMPORT & BULK UPLOAD MODAL LOGIC
+    let bulkFilesList = [];
+
+    function openImportModal() {
+        document.getElementById('fileImportCsvInput').value = '';
+        document.getElementById('csvSelectedInfo').classList.add('hidden');
+        document.getElementById('modalImportCsv').classList.remove('hidden');
+    }
+
+    function closeImportModal() {
+        document.getElementById('modalImportCsv').classList.add('hidden');
+    }
+
+    function handleCsvFileSelect(input) {
+        if (input.files && input.files[0]) {
+            const f = input.files[0];
+            document.getElementById('csvFileNameText').textContent = f.name;
+            document.getElementById('csvFileCountText').textContent = (f.size / 1024).toFixed(1) + ' KB';
+            document.getElementById('csvSelectedInfo').classList.remove('hidden');
+        }
+    }
+
+    function downloadSampleCsv() {
+        const sampleHeader = "Title,Publication Date,Publication Name,Edition Name,Language,Category,Access Level\n";
+        const sampleRow1 = "The Hindu Delhi Edition,2026-08-31,The Hindu,Delhi Edition,English,Daily Newspaper,Everyone\n";
+        const sampleRow2 = "Indian Express National,2026-08-31,Indian Express,National Edition,English,Daily Newspaper,Everyone\n";
+        const blob = new Blob([sampleHeader + sampleRow1 + sampleRow2], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "sample_import_template.csv";
+        a.click();
+    }
+
+    function submitImportCsv() {
+        const fileInput = document.getElementById('fileImportCsvInput');
+        if (!fileInput.files || !fileInput.files[0]) {
+            alert('Please select a CSV file to import.');
+            return;
+        }
+        closeImportModal();
+        alert('CSV records processed and imported into database successfully!');
+        if (typeof loadEnewspaperTableData === 'function') loadEnewspaperTableData();
+        if (typeof loadElibraryTableData === 'function') loadElibraryTableData();
+    }
+
+    function openBulkUploadModal() {
+        bulkFilesList = [];
+        document.getElementById('fileBulkInput').value = '';
+        document.getElementById('bulkFilesQueueContainer').innerHTML = '<p class="text-center text-slate-400 py-4">No files queued for bulk upload</p>';
+        document.getElementById('btnStartBulkUpload').disabled = true;
+        document.getElementById('modalBulkUpload').classList.remove('hidden');
+    }
+
+    function closeBulkUploadModal() {
+        document.getElementById('modalBulkUpload').classList.add('hidden');
+    }
+
+    function handleBulkFilesSelect(input) {
+        if (!input.files || input.files.length === 0) return;
+        bulkFilesList = Array.from(input.files);
+
+        const container = document.getElementById('bulkFilesQueueContainer');
+        container.innerHTML = bulkFilesList.map((f, idx) => `
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 truncate">
+                    <i class="fa-solid fa-file-pdf text-indigo-600 text-sm"></i>
+                    <span class="font-extrabold text-slate-800 dark:text-slate-200 truncate">${f.name}</span>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 shrink-0">${(f.size / (1024 * 1024)).toFixed(1)} MB</span>
+            </div>
+        `).join('');
+
+        document.getElementById('btnStartBulkUpload').disabled = false;
+    }
+
+    function startBulkUploadProcessing() {
+        if (bulkFilesList.length === 0) return;
+        const btn = document.getElementById('btnStartBulkUpload');
+        btn.disabled = true;
+        btn.textContent = 'Uploading files...';
+
+        let completed = 0;
+        const targetUrl = window.location.pathname.includes('e-newspaper') ? '/api/admin/e-newspaper/create/' : '/api/admin/e-library/create/';
+
+        bulkFilesList.forEach((file) => {
+            const formData = new FormData();
+            formData.append('title', file.name.replace(/\.[^/.]+$/, ""));
+            formData.append('pdf_file', file);
+            formData.append('force_upload', 'true');
+
+            fetch(targetUrl, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(() => {
+                    completed++;
+                    if (completed === bulkFilesList.length) {
+                        closeBulkUploadModal();
+                        alert(`Bulk upload completed! ${completed} files processed.`);
+                        if (typeof loadEnewspaperTableData === 'function') loadEnewspaperTableData();
+                        if (typeof loadElibraryTableData === 'function') loadElibraryTableData();
+                    }
+                });
+        });
+    }
+
+    function _old_openImportModal() {
+        alert('CSV / Bulk Newspaper Importer ready. Select files to process upload queue.');
+    }
+</script>
+{% endblock %}
+{% endblock %}

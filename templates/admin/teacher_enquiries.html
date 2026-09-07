@@ -224,11 +224,23 @@
                         </td>
                         <td class="px-3 py-2 text-slate-400 font-bold text-[10px] whitespace-nowrap">{{ item.created_at|date:"M d, Y" }}</td>
                         <td class="px-3 py-2 text-right whitespace-nowrap">
-                            <!-- COMPACT ICON SYMBOL ACTION BUTTONS (32x32px) — ONLY VIEW BUTTON -->
+                            <!-- COMPACT ICON SYMBOL ACTION BUTTONS (32x32px) -->
                             <div id="teacher-enquiry-actions-{{ item.id }}" class="flex items-center justify-end gap-1.5 flex-nowrap">
-                                <button type="button" onclick="openTeacherEnquiryDetailModal({{ item.id }}, '{{ item.source_type|default:"enq" }}')" title="View Details" aria-label="View Teacher Details" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer inline-flex items-center justify-center p-0 border-0 shadow-2xs">
+                                <button type="button" data-id="{{ item.id }}" data-source="{{ item.source_type|default:'enq' }}" onclick="openTeacherEnquiryDetailModal(this.dataset.id, this.dataset.source)" title="View Details" aria-label="View Teacher Details" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all cursor-pointer inline-flex items-center justify-center p-0 border-0 shadow-2xs">
                                     <i class="fas fa-eye text-xs"></i>
                                 </button>
+                                {% if item.status == 'NEW' or item.status == 'PENDING' or not item.status or item.status == 'APPLIED' %}
+                                <button id="btn-approve-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptApproveTeacherEnquiry(this.dataset.id)" title="Approve Teacher" aria-label="Approve Teacher" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-check text-xs"></i></button>
+                                <button id="btn-reject-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptRejectTeacherEnquiry(this.dataset.id)" title="Reject Enquiry" aria-label="Reject Teacher" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-times text-xs"></i></button>
+                                <button id="btn-suspend-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptSuspendTeacherEnquiry(this.dataset.id)" title="Suspend Teacher" aria-label="Suspend Teacher" class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-ban text-xs"></i></button>
+                                <button id="btn-remove-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptRemoveTeacherEnquiry(this.dataset.id)" title="Remove Teacher" aria-label="Remove Teacher" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-trash-alt text-xs"></i></button>
+                                {% elif item.status == 'APPROVED' %}
+                                <button id="btn-suspend-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptSuspendTeacherEnquiry(this.dataset.id)" title="Suspend Teacher" aria-label="Suspend Teacher" class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-ban text-xs"></i></button>
+                                <button id="btn-remove-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptRemoveTeacherEnquiry(this.dataset.id)" title="Remove Teacher" aria-label="Remove Teacher" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-trash-alt text-xs"></i></button>
+                                {% elif item.status == 'REJECTED' or item.status == 'SUSPENDED' %}
+                                <button id="btn-approve-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptApproveTeacherEnquiry(this.dataset.id)" title="Approve Teacher" aria-label="Approve Teacher" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-check text-xs"></i></button>
+                                <button id="btn-remove-teacher-{{ item.id }}" data-id="{{ item.id }}" onclick="promptRemoveTeacherEnquiry(this.dataset.id)" title="Remove Teacher" aria-label="Remove Teacher" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-600 hover:text-white transition-all cursor-pointer border-0 inline-flex items-center justify-center p-0 shadow-2xs"><i class="fas fa-trash-alt text-xs"></i></button>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -683,17 +695,20 @@
                 let btnsHtml = '';
                 if (st === 'NEW' || st === 'PENDING' || st === 'APPLIED') {
                     btnsHtml = `
-                        <button onclick="promptApproveTeacherEnquiry(${e.id}); closeTeacherEnquiryDetailModal();" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-2xs"><i class="fas fa-check mr-1"></i> Approve</button>
-                        <button onclick="promptRejectTeacherEnquiry(${e.id}); closeTeacherEnquiryDetailModal();" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-2xs"><i class="fas fa-times mr-1"></i> Reject</button>
-                        <button onclick="promptSuspendTeacherEnquiry(${e.id}); closeTeacherEnquiryDetailModal();" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-2xs"><i class="fas fa-ban mr-1"></i> Suspend</button>
+                        <button id="modal-btn-approve-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptApproveTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-check"></i> Approve</button>
+                        <button id="modal-btn-reject-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptRejectTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-times"></i> Reject</button>
+                        <button id="modal-btn-suspend-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptSuspendTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-ban"></i> Suspend</button>
+                        <button id="modal-btn-remove-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptRemoveTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-trash-alt"></i> Remove</button>
                     `;
                 } else if (st === 'APPROVED' || st === 'ACCEPTED') {
                     btnsHtml = `
-                        <button onclick="promptSuspendTeacherEnquiry(${e.id}); closeTeacherEnquiryDetailModal();" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-2xs"><i class="fas fa-ban mr-1"></i> Suspend</button>
+                        <button id="modal-btn-suspend-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptSuspendTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-ban"></i> Suspend</button>
+                        <button id="modal-btn-remove-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptRemoveTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-trash-alt"></i> Remove</button>
                     `;
                 } else if (st === 'REJECTED' || st === 'SUSPENDED') {
                     btnsHtml = `
-                        <button onclick="promptApproveTeacherEnquiry(${e.id}); closeTeacherEnquiryDetailModal();" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-2xs"><i class="fas fa-check mr-1"></i> Approve</button>
+                        <button id="modal-btn-approve-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptApproveTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-check"></i> Approve</button>
+                        <button id="modal-btn-remove-teacher-${e.id}" onclick="closeTeacherEnquiryDetailModal(); promptRemoveTeacherEnquiry(${e.id});" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-trash-alt"></i> Remove</button>
                     `;
                 }
                 actionsEl.innerHTML = btnsHtml;
@@ -1135,6 +1150,37 @@
             if (typeof showEnquiryToast === 'function') showEnquiryToast('Server error processing action', 'error');
         }
     };
+
+    if (!window.promptApproveTeacherEnquiry) {
+        window.promptApproveTeacherEnquiry = function(id) {
+            if (confirm('Are you sure you want to approve this teacher registration?')) {
+                window.sendTeacherEnquiryAction(id, 'approve');
+            }
+        };
+    }
+    if (!window.promptRejectTeacherEnquiry) {
+        window.promptRejectTeacherEnquiry = function(id) {
+            const reason = prompt('Enter rejection reason (optional):');
+            if (reason !== null) {
+                window.sendTeacherEnquiryAction(id, 'reject', reason);
+            }
+        };
+    }
+    if (!window.promptSuspendTeacherEnquiry) {
+        window.promptSuspendTeacherEnquiry = function(id) {
+            const reason = prompt('Enter suspension reason (optional):');
+            if (reason !== null) {
+                window.sendTeacherEnquiryAction(id, 'suspend', reason);
+            }
+        };
+    }
+    if (!window.promptRemoveTeacherEnquiry) {
+        window.promptRemoveTeacherEnquiry = function(id) {
+            if (confirm('Are you sure you want to remove this teacher enquiry?')) {
+                window.sendTeacherEnquiryAction(id, 'remove');
+            }
+        };
+    }
 
 window.initTeacherEnquiries = function() {
     console.log('[MODULE INIT SUCCESS] teacher_enquiries initialized');

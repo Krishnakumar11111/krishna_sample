@@ -62,42 +62,9 @@
 
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 text-gray-800 font-sans min-h-screen flex flex-col justify-between">
 
-    <header id="navbar" class="fixed w-full top-0 z-50 py-4 bg-white/80 backdrop-blur-md transition-all duration-300 shadow-sm">
-        <div class="container mx-auto px-4 md:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <a href="{% url 'home' %}" class="flex items-center gap-3 group text-decoration-none">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <span class="text-2xl font-extrabold tracking-tight text-gray-900">
-                        Edu<span class="text-brand-600">Trust</span>
-                    </span>
-                </a>
+    {% include "components/public_header.html" %}
 
-                <nav class="hidden lg:flex items-center gap-4 font-medium text-gray-600">
-                    <a href="{% url 'home' %}#home" class="hover:text-brand-600 transition-colors">Home</a>
-                    <a href="{% url 'courses' %}" class="hover:text-brand-600 transition-colors text-decoration-none">Courses</a>
-                    <a href="{% url 'find_tutor' %}" class="hover:text-brand-600 transition-colors text-decoration-none text-brand-600 font-semibold">Tutors</a>
-                    <a href="{% url 'study_material' %}" class="hover:text-brand-600 transition-colors text-decoration-none">Study Material</a>
-                    <a href="{% url 'success' %}" class="hover:text-brand-600 transition-colors text-decoration-none">Success Stories</a>
-                    <a href="{% url 'faqs' %}" class="hover:text-brand-600 transition-colors text-decoration-none">FAQs</a>
-                    <a href="{% url 'teacher_registration' %}" class="hover:text-brand-600 transition-colors text-brand-600 font-semibold text-decoration-none">Teacher Registration</a>
-                </nav>
-
-                <div class="hidden lg:flex items-center gap-4">
-                    <a href="{% url 'login' %}" class="font-medium text-gray-700 hover:text-brand-600 transition-colors px-4 py-2 text-decoration-none">
-                        Login
-                    </a>
-
-                    <a href="{% url 'student_registration' %}" class="bg-brand-600 text-white px-5 py-2.5 rounded-xl font-medium text-center hover:bg-brand-700 shadow-md transition-colors text-decoration-none">
-                        Register/Student
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <section id="tutors"class="pt-28 pb-20 flex-grow">
+    <section id="tutors" class="py-8 flex-grow">
         <div class="container mx-auto px-4 md:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 bg-white/60 backdrop-blur-md p-6 rounded-3xl shadow-sm border border-white">
                 <div class="text-center md:text-left">

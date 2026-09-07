@@ -78,14 +78,6 @@ const initHomeNavbarAndScroll = () => {
     const backToTop = document.getElementById("backToTop");
 
     window.addEventListener("scroll", () => {
-        if (navbar) {
-            if (window.scrollY > 50) {
-                navbar.classList.add("scrolled");
-            } else {
-                navbar.classList.remove("scrolled");
-            }
-        }
-
         if (backToTop) {
             if (window.scrollY > 500) {
                 backToTop.classList.remove("opacity-0", "invisible");

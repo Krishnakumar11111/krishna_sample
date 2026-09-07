@@ -14,12 +14,13 @@ from datetime import datetime
 from django.db import transaction, IntegrityError
 from django.db.models import Q, Count, F, Sum
 from django.contrib.auth.models import User
+from django.contrib import messages
 from .models import (
     TeacherProfile, StudentProfile, ContactEnquiry,
     TuitionRequirement, ActivityLog, UserAuthLog, VisitorTracker, AdminNotification,
     StudyMaterial, JobApplication, OnlineTest, TestQuestion, StudentTestResult,
     LiveClass, CourseBatch, CourseChapter, CourseSubject, DPPSet, StudentDPPAttempt,
-    CourseLecture, CourseMaterial, CourseDoubt, CourseEnrollment,
+    CourseLecture, CourseMaterial, CourseDoubt, CourseEnrollment, PaymentTransaction,
     Coupon, HomeworkAssignment, HomeworkSubmission, NoticeBoard, DoubtQuery, PreviousYearQuestion, ELibraryBook,
     LocationSearchHistory, LectureComment, LectureProgress, StudentProfileChangeLog,
     TeacherProfileChangeLog, StudentParentEnquiry, TeacherEnquiry, TeacherJobApplication
@@ -28,6 +29,49 @@ from .forms import StudyMaterialForm
 from bookings.models import FreeTrialBooking
 
 from django.contrib.auth.hashers import make_password, check_password
+
+
+def check_student_batch_enrollment(request):
+    """
+    Checks if the currently logged-in student profile has a valid, successful batch purchase/enrollment.
+    Returns (has_valid_batch, student_profile_object).
+    """
+    user_role = str(request.session.get('user_role') or request.session.get('role') or '').lower()
+    session_email = (request.session.get('email') or '').strip().lower()
+    session_user_id = request.session.get('user_id')
+
+    sp = None
+    if session_email:
+        sp = StudentProfile.objects.filter(email__iexact=session_email).first()
+    if not sp and session_user_id:
+        if str(session_user_id).isdigit():
+            sp = StudentProfile.objects.filter(Q(student_id=session_user_id) | Q(id=int(session_user_id))).first()
+        else:
+            sp = StudentProfile.objects.filter(student_id=session_user_id).first()
+    if not sp and hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and request.user.email:
+        sp = StudentProfile.objects.filter(email__iexact=request.user.email).first()
+
+    if not sp:
+        return False, None
+
+    # Check for CourseEnrollment with payment_status='Success'
+    has_enrollment = CourseEnrollment.objects.filter(
+        student=sp,
+        payment_status__iexact='Success'
+    ).exists()
+
+    if not has_enrollment:
+        # Check PaymentTransaction with status='Success'
+        has_payment = PaymentTransaction.objects.filter(
+            status__iexact='Success'
+        ).filter(
+            Q(student_email__iexact=sp.email) | Q(student_id_code=sp.student_id)
+        ).exists()
+        if has_payment:
+            has_enrollment = True
+
+    return has_enrollment, sp
+
 
 def get_client_info(request):
     user_agent = request.META.get('HTTP_USER_AGENT', '')
@@ -374,12 +418,15 @@ def login_view(request):
                         description=f"Student {student.full_name} ({student.student_id}) logged in successfully.",
                         student_profile=student
                     )
+                    has_valid_batch, _ = check_student_batch_enrollment(request)
+                    redirect_target = '/studymaterial/' if has_valid_batch else '/'
+
                     return JsonResponse({
                         'status': 'success',
                         'message': f'Welcome back Student, {student.full_name}!',
                         'role': 'Student',
                         'name': student.full_name,
-                        'redirect_url': '/studymaterial/'
+                        'redirect_url': redirect_target
                     })
                 else:
                     log_user_auth_event(
@@ -588,7 +635,7 @@ def student_registration(request):
                 category="student_registration"
             )
 
-            redirect_target = '/studymaterial/'
+            redirect_target = '/'
 
             is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', '')
             if is_ajax:
@@ -924,6 +971,16 @@ def latest_tuition_job(request):
     return render(request, 'latest_tution_job.html')
 
 def study_material(request):
+    # Server-Side Batch Purchase Gate (PART 9 Requirement)
+    is_staff = hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and (request.user.is_staff or request.user.is_superuser)
+    session_role = str(request.session.get('user_role') or request.session.get('role') or '').lower()
+
+    if not (is_staff or session_role in ['super admin', 'teacher', 'tutor']):
+        has_valid_batch, _ = check_student_batch_enrollment(request)
+        if not has_valid_batch:
+            messages.warning(request, "Access Restricted: You must purchase or enroll in a valid batch to access the Student Dashboard & Study Material.")
+            return redirect('courses')
+
     # Strictly query database & session for authenticated student profile (NO URL PARAMETERS)
     db_student_name = None
     db_student_class = None
@@ -1427,49 +1484,74 @@ def admin_module_view(request, module_name, extra_context=None):
 
     clean_module = (module_name or 'dashboard').replace('-', '_')
 
-    if clean_module in ['messages', 'notices', 'announcements']:
-        template_name = 'admin/messages.html'
-    elif clean_module in ['live_classes', 'live_classes_center']:
-        template_name = 'admin/live_classes.html'
-    elif clean_module == 'assignments':
-        template_name = 'admin_modules/assignments.html'
-    elif clean_module in ['dpp_practice', 'dpp-practice', 'dpp']:
-        template_name = 'admin_modules/dpp.html'
-    elif clean_module in ['tests_quizzes', 'tests-quizzes', 'tests']:
-        template_name = 'admin_modules/tests.html'
-    elif clean_module in ['test_series', 'test-series']:
-        template_name = 'admin_modules/test_series.html'
-    elif clean_module in ['study_material', 'recorded_lectures', 'study_materials', 'pyq', 'e_library', 'e_newspaper']:
-        template_name = 'admin_modules/study_material.html'
-    elif clean_module in ['courses', 'subjects', 'chapters', 'course_wizard', 'manage_course']:
-        if clean_module == 'course_wizard':
-            template_name = 'admin_modules/course_wizard.html'
-        elif clean_module == 'manage_course':
-            template_name = 'admin_modules/manage_course.html'
-        else:
-            template_name = 'admin_modules/courses.html'
-    elif clean_module == 'reports':
-        template_name = 'admin/reports.html'
-    elif clean_module in ['payments', 'location_analytics', 'wallet', 'invoices']:
-        template_name = 'admin_modules/payments.html'
-    elif clean_module in ['dpp_practice', 'dpp-practice', 'dpp']:
-        template_name = 'admin_modules/dpp.html'
-    elif clean_module in ['tests_quizzes', 'tests-quizzes', 'tests']:
-        template_name = 'admin_modules/tests.html'
-    elif clean_module in ['test_series', 'test-series']:
-        template_name = 'admin_modules/test_series.html'
-    elif clean_module in ['pyq_model_papers', 'pyq-model-papers', 'pyq']:
-        template_name = 'pyq.html'
-    elif clean_module in ['e_library', 'e-library', 'e_newspaper', 'e-newspaper']:
-        template_name = 'studymaterial.html'
-    elif clean_module == 'backup_restore':
-        template_name = 'admin/backup_restore.html'
-    elif clean_module in ['user_logs', 'profile_changes', 'system_logs', 'notifications']:
-        if clean_module == 'profile_changes':
-            template_name = 'admin_modules/profile_changes.html'
-        else:
-            template_name = 'admin_modules/user_logs.html'
+    # Canonical routing for modules with dedicated view functions
+    if clean_module in ['student_parent_enquiries', 'student_parent_enquiry']:
+        return admin_student_parent_enquiries(request)
+    elif clean_module in ['teacher_enquiries', 'teacher_enquiry']:
+        return admin_teacher_enquiries(request)
+    elif clean_module in ['demo_enquiries', 'demo_bookings', 'demo_booking', 'demo_enquiry']:
+        return admin_demo_bookings(request)
+    elif clean_module in ['security', 'security_settings']:
+        from TutionPlatform.admin_auth_views import admin_security_settings_view
+        return admin_security_settings_view(request)
+    elif clean_module in ['roles_permissions', 'roles']:
+        from TutionPlatform.settings_views import admin_roles_permissions_view
+        return admin_roles_permissions_view(request)
+    elif clean_module in ['settings']:
+        from TutionPlatform.settings_views import admin_settings_view
+        return admin_settings_view(request)
 
+    # Canonical Module-to-Template Mapping Registry
+    MODULE_TEMPLATE_MAP = {
+        'messages': 'admin/messages.html',
+        'notices': 'admin/messages.html',
+        'announcements': 'admin/messages.html',
+        'live_classes': 'admin/live_classes.html',
+        'live_classes_center': 'admin/live_classes.html',
+        'assignments': 'admin_modules/assignments.html',
+        'dpp': 'admin_modules/dpp.html',
+        'dpp_practice': 'admin_modules/dpp.html',
+        'tests': 'admin_modules/tests.html',
+        'tests_quizzes': 'admin_modules/tests.html',
+        'test_series': 'admin_modules/test_series.html',
+        'pyq': 'admin_modules/pyq_model_papers.html',
+        'pyq_model_papers': 'admin_modules/pyq_model_papers.html',
+        'pyq_model_paper': 'admin_modules/pyq_model_papers.html',
+        'study_material': 'admin_modules/study_material.html',
+        'recorded_lectures': 'admin_modules/study_material.html',
+        'study_materials': 'admin_modules/study_material.html',
+        'courses': 'admin_modules/courses.html',
+        'subjects': 'admin_modules/courses.html',
+        'chapters': 'admin_modules/courses.html',
+        'course_wizard': 'admin_modules/course_wizard.html',
+        'manage_course': 'admin_modules/manage_course.html',
+        'reports': 'admin/reports.html',
+        'payments': 'admin_modules/payments.html',
+        'location_analytics': 'admin_modules/payments.html',
+        'wallet': 'admin_modules/payments.html',
+        'invoices': 'admin_modules/payments.html',
+        'e_library': 'admin_modules/e_library.html',
+        'e_newspaper': 'admin_modules/e_newspaper.html',
+        'coupons': 'admin_modules/coupons_rewards.html',
+        'rewards': 'admin_modules/coupons_rewards.html',
+        'coupons_rewards': 'admin_modules/coupons_rewards.html',
+        'backup_restore': 'admin/backup_restore.html',
+        'user_logs': 'admin_modules/user_logs.html',
+        'system_logs': 'admin_modules/user_logs.html',
+        'notifications': 'admin_modules/user_logs.html',
+        'profile_changes': 'admin_modules/profile_changes.html',
+        'student_parent_enquiries': 'admin/student_parent_enquiries.html',
+        'teacher_enquiries': 'admin/teacher_enquiries.html',
+        'demo_enquiries': 'admin_demo_bookings.html',
+        'demo_bookings': 'admin_demo_bookings.html',
+        'security': 'admin/security_settings.html',
+        'security_settings': 'admin/security_settings.html',
+        'roles_permissions': 'admin/roles_permissions.html',
+        'settings': 'admin/settings.html',
+    }
+
+    if clean_module in MODULE_TEMPLATE_MAP:
+        template_name = MODULE_TEMPLATE_MAP[clean_module]
     else:
         template_name = f'admin_modules/{clean_module}.html'
         
@@ -4067,6 +4149,7 @@ def api_admin_test_upload(request):
         raw_text = request.POST.get('questions_text', '')
 
         pdf_file = request.FILES.get('pdf_file')
+        content_type = request.POST.get('content_type', 'test')
 
         test_obj = OnlineTest.objects.create(
             test_type=test_type,
@@ -4442,17 +4525,17 @@ def api_student_my_results(request):
     name = request.GET.get('name', '')
 
     if not mobile and not name:
-        results_qs = StudentTestResult.objects.select_related('test').all()[:20]
+        results_qs = StudentTestResult.objects.select_related('test').all().order_by('-attempted_at')[:20]
     else:
         results_qs = StudentTestResult.objects.select_related('test').filter(
             Q(student_mobile=mobile) | Q(student_name__icontains=name)
-        )
+        ).order_by('-attempted_at')
 
     results_list = []
     total_score = 0
     pass_cnt = 0
 
-    for r in results_qs.order_by('-attempted_at'):
+    for r in results_qs:
         total_score += r.percentage
         if r.status == 'Passed':
             pass_cnt += 1
@@ -4760,6 +4843,7 @@ def api_admin_live_class_create(request):
         return JsonResponse({'status': 'error', 'message': 'Title, Meet Link, Date, and Time are required.'}, status=400)
     
     video_file = request.FILES.get('recorded_video_file')
+    content_type = data.get('content_type', 'live_class')
     
     lc = LiveClass.objects.create(
         content_type=content_type,
@@ -5523,6 +5607,7 @@ def api_courses_list(request):
     subject_filter = request.GET.get('subject', '')
     board_filter = request.GET.get('board', '').strip()
     tier_filter = request.GET.get('tier', '').strip()
+    stream_filter = request.GET.get('stream', '').strip()
     search_q = request.GET.get('q', '').strip()
 
     qs = CourseBatch.objects.all()
@@ -5532,6 +5617,15 @@ def api_courses_list(request):
         qs = qs.filter(subject__icontains=subject_filter)
     if board_filter and board_filter != 'all':
         qs = qs.filter(board__icontains=board_filter)
+    if stream_filter and stream_filter != 'all':
+        if 'science' in stream_filter.lower():
+            qs = qs.filter(Q(stream__icontains='Science') | Q(subject__icontains='Physics') | Q(subject__icontains='Chemistry') | Q(subject__icontains='Biology') | Q(subject__icontains='Math'))
+        elif 'commerce' in stream_filter.lower():
+            qs = qs.filter(Q(stream__icontains='Commerce') | Q(subject__icontains='Accounts') | Q(subject__icontains='Economics') | Q(subject__icontains='Business'))
+        elif 'arts' in stream_filter.lower() or 'humanities' in stream_filter.lower():
+            qs = qs.filter(Q(stream__icontains='Arts') | Q(stream__icontains='Humanities') | Q(subject__icontains='History') | Q(subject__icontains='English') | Q(subject__icontains='Geography'))
+        else:
+            qs = qs.filter(stream__icontains=stream_filter)
     if tier_filter and tier_filter != 'all':
         qs = qs.filter(tier__iexact=tier_filter)
     if search_q:
@@ -5540,6 +5634,18 @@ def api_courses_list(request):
     courses_data = []
     for c in qs:
         effective_price = float(c.price) * (1 - c.discount_percent / 100.0) if c.discount_percent > 0 else float(c.price)
+        
+        # Resolve stream fallback if not explicitly set
+        resolved_stream = c.stream if (c.stream and c.stream != 'N/A') else ''
+        if not resolved_stream:
+            comb = (c.subject + ' ' + c.title).lower()
+            if any(k in comb for k in ['physics', 'chemistry', 'biology', 'math', 'science']):
+                resolved_stream = 'Science'
+            elif any(k in comb for k in ['commerce', 'accounts', 'economics', 'business']):
+                resolved_stream = 'Commerce'
+            else:
+                resolved_stream = 'Arts / Humanities'
+
         courses_data.append({
             'id': c.id,
             'course_id': c.course_id,
@@ -5547,6 +5653,7 @@ def api_courses_list(request):
             'class_name': c.class_name,
             'subject': c.subject,
             'board': c.board,
+            'stream': resolved_stream,
             'language': c.language,
             'tier': c.tier or 'Normal',
             'original_price': float(c.price),
@@ -6103,6 +6210,8 @@ def api_admin_notices(request):
         if not title or not message:
             return JsonResponse({'status': 'error', 'message': 'Title and Message required'}, status=400)
 
+        content_type = data.get('content_type', 'notice')
+
         n = NoticeBoard.objects.create(
             content_type=content_type,
                 title=title,
@@ -6192,6 +6301,8 @@ def api_homework_assignments(request):
         course = None
         if course_id:
             course = CourseBatch.objects.filter(pk=course_id).first()
+
+        content_type = request.POST.get('content_type', 'homework')
 
         ha = HomeworkAssignment.objects.create(
             course=course,
@@ -6425,8 +6536,15 @@ def teacher_dashboard(request):
 # Daily Practice Problems (DPP) View
 # ===========================
 def dpp_view(request):
+    is_staff = hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and (request.user.is_staff or request.user.is_superuser)
+    session_role = str(request.session.get('user_role') or request.session.get('role') or '').lower()
+    if not (is_staff or session_role in ['super admin', 'teacher', 'tutor']):
+        has_valid_batch, _ = check_student_batch_enrollment(request)
+        if not has_valid_batch:
+            messages.warning(request, "Access Restricted: You must purchase or enroll in a batch to access DPPs.")
+            return redirect('courses')
+
     name_from_param = request.GET.get('name', '').strip()
-    session_role = request.session.get('role') or request.session.get('user_role')
     session_student_name = request.session.get('student_name')
     
     student_name = None
@@ -6461,8 +6579,15 @@ def dpp_view(request):
 # Assignments Page View
 # ===========================
 def assignments_view(request):
+    is_staff = hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and (request.user.is_staff or request.user.is_superuser)
+    session_role = str(request.session.get('user_role') or request.session.get('role') or '').lower()
+    if not (is_staff or session_role in ['super admin', 'teacher', 'tutor']):
+        has_valid_batch, _ = check_student_batch_enrollment(request)
+        if not has_valid_batch:
+            messages.warning(request, "Access Restricted: You must purchase or enroll in a batch to access Assignments.")
+            return redirect('courses')
+
     name_from_param = request.GET.get('name', '').strip()
-    session_role = request.session.get('role') or request.session.get('user_role')
     session_student_name = request.session.get('student_name')
     
     student_name = None
@@ -6494,6 +6619,14 @@ def assignments_view(request):
 
 
 def notes_view(request):
+    is_staff = hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and (request.user.is_staff or request.user.is_superuser)
+    session_role = str(request.session.get('user_role') or request.session.get('role') or '').lower()
+    if not (is_staff or session_role in ['super admin', 'teacher', 'tutor']):
+        has_valid_batch, _ = check_student_batch_enrollment(request)
+        if not has_valid_batch:
+            messages.warning(request, "Access Restricted: You must purchase or enroll in a batch to access Notes.")
+            return redirect('courses')
+
     session_student_name = request.session.get('student_name', '')
     session_user_name = request.session.get('user_name', '')
     session_student_class = request.session.get('student_class', 'Class 10')
@@ -9746,6 +9879,7 @@ def admin_test_series_view(request): return _render_admin_module_response(reques
 def admin_pyq_view(request): return _render_admin_module_response(request, 'pyq')
 def admin_e_library_view(request): return _render_admin_module_response(request, 'e_library')
 def admin_e_newspaper_view(request): return _render_admin_module_response(request, 'e_newspaper')
+def admin_coupons_rewards_view(request): return _render_admin_module_response(request, 'coupons_rewards')
 def admin_notices_view(request):
     from .communication_views import admin_notices_view as comm_notices_view
     return comm_notices_view(request)
@@ -10174,13 +10308,19 @@ def api_admin_study_material_classes_subjects(request):
             name = body_data.get('name', '').strip()
             class_name = body_data.get('class_name', '').strip()
 
-            if not name or not class_name:
-                return JsonResponse({'status': 'error', 'message': 'Class Name and Subject Name are required.'}, status=400)
+            if not class_name:
+                return JsonResponse({'status': 'error', 'message': 'Class Name is required.'}, status=400)
 
-            deleted_cnt, _ = CourseSubject.objects.filter(name__iexact=name, class_name__iexact=class_name).delete()
+            if name and name != 'ALL':
+                deleted_cnt, _ = CourseSubject.objects.filter(name__iexact=name, class_name__iexact=class_name).delete()
+                msg = f"Subject '{name}' for '{class_name}' deleted successfully!"
+            else:
+                deleted_cnt, _ = CourseSubject.objects.filter(class_name__iexact=class_name).delete()
+                msg = f"Class '{class_name}' and all its subjects deleted successfully!"
+
             return JsonResponse({
                 'status': 'success',
-                'message': f"Subject '{name}' for '{class_name}' deleted successfully!"
+                'message': msg
             })
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
@@ -10696,3 +10836,197 @@ def api_admin_test_series_analytics(request):
         })
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+# =========================================================
+# STUDENT PROFILE EDIT & BATCH PURCHASE / ENROLLMENT APIS
+# =========================================================
+
+@csrf_exempt
+def api_student_profile_update(request):
+    """
+    Handles AJAX POST updates for editing StudentProfile details.
+    Allows updating non-protected fields and saves changes to database.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
+    has_batch, sp = check_student_batch_enrollment(request)
+    if not sp:
+        session_email = (request.session.get('email') or '').strip().lower()
+        if session_email:
+            sp = StudentProfile.objects.filter(email__iexact=session_email).first()
+
+    if not sp and hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and request.user.email:
+        sp = StudentProfile.objects.filter(email__iexact=request.user.email).first()
+
+    if not sp:
+        return JsonResponse({'status': 'error', 'message': 'Please log in as a student to edit your profile.'}, status=401)
+
+    full_name = request.POST.get('full_name', '').strip()
+    mobile = request.POST.get('mobile', '').strip()
+    gender = request.POST.get('gender', '').strip()
+    student_class = request.POST.get('student_class', '').strip()
+    board = request.POST.get('board', '').strip()
+    dob = request.POST.get('dob', '').strip()
+    city = request.POST.get('city', '').strip()
+    state = request.POST.get('state', '').strip()
+    address = request.POST.get('address', '').strip()
+    school_name = request.POST.get('school_name', '').strip()
+
+    if full_name:
+        sp.full_name = full_name
+        request.session['student_name'] = full_name
+    if mobile:
+        sp.mobile = mobile
+    if gender:
+        sp.gender = gender
+    if student_class:
+        sp.student_class = student_class
+        request.session['student_class'] = student_class
+    if board:
+        sp.board = board
+        request.session['board'] = board
+    if dob:
+        sp.dob = dob
+    if city:
+        sp.city = city
+    if state:
+        sp.state = state
+    if address:
+        sp.address = address
+    if school_name:
+        sp.school_name = school_name
+
+    if 'profile_photo' in request.FILES:
+        sp.profile_photo = request.FILES['profile_photo']
+
+    sp.save()
+
+    ActivityLog.objects.create(
+        activity_type='Student Profile Updated',
+        user_name=sp.full_name,
+        user_role='Student',
+        description=f"Student {sp.full_name} ({sp.student_id}) updated profile details.",
+        page_url=request.path,
+        ip_address='127.0.0.1'
+    )
+
+    return JsonResponse({
+        'status': 'success',
+        'message': 'Profile updated successfully!',
+        'full_name': sp.full_name,
+        'mobile': sp.mobile,
+        'student_class': sp.student_class,
+        'board': sp.board
+    })
+
+
+@csrf_exempt
+def api_batch_enroll(request):
+    """
+    Handles student batch enrollment/purchase.
+    Creates CourseEnrollment and PaymentTransaction with status='Success' in database,
+    unlocking the Student Dashboard.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
+
+    batch_id = request.POST.get('batch_id') or request.POST.get('course_id')
+    batch_title = request.POST.get('batch_title') or request.POST.get('course_title') or 'EduTrust Premium Batch'
+    amount_str = request.POST.get('amount') or '2999'
+
+    # Resolve Student
+    session_email = (request.session.get('email') or '').strip().lower()
+    session_user_id = request.session.get('user_id')
+    
+    sp = None
+    if session_email:
+        sp = StudentProfile.objects.filter(email__iexact=session_email).first()
+    if not sp and session_user_id:
+        if str(session_user_id).isdigit():
+            sp = StudentProfile.objects.filter(Q(student_id=session_user_id) | Q(id=int(session_user_id))).first()
+        else:
+            sp = StudentProfile.objects.filter(student_id=session_user_id).first()
+    if not sp and hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False) and request.user.email:
+        sp = StudentProfile.objects.filter(email__iexact=request.user.email).first()
+
+    if not sp:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Please register or log in as a student to purchase a batch.',
+            'redirect_url': '/registration/'
+        }, status=401)
+
+    # Resolve Batch object if batch_id passed
+    batch_obj = None
+    if batch_id:
+        try:
+            batch_obj = CourseBatch.objects.filter(pk=int(batch_id)).first()
+        except Exception:
+            pass
+    if not batch_obj:
+        batch_obj = CourseBatch.objects.filter(status='Active').first()
+
+    if not batch_obj:
+        return JsonResponse({'status': 'error', 'message': 'No active course batch found to enroll in.'}, status=400)
+
+    try:
+        amount_val = float(amount_str)
+    except Exception:
+        amount_val = float(batch_obj.net_price or batch_obj.tier_pricing_normal or 2999)
+
+    # Atomic transaction for Enrollment & Payment Creation
+    with transaction.atomic():
+        enrollment, created = CourseEnrollment.objects.get_or_create(
+            student=sp,
+            course=batch_obj,
+            defaults={
+                'student_name': sp.full_name,
+                'payment_status': 'Success',
+                'progress_percent': 0
+            }
+        )
+        if not created:
+            enrollment.payment_status = 'Success'
+            enrollment.save()
+
+        # Create PaymentTransaction record
+        txn_id = f"TXN-{random.randint(10000000, 99999999)}"
+        PaymentTransaction.objects.create(
+            transaction_id=txn_id,
+            student_name=sp.full_name,
+            student_id_code=sp.student_id,
+            student_email=sp.email,
+            course_title=batch_obj.title,
+            batch_title=batch_obj.title,
+            amount=amount_val,
+            payment_method='UPI / Razorpay',
+            gateway_name='Razorpay',
+            gateway_txn_id=f"pay_{random.randint(10000000, 99999999)}",
+            status='Success',
+            notes=f"Successful batch purchase for {batch_obj.title}"
+        )
+
+        # Log Activity
+        ActivityLog.objects.create(
+            activity_type='Batch Purchased',
+            user_name=sp.full_name,
+            user_role='Student',
+            description=f"Student {sp.full_name} ({sp.student_id}) purchased batch '{batch_obj.title}'.",
+            page_url=request.path,
+            ip_address='127.0.0.1'
+        )
+
+        AdminNotification.objects.create(
+            title=f"New Batch Enrollment: {sp.full_name}",
+            message=f"{sp.full_name} enrolled in {batch_obj.title}.",
+            category="enrollment"
+        )
+
+    return JsonResponse({
+        'status': 'success',
+        'message': f"Congratulations! You have successfully enrolled in '{batch_obj.title}'. Student Dashboard is now unlocked!",
+        'redirect_url': '/studymaterial/'
+    })
+

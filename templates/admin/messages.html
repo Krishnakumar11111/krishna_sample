@@ -452,8 +452,8 @@
 </div>
 
 <script>
-let currentCategory = 'all';
-let currentTargetId = null;
+var currentCategory = typeof currentCategory !== 'undefined' ? currentCategory : 'all';
+var currentTargetId = typeof currentTargetId !== 'undefined' ? currentTargetId : null;
 
 function initMessagesModule() {
     loadStats();

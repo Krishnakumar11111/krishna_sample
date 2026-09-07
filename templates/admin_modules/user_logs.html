@@ -126,8 +126,8 @@
             <div class="flex items-center gap-3">
                 <div id="modalAvatar" class="w-10 h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center text-sm uppercase">ST</div>
                 <div>
-                    <h3 id="modalUserName" class="text-base font-black leading-tight text-white">Student Name</h3>
-                    <p id="modalUserRoleBadge" class="text-[10px] font-bold text-blue-400">STUDENT PROFILE</p>
+                    <span id="modalUserName" class="text-xl font-black leading-tight block" style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Student Name</span>
+                    <span id="modalUserRoleBadge" class="text-xs font-extrabold uppercase tracking-wider block mt-0.5" style="color: #60a5fa !important; -webkit-text-fill-color: #60a5fa !important;">STUDENT PROFILE</span>
                 </div>
             </div>
             <button onclick="closeUserAuthDetailModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm transition-colors border-0 cursor-pointer">
@@ -670,7 +670,7 @@ function openUserAuthDetailModal(email, userId, roleType) {
                 if (avatar) avatar.innerText = (user.full_name || 'U').slice(0, 2).toUpperCase();
 
                 const userName = document.getElementById('modalUserName');
-                if (userName) userName.innerText = user.full_name;
+                if (userName) { userName.innerText = user.full_name || 'User Name'; userName.style.setProperty('color', '#ffffff', 'important'); userName.style.setProperty('-webkit-text-fill-color', '#ffffff', 'important'); }
 
                 const roleBadge = document.getElementById('modalUserRoleBadge');
                 if (roleBadge) roleBadge.innerText = user.role ? user.role.toUpperCase() + ' PROFILE' : 'REGISTERED PROFILE';

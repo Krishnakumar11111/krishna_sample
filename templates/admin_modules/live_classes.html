@@ -1,183 +1,2117 @@
 {% extends base_template|default:"admin_partial_base.html" %}
 
 {% block admin_content %}
-<div class="space-y-6 fade-in">
-    <!-- HEADER -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="space-y-5 fade-in text-slate-800 pb-12">
+    <!-- PAGE HEADER BAR -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-            <h2 class="text-xl font-black text-slate-900 tracking-tight">Live Classes Schedule</h2>
-            <p class="text-xs text-slate-500 font-medium">Real-time active streaming sessions, upcoming schedule & conducted classes</p>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-indigo-100">Live Management Center</span>
+                <span id="liveRealtimeTicker" class="text-[10px] text-slate-400 font-semibold flex items-center gap-1"><i class="fas fa-sync-alt text-[9px] animate-spin text-blue-500"></i> <span id="tickerText">Updated 5s ago</span></span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mt-0.5">Live Classes Calendar Schedule</h2>
+            <p class="text-xs text-slate-500 font-medium">Plan, schedule and monitor all your live streaming sessions in one place.</p>
         </div>
-        <button onclick="openModal('modalScheduleLive')" class="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-2xl border-0 cursor-pointer shadow-md flex items-center gap-2">
-            <i class="fas fa-video"></i> Schedule New Live Class
+        <div class="flex flex-wrap items-center gap-2">
+            <button onclick="refreshLiveClassesData()" title="Refresh All Data" aria-label="Refresh Data" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer transition-all inline-flex items-center gap-1.5 shadow-2xs">
+                <i class="fas fa-sync-alt text-xs"></i> <span>Refresh</span>
+            </button>
+            <div class="relative group">
+                <button onclick="exportLiveClassesSchedule()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer transition-all inline-flex items-center gap-1.5 shadow-2xs">
+                    <i class="fas fa-download text-xs text-slate-500"></i> <span>Export</span> <i class="fas fa-chevron-down text-[9px]"></i>
+                </button>
+            </div>
+            <button id="btnOpenLiveSettingsModal" onclick="openLiveSettingsModal()" title="Calendar Settings" aria-label="Settings" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer transition-all inline-flex items-center justify-center w-9 h-9 shadow-2xs">
+                <i class="fas fa-cog text-xs"></i>
+            </button>
+            <button id="btnOpenCreateLiveClassModal" onclick="openCreateLiveClassModal()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer transition-all inline-flex items-center gap-2 shadow-md hover:scale-[1.02]">
+                <i class="fas fa-plus text-xs"></i> <span>+ Create Live Class</span>
+            </button>
+        </div>
+    </div>
+
+        <!-- 1. SIX COMPACT PREMIUM KPI SUMMARY CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2" id="liveKpiCardsGrid">
+        <!-- Card 1: Live Now -->
+        <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-rose-200/80 shadow-2xs relative overflow-hidden group hover:border-rose-300 transition-all">
+            <div class="flex items-center justify-between text-rose-600 mb-0.5">
+                <span class="text-[9px] font-extrabold text-rose-600 uppercase tracking-wider flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span> Live Now</span>
+                <div class="w-5 h-5 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center text-[10px]"><i class="fas fa-broadcast-tower"></i></div>
+            </div>
+            <h4 class="text-lg font-black text-slate-900 leading-none" id="kpiLiveNowCount">0</h4>
+            <p class="text-[9px] text-slate-500 font-bold mt-0.5">Classes in progress</p>
+        </div>
+
+        <!-- Card 2: Upcoming -->
+        <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-blue-200/80 shadow-2xs relative overflow-hidden group hover:border-blue-300 transition-all">
+            <div class="flex items-center justify-between text-blue-600 mb-0.5">
+                <span class="text-[9px] font-extrabold text-blue-600 uppercase tracking-wider">Upcoming</span>
+                <div class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-calendar-alt"></i></div>
+            </div>
+            <h4 class="text-lg font-black text-slate-900 leading-none" id="kpiUpcomingCount">0</h4>
+            <p class="text-[9px] text-slate-500 font-bold mt-0.5">Scheduled classes</p>
+        </div>
+
+        <!-- Card 3: Completed -->
+        <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-emerald-200/80 shadow-2xs relative overflow-hidden group hover:border-emerald-300 transition-all">
+            <div class="flex items-center justify-between text-emerald-600 mb-0.5">
+                <span class="text-[9px] font-extrabold text-emerald-600 uppercase tracking-wider">Completed</span>
+                <div class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px]"><i class="fas fa-check-circle"></i></div>
+            </div>
+            <h4 class="text-lg font-black text-slate-900 leading-none" id="kpiCompletedCount">0</h4>
+            <p class="text-[9px] text-slate-500 font-bold mt-0.5">Classes completed</p>
+        </div>
+
+        <!-- Card 4: Rescheduled -->
+        <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-amber-200/80 shadow-2xs relative overflow-hidden group hover:border-amber-300 transition-all">
+            <div class="flex items-center justify-between text-amber-600 mb-0.5">
+                <span class="text-[9px] font-extrabold text-amber-600 uppercase tracking-wider">Rescheduled</span>
+                <div class="w-5 h-5 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center text-[10px]"><i class="fas fa-history"></i></div>
+            </div>
+            <h4 class="text-lg font-black text-slate-900 leading-none" id="kpiRescheduledCount">0</h4>
+            <p class="text-[9px] text-slate-500 font-bold mt-0.5">Rescheduled classes</p>
+        </div>
+
+        <!-- Card 5: Cancelled -->
+        <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-purple-200/80 shadow-2xs relative overflow-hidden group hover:border-purple-300 transition-all">
+            <div class="flex items-center justify-between text-purple-600 mb-0.5">
+                <span class="text-[9px] font-extrabold text-purple-600 uppercase tracking-wider">Cancelled</span>
+                <div class="w-5 h-5 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[10px]"><i class="fas fa-ban"></i></div>
+            </div>
+            <h4 class="text-lg font-black text-slate-900 leading-none" id="kpiCancelledCount">0</h4>
+            <p class="text-[9px] text-slate-500 font-bold mt-0.5">Cancelled classes</p>
+        </div>
+
+        <!-- Card 6: Total Students -->
+        <div class="bg-white p-2 sm:p-2.5 rounded-xl border border-cyan-200/80 shadow-2xs relative overflow-hidden group hover:border-cyan-300 transition-all">
+            <div class="flex items-center justify-between text-cyan-600 mb-0.5">
+                <span class="text-[9px] font-extrabold text-cyan-600 uppercase tracking-wider">Total Students</span>
+                <div class="w-5 h-5 rounded-md bg-cyan-50 text-cyan-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-graduate"></i></div>
+            </div>
+            <h4 class="text-lg font-black text-slate-900 leading-none" id="kpiTotalStudentsCount">0</h4>
+            <p class="text-[9px] text-slate-500 font-bold mt-0.5">Across all classes</p>
+        </div>
+    </div>
+
+    <!-- 2. SEARCH & FILTER TOOLBAR -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2">
+            <!-- Search -->
+            <div class="relative lg:col-span-2">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="liveSearchInput" onkeyup="debouncedApplyLiveFilters()" placeholder="Search by class, teacher, subject, batch..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
+            </div>
+            <!-- Course Filter -->
+            <div>
+                <select id="filterLiveCourse" onchange="applyLiveFilters()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">All Classes</option>
+                </select>
+            </div>
+            <!-- Batch Filter -->
+            <div>
+                <select id="filterLiveBatch" onchange="applyLiveFilters()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">All Batches</option>
+                </select>
+            </div>
+            <!-- Teacher Filter -->
+            <div>
+                <select id="filterLiveTeacher" onchange="applyLiveFilters()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">All Teachers</option>
+                </select>
+            </div>
+            <!-- Subject Filter -->
+            <div>
+                <select id="filterLiveSubject" onchange="applyLiveFilters()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">All Subjects</option>
+                </select>
+            </div>
+            <!-- Status Filter -->
+            <div>
+                <select id="filterLiveStatus" onchange="applyLiveFilters()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">All Statuses</option>
+                    <option value="Live">LIVE NOW</option>
+                    <option value="Upcoming">UPCOMING</option>
+                    <option value="Completed">COMPLETED</option>
+                    <option value="Rescheduled">RESCHEDULED</option>
+                    <option value="Cancelled">CANCELLED</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
+            <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold text-slate-500">Active Date Range:</span>
+                <span id="calendarDateRangeLabel" class="font-extrabold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-100">31 Aug – 06 Sep, 2026</span>
+            </div>
+            <button onclick="clearLiveFilters()" class="text-rose-600 hover:text-rose-700 font-extrabold text-[11px] border-0 bg-transparent cursor-pointer inline-flex items-center gap-1">
+                <i class="fas fa-undo text-[10px]"></i> Clear Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. CALENDAR CONTROLS & INTERACTIVE WEEK CALENDAR -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <!-- CALENDAR CONTROLS BAR -->
+        <div class="p-3 bg-slate-50/80 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <button onclick="navigateCalendar('prev')" title="Previous" aria-label="Previous Period" class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center border-0 cursor-pointer shadow-2xs">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+                <button onclick="navigateCalendar('today')" class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-extrabold text-xs hover:bg-slate-100 cursor-pointer shadow-2xs">
+                    Today
+                </button>
+                <button onclick="navigateCalendar('next')" title="Next" aria-label="Next Period" class="w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center border-0 cursor-pointer shadow-2xs">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
+                <h3 id="calendarCurrentMonthTitle" class="text-base font-black text-slate-900 ml-2">August 31 – September 6, 2026</h3>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <div class="bg-white p-0.5 rounded-xl border border-slate-200 shadow-2xs flex items-center text-xs font-extrabold">
+                    <button onclick="switchCalendarView('month')" id="btnViewMonth" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Month</button>
+                    <button onclick="switchCalendarView('week')" id="btnViewWeek" class="px-3 py-1 rounded-lg bg-blue-600 text-white shadow-2xs cursor-pointer">Week</button>
+                    <button onclick="switchCalendarView('day')" id="btnViewDay" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Day</button>
+                    <button onclick="switchCalendarView('agenda')" id="btnViewAgenda" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Agenda</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEK CALENDAR CONTAINER -->
+        <div id="calendarMainContainer" class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs min-h-[420px] transition-all">
+            <div class="p-12 text-center text-slate-400 space-y-2"><p class="font-bold text-xs text-slate-500">There is no class today</p></div></div>
+        </div>
+    </div>
+
+        <!-- 4. SECONDARY DASHBOARD PANELS (BALANCED 2-COLUMN GRID) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+        <!-- LEFT COLUMN: LIVE NOW + UPCOMING CLASSES -->
+        <div class="space-y-3.5">
+            <!-- LIVE NOW PANEL -->
+            <div class="bg-white p-3.5 rounded-xl border border-rose-200/80 shadow-2xs space-y-2.5">
+                <div class="flex items-center justify-between border-b border-rose-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span>
+                        <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm">Live Now (<span id="liveNowPanelCount">0</span>)</h3>
+                    </div>
+                    <button onclick="switchCalendarView('agenda')" class="text-blue-600 hover:underline font-extrabold text-[11px] cursor-pointer border-0 bg-transparent">View All →</button>
+                </div>
+                <div id="liveNowCardsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <!-- Dynamic DB Content -->
+                </div>
+            </div>
+
+            <!-- UPCOMING CLASSES (NEXT 7 DAYS) -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-2.5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="font-extrabold text-slate-900 text-xs sm:text-sm flex items-center gap-1.5"><i class="fas fa-calendar-check text-blue-600"></i> Upcoming Classes (Next 7 Days)</h3>
+                    <button onclick="switchCalendarView('agenda')" class="text-blue-600 hover:underline font-extrabold text-[11px] cursor-pointer border-0 bg-transparent">View All →</button>
+                </div>
+                <div id="upcomingClassesList" class="space-y-2">
+                    <!-- Dynamic DB Content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: TODAY'S AGENDA + CLASS TYPE DONUT + RECENT ACTIVITY -->
+        <div class="space-y-3.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <!-- TODAY'S AGENDA -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <h3 class="font-extrabold text-slate-900 text-xs flex items-center gap-1.5"><i class="fas fa-clock text-indigo-600"></i> Today's Agenda</h3>
+                        <span class="text-[10px] font-bold text-slate-400" id="agendaTodayDate">31 Aug, 2026</span>
+                    </div>
+                    <div id="todaysAgendaList" class="space-y-2 text-xs">
+                        <!-- Dynamic DB Content -->
+                    </div>
+                </div>
+
+                <!-- CLASS TYPE DISTRIBUTION (DONUT CHART) -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5"><i class="fas fa-chart-pie text-purple-600"></i> Class Distribution</h3>
+                        <button onclick="openClassTypeReport()" class="text-blue-600 hover:underline font-extrabold text-[10px] border-0 bg-transparent cursor-pointer">Report</button>
+                    </div>
+                    <div class="flex items-center justify-center relative" style="height: 140px;">
+                        <canvas id="classTypeDonutChart"></canvas>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 text-[9.5px] font-extrabold pt-1.5 border-t border-slate-100" id="classTypeLegendGrid">
+                        <!-- Dynamic DB Content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY FEED -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-2.5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5"><i class="fas fa-stream text-amber-600"></i> Recent Activity</h3>
+                    <span class="text-[10px] font-bold text-slate-400">Live Audit Log</span>
+                </div>
+                <div id="recentActivityFeedList" class="space-y-2 text-xs max-h-[180px] overflow-y-auto custom-scrollbar pr-1">
+                    <!-- Dynamic DB Content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. BOTTOM ANALYTICS STRIP (COMPACT & REAL DB CONNECTED) -->
+    <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-center divide-x divide-slate-100">
+            <div class="px-2 py-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase block tracking-wider">Total Classes</span>
+                <h5 class="text-sm sm:text-base font-black text-slate-900 leading-tight mt-0.5" id="stripTotalClasses">0</h5>
+            </div>
+            <div class="px-2 py-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase block tracking-wider">Scheduled Students</span>
+                <h5 class="text-sm sm:text-base font-black text-slate-900 leading-tight mt-0.5" id="stripTotalStudents">0</h5>
+            </div>
+            <div class="px-2 py-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase block tracking-wider">Avg Attendance</span>
+                <h5 class="text-sm sm:text-base font-black text-slate-900 leading-tight mt-0.5" id="stripAvgAttendance">0%</h5>
+            </div>
+            <div class="px-2 py-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase block tracking-wider">Total Watch Time</span>
+                <h5 class="text-sm sm:text-base font-black text-slate-900 leading-tight mt-0.5" id="stripTotalWatchTime">0 h</h5>
+            </div>
+            <div class="px-2 py-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase block tracking-wider">Recordings Available</span>
+                <h5 class="text-sm sm:text-base font-black text-slate-900 leading-tight mt-0.5" id="stripRecordingsCount">0</h5>
+            </div>
+            <div class="px-2 py-0.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase block tracking-wider">Teachers Active</span>
+                <h5 class="text-sm sm:text-base font-black text-slate-900 leading-tight mt-0.5" id="stripActiveTeachers">0</h5>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========================================== -->
+<!-- SLIDING RIGHT-SIDE CLASS DETAILS DRAWER -->
+<!-- ========================================== -->
+<div id="liveClassDetailDrawer" class="fixed inset-y-0 right-0 z-[10000] w-full max-w-md bg-white shadow-2xl border-l border-slate-200 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col hidden">
+    <!-- Drawer Header -->
+    <div class="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2">
+            <span id="drawerStatusBadge" class="bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> LIVE NOW</span>
+            <span id="drawerClassId" class="text-[10px] font-mono text-slate-400">#LIVE-001</span>
+        </div>
+        <button onclick="closeLiveClassDrawer()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white border-0 cursor-pointer flex items-center justify-center">
+            <i class="fas fa-times text-xs"></i>
         </button>
     </div>
 
-    <!-- KPI SUMMARY CARDS -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Total Classes</span>
-            <h4 class="text-xl font-black text-slate-900 leading-none">{{ all_live_classes.count }}</h4>
+    <!-- Drawer Content (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar text-xs">
+        <div>
+            <h3 id="drawerClassTitle" class="text-lg font-black text-slate-900 leading-tight">Physics – Laws of Motion</h3>
+            <p id="drawerBatchCourse" class="text-xs font-bold text-blue-600 mt-1">JEE 2026 – Batch A • Class 11 Physics</p>
         </div>
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span class="text-[10px] font-extrabold text-rose-500 uppercase tracking-wider block">Live Now</span>
-            <h4 class="text-xl font-black text-rose-600 leading-none">{% if live_now_classes %}{{ live_now_classes }}{% else %}0{% endif %}</h4>
-        </div>
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span class="text-[10px] font-extrabold text-blue-500 uppercase tracking-wider block">Scheduled</span>
-            <h4 class="text-xl font-black text-blue-600 leading-none">{% if scheduled_live_classes %}{{ scheduled_live_classes }}{% else %}{{ all_live_classes.count }}{% endif %}</h4>
-        </div>
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs space-y-1">
-            <span class="text-[10px] font-extrabold text-emerald-500 uppercase tracking-wider block">Conducted</span>
-            <h4 class="text-xl font-black text-emerald-600 leading-none">{% if conducted_live_classes %}{{ conducted_live_classes }}{% else %}0{% endif %}</h4>
-        </div>
-    </div>
 
-    <!-- LIVE CLASSES TABLE / LIST -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xs overflow-hidden">
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <i class="fas fa-broadcast-tower text-rose-600"></i> Active & Upcoming Live Sessions
-            </h3>
+        <!-- Teacher Box -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div id="drawerTeacherAvatar" class="w-9 h-9 rounded-full bg-blue-600 text-white font-black flex items-center justify-center text-xs uppercase">AS</div>
+                <div>
+                    <h5 id="drawerTeacherName" class="font-extrabold text-slate-900 text-xs">Amit Sharma <i class="fas fa-check-circle text-blue-500 text-[10px]"></i></h5>
+                    <span id="drawerTeacherSub" class="text-[10px] text-slate-500 font-semibold">Lead Physics Faculty</span>
+                </div>
+            </div>
+            <button onclick="viewTeacherProfileFromDrawer()" class="text-blue-600 hover:underline font-extrabold text-[11px] border-0 bg-transparent cursor-pointer">Profile</button>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-xs">
-                <thead>
-                    <tr class="bg-slate-50 text-slate-500 font-extrabold uppercase text-[10px]">
-                        <th class="p-3 text-left">Class ID</th>
-                        <th class="p-3 text-left">Topic & Details</th>
-                        <th class="p-3 text-left">Teacher</th>
-                        <th class="p-3 text-left">Class / Subject</th>
-                        <th class="p-3 text-left">Status</th>
-                        <th class="p-3 text-left">Date & Time</th>
-                        <th class="p-3 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for lc in all_live_classes %}
-                    <tr class="border-t border-slate-100 hover:bg-slate-50/70 transition-colors">
-                        <td class="p-3 font-mono text-[10px] font-bold text-slate-400">#LC-{{ lc.id }}</td>
-                        <td class="p-3 font-extrabold text-slate-900 max-w-[220px] truncate">{{ lc.topic }}</td>
-                        <td class="p-3 font-bold text-slate-700">{{ lc.teacher_name|default:"Assigned Faculty" }}</td>
-                        <td class="p-3 text-slate-600">{{ lc.class_name|default:"Class 10" }} • {{ lc.subject|default:"Science" }}</td>
-                        <td class="p-3">
-                            {% if lc.status == 'Live' %}
-                            <span class="bg-rose-100 text-rose-700 text-[10px] font-black px-2.5 py-1 rounded-full inline-flex items-center gap-1">
-                                <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping"></span> Live Now
-                            </span>
-                            {% elif lc.status == 'Ended' %}
-                            <span class="bg-slate-100 text-slate-600 text-[10px] font-extrabold px-2.5 py-1 rounded-full">Conducted</span>
-                            {% else %}
-                            <span class="bg-blue-100 text-blue-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full">Scheduled</span>
-                            {% endif %}
-                        </td>
-                        <td class="p-3 text-slate-500 font-medium">{{ lc.scheduled_time|default:lc.created_at|date:"d M Y, h:i A" }}</td>
-                        <td class="p-3">
-                            <div class="flex items-center gap-1.5">
-                                <button type="button" onclick="openLiveClassDetailModal({{ lc.id }}, '{{ lc.topic|escapejs }}', '{{ lc.teacher_name|escapejs }}', '{{ lc.class_name|escapejs }}', '{{ lc.subject|escapejs }}', '{{ lc.status|escapejs }}', '{{ lc.scheduled_time|date:"d M Y, h:i A" }}', '{{ lc.meet_link|escapejs }}')" title="View Details" class="w-7 h-7 rounded-lg bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 border-0 cursor-pointer text-xs flex items-center justify-center p-0 transition-colors shadow-2xs">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                {% if lc.meet_link %}
-                                <a href="{{ lc.meet_link }}" target="_blank" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[10px] no-underline inline-flex items-center gap-1">
-                                    <i class="fas fa-play text-[9px]"></i> Join
-                                </a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" class="p-8 text-center">
-                            <div class="text-slate-400 space-y-2">
-                                <i class="fas fa-video-slash text-3xl"></i>
-                                <h4 class="font-bold text-sm text-slate-700">No Live Classes Scheduled</h4>
-                                <p class="text-xs text-slate-400">Click Schedule New Live Class above to add a session.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
-<!-- ========== LIVE CLASS DETAIL MODAL ========== -->
-<div id="modalLiveClassDetail" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/70 backdrop-blur-xs p-4" onclick="if(event.target===this) closeLiveClassDetailModal()">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200" onclick="event.stopPropagation()">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
-            <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
-                <i class="fas fa-video text-rose-600"></i> Live Class Details
-            </h3>
-            <button onclick="closeLiveClassDetailModal()" class="w-8 h-8 rounded-full bg-slate-200/60 hover:bg-slate-300 text-slate-600 border-0 cursor-pointer flex items-center justify-center transition-colors">
-                <i class="fas fa-times text-sm"></i>
+        <!-- Schedule & Duration Box -->
+        <div class="grid grid-cols-2 gap-2 text-slate-700">
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-bold text-slate-400 block mb-0.5">Time & Duration</span>
+                <strong id="drawerTimeDuration" class="text-slate-900 block">10:00 AM – 11:30 AM (90 min)</strong>
+            </div>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span class="text-[10px] font-bold text-slate-400 block mb-0.5">Enrolled / Capacity</span>
+                <strong id="drawerCapacity" class="text-slate-900 block">0 Students Enrolled</strong>
+            </div>
+        </div>
+
+        <!-- Stream Link Primary CTA -->
+        <div class="space-y-2 pt-1">
+            <div id="drawerEndClassBtnContainer" style="display: none;"><button onclick="executeEndLiveClass()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl border-0 cursor-pointer shadow-md flex items-center justify-center gap-1.5 mb-2"><i class="fas fa-power-off text-xs"></i> <span>End Class Session Now</span></button></div><a id="drawerJoinRoomBtn" href="#" target="_blank" class="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs rounded-xl border-0 cursor-pointer shadow-md flex items-center justify-center gap-2 no-underline">
+                <i class="fas fa-external-link-alt text-xs"></i> <span>Join Class Room ↗</span>
+            </a>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="monitorLiveClassStream()" class="py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold text-xs rounded-xl border border-rose-200 cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                    <i class="fas fa-eye text-xs"></i> Monitor Live
+                </button>
+                <button onclick="viewClassFullDetails()" class="py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer transition-colors flex items-center justify-center gap-1.5">
+                    <i class="fas fa-info-circle text-xs"></i> Class Details
+                </button>
+            </div>
+        </div>
+
+        <!-- Attendance Progress Bar -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+                <span class="font-extrabold text-slate-700">Attendance</span>
+                <strong id="drawerAttendancePctText" class="text-emerald-600 font-extrabold">0 / 0 (0%)</strong>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div id="drawerAttendanceBar" class="h-full bg-emerald-500 rounded-full" style="width: 92.5%;"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-1 text-[10px] text-center font-bold text-slate-500 pt-1">
+                <div>Online: <span id="drawerStudentsOnline" class="text-blue-600">164</span></div>
+                <div>Peak: <span id="drawerStudentsPeak" class="text-indigo-600">181</span></div>
+                <div>Avg Time: <span id="drawerAvgTime" class="text-purple-600">52m</span></div>
+            </div>
+            <button onclick="openAttendanceModalFromDrawer()" class="w-full py-1.5 bg-white hover:bg-slate-100 text-slate-800 font-extrabold text-xs rounded-lg border border-slate-200 cursor-pointer transition-colors flex items-center justify-center gap-1 mt-1">
+                View Attendance →
             </button>
         </div>
-        <div id="lcDetailBody" class="p-6 text-xs max-h-[80vh] overflow-y-auto space-y-4">
-            <!-- Dynamic JavaScript Populate -->
-        </div>
-        <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
-            <button onclick="closeLiveClassDetailModal()" class="px-5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold border-0 cursor-pointer text-xs transition-colors">Close</button>
+
+        <!-- QUICK ACTIONS GRID -->
+        <div class="space-y-2">
+            <h4 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Quick Actions</h4>
+            <div class="grid grid-cols-4 gap-1.5 text-center text-[10px] font-bold">
+                <button onclick="drawerEditClass()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 cursor-pointer flex flex-col items-center gap-1 transition-all"><i class="fas fa-edit text-xs text-blue-600"></i> Edit</button>
+                <button onclick="drawerRescheduleClass()" class="p-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 cursor-pointer flex flex-col items-center gap-1 transition-all"><i class="fas fa-history text-xs text-amber-600"></i> Reschedule</button>
+                <button onclick="drawerCancelClass()" class="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 cursor-pointer flex flex-col items-center gap-1 transition-all"><i class="fas fa-ban text-xs text-rose-600"></i> Cancel</button>
+                <button onclick="drawerNotifyStudents()" class="p-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 cursor-pointer flex flex-col items-center gap-1 transition-all"><i class="fas fa-bell text-xs text-purple-600"></i> Notify</button>
+            </div>
         </div>
     </div>
 </div>
 
-<script>
-    function openLiveClassDetailModal(id, topic, teacher, className, subject, status, scheduledTime, meetLink) {
-        const modal = document.getElementById('modalLiveClassDetail');
-        const body = document.getElementById('lcDetailBody');
-        if (!modal || !body) return;
+<!-- ========================================== -->
+<!-- MULTI-STEP CREATE LIVE CLASS MODAL -->
+<!-- ========================================== -->
+<div 
+<!-- ========================================== -->
+<!-- CALENDAR SETTINGS MODAL -->
+<!-- ========================================== -->
+<div id="liveSettingsModal" class="fixed inset-0 z-[10002] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="font-black text-slate-900 text-sm flex items-center gap-2">
+                <i class="fas fa-cog text-blue-600"></i> Calendar Settings & Preferences
+            </h3>
+            <button onclick="closeLiveSettingsModal()" class="w-7 h-7 rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border-0 cursor-pointer">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        <div class="space-y-3 text-xs">
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Default View Mode</label>
+                <select id="prefDefaultView" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800">
+                    <option value="week">Week View (Default)</option>
+                    <option value="month">Month View</option>
+                    <option value="day">Day View</option>
+                    <option value="agenda">Agenda View</option>
+                </select>
+            </div>
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Auto Refresh Interval</label>
+                <select id="prefRefreshInterval" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800">
+                    <option value="10000">Every 10 Seconds (Recommended)</option>
+                    <option value="30000">Every 30 Seconds</option>
+                    <option value="60000">Every 1 Minute</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            <button onclick="closeLiveSettingsModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold rounded-xl border border-slate-200 cursor-pointer">Cancel</button>
+            <button onclick="saveLiveSettings()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl border-0 cursor-pointer shadow-md">Save Preferences</button>
+        </div>
+    </div>
+</div>
 
-        let statusBadge = `<span class="bg-blue-100 text-blue-700 font-black px-2.5 py-1 rounded-full text-[10px]">Scheduled</span>`;
-        if (status === 'Live') statusBadge = `<span class="bg-rose-100 text-rose-700 font-black px-2.5 py-1 rounded-full text-[10px]">Live Now</span>`;
-        if (status === 'Ended') statusBadge = `<span class="bg-slate-100 text-slate-700 font-extrabold px-2.5 py-1 rounded-full text-[10px]">Conducted</span>`;
 
-        body.innerHTML = `
-            <div class="bg-slate-50 p-4 rounded-2xl border space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-extrabold text-slate-400 uppercase">CLASS ID</span>
-                    <span class="font-mono font-black text-slate-800 text-xs">LC-${id}</span>
+<div 
+    <!-- LIVE CALENDAR SETTINGS MODAL -->
+    <div id="modalLiveSettings" class="fixed inset-0 z-[10002] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fas fa-cog"></i></div>
+                    <h3 class="font-extrabold text-slate-900 text-sm sm:text-base">Calendar Schedule Settings</h3>
                 </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-extrabold text-slate-400 uppercase">STATUS</span>
-                    <div>${statusBadge}</div>
+                <button onclick="closeLiveSettingsModal()" class="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border-0 cursor-pointer text-xs"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Default View Mode</label>
+                    <select id="settingDefaultView" class="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-semibold text-xs">
+                        <option value="week" selected>Week View (Default)</option>
+                        <option value="month">Month View</option>
+                        <option value="day">Day View</option>
+                        <option value="agenda">Agenda List View</option>
+                    </select>
                 </div>
                 <div>
-                    <span class="text-[10px] font-extrabold text-slate-400 uppercase block mb-1">TOPIC</span>
-                    <span class="text-sm font-black text-slate-900 block leading-tight">${topic || 'Live Session'}</span>
+                    <label class="font-bold text-slate-700 block mb-1">Auto-Refresh Interval</label>
+                    <select id="settingRefreshInterval" class="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-semibold text-xs">
+                        <option value="10">Every 10 Seconds (Real-time)</option>
+                        <option value="30">Every 30 Seconds</option>
+                        <option value="60">Every 1 Minute</option>
+                        <option value="0">Disabled (Manual Only)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">Calendar Time Slot Start</label>
+                    <select id="settingSlotStart" class="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-semibold text-xs">
+                        <option value="8" selected>08:00 AM Start</option>
+                        <option value="6">06:00 AM Start</option>
+                        <option value="9">09:00 AM Start</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button onclick="closeLiveSettingsModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer">Cancel</button>
+                <button onclick="saveLiveSettingsPreferences()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-md">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+
+<div id="modalCreateLiveClass" class="fixed inset-0 z-[10001] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 shadow-2xl border border-slate-200 relative space-y-4 my-auto max-h-[92vh] flex flex-col">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
+            <div>
+                <span class="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">Class Scheduler Wizard</span>
+                <h3 class="text-lg font-black text-slate-900 leading-tight">Schedule New Live Class</h3>
+            </div>
+            <button onclick="closeCreateLiveClassModal()" class="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border-0 cursor-pointer text-sm font-bold">
+                ✕
+            </button>
+        </div>
+
+        <!-- Wizard Step Indicators -->
+        <div class="flex items-center justify-between px-2 text-xs font-extrabold border-b border-slate-100 pb-2 shrink-0">
+            <span id="stepBadge1" class="text-blue-600 border-b-2 border-blue-600 pb-1">1. Basic Info</span>
+            <span id="stepBadge2" class="text-slate-400 pb-1">2. Faculty & Batch</span>
+            <span id="stepBadge3" class="text-slate-400 pb-1">3. Schedule</span>
+            <span id="stepBadge4" class="text-slate-400 pb-1">4. Platform</span>
+            <span id="stepBadge5" class="text-slate-400 pb-1">5. Settings</span>
+            <span id="stepBadge6" class="text-slate-400 pb-1">6. Review</span>
+        </div>
+
+        <!-- Step Content Container -->
+        <form id="createLiveClassForm" onsubmit="event.preventDefault(); submitCreateLiveClass();" class="flex-1 overflow-y-auto pr-1 space-y-3 text-xs custom-scrollbar">
+            <!-- Step 1: Basic Info -->
+            <div id="wizardStep1" class="space-y-3">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Class Title *</label>
+                    <input type="text" id="createTitle" required placeholder="e.g. Mathematics – Real Numbers" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:outline-none focus:border-blue-500">
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <!-- Class Dropdown -->
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Class *</label>
+                        <select id="createCourse" onchange="handleSchoolClassChange()" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:outline-none focus:border-blue-500">
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+
+                    <!-- Conditional Board Dropdown (Class 9-12) -->
+                    <div id="containerCreateBoard" class="hidden">
+                        <label class="block font-bold text-slate-700 mb-1">Board *</label>
+                        <select id="createBoard" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:outline-none focus:border-blue-500">
+                            <option value="">Select Board</option>
+                            <option value="CBSE">CBSE</option>
+                            <option value="ICSE">ICSE</option>
+                            <option value="State Board">State Board</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <p class="text-[10px] text-slate-400 font-medium mt-0.5">Select the board for which this class is being scheduled.</p>
+                    </div>
+
+                    <!-- Conditional Stream Dropdown (Class 11-12) -->
+                    <div id="containerCreateStream" class="hidden">
+                        <label class="block font-bold text-slate-700 mb-1">Stream *</label>
+                        <select id="createStream" onchange="handleSchoolStreamChange()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:outline-none focus:border-blue-500">
+                            <option value="">Select Stream</option>
+                            <option value="Science">Science</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Humanities / Arts">Humanities / Arts</option>
+                        </select>
+                    </div>
+
+                    <!-- Subject Dropdown -->
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Subject *</label>
+                        <select id="createSubject" disabled required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:outline-none focus:border-blue-500 disabled:bg-slate-100 disabled:text-slate-400">
+                            <option value="">Select class first</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Chapter (Optional)</label>
+                        <input type="text" id="createChapter" placeholder="e.g. Chapter 1: Real Numbers" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Class Type *</label>
+                        <select id="createClassType" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                            <option value="Live Lecture">Live Lecture</option>
+                            <option value="Doubt Clearing Session">Doubt Clearing Session</option>
+                            <option value="Revision Class">Revision Class</option>
+                            <option value="Exam Strategy">Exam Strategy</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="step1ValidationError" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold"></div>
+            </div>
+
+            <!-- Step 2: Faculty & Batch -->
+            <div id="wizardStep2" class="space-y-3 hidden">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Primary Teacher *</label>
+                        <select id="createTeacher" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                            <option value="">Select Lead Faculty</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Target Batch *</label>
+                        <select id="createBatch" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                            <option value="">Select Batch</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 text-xs pt-2">
-                <div class="p-3 bg-white border border-slate-200 rounded-xl">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Faculty Instructor</span>
-                    <span class="font-extrabold text-slate-900 text-xs">${teacher || 'EduTrust Faculty'}</span>
-                </div>
-                <div class="p-3 bg-white border border-slate-200 rounded-xl">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Class & Subject</span>
-                    <span class="font-extrabold text-slate-900 text-xs">${className || 'Class 10'} • ${subject || 'Science'}</span>
-                </div>
-                <div class="p-3 bg-white border border-slate-200 rounded-xl col-span-2">
-                    <span class="text-[9px] font-bold text-slate-400 uppercase block">Scheduled Date & Time</span>
-                    <span class="font-bold text-slate-800">${scheduledTime || 'Today'}</span>
+            <!-- Step 3: Schedule -->
+            <div id="wizardStep3" class="space-y-3 hidden">
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Date *</label>
+                        <input type="date" id="createDate" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Start Time *</label>
+                        <input type="time" id="createStartTime" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">End Time *</label>
+                        <input type="time" id="createEndTime" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                    </div>
                 </div>
             </div>
 
-            ${meetLink ? `
-                <div class="pt-3">
-                    <a href="${meetLink}" target="_blank" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2.5 rounded-xl border-0 cursor-pointer flex items-center justify-center gap-2 no-underline shadow-xs">
-                        <i class="fas fa-play"></i> Join Live Broadcast Room Now
-                    </a>
+            <!-- Step 4: Platform -->
+            <div id="wizardStep4" class="space-y-3 hidden">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Streaming Platform *</label>
+                    <select id="createPlatform" onchange="togglePlatformFields()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                        <option value="EduTrust Live">EduTrust Integrated Stream (Built-in)</option>
+                        <option value="Google Meet">Google Meet</option>
+                        <option value="Zoom">Zoom Cloud Meeting</option>
+                    </select>
                 </div>
-            ` : ''}
-        `;
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Meeting Room URL / Link *</label>
+                    <input type="url" id="createMeetLink" required placeholder="https://meet.google.com/... or https://zoom.us/j/..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                </div>
+            </div>
 
-        modal.classList.remove('hidden');
+            <!-- Step 5: Settings -->
+            <div id="wizardStep5" class="space-y-3 hidden">
+                <div class="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700">
+                    <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer"><input type="checkbox" id="setRecording" checked> Enable Auto Recording</label>
+                    <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer"><input type="checkbox" id="setChat" checked> Enable Live Chat</label>
+                    <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer"><input type="checkbox" id="setQA" checked> Enable Student Q&A</label>
+                    <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer"><input type="checkbox" id="setAttendance" checked> Auto Track Attendance</label>
+                </div>
+            </div>
+
+            <!-- Step 6: Review -->
+            <div id="wizardStep6" class="space-y-3 hidden">
+                <div class="p-3 bg-blue-50/80 rounded-xl border border-blue-200 space-y-1.5">
+                    <h5 class="font-extrabold text-blue-900 text-xs">Class Summary Review</h5>
+                    <p id="reviewText" class="text-xs text-blue-800">Review your class details before publishing to students.</p>
+                </div>
+            </div>
+        </form>
+
+        <!-- Modal Footer Actions -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 shrink-0">
+            <button type="button" onclick="closeCreateLiveClassModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-extrabold text-xs border-0 cursor-pointer hover:bg-slate-200">
+                Cancel
+            </button>
+            <div class="flex items-center gap-2">
+                <button type="button" id="btnWizardPrev" onclick="wizardStepPrev()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-800 font-extrabold text-xs border-0 cursor-pointer hidden">
+                    Back
+                </button>
+                <button type="button" id="btnWizardNext" onclick="wizardStepNext()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md">
+                    Next →
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- SCRIPT CONTROLLER (100% REAL DB INTEGRATION & AJAX) -->
+<!-- ========================================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    function refreshAdminDashboardLiveStats() {
+        fetch('/api/admin/live-classes/stats/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+
+                const elLive = document.getElementById('kpiLiveNowCount');
+                const elUp = document.getElementById('kpiUpcomingCount');
+                const elComp = document.getElementById('kpiCompletedCount');
+                const elResch = document.getElementById('kpiRescheduledCount');
+                const elCanc = document.getElementById('kpiCancelledCount');
+                const elStud = document.getElementById('kpiTotalStudentsCount');
+
+                if (elLive) elLive.textContent = data.live_now !== undefined ? data.live_now : 0;
+                if (elUp) elUp.textContent = data.upcoming !== undefined ? data.upcoming : 0;
+                if (elComp) elComp.textContent = data.completed !== undefined ? data.completed : 0;
+                if (elResch) elResch.textContent = data.rescheduled !== undefined ? data.rescheduled : 0;
+                if (elCanc) elCanc.textContent = data.cancelled !== undefined ? data.cancelled : 0;
+                if (elStud) elStud.textContent = data.total_students !== undefined ? data.total_students : 0;
+
+                if (data.strip) {
+                    const s = data.strip;
+                    if (document.getElementById('stripTotalClasses')) document.getElementById('stripTotalClasses').textContent = s.total_classes || 0;
+                    if (document.getElementById('stripTotalStudents')) document.getElementById('stripTotalStudents').textContent = s.total_students || 0;
+                    if (document.getElementById('stripAvgAttendance')) document.getElementById('stripAvgAttendance').textContent = (s.avg_attendance || 0) + '%';
+                    if (document.getElementById('stripTotalWatchTime')) document.getElementById('stripTotalWatchTime').textContent = (s.watch_time || 0) + ' h';
+                    if (document.getElementById('stripRecordingsCount')) document.getElementById('stripRecordingsCount').textContent = s.recordings || 0;
+                    if (document.getElementById('stripActiveTeachers')) document.getElementById('stripActiveTeachers').textContent = s.active_teachers || 0;
+                }
+            })
+            .catch(err => console.error('Error fetching live stats:', err));
     }
 
-    function closeLiveClassDetailModal() {
-        const modal = document.getElementById('modalLiveClassDetail');
+
+
+    function updateReviewStepSummary() {
+        const title = document.getElementById('createTitle')?.value || 'Untitled Class';
+        const cls = document.getElementById('createCourse')?.value || 'Class 10';
+        const board = document.getElementById('createBoard')?.value || '';
+        const stream = document.getElementById('createStream')?.value || '';
+        const subject = document.getElementById('createSubject')?.value || 'Mathematics';
+        const chapter = document.getElementById('createChapter')?.value || 'General Chapter';
+        const teacher = document.getElementById('createTeacher')?.options[document.getElementById('createTeacher')?.selectedIndex]?.text || 'Lead Faculty';
+        const batch = document.getElementById('createBatch')?.options[document.getElementById('createBatch')?.selectedIndex]?.text || 'Default Batch';
+        const date = document.getElementById('createDate')?.value || 'Today';
+        const time = document.getElementById('createTime')?.value || '10:00 AM';
+
+        let metaBadges = `<span class="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 font-extrabold text-[11px]">${cls}</span>`;
+        if (['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(cls) && board) {
+            metaBadges += ` <span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-extrabold text-[11px]">${board}</span>`;
+        }
+        if (['Class 11', 'Class 12'].includes(cls) && stream) {
+            metaBadges += ` <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-extrabold text-[11px]">${stream}</span>`;
+        }
+        metaBadges += ` <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">${subject}</span>`;
+
+        const html = `
+            <div class="space-y-2 text-xs">
+                <div class="p-3 bg-blue-50/90 rounded-xl border border-blue-200">
+                    <h4 class="font-black text-slate-900 text-sm mb-1">${title}</h4>
+                    <div class="flex flex-wrap gap-1 mb-2">${metaBadges}</div>
+                    <p class="text-slate-600 font-medium text-[11px]">Chapter: <strong>${chapter}</strong></p>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block uppercase text-[9px]">Faculty</span>
+                        <strong class="text-slate-800 font-bold">${teacher}</strong>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block uppercase text-[9px]">Target Batch</span>
+                        <strong class="text-slate-800 font-bold">${batch}</strong>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block uppercase text-[9px]">Date & Time</span>
+                        <strong class="text-slate-800 font-bold">${date} @ ${time}</strong>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-slate-400 font-bold block uppercase text-[9px]">Platform</span>
+                        <strong class="text-slate-800 font-bold">EduTrust Live Stream</strong>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const step6El = document.getElementById('wizardStep6');
+        if (step6El) step6El.innerHTML = html;
+    }
+
+
+
+    window.schoolClassSubjectsMap = {
+        'Class 6': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer'],
+        'Class 7': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer'],
+        'Class 8': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer'],
+        'Class 9': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer'],
+        'Class 10': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer'],
+        'Class 11_Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'English', 'Computer Science'],
+        'Class 11_Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'English', 'Computer Science'],
+        'Class 11_Humanities / Arts': ['History', 'Political Science', 'Geography', 'Economics', 'Sociology', 'English', 'Psychology'],
+        'Class 12_Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'English', 'Computer Science'],
+        'Class 12_Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'English', 'Computer Science'],
+        'Class 12_Humanities / Arts': ['History', 'Political Science', 'Geography', 'Economics', 'Sociology', 'English', 'Psychology']
+    };
+
+    function handleSchoolClassChange() {
+        const classEl = document.getElementById('createCourse');
+        const boardContainer = document.getElementById('containerCreateBoard');
+        const streamContainer = document.getElementById('containerCreateStream');
+        const subjectEl = document.getElementById('createSubject');
+        const streamEl = document.getElementById('createStream');
+
+        if (!classEl || !subjectEl) return;
+        const selectedClass = classEl.value;
+
+        if (streamEl) streamEl.value = '';
+
+        const errBanner = document.getElementById('step1ValidationError');
+        if (errBanner) errBanner.classList.add('hidden');
+
+        if (!selectedClass) {
+            if (boardContainer) boardContainer.classList.add('hidden');
+            if (streamContainer) streamContainer.classList.add('hidden');
+            subjectEl.disabled = true;
+            subjectEl.innerHTML = '<option value="">Select class first</option>';
+            return;
+        }
+
+        // Board visibility (Class 9, 10, 11, 12)
+        if (['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(selectedClass)) {
+            if (boardContainer) boardContainer.classList.remove('hidden');
+        } else {
+            if (boardContainer) boardContainer.classList.add('hidden');
+        }
+
+        // Stream visibility & Subject state (Class 11, 12)
+        if (['Class 11', 'Class 12'].includes(selectedClass)) {
+            if (streamContainer) streamContainer.classList.remove('hidden');
+            subjectEl.disabled = true;
+            subjectEl.innerHTML = '<option value="">Select stream first</option>';
+        } else {
+            if (streamContainer) streamContainer.classList.add('hidden');
+            subjectEl.disabled = false;
+            const subList = window.schoolClassSubjectsMap[selectedClass] || ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer'];
+            let html = '<option value="">Select Subject</option>';
+            subList.forEach(s => { html += `<option value="${s}">${s}</option>`; });
+            subjectEl.innerHTML = html;
+        }
+    }
+
+    function handleSchoolStreamChange() {
+        const classEl = document.getElementById('createCourse');
+        const streamEl = document.getElementById('createStream');
+        const subjectEl = document.getElementById('createSubject');
+
+        if (!classEl || !streamEl || !subjectEl) return;
+        const selectedClass = classEl.value;
+        const selectedStream = streamEl.value;
+
+        if (!selectedStream) {
+            subjectEl.disabled = true;
+            subjectEl.innerHTML = '<option value="">Select stream first</option>';
+            return;
+        }
+
+        subjectEl.disabled = false;
+        const key = `${selectedClass}_${selectedStream}`;
+        const subList = window.schoolClassSubjectsMap[key] || ['Physics', 'Chemistry', 'Mathematics', 'English', 'Computer Science'];
+        let html = '<option value="">Select Subject</option>';
+        subList.forEach(s => { html += `<option value="${s}">${s}</option>`; });
+        subjectEl.innerHTML = html;
+    }
+
+    function validateStep1() {
+        const title = document.getElementById('createTitle')?.value.trim();
+        const classVal = document.getElementById('createCourse')?.value;
+        const boardVal = document.getElementById('createBoard')?.value;
+        const streamVal = document.getElementById('createStream')?.value;
+        const subjectVal = document.getElementById('createSubject')?.value;
+        const errBanner = document.getElementById('step1ValidationError');
+
+        if (errBanner) {
+            errBanner.classList.add('hidden');
+            errBanner.textContent = '';
+        }
+
+        function showError(msg) {
+            if (errBanner) {
+                errBanner.textContent = msg;
+                errBanner.classList.remove('hidden');
+            } else {
+                alert(msg);
+            }
+            return false;
+        }
+
+        if (!title) return showError("Class Title is required.");
+        if (!classVal) return showError("Class is required.");
+
+        if (['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(classVal) && !boardVal) {
+            return showError(`Board is required for ${classVal}.`);
+        }
+
+        if (['Class 11', 'Class 12'].includes(classVal) && !streamVal) {
+            return showError(`Please select a stream for ${classVal}.`);
+        }
+
+        if (!subjectVal) return showError("Please select a subject.");
+
+        return true;
+    }
+
+
+
+    window.globalCourseSubjectsMap = {};
+
+    function handleCourseSelectionChange(courseSelectId, subjectSelectId, defaultSubjectLabel) {
+        const courseEl = document.getElementById(courseSelectId);
+        const subjectEl = document.getElementById(subjectSelectId);
+        if (!courseEl || !subjectEl) return;
+
+        const selectedCourse = courseEl.value;
+        let validSubjects = [];
+
+        if (selectedCourse && window.globalCourseSubjectsMap && window.globalCourseSubjectsMap[selectedCourse]) {
+            validSubjects = window.globalCourseSubjectsMap[selectedCourse];
+        } else {
+            // Aggregate all subjects
+            const setS = new Set();
+            Object.values(window.globalCourseSubjectsMap || {}).forEach(arr => arr.forEach(s => setS.add(s)));
+            validSubjects = Array.from(setS);
+        }
+
+        populateSelectOptions(subjectSelectId, validSubjects.sort(), defaultSubjectLabel);
+    }
+
+
+
+    function updateLiveKpiCardsFromSummary(summary) {
+        if (!summary) return;
+        const elLive = document.getElementById('kpiLiveNowCount');
+        const elUp = document.getElementById('kpiUpcomingCount');
+        const elComp = document.getElementById('kpiCompletedCount');
+        const elResch = document.getElementById('kpiRescheduledCount');
+        const elCanc = document.getElementById('kpiCancelledCount');
+        const elStud = document.getElementById('kpiTotalStudentsCount');
+
+        if (elLive) elLive.textContent = summary.live !== undefined ? summary.live : 0;
+        if (elUp) elUp.textContent = summary.upcoming !== undefined ? summary.upcoming : 0;
+        if (elComp) elComp.textContent = summary.completed !== undefined ? summary.completed : 0;
+        if (elResch) elResch.textContent = summary.rescheduled !== undefined ? summary.rescheduled : 0;
+        if (elCanc) elCanc.textContent = summary.cancelled !== undefined ? summary.cancelled : 0;
+        if (elStud) elStud.textContent = summary.total_students !== undefined ? summary.total_students : 0;
+    }
+
+
+
+    function getFilterDefaultVal(label) {
+        if (label && label.includes('Select')) return '';
+        return 'ALL';
+    }
+    function getDayEventsBadge(events) {
+        if (events && events.length > 0) return '<span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>';
+        return '';
+    }
+
+
+
+    function fetchLiveKpis() {
+        if (typeof fetchLiveCalendarEvents === 'function') {
+            fetchLiveCalendarEvents();
+        }
+        if (typeof refreshAdminDashboardLiveStats === 'function') {
+            refreshAdminDashboardLiveStats();
+        }
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const createBtn = document.getElementById('btnOpenCreateLiveClassModal');
+        if (createBtn) {
+            createBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.openCreateLiveClassModal === 'function') {
+                    window.openCreateLiveClassModal();
+                }
+            });
+        }
+
+        const settingsBtn = document.getElementById('btnOpenLiveSettingsModal');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.openLiveSettingsModal === 'function') {
+                    window.openLiveSettingsModal();
+                }
+            });
+        }
+    });
+
+
+
+    // EXPLICIT WINDOW-SCOPE MODAL CONTROLLERS (GUARANTEED TO TRIGGER ONCLICK)
+    window.openCreateLiveClassModal = function() {
+        if (typeof loadAcademicSystemData === 'function') loadAcademicSystemData();
+        console.log('openCreateLiveClassModal triggered');
+        if (typeof currentWizardStep !== 'undefined') currentWizardStep = 1;
+        if (typeof updateWizardStepUI === 'function') updateWizardStepUI();
+        const modal = document.getElementById('modalCreateLiveClass');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.setProperty('display', 'flex', 'important');
+        } else {
+            console.error('modalCreateLiveClass not found');
+        }
+    };
+
+    window.closeCreateLiveClassModal = function() {
+        const modal = document.getElementById('modalCreateLiveClass');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.setProperty('display', 'none', 'important');
+        }
+    };
+
+    window.openLiveSettingsModal = function() {
+        console.log('openLiveSettingsModal triggered');
+        const modal = document.getElementById('modalLiveSettings');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.setProperty('display', 'flex', 'important');
+        } else {
+            console.error('modalLiveSettings not found');
+        }
+    };
+
+    window.closeLiveSettingsModal = function() {
+        const modal = document.getElementById('modalLiveSettings');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.setProperty('display', 'none', 'important');
+        }
+    };
+
+
+    
+    let currentLiveCalendarView = sessionStorage.getItem('liveCalView') || 'week';
+    let currentCalendarDate = sessionStorage.getItem('liveCalDate') ? new Date(sessionStorage.getItem('liveCalDate')) : new Date(2026, 7, 31);
+    let classTypeChartInstance = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initLiveClassesDashboard();
+    });
+
+    function initLiveClassesDashboard() {
+        loadAcademicSystemData();
+        refreshLiveClassesData();
+    }
+
+    function refreshLiveClassesData() {
+        fetchLiveKpis();
+        fetchLiveCalendarEvents();
+        fetchSecondaryPanelsData();
+    }
+
+    function fetchLiveCalendarEvents() {
+        const container = document.getElementById('calendarMainContainer');
+        const headerTitleEl = document.getElementById('calendarCurrentMonthTitle');
+        const searchVal = document.getElementById('liveSearchInput')?.value || '';
+        const courseVal = document.getElementById('filterLiveCourse')?.value || 'ALL';
+        const batchVal = document.getElementById('filterLiveBatch')?.value || 'ALL';
+        const teacherVal = document.getElementById('filterLiveTeacher')?.value || 'ALL';
+        const subjectVal = document.getElementById('filterLiveSubject')?.value || 'ALL';
+        const statusVal = document.getElementById('filterLiveStatus')?.value || 'ALL';
+
+        const dateStr = currentCalendarDate.toISOString().split('T')[0];
+
+        // Save State
+        sessionStorage.setItem('liveCalView', currentLiveCalendarView);
+        sessionStorage.setItem('liveCalDate', dateStr);
+
+        // Skeleton Loader
+        if (container) {
+            container.innerHTML = `
+                <div class="p-12 text-center text-slate-400 space-y-2">
+                    
+                    <p class="font-bold text-xs text-slate-600"></p>
+                </div>
+            `;
+        }
+
+        const url = `/api/admin/live-classes/calendar-events/?view=${currentLiveCalendarView}&date=${dateStr}&q=${encodeURIComponent(searchVal)}&course=${encodeURIComponent(courseVal)}&batch=${encodeURIComponent(batchVal)}&teacher=${encodeURIComponent(teacherVal)}&subject=${encodeURIComponent(subjectVal)}&status=${encodeURIComponent(statusVal)}`;
+
+        fetch(url)
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success') {
+                    if (headerTitleEl && data.header_title) {
+                        headerTitleEl.innerText = data.header_title;
+                    }
+                    const events = data.events || [];
+                    const summary = data.summary || {};
+
+                    if (currentLiveCalendarView === 'month') {
+                        renderMonthCalendarView(events, data.grid_start, data.grid_end);
+                    } else if (currentLiveCalendarView === 'day') {
+                        renderDayCalendarView(events, data.date_ref, summary);
+                    } else if (currentLiveCalendarView === 'agenda') {
+                        renderAgendaCalendarView(events, summary);
+                    } else {
+                        renderWeekCalendarView(events, data.grid_start, data.grid_end);
+                    }
+                } else {
+                    renderCalendarErrorState();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                renderCalendarErrorState();
+            });
+    }
+
+    function renderCalendarErrorState() {
+        const container = document.getElementById('calendarMainContainer');
+        if (container) {
+            container.innerHTML = `
+                <div class="p-12 text-center text-slate-400 space-y-3">
+                    <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 class="font-black text-slate-800 text-sm">There is no class today</h4>
+                    <p class="text-xs text-slate-400 font-semibold">No live classes found in database.</p>
+                    <button onclick="fetchLiveCalendarEvents()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-md inline-flex items-center gap-1.5">
+                        <i class="fas fa-sync-alt text-xs"></i> Retry
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // ==========================================
+    // 1. MONTH CALENDAR VIEW RENDERER
+    // ==========================================
+    function renderMonthCalendarView(events, gridStartStr, gridEndStr) {
+        const container = document.getElementById('calendarMainContainer');
+        if (!container) return;
+
+        let gridStart = new Date(gridStartStr);
+        let daysHeader = `
+            <div class="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-center text-xs font-black divide-x divide-slate-200">
+                <div class="p-2.5 text-slate-800">MON</div>
+                <div class="p-2.5 text-slate-800">TUE</div>
+                <div class="p-2.5 text-slate-800">WED</div>
+                <div class="p-2.5 text-slate-800">THU</div>
+                <div class="p-2.5 text-slate-800">FRI</div>
+                <div class="p-2.5 text-slate-800">SAT</div>
+                <div class="p-2.5 text-slate-800">SUN</div>
+            </div>
+        `;
+
+        let cellsHtml = '';
+        let currentDay = new Date(gridStart);
+        let totalCells = 35; // 5 weeks grid
+
+        for (let i = 0; i < totalCells; i++) {
+            let dateFormatted = currentDay.toISOString().split('T')[0];
+            let dayNum = currentDay.getDate();
+            let isCurrentMonth = currentDay.getMonth() === currentCalendarDate.getMonth();
+            let dayEvents = events.filter(e => e.date_str === dateFormatted);
+
+            let textDim = isCurrentMonth ? 'text-slate-900 font-black' : 'text-slate-300 font-bold';
+            let bgBg = isCurrentMonth ? 'bg-white' : 'bg-slate-50/40';
+
+            let eventCards = '';
+            let maxShow = 3;
+            let displayEvents = dayEvents.slice(0, maxShow);
+            let remaining = dayEvents.length - maxShow;
+
+            displayEvents.forEach(ev => {
+                let badgeColor = 'bg-blue-600 text-white';
+                if (ev.status === 'LIVE') badgeColor = 'bg-rose-600 text-white animate-pulse';
+                else if (ev.status === 'COMPLETED') badgeColor = 'bg-emerald-600 text-white';
+                else if (ev.status === 'RESCHEDULED') badgeColor = 'bg-amber-600 text-white';
+                else if (ev.status === 'CANCELLED') badgeColor = 'bg-slate-600 text-white';
+
+                eventCards += `
+                    <div onclick="event.stopPropagation(); openLiveClassDrawer(${ev.id})" class="p-1 rounded-md border border-slate-200 bg-slate-50 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all mb-1 space-y-0.5">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="px-1 py-0.2 rounded text-[7.5px] font-black uppercase ${badgeColor}">${ev.status}</span>
+                            <span class="text-[8px] font-bold text-slate-500">${ev.time_str}</span>
+                        </div>
+                        <h6 class="font-extrabold text-[9.5px] text-slate-900 leading-tight truncate">${ev.title}</h6>
+                    </div>
+                `;
+            });
+
+            if (remaining > 0) {
+                eventCards += `
+                    <div onclick="event.stopPropagation(); jumpToDateView('${dateFormatted}')" class="text-[9px] font-black text-blue-600 hover:underline cursor-pointer pt-0.5">
+                        +${remaining} more classes
+                    </div>
+                `;
+            }
+
+            cellsHtml += `
+                <div onclick="jumpToDateView('${dateFormatted}')" class="p-1.5 min-h-[95px] border-b border-r border-slate-100 ${bgBg} hover:bg-blue-50/30 cursor-pointer transition-colors flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs ${textDim}">${dayNum}</span>
+                        ${getDayEventsBadge(dayEvents)}
+                    </div>
+                    <div class="flex-1 overflow-hidden">${eventCards}</div>
+                </div>
+            `;
+
+            currentDay.setDate(currentDay.getDate() + 1);
+        }
+
+        if (events.length === 0) {
+            container.innerHTML = `
+                <div class="p-12 text-center text-slate-400 space-y-3">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm">There is no class today</h4>
+                    <p class="text-xs text-slate-400 font-medium">Click Create Live Class to schedule a session.</p>
+                    <button onclick="openCreateLiveClassModal()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer shadow-md inline-flex items-center gap-1.5">
+                        <i class="fas fa-plus text-xs"></i> Create Live Class
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = daysHeader + `<div class="grid grid-cols-7 border-l border-slate-200">${cellsHtml}</div>`;
+    }
+
+    // ==========================================
+    // 2. WEEK CALENDAR VIEW RENDERER
+    // ==========================================
+    function renderWeekCalendarView(events, gridStartStr, gridEndStr) {
+        const container = document.getElementById('calendarMainContainer');
+        if (!container) return;
+
+        let gridStart = new Date(gridStartStr);
+        let daysHeader = `<div class="grid grid-cols-8 border-b border-slate-200 bg-slate-50 text-center text-xs font-black divide-x divide-slate-200">
+            <div class="p-2.5 text-slate-400">TIME</div>`;
+
+        let cur = new Date(gridStart);
+        const dayNames = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+        const monthsNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        for (let d = 0; d < 7; d++) {
+            daysHeader += `
+                <div class="p-2.5 text-slate-800 cursor-pointer hover:bg-blue-50/50" onclick="jumpToDateView('${cur.toISOString().split('T')[0]}')">
+                    ${dayNames[d]}<br>
+                    <span class="text-[10px] font-bold text-slate-400">${cur.getDate()} ${monthsNames[cur.getMonth()]}</span>
+                </div>
+            `;
+            cur.setDate(cur.getDate() + 1);
+        }
+        daysHeader += `</div>`;
+
+        let timeSlots = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM'];
+        let bodyRows = '';
+
+        timeSlots.forEach((slot, sIdx) => {
+            bodyRows += `<div class="grid grid-cols-8 border-b border-slate-100 text-xs divide-x divide-slate-100 min-h-[64px]">`;
+            bodyRows += `<div class="p-2 bg-slate-50/50 text-[10px] font-mono text-slate-400 text-center font-bold flex items-center justify-center">${slot}</div>`;
+
+            for (let d = 0; d < 7; d++) {
+                let cellEvents = events.filter(e => e.day_index === d && (e.time_str === slot || sIdx === (e.slot_index || 0)));
+                let eventCardsHtml = '';
+
+                cellEvents.forEach(ev => {
+                    let stColor = 'bg-rose-50 border-rose-200 text-rose-800';
+                    let badgeColor = 'bg-rose-600 text-white';
+                    if (ev.status === 'LIVE') {
+                        stColor = 'bg-rose-50 border-rose-300 text-rose-900 shadow-xs';
+                        badgeColor = 'bg-rose-600 text-white animate-pulse';
+                    } else if (ev.status === 'UPCOMING' || ev.status === 'SCHEDULED') {
+                        stColor = 'bg-blue-50 border-blue-200 text-blue-900';
+                        badgeColor = 'bg-blue-600 text-white';
+                    } else if (ev.status === 'COMPLETED') {
+                        stColor = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+                        badgeColor = 'bg-emerald-600 text-white';
+                    } else if (ev.status === 'RESCHEDULED') {
+                        stColor = 'bg-amber-50 border-amber-200 text-amber-900';
+                        badgeColor = 'bg-amber-600 text-white';
+                    }
+
+                    eventCardsHtml += `
+                        <div onclick="openLiveClassDrawer(${ev.id})" class="p-2 rounded-xl border ${stColor} cursor-pointer transition-all hover:scale-[1.02] space-y-1 mb-1 shadow-2xs">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="px-1.5 py-0.2 rounded-full text-[8.5px] font-extrabold uppercase ${badgeColor}">${ev.status}</span>
+                                <span class="text-[9px] font-bold opacity-75">${ev.student_count !== undefined ? ev.student_count : 0} Students</span>
+                            </div>
+                            <h5 class="font-extrabold text-[11px] leading-tight block truncate">${ev.title}</h5>
+                            <p class="text-[9.5px] font-bold opacity-80 truncate">${ev.teacher_name} • ${ev.batch_name}</p>
+                        </div>
+                    `;
+                });
+
+                bodyRows += `<div class="p-1 relative hover:bg-slate-50/80 transition-colors">${eventCardsHtml}</div>`;
+            }
+
+            bodyRows += `</div>`;
+        });
+
+        container.innerHTML = daysHeader + bodyRows;
+    }
+
+    // ==========================================
+    // 3. DAY CALENDAR VIEW RENDERER
+    // ==========================================
+    function renderDayCalendarView(events, dateRefStr, summary) {
+        const container = document.getElementById('calendarMainContainer');
+        if (!container) return;
+
+        let dateObj = new Date(dateRefStr);
+        let formattedHeading = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        let daySummaryBar = `
+            <div class="p-3 bg-blue-50/70 border-b border-blue-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="font-black text-slate-900">${formattedHeading}</span>
+                    <span class="px-2 py-0.5 rounded-full bg-blue-600 text-white font-extrabold text-[10px]">${events.length} Classes</span>
+                </div>
+                <div class="flex items-center gap-3 font-extrabold text-[11px]">
+                    <span class="text-rose-600"><i class="fas fa-broadcast-tower"></i> Live: ${summary.live || 0}</span>
+                    <span class="text-blue-600"><i class="fas fa-calendar"></i> Upcoming: ${summary.upcoming || 0}</span>
+                    <span class="text-emerald-600"><i class="fas fa-check-circle"></i> Completed: ${summary.completed || 0}</span>
+                    <span class="text-slate-700"><i class="fas fa-users"></i> Students: ${summary.total_students ? summary.total_students.toLocaleString() : 0}</span>
+                </div>
+            </div>
+        `;
+
+        if (events.length === 0) {
+            container.innerHTML = daySummaryBar + `
+                <div class="p-12 text-center text-slate-400 space-y-3">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm">There is no class today</h4>
+                    <p class="text-xs text-slate-400 font-medium">Select another date or schedule a new live class.</p>
+                    <button onclick="openCreateLiveClassModal()" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer shadow-md inline-flex items-center gap-1.5">
+                        <i class="fas fa-plus text-xs"></i> Create Live Class
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        let timeSlots = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM'];
+        let bodyRows = '';
+
+        timeSlots.forEach((slot, sIdx) => {
+            let slotEvents = events.filter(e => e.time_str === slot || sIdx === (e.slot_index || 0));
+            let eventsCardsHtml = '';
+
+            slotEvents.forEach(ev => {
+                let stColor = 'bg-rose-50 border-rose-200 text-rose-800';
+                let badgeColor = 'bg-rose-600 text-white';
+                if (ev.status === 'LIVE') {
+                    stColor = 'bg-rose-50 border-rose-300 text-rose-900 shadow-sm';
+                    badgeColor = 'bg-rose-600 text-white animate-pulse';
+                } else if (ev.status === 'UPCOMING' || ev.status === 'SCHEDULED') {
+                    stColor = 'bg-blue-50 border-blue-200 text-blue-900';
+                    badgeColor = 'bg-blue-600 text-white';
+                } else if (ev.status === 'COMPLETED') {
+                    stColor = 'bg-emerald-50 border-emerald-200 text-emerald-900';
+                    badgeColor = 'bg-emerald-600 text-white';
+                }
+
+                eventsCardsHtml += `
+                    <div onclick="openLiveClassDrawer(${ev.id})" class="p-3 rounded-2xl border ${stColor} cursor-pointer transition-all hover:scale-[1.01] flex items-center justify-between mb-2 shadow-2xs">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${badgeColor}">${ev.status}</span>
+                                <span class="text-xs font-mono font-bold text-slate-500">${ev.time_str} – ${ev.end_time_str || '11:30 AM'} (${ev.duration_mins || 90} min)</span>
+                            </div>
+                            <h4 class="font-extrabold text-sm text-slate-900">${ev.title}</h4>
+                            <p class="text-xs font-semibold text-slate-600">${ev.teacher_name} • ${ev.class_name} • ${ev.subject}</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="text-xs font-extrabold text-blue-600 block">${ev.student_count !== undefined ? ev.student_count : 0} Students</span>
+                            <button class="mt-1 px-3 py-1 bg-white hover:bg-slate-100 text-slate-800 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer shadow-2xs">Details →</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            bodyRows += `
+                <div class="flex items-start border-b border-slate-100 p-3 hover:bg-slate-50/50 transition-colors">
+                    <div class="w-24 shrink-0 font-mono text-xs text-slate-400 font-bold pt-1">${slot}</div>
+                    <div class="flex-1">${eventsCardsHtml || '<span class="text-slate-300 text-xs font-bold pt-1 block">No session starting at this hour</span>'}</div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = daySummaryBar + `<div class="divide-y divide-slate-100">${bodyRows}</div>`;
+    }
+
+    // ==========================================
+    // 4. AGENDA CALENDAR VIEW RENDERER
+    // ==========================================
+    function renderAgendaCalendarView(events, summary) {
+        const container = document.getElementById('calendarMainContainer');
+        if (!container) return;
+
+        if (events.length === 0) {
+            container.innerHTML = `
+                <div class="p-12 text-center text-slate-400 space-y-3">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <h4 class="font-extrabold text-slate-800 text-sm">There is no class today</h4>
+                    <p class="text-xs text-slate-400 font-medium">Try clearing filters or selecting another date range.</p>
+                    <div class="flex items-center justify-center gap-2 pt-1">
+                        <button onclick="clearLiveFilters()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer">Clear Filters</button>
+                        <button onclick="openCreateLiveClassModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-md">+ Create Live Class</button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Group events by Date Heading
+        let grouped = {};
+        events.forEach(e => {
+            let key = e.date_heading || e.date_formatted;
+            if (!grouped[key]) grouped[key] = [];
+            grouped[key].push(e);
+        });
+
+        let agendaHtml = `<div class="p-4 space-y-4">`;
+
+        Object.keys(grouped).forEach(dateKey => {
+            let dayEvs = grouped[dateKey];
+            let liveCount = dayEvs.filter(x => x.status === 'LIVE').length;
+            let upCount = dayEvs.filter(x => x.status === 'UPCOMING' || x.status === 'SCHEDULED').length;
+            let compCount = dayEvs.filter(x => x.status === 'COMPLETED').length;
+            let studentSum = dayEvs.reduce((acc, x) => acc + (x.student_count !== undefined ? x.student_count : 0), 0);
+
+            agendaHtml += `
+                <div class="space-y-2">
+                    <div class="p-2.5 bg-slate-100/80 rounded-xl border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                        <h4 class="font-black text-xs text-slate-900 tracking-wider flex items-center gap-1.5"><i class="fas fa-calendar-day text-blue-600"></i> ${dateKey}</h4>
+                        <div class="flex items-center gap-2 text-[10px] font-extrabold text-slate-600">
+                            <span>${dayEvs.length} Classes</span> •
+                            <span class="text-rose-600">${liveCount} Live</span> •
+                            <span class="text-blue-600">${upCount} Upcoming</span> •
+                            <span class="text-emerald-600">${compCount} Completed</span> •
+                            <span class="text-slate-800">${studentSum.toLocaleString()} Students</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2 pl-2">
+            `;
+
+            dayEvs.forEach(ev => {
+                let badgeColor = 'bg-blue-600 text-white';
+                if (ev.status === 'LIVE') badgeColor = 'bg-rose-600 text-white animate-pulse';
+                else if (ev.status === 'COMPLETED') badgeColor = 'bg-emerald-600 text-white';
+
+                agendaHtml += `
+                    <div onclick="openLiveClassDrawer(${ev.id})" class="p-3 bg-white rounded-2xl border border-slate-200 hover:border-blue-300 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer transition-all">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${badgeColor}">${ev.status}</span>
+                                <span class="text-xs font-mono font-bold text-slate-500">${ev.time_str} – ${ev.end_time_str}</span>
+                            </div>
+                            <h4 class="font-extrabold text-sm text-slate-900">${ev.title}</h4>
+                            <p class="text-xs font-semibold text-slate-600">${ev.teacher_name} • ${ev.class_name} • ${ev.subject}</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-xs font-extrabold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">${ev.student_count !== undefined ? ev.student_count : 0} Students</span>
+                            <a href="${ev.meet_link}" target="_blank" onclick="event.stopPropagation();" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer no-underline shadow-2xs">Join Class</a>
+                            <button class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl border border-slate-200 cursor-pointer shadow-2xs">Details</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            agendaHtml += `</div></div>`;
+        });
+
+        agendaHtml += `</div>`;
+        container.innerHTML = agendaHtml;
+    }
+
+    function jumpToDateView(dateStr) {
+        currentCalendarDate = new Date(dateStr);
+        switchCalendarView('day');
+    }
+
+
+    function fetchSecondaryPanelsData() {
+        // 1. Fetch Live Now Classes from DB
+        const liveNowContainer = document.getElementById('liveNowCardsList');
+        const liveNowCountEl = document.getElementById('liveNowPanelCount');
+        fetch('/api/admin/live-classes/live-now/')
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success' && data.classes && data.classes.length > 0) {
+                    if (liveNowCountEl) liveNowCountEl.innerText = data.classes.length;
+                    let html = '';
+                    data.classes.forEach(lc => {
+                        html += `
+                            <div onclick="openLiveClassDrawer(${lc.id})" class="p-3 bg-rose-50/60 rounded-xl border border-rose-200 hover:border-rose-300 cursor-pointer transition-all space-y-1.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-rose-600 text-white font-extrabold text-[8.5px] px-2 py-0.5 rounded-full uppercase flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> LIVE</span>
+                                    <span class="text-[10px] font-extrabold text-rose-700">${lc.students_joined || 0} Students</span>
+                                </div>
+                                <h5 class="font-black text-slate-900 text-xs truncate">${lc.title}</h5>
+                                <p class="text-[10.5px] font-bold text-slate-600 truncate">${lc.teacher_name} · ${lc.class_name}</p>
+                                <span class="text-[10px] text-slate-500 font-semibold block">${lc.schedule_time || '10:00 AM'}</span>
+                            </div>
+                        `;
+                    });
+                    if (liveNowContainer) liveNowContainer.innerHTML = html;
+                } else {
+                    if (liveNowCountEl) liveNowCountEl.innerText = '0';
+                    if (liveNowContainer) {
+                        liveNowContainer.innerHTML = `
+                            <div class="col-span-full p-6 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                <i class="fas fa-broadcast-tower text-xl mb-1 text-slate-300"></i>
+                                <p class="font-bold text-xs text-slate-500">No live classes currently in progress</p>
+                            </div>
+                        `;
+                    }
+                }
+            })
+            .catch(err => console.error(err));
+
+        // 2. Fetch Upcoming Classes (Next 7 Days) from DB
+        const upcomingContainer = document.getElementById('upcomingClassesList');
+        fetch('/api/admin/live-classes/upcoming/?filter=week')
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success' && data.classes && data.classes.length > 0) {
+                    let html = '';
+                    data.classes.slice(0, 5).forEach(lc => {
+                        html += `
+                            <div onclick="openLiveClassDrawer(${lc.id})" class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-xs cursor-pointer hover:border-blue-300">
+                                <div class="truncate pr-2">
+                                    <h5 class="font-extrabold text-slate-900 truncate">${lc.title}</h5>
+                                    <p class="text-[10.5px] text-slate-500 font-semibold truncate">${lc.teacher_name} • ${lc.class_name} • ${lc.schedule_date || ''} ${lc.schedule_time || ''}</p>
+                                </div>
+                                <span class="px-2.5 py-1 bg-blue-50 text-blue-600 font-extrabold text-[10px] rounded-lg border border-blue-100 shrink-0">UPCOMING</span>
+                            </div>
+                        `;
+                    });
+                    if (upcomingContainer) upcomingContainer.innerHTML = html;
+                } else {
+                    if (upcomingContainer) {
+                        upcomingContainer.innerHTML = `
+                            <div class="p-6 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                <i class="fas fa-calendar-times text-xl mb-1 text-slate-300"></i>
+                                <p class="font-bold text-xs text-slate-500">No upcoming classes scheduled</p>
+                            </div>
+                        `;
+                    }
+                }
+            })
+            .catch(err => console.error(err));
+
+        // 3. Fetch Today's Agenda from DB
+        const agendaContainer = document.getElementById('todaysAgendaList');
+        fetch('/api/admin/live-classes/upcoming/?filter=today')
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success' && data.classes && data.classes.length > 0) {
+                    let html = '';
+                    data.classes.forEach(lc => {
+                        html += `
+                            <div onclick="openLiveClassDrawer(${lc.id})" class="p-2 bg-blue-50/70 rounded-xl border border-blue-200 flex items-center gap-2 cursor-pointer">
+                                <span class="font-black text-blue-700 shrink-0 text-[11px]">${lc.schedule_time || '10:00 AM'}</span>
+                                <div class="truncate">
+                                    <span class="bg-blue-600 text-white font-extrabold text-[8px] px-1.5 py-0.2 rounded-full uppercase">${lc.status || 'UPCOMING'}</span>
+                                    <strong class="text-slate-900 truncate ml-1 text-xs">${lc.title}</strong>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    if (agendaContainer) agendaContainer.innerHTML = html;
+                } else {
+                    if (agendaContainer) {
+                        agendaContainer.innerHTML = `
+                            <div class="p-4 text-center text-slate-400 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                <p class="font-bold text-xs text-slate-500">No classes scheduled for today</p>
+                            </div>
+                        `;
+                    }
+                }
+            })
+            .catch(err => console.error(err));
+
+        // 4. Fetch Stats for Donut Chart & Activity Log from DB
+        fetch('/api/admin/live-classes/stats/')
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success') {
+                    renderClassTypeDonutChartFromData(data.class_types || []);
+                    renderRecentActivityFromData(data.recent_activity || []);
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    function renderClassTypeDonutChartFromData(typesData) {
+        const ctx = document.getElementById('classTypeDonutChart');
+        if (!ctx) return;
+
+        if (classTypeChartInstance) {
+            classTypeChartInstance.destroy();
+        }
+
+        let labels = typesData.length > 0 ? typesData.map(t => t.label) : ['No Data'];
+        let counts = typesData.length > 0 ? typesData.map(t => t.count) : [1];
+        let colors = ['#2563eb', '#7c3aed', '#059669', '#f59e0b', '#06b6d4', '#e11d48'];
+
+        classTypeChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: colors.slice(0, labels.length),
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                cutout: '70%'
+            }
+        });
+
+        const legendGrid = document.getElementById('classTypeLegendGrid');
+        if (legendGrid) {
+            let legHtml = '';
+            typesData.forEach((t, idx) => {
+                legHtml += `<div class="flex items-center gap-1.5 truncate"><span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${colors[idx % colors.length]};"></span> <span class="truncate">${t.label}: ${t.count}</span></div>`;
+            });
+            if (!legHtml) legHtml = '<div class="col-span-2 text-center text-slate-400 font-bold">No class distribution data</div>';
+            legendGrid.innerHTML = legHtml;
+        }
+    }
+
+    function renderRecentActivityFromData(activityLogs) {
+        const activityContainer = document.getElementById('recentActivityFeedList');
+        if (!activityContainer) return;
+
+        if (activityLogs && activityLogs.length > 0) {
+            let html = '';
+            activityLogs.forEach(act => {
+                html += `
+                    <div class="flex items-start gap-2 text-xs">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] shrink-0 mt-0.5"><i class="fas fa-history"></i></div>
+                        <div class="truncate">
+                            <strong class="text-slate-900 block truncate">${act.title}</strong>
+                            <span class="text-[10px] text-slate-500 font-semibold block truncate">${act.subtitle}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            activityContainer.innerHTML = html;
+        } else {
+            activityContainer.innerHTML = '<div class="p-4 text-center text-slate-400 font-bold text-xs">No recent activity logged</div>';
+        }
+    }
+
+    function renderClassTypeDonutChart() {
+        const ctx = document.getElementById('classTypeDonutChart');
+        if (!ctx) return;
+
+        if (classTypeChartInstance) {
+            classTypeChartInstance.destroy();
+        }
+
+        classTypeChartInstance = new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Live Lecture', 'Doubt Class', 'Revision', 'Test Discussion', 'Orientation'],
+                datasets: [{
+                    data: [54, 28, 18, 14, 6],
+                    backgroundColor: ['#2563eb', '#7c3aed', '#059669', '#f59e0b', '#06b6d4'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                cutout: '70%'
+            }
+        });
+
+        const legendGrid = document.getElementById('classTypeLegendGrid');
+        if (legendGrid) {
+            legendGrid.innerHTML = `
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-600"></span> Live Lecture: 54 (45%)</div>
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-600"></span> Doubt Class: 28 (23%)</div>
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> Revision: 18 (15%)</div>
+                <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Test Disc: 14 (12%)</div>
+            `;
+        }
+    }
+
+    function loadAcademicSystemData() {
+        fetch('/api/admin/live-classes/academic-system-data/')
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Populate Filter Dropdowns
+                    window.globalCourseSubjectsMap = data.course_subjects || {};
+                    populateSelectOptions('filterLiveCourse', data.courses || [], 'All Courses');
+                    populateSelectOptions('filterLiveBatch', data.batches || [], 'All Batches');
+                    populateSelectOptions('filterLiveTeacher', data.teachers || [], 'All Teachers');
+                    populateSelectOptions('filterLiveSubject', data.subjects || [], 'All Subjects');
+
+                    // Populate Wizard Dropdowns
+                    populateSelectOptions('createCourse', data.courses || [], 'Select Course');
+                    populateSelectOptions('createSubject', data.subjects || [], 'Select Subject');
+                    populateSelectOptions('createTeacher', data.teachers || [], 'Select Lead Faculty');
+                    populateSelectOptions('createBatch', data.batches || [], 'Select Batch');
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    function populateSelectOptions(selectId, items, defaultLabel) {
+        const el = document.getElementById(selectId);
+        if (!el) return;
+        let html = `<option value="${getFilterDefaultVal(defaultLabel)}">${defaultLabel}</option>`;
+        items.forEach(it => {
+            let val = it.id || it.name || it;
+            let label = it.name || it.full_name || it.title || it;
+            html += `<option value="${val}">${label}</option>`;
+        });
+        el.innerHTML = html;
+    }
+
+        function switchCalendarView(view, targetDateStr) {
+        currentLiveCalendarView = view;
+        if (targetDateStr) {
+            currentCalendarDate = new Date(targetDateStr);
+        }
+        ['Month', 'Week', 'Day', 'Agenda'].forEach(v => {
+            const btn = document.getElementById('btnView' + v);
+            if (btn) {
+                if (v.toLowerCase() === view) {
+                    btn.className = 'px-3 py-1 rounded-lg bg-blue-600 text-white shadow-2xs cursor-pointer font-black';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer font-bold';
+                }
+            }
+        });
+        fetchLiveCalendarEvents();
+    }
+
+    function navigateCalendar(action) {
+        if (action === 'prev') {
+            if (currentLiveCalendarView === 'month') {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+            } else if (currentLiveCalendarView === 'day') {
+                currentCalendarDate.setDate(currentCalendarDate.getDate() - 1);
+            } else {
+                currentCalendarDate.setDate(currentCalendarDate.getDate() - 7);
+            }
+        } else if (action === 'next') {
+            if (currentLiveCalendarView === 'month') {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+            } else if (currentLiveCalendarView === 'day') {
+                currentCalendarDate.setDate(currentCalendarDate.getDate() + 1);
+            } else {
+                currentCalendarDate.setDate(currentCalendarDate.getDate() + 7);
+            }
+        } else {
+            currentCalendarDate = new Date(2026, 7, 31);
+        }
+        fetchLiveCalendarEvents();
+    }
+
+        let activeDrawerClassId = null;
+
+    function openLiveClassDrawer(classId) {
+        activeDrawerClassId = classId;
+        const drawer = document.getElementById('liveClassDetailDrawer');
+        if (!drawer) return;
+
+        fetch(`/api/admin/live-classes/detail/${classId}/`)
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success') {
+                    const lc = data.detail;
+                    document.getElementById('drawerClassId').innerText = lc.live_class_id || `#LIVE-${lc.id}`;
+                    document.getElementById('drawerClassTitle').innerText = lc.title;
+                    document.getElementById('drawerBatchCourse').innerText = `${lc.class_name} • ${lc.subject}`;
+                    document.getElementById('drawerTeacherName').innerHTML = `${lc.teacher_name} <i class="fas fa-check-circle text-blue-500 text-[10px]"></i>`;
+                    document.getElementById('drawerTimeDuration').innerText = `${lc.schedule_time} (${lc.duration_mins} min)`;
+                    document.getElementById('drawerCapacity').innerText = `${lc.students_joined || 0} / 200 Students`;
+                    document.getElementById('drawerJoinRoomBtn').href = lc.meet_link || '#';
+                    
+                    const badge = document.getElementById('drawerStatusBadge');
+                    const endBtnContainer = document.getElementById('drawerEndClassBtnContainer');
+
+                    if (badge) {
+                        badge.innerText = (lc.status || 'SCHEDULED').toUpperCase();
+                        if (lc.status === 'Live' || lc.status === 'LIVE') {
+                            badge.className = 'bg-rose-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase flex items-center gap-1 animate-pulse';
+                            if (endBtnContainer) endBtnContainer.style.display = 'block';
+                        } else {
+                            badge.className = 'bg-blue-600 text-white font-extrabold px-2.5 py-0.5 rounded-full text-[10px] uppercase flex items-center gap-1';
+                            if (endBtnContainer) endBtnContainer.style.display = 'none';
+                        }
+                    }
+
+                    drawer.classList.remove('hidden', 'translate-x-full');
+                    drawer.classList.add('translate-x-0');
+                }
+            })
+            .catch(err => {
+                drawer.classList.remove('hidden', 'translate-x-full');
+                drawer.classList.add('translate-x-0');
+            });
+    }
+
+    function executeEndLiveClass(classId) {
+        const targetId = classId || activeDrawerClassId;
+        if (!targetId) return;
+
+        if (!confirm('Are you sure you want to END this live class session now?')) return;
+
+        fetch(`/api/admin/live-classes/end/${targetId}/`, { method: 'POST' })
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Live Class session ended successfully!');
+                    closeLiveClassDrawer();
+                    refreshLiveClassesData();
+                } else {
+                    alert(data.message || 'Unable to end class.');
+                }
+            })
+            .catch(err => {
+                alert('Error ending live class session.');
+            });
+    }
+
+    function promptRecordClass(classId) {
+        const targetId = classId || activeDrawerClassId;
+        if (!targetId) return;
+
+        const videoLink = prompt('Enter video recording link (YouTube / Google Drive / Vimeo):');
+        if (!videoLink) return;
+
+        fetch(`/api/admin/live-classes/recording/${targetId}/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ video_link: videoLink })
+        })
+        .then(res => res.ok ? res.json() : { status: "error", events: [] })
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Recording saved successfully!');
+            }
+        });
+    }
+
+    function closeLiveClassDrawer() {
+        const drawer = document.getElementById('liveClassDetailDrawer');
+        if (drawer) {
+            drawer.classList.add('translate-x-full');
+            setTimeout(() => drawer.classList.add('hidden'), 300);
+        }
+    }
+
+    // CREATE LIVE CLASS WIZARD CONTROLLER
+    let currentWizardStep = 1;
+
+    
+    // ==========================================
+    // TOP HEADER TOOLBAR BUTTON HANDLERS
+    // ==========================================
+    function exportLiveClassesSchedule() {
+        const dateStr = currentCalendarDate.toISOString().split('T')[0];
+        const searchVal = document.getElementById('liveSearchInput')?.value || '';
+        const courseVal = document.getElementById('filterLiveCourse')?.value || 'ALL';
+        const batchVal = document.getElementById('filterLiveBatch')?.value || 'ALL';
+        const teacherVal = document.getElementById('filterLiveTeacher')?.value || 'ALL';
+        const subjectVal = document.getElementById('filterLiveSubject')?.value || 'ALL';
+        const statusVal = document.getElementById('filterLiveStatus')?.value || 'ALL';
+
+        const url = `/api/admin/live-classes/calendar-events/?view=${currentLiveCalendarView}&date=${dateStr}&q=${encodeURIComponent(searchVal)}&course=${encodeURIComponent(courseVal)}&batch=${encodeURIComponent(batchVal)}&teacher=${encodeURIComponent(teacherVal)}&subject=${encodeURIComponent(subjectVal)}&status=${encodeURIComponent(statusVal)}`;
+
+        fetch(url)
+            .then(res => res.ok ? res.json() : { status: "error", events: [] })
+            .then(data => {
+                if (data.status === 'success' && data.events) {
+                    let csvContent = "data:text/csv;charset=utf-8,ID,Title,Course,Subject,Teacher,Date,Time,Status,Meeting Link\n";
+                    data.events.forEach(ev => {
+                        let row = [
+                            `"${ev.live_class_id || ev.id}"`,
+                            `"${(ev.title || '').replace(/"/g, '""')}"`,
+                            `"${(ev.class_name || '').replace(/"/g, '""')}"`,
+                            `"${(ev.subject || '').replace(/"/g, '""')}"`,
+                            `"${(ev.teacher_name || '').replace(/"/g, '""')}"`,
+                            `"${ev.date_str || ''}"`,
+                            `"${ev.time_str || ''}"`,
+                            `"${ev.status || ''}"`,
+                            `"${ev.meet_link || ''}"`
+                        ].join(",");
+                        csvContent += row + "\n";
+                    });
+                    const encodedUri = encodeURI(csvContent);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", `Live_Classes_Schedule_${dateStr}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert('No live class schedule data available to export.');
+                }
+            })
+            .catch(err => {
+                alert('Export failed. Unable to fetch live classes schedule.');
+            });
+    }
+
+    function openLiveSettingsModal() {
+        const modal = document.getElementById('liveSettingsModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        } else {
+            alert(`Calendar Settings:\n• Active View: ${currentLiveCalendarView.toUpperCase()}\n• Selected Date: ${currentCalendarDate.toDateString()}\n• Auto Sync: Real-time 10s`);
+        }
+    }
+
+    function closeLiveSettingsModal() {
+        const modal = document.getElementById('liveSettingsModal');
         if (modal) modal.classList.add('hidden');
+    }
+
+
+    
+    function saveLiveSettings() {
+        const viewPref = document.getElementById('prefDefaultView')?.value || 'week';
+        currentLiveCalendarView = viewPref;
+        closeLiveSettingsModal();
+        switchCalendarView(viewPref);
+        alert('Settings saved successfully!');
+    }
+
+
+    
+    function openLiveSettingsModal() {
+        const modal = document.getElementById('modalLiveSettings');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+    }
+
+    function closeLiveSettingsModal() {
+        const modal = document.getElementById('modalLiveSettings');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+    }
+
+    function saveLiveSettingsPreferences() {
+        const defView = document.getElementById('settingDefaultView')?.value || 'week';
+        sessionStorage.setItem('liveCalView', defView);
+        currentLiveCalendarView = defView;
+        switchCalendarView(defView);
+        closeLiveSettingsModal();
+        alert('Calendar settings preferences saved!');
+    }
+
+    function openCreateLiveClassModal() {
+        currentWizardStep = 1;
+        updateWizardStepUI();
+        const modal = document.getElementById('modalCreateLiveClass');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+    }
+
+    function closeCreateLiveClassModal() {
+        const modal = document.getElementById('modalCreateLiveClass');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+    }
+
+
+    function wizardStepNext() {
+        if (currentWizardStep === 1) {
+            if (typeof validateStep1 === 'function' && !validateStep1()) return;
+        }
+        if (currentWizardStep < 6) {
+            if (currentWizardStep === 5 && typeof updateReviewStepSummary === 'function') updateReviewStepSummary();
+            currentWizardStep++;
+            updateWizardStepUI();
+        } else {
+            submitCreateLiveClass();
+        }
+    }
+
+    function wizardStepPrev() {
+        if (currentWizardStep > 1) {
+            currentWizardStep--;
+            updateWizardStepUI();
+        }
+    }
+
+    function updateWizardStepUI() {
+        for (let i = 1; i <= 6; i++) {
+            const stepEl = document.getElementById('wizardStep' + i);
+            const badgeEl = document.getElementById('stepBadge' + i);
+            if (stepEl) {
+                if (i === currentWizardStep) {
+                    stepEl.classList.remove('hidden');
+                } else {
+                    stepEl.classList.add('hidden');
+                }
+            }
+            if (badgeEl) {
+                if (i === currentWizardStep) {
+                    badgeEl.className = 'text-blue-600 border-b-2 border-blue-600 pb-1 font-black';
+                } else if (i < currentWizardStep) {
+                    badgeEl.className = 'text-emerald-600 font-extrabold pb-1';
+                } else {
+                    badgeEl.className = 'text-slate-400 font-semibold pb-1';
+                }
+            }
+        }
+
+        const prevBtn = document.getElementById('btnWizardPrev');
+        const nextBtn = document.getElementById('btnWizardNext');
+        if (prevBtn) {
+            if (currentWizardStep > 1) prevBtn.classList.remove('hidden');
+            else prevBtn.classList.add('hidden');
+        }
+        if (nextBtn) {
+            if (currentWizardStep === 6) nextBtn.innerHTML = '<span>Schedule Live Class ✓</span>';
+            else nextBtn.innerHTML = '<span>Next →</span>';
+        }
+    }
+
+        function submitCreateLiveClass() {
+        const titleEl = document.getElementById('createTitle');
+        const title = titleEl ? titleEl.value.trim() : '';
+
+        if (!title) {
+            alert('Please enter a class title.');
+            if (titleEl) titleEl.focus();
+            return;
+        }
+
+        let date = document.getElementById('createDate')?.value || '';
+        if (!date) {
+            date = new Date().toISOString().split('T')[0];
+        }
+
+        let startTime = document.getElementById('createStartTime')?.value || '10:00';
+        
+        let meetLink = document.getElementById('createMeetLink')?.value.trim() || '';
+        if (!meetLink) {
+            meetLink = 'https://meet.edutrust.com/room/LC-' + Math.random().toString(36).substr(2, 8);
+        }
+
+        const courseEl = document.getElementById('createCourse');
+        const boardEl = document.getElementById('createBoard');
+        const streamEl = document.getElementById('createStream');
+        const subjectEl = document.getElementById('createSubject');
+        const teacherEl = document.getElementById('createTeacher');
+        const chapterEl = document.getElementById('createChapter');
+
+        const className = (courseEl && courseEl.value) ? courseEl.value : 'Class 10';
+        const boardVal = (boardEl && boardEl.value) ? boardEl.value : '';
+        const streamVal = (streamEl && streamEl.value) ? streamEl.value : '';
+        const subjectName = (subjectEl && subjectEl.value) ? subjectEl.value : 'Mathematics';
+        const teacherName = (teacherEl && teacherEl.options && teacherEl.options[teacherEl.selectedIndex]) ? teacherEl.options[teacherEl.selectedIndex].text : 'Lead Faculty';
+        const chapterName = (chapterEl && chapterEl.value) ? chapterEl.value : 'General Topic';
+
+        fetch('/api/admin/live-classes/create/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                title: title,
+                schedule_date: date,
+                schedule_time: startTime,
+                meet_link: meetLink,
+                class_name: className,
+                board: boardVal,
+                stream: streamVal,
+                subject: subjectName,
+                chapter: chapterName,
+                teacher_name: teacherName
+            })
+        })
+        .then(res => {
+            if (res.ok) return res.json();
+            return res.json().then(errData => { throw new Error(errData.message || 'Unable to schedule live class.'); });
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                closeCreateLiveClassModal();
+                if (data.schedule_date) {
+                    currentCalendarDate = new Date(data.schedule_date);
+                }
+                refreshLiveClassesData();
+                if (typeof refreshAdminDashboardLiveStats === 'function') {
+                    refreshAdminDashboardLiveStats();
+                }
+                alert(data.message || 'Live Class scheduled successfully!');
+            } else {
+                alert(data.message || 'Unable to schedule live class.');
+            }
+        })
+        .catch(err => {
+            console.error('Create Live Class Error:', err);
+            alert(err.message || 'Unable to schedule live class.');
+        });
+    }
+
+    function applyLiveFilters() {
+        fetchLiveCalendarEvents();
+    }
+
+    function debouncedApplyLiveFilters() {
+        clearTimeout(window.liveFilterTimeout);
+        window.liveFilterTimeout = setTimeout(applyLiveFilters, 300);
+    }
+
+    function clearLiveFilters() {
+        document.getElementById('liveSearchInput').value = '';
+        document.getElementById('filterLiveCourse').value = 'ALL';
+        document.getElementById('filterLiveBatch').value = 'ALL';
+        document.getElementById('filterLiveTeacher').value = 'ALL';
+        document.getElementById('filterLiveSubject').value = 'ALL';
+        document.getElementById('filterLiveStatus').value = 'ALL';
+        applyLiveFilters();
     }
 </script>
 {% endblock %}

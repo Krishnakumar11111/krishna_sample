@@ -2,6 +2,10 @@ import TutionPlatform.roles_views as roles_views
 import TutionPlatform.settings_views as settings_views
 from . import communication_views
 import TutionPlatform.live_class_views as live_class_views
+import TutionPlatform.pyq_views as pyq_views
+import TutionPlatform.e_library_views as e_library_views
+import TutionPlatform.e_newspaper_views as e_newspaper_views
+import TutionPlatform.coupons_views as coupons_views
 import TutionPlatform.admin_auth_views as admin_auth_views
 from django.urls import path
 from . import views
@@ -25,11 +29,62 @@ urlpatterns = [
     path('api/admin/settings/category/<str:category>/', settings_views.api_admin_settings_category, name='api_admin_settings_category'),
     path('api/admin/settings/reset/', settings_views.api_admin_settings_reset, name='api_admin_settings_reset'),
     path('api/admin/settings/branding/upload/', settings_views.api_admin_branding_upload, name='api_admin_branding_upload'),
+    path('api/admin/settings/branding/remove/', settings_views.api_admin_branding_remove, name='api_admin_branding_remove'),
     path('api/admin/settings/test-connection/', settings_views.api_admin_settings_test_connection, name='api_admin_settings_test_connection'),
+    path('api/admin/settings/security-logs/', settings_views.api_admin_security_logs, name='api_admin_security_logs'),
     path('api/admin/settings/backups/', settings_views.api_admin_backups_list_create, name='api_admin_backups_list_create'),
     path('api/admin/settings/backups/<int:backup_id>/restore/', settings_views.api_admin_backup_restore, name='api_admin_backup_restore'),
     path('api/admin/settings/backups/<int:backup_id>/verify/', settings_views.api_admin_backup_verify, name='api_admin_backup_verify'),
     path('api/admin/settings/backups/<int:backup_id>/delete/', settings_views.api_admin_backup_delete, name='api_admin_backup_delete'),
+    path('api/admin/maintenance/action/', settings_views.api_admin_maintenance_action, name='api_admin_maintenance_action'),
+    path('api/admin/maintenance/logs/', settings_views.api_admin_maintenance_logs, name='api_admin_maintenance_logs'),
+
+    # Certificate Template & Issuance API Routes
+    path('api/admin/certificate/templates/', settings_views.api_admin_certificate_templates, name='api_admin_certificate_templates'),
+    path('api/admin/certificate/templates/upload/', settings_views.api_admin_certificate_upload_template, name='api_admin_certificate_upload_template'),
+    path('api/admin/certificate/search/', settings_views.api_admin_certificate_student_course_search, name='api_admin_certificate_student_course_search'),
+    path('api/admin/certificate/issue/', settings_views.api_admin_certificate_issue, name='api_admin_certificate_issue'),
+
+    # Central Academic Control Center API Routes
+    path('api/admin/academic/sessions/', settings_views.api_admin_academic_sessions, name='api_admin_academic_sessions'),
+    path('api/admin/academic/classes/', settings_views.api_admin_academic_classes, name='api_admin_academic_classes'),
+    path('api/admin/academic/boards/', settings_views.api_admin_academic_boards, name='api_admin_academic_boards'),
+    path('api/admin/academic/streams/', settings_views.api_admin_academic_streams, name='api_admin_academic_streams'),
+    path('api/admin/academic/subjects/', settings_views.api_admin_academic_subjects, name='api_admin_academic_subjects'),
+    path('api/admin/academic/terms/', settings_views.api_admin_academic_terms, name='api_admin_academic_terms'),
+    path('api/admin/academic/calendar/', settings_views.api_admin_academic_calendar, name='api_admin_academic_calendar'),
+    path('api/admin/academic/import-csv/', settings_views.api_admin_academic_import_csv, name='api_admin_academic_import_csv'),
+    path('api/admin/academic/export/', settings_views.api_admin_academic_export, name='api_admin_academic_export'),
+    path('api/admin/academic/bulk-assign/cascading/', settings_views.api_admin_academic_bulk_assign_cascading, name='api_admin_academic_bulk_assign_cascading'),
+    path('api/admin/academic/bulk-assign/execute/', settings_views.api_admin_academic_bulk_assign_execute, name='api_admin_academic_bulk_assign_execute'),
+    path('api/admin/academic/copy-session/estimate/', settings_views.api_admin_academic_copy_session_estimate, name='api_admin_academic_copy_session_estimate'),
+    path('api/admin/academic/copy-session/execute/', settings_views.api_admin_academic_copy_session_execute, name='api_admin_academic_copy_session_execute'),
+
+    # Advanced Examination Configuration System Routes
+    path('api/admin/exam-config/list/', settings_views.api_admin_exam_config_list, name='api_admin_exam_config_list'),
+    path('api/admin/exam-config/dropdowns/', settings_views.api_admin_exam_config_dropdowns, name='api_admin_exam_config_dropdowns'),
+    path('api/admin/exam-config/save/', settings_views.api_admin_exam_config_save, name='api_admin_exam_config_save'),
+    path('api/admin/exam-config/save/<int:config_id>/', settings_views.api_admin_exam_config_save, name='api_admin_exam_config_save_id'),
+    path('api/admin/exam-config/<int:config_id>/toggle/', settings_views.api_admin_exam_config_toggle, name='api_admin_exam_config_toggle'),
+    path('api/admin/exam-config/<int:config_id>/delete/', settings_views.api_admin_exam_config_delete, name='api_admin_exam_config_delete'),
+    path('api/admin/exam-config/<int:config_id>/duplicate/', settings_views.api_admin_exam_config_duplicate, name='api_admin_exam_config_duplicate'),
+
+    # Manage Exam Types Routes
+    path('api/admin/exam-types/', settings_views.api_admin_exam_types_list_create, name='api_admin_exam_types_list_create'),
+    path('api/admin/exam-types/<int:type_id>/action/', settings_views.api_admin_exam_types_update_delete, name='api_admin_exam_types_update_delete'),
+
+    # Global Exam Settings Fallback Route
+    path('api/admin/global-exam-settings/save/', settings_views.api_admin_global_exam_settings_save, name='api_admin_global_exam_settings_save'),
+
+    # Loader Management APIs
+    path('api/admin/loaders/list/', settings_views.api_admin_loaders_list, name='api_admin_loaders_list'),
+    path('api/admin/loaders/apply/<int:loader_id>/', settings_views.api_admin_loaders_apply, name='api_admin_loaders_apply'),
+    path('api/admin/loaders/disable/', settings_views.api_admin_loaders_disable, name='api_admin_loaders_disable'),
+    path('api/admin/loaders/create/', settings_views.api_admin_loaders_create, name='api_admin_loaders_create'),
+    path('api/admin/loaders/upload/', settings_views.api_admin_loaders_upload, name='api_admin_loaders_upload'),
+    path('api/admin/loaders/<int:loader_id>/update/', settings_views.api_admin_loaders_update, name='api_admin_loaders_update'),
+    path('api/admin/loaders/<int:loader_id>/delete/', settings_views.api_admin_loaders_delete, name='api_admin_loaders_delete'),
+    path('api/admin/loaders/settings/save/', settings_views.api_admin_loader_settings_save, name='api_admin_loader_settings_save'),
     path('notes/', views.notes_view, name='notes'),
     path('notes.html', views.notes_view),
     path('assignments/', views.assignments_view, name='assignments'),
@@ -97,6 +152,9 @@ urlpatterns = [
     path('login/', views.login_view),
     path('logout/', views.logout_view, name='logout'),
     path('api/auth/user/', views.api_current_user, name='api_current_user'),
+    path('api/student/profile/update/', views.api_student_profile_update, name='api_student_profile_update'),
+    path('api/batch/enroll/', views.api_batch_enroll, name='api_batch_enroll'),
+    path('student-dashboard/', views.study_material, name='student_dashboard'),
     path('admin.html', views.custom_admin, name='custom_admin'),
     path('custom-admin/', views.custom_admin, name='admin'),
     path('admin-module/<str:module_name>/', views.admin_module_view, name='admin_module_tp'),
@@ -211,6 +269,8 @@ urlpatterns = [
     path('api/admin/auth/change-password/', admin_auth_views.api_admin_auth_change_password, name='api_admin_auth_change_password'),
     path('api/admin/auth/change-username/', admin_auth_views.api_admin_auth_change_username, name='api_admin_auth_change_username'),
     path('api/admin/auth/change-email/', admin_auth_views.api_admin_auth_change_email, name='api_admin_auth_change_email'),
+    path('admin/both/', views.custom_admin, name='admin_both_tp_slash'),
+    path('admin/both', views.custom_admin, name='admin_both_tp'),
     path('admin/dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
     path('admin/courses/', views.admin_courses_view, name='admin_courses'),
     path('admin/course-wizard/', views.admin_course_wizard_view, name='admin_course_wizard'),
@@ -225,8 +285,35 @@ urlpatterns = [
     path('admin/study-material/tests-quizzes/', views.admin_tests_view, name='admin_study_material_tests_quizzes'),
     path('admin/study-material/test-series/', views.admin_test_series_view, name='admin_study_material_test_series'),
     path('admin/study-material/pyq-model-papers/', views.admin_pyq_view, name='admin_study_material_pyq_model_papers'),
+    path('api/admin/pyq-model-papers/list/', pyq_views.api_admin_pyq_model_papers_list, name='api_admin_pyq_model_papers_list'),
+    path('api/admin/pyq-model-papers/kpis/', pyq_views.api_admin_pyq_model_papers_kpis, name='api_admin_pyq_model_papers_kpis'),
+    path('api/admin/pyq-model-papers/analytics/', pyq_views.api_admin_pyq_model_papers_analytics, name='api_admin_pyq_model_papers_analytics'),
+    path('api/admin/pyq-model-papers/create/', pyq_views.api_admin_pyq_model_papers_create, name='api_admin_pyq_model_papers_create'),
+    path('api/admin/pyq-model-papers/bulk-actions/', pyq_views.api_admin_pyq_model_papers_bulk_actions, name='api_admin_pyq_model_papers_bulk_actions'),
+    path('api/admin/pyq-model-papers/detail/<int:paper_id>/', pyq_views.api_admin_pyq_model_papers_detail, name='api_admin_pyq_model_papers_detail'),
     path('admin/study-material/e-library/', views.admin_e_library_view, name='admin_study_material_e_library'),
+    path('api/admin/e-library/list/', e_library_views.api_admin_elibrary_list, name='api_admin_elibrary_list'),
+    path('api/admin/e-library/kpis/', e_library_views.api_admin_elibrary_kpis, name='api_admin_elibrary_kpis'),
+    path('api/admin/e-library/analytics/', e_library_views.api_admin_elibrary_analytics, name='api_admin_elibrary_analytics'),
+    path('api/admin/e-library/create/', e_library_views.api_admin_elibrary_create, name='api_admin_elibrary_create'),
+    path('api/admin/e-library/bulk-actions/', e_library_views.api_admin_elibrary_bulk_actions, name='api_admin_elibrary_bulk_actions'),
+    path('api/admin/e-library/detail/<int:resource_id>/', e_library_views.api_admin_elibrary_detail, name='api_admin_elibrary_detail'),
     path('admin/study-material/e-newspaper/', views.admin_e_newspaper_view, name='admin_study_material_e_newspaper'),
+    path('api/admin/e-newspaper/list/', e_newspaper_views.api_admin_enewspaper_list, name='api_admin_enewspaper_list'),
+    path('api/admin/e-newspaper/kpis/', e_newspaper_views.api_admin_enewspaper_kpis, name='api_admin_enewspaper_kpis'),
+    path('api/admin/e-newspaper/analytics/', e_newspaper_views.api_admin_enewspaper_analytics, name='api_admin_enewspaper_analytics'),
+    path('api/admin/e-newspaper/create/', e_newspaper_views.api_admin_enewspaper_create, name='api_admin_enewspaper_create'),
+    path('api/admin/e-newspaper/bulk-actions/', e_newspaper_views.api_admin_enewspaper_bulk_actions, name='api_admin_enewspaper_bulk_actions'),
+    path('api/admin/e-newspaper/detail/<int:newspaper_id>/', e_newspaper_views.api_admin_enewspaper_detail, name='api_admin_enewspaper_detail'),
+    path('admin/coupons-rewards/', views.admin_coupons_rewards_view, name='admin_coupons_rewards'),
+    path('admin/finance/coupons-rewards/', views.admin_coupons_rewards_view, name='admin_finance_coupons_rewards'),
+    path('api/admin/coupons-rewards/list/', coupons_views.api_admin_coupons_list, name='api_admin_coupons_list'),
+    path('api/admin/coupons-rewards/kpis/', coupons_views.api_admin_coupons_kpis, name='api_admin_coupons_kpis'),
+    path('api/admin/coupons-rewards/analytics/', coupons_views.api_admin_coupons_analytics, name='api_admin_coupons_analytics'),
+    path('api/admin/coupons-rewards/create/', coupons_views.api_admin_coupons_create, name='api_admin_coupons_create'),
+    path('api/admin/coupons-rewards/create-reward/', coupons_views.api_admin_rewards_create, name='api_admin_rewards_create'),
+    path('api/admin/coupons-rewards/bulk-actions/', coupons_views.api_admin_coupons_bulk_actions, name='api_admin_coupons_bulk_actions'),
+    path('api/admin/coupons-rewards/detail/<int:coupon_id>/', coupons_views.api_admin_coupons_detail, name='api_admin_coupons_detail'),
     path('admin/user-logs/', views.admin_user_logs_view, name='admin_user_logs'),
     path('api/admin/user-logs/', admin_api_views.user_logs_api, name='api_admin_user_logs'),
     path('api/admin/user-logs/analytics/', admin_api_views.api_admin_user_logs_analytics, name='api_admin_user_logs_analytics'),
@@ -253,6 +340,7 @@ urlpatterns = [
     path('api/admin/communication/stats/', communication_views.api_admin_comm_stats, name='api_admin_comm_stats'),
     path('api/admin/communication/conversations/', communication_views.api_admin_comm_conversations, name='api_admin_comm_conversations'),
     path('api/admin/communication/thread/', communication_views.api_admin_comm_thread_messages, name='api_admin_comm_thread_messages'),
+    path('api/admin/communication/messages/', communication_views.api_admin_comm_thread_messages, name='api_admin_comm_messages'),
     path('api/admin/communication/send/', communication_views.api_admin_comm_send_message, name='api_admin_comm_send_message'),
     path('api/admin/communication/broadcast/', communication_views.api_admin_comm_broadcast, name='api_admin_comm_broadcast'),
     path('api/admin/communication/notices/', communication_views.api_admin_comm_notices, name='api_admin_comm_notices'),
@@ -347,9 +435,12 @@ urlpatterns = [
     path('api/admin/live-classes/student-detail/<int:student_id>/', live_class_views.api_admin_student_details, name='api_admin_student_details'),
     path('api/admin/live-classes/dependent-options/', live_class_views.api_admin_dependent_options, name='api_admin_dependent_options'),
     path('api/admin/live-classes/stats/', live_class_views.api_admin_live_stats, name='api_admin_live_stats'),
-    path('api/admin/live-classes/live-now/', live_class_views.api_admin_live_now, name='api_admin_live_now'),
+        path('api/admin/live-classes/end/<int:class_id>/', live_class_views.api_admin_end_live_class, name='api_admin_end_live_class'),
+    path('api/admin/live-classes/recording/<int:class_id>/', live_class_views.api_admin_save_recording, name='api_admin_save_recording'),
+path('api/admin/live-classes/live-now/', live_class_views.api_admin_live_now, name='api_admin_live_now'),
     path('api/admin/live-classes/upcoming/', live_class_views.api_admin_upcoming_classes, name='api_admin_upcoming_classes'),
     path('api/admin/live-classes/create-class/', live_class_views.api_admin_create_live_class, name='api_admin_create_live_class'),
+    path('api/admin/live-classes/calendar-events/', live_class_views.api_admin_calendar_events, name='api_admin_calendar_events_alias'),
     path('api/admin/live-classes/calendar/', live_class_views.api_admin_calendar_events, name='api_admin_calendar_events'),
     path('api/admin/live-classes/<int:class_id>/detail/', live_class_views.api_admin_live_class_detail, name='api_admin_live_class_detail'),
     path('api/admin/live-classes/<int:class_id>/action-reschedule/', live_class_views.api_admin_reschedule_cancel_class, name='api_admin_reschedule_cancel_class'),
@@ -394,4 +485,12 @@ path('api/admin/live-classes/', views.api_admin_live_classes, name='api_admin_li
     path('api/teacher/profile/', views.api_teacher_profile, name='api_teacher_profile'),
     path('teacher-dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
     path('teacher_dashboard.html', views.teacher_dashboard, name='teacher_dashboard_html'),
+
+    # Academic Import & Export Wizard APIs
+    path('api/admin/academic/import/validate/', settings_views.api_admin_academic_import_validate, name='api_admin_academic_import_validate'),
+    path('api/admin/academic/import/execute/', settings_views.api_admin_academic_import_execute, name='api_admin_academic_import_execute'),
+    path('api/admin/academic/import/template/', settings_views.api_admin_academic_import_template, name='api_admin_academic_import_template'),
+    path('api/admin/academic/export/generate/', settings_views.api_admin_academic_export_generate, name='api_admin_academic_export_generate'),
+    path('api/admin/academic/history/', settings_views.api_admin_academic_history_list, name='api_admin_academic_history_list'),
+
 ]

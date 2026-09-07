@@ -43,20 +43,20 @@
         </div>
 
         <div id="detail-teacher-actions-container" class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-            {% if enquiry.status == 'NEW' %}
-                <button onclick="promptApproveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-check"></i> APPROVE</button>
-                <button onclick="promptRejectTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-times"></i> REJECT</button>
-                <button onclick="promptSuspendTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-ban"></i> SUSPEND</button>
-                <button onclick="promptRemoveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
+            {% if enquiry.status == 'NEW' or enquiry.status == 'PENDING' or not enquiry.status or enquiry.status == 'APPLIED' %}
+                <button id="btn-approve-detail-teacher-{{ enquiry.id }}" onclick="promptApproveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-check"></i> APPROVE</button>
+                <button id="btn-reject-detail-teacher-{{ enquiry.id }}" onclick="promptRejectTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-times"></i> REJECT</button>
+                <button id="btn-suspend-detail-teacher-{{ enquiry.id }}" onclick="promptSuspendTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-ban"></i> SUSPEND</button>
+                <button id="btn-remove-detail-teacher-{{ enquiry.id }}" onclick="promptRemoveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
             {% elif enquiry.status == 'APPROVED' %}
-                <button onclick="promptSuspendTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-ban"></i> SUSPEND</button>
-                <button onclick="promptRemoveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
+                <button id="btn-suspend-detail-teacher-{{ enquiry.id }}" onclick="promptSuspendTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-ban"></i> SUSPEND</button>
+                <button id="btn-remove-detail-teacher-{{ enquiry.id }}" onclick="promptRemoveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
             {% elif enquiry.status == 'REJECTED' %}
-                <button onclick="promptApproveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-check"></i> APPROVE</button>
-                <button onclick="promptRemoveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
+                <button id="btn-approve-detail-teacher-{{ enquiry.id }}" onclick="promptApproveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-check"></i> APPROVE</button>
+                <button id="btn-remove-detail-teacher-{{ enquiry.id }}" onclick="promptRemoveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
             {% elif enquiry.status == 'SUSPENDED' %}
-                <button onclick="promptApproveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-check"></i> APPROVE</button>
-                <button onclick="promptRemoveTeacherEnquiry({{ enquiry.id }})" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
+                <button id="btn-approve-detail-teacher-{{ enquiry.id }}" onclick="promptApproveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5 shadow-2xs"><i class="fas fa-check"></i> APPROVE</button>
+                <button id="btn-remove-detail-teacher-{{ enquiry.id }}" onclick="promptRemoveTeacherEnquiry('{{ enquiry.id }}')" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs rounded-xl transition-all cursor-pointer border-0 inline-flex items-center gap-1.5"><i class="fas fa-trash-alt"></i> REMOVE</button>
             {% endif %}
         </div>
     </div>
@@ -103,10 +103,10 @@
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
             <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2"><i class="fas fa-calendar-check text-blue-500"></i> REGISTRATION</h4>
             <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Registration Date</span><strong class="text-slate-800">{{ enquiry.created_at|date:"M d, Y I:i A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Registration Date</span><strong class="text-slate-800">{{ enquiry.created_at|date:"M d, Y h:i A" }}</strong></div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Source</span><strong class="text-slate-800">Register as a Tutor</strong></div>
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Verification Status</span><strong class="text-slate-800">{{ enquiry.status }}</strong></div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ enquiry.updated_at|date:"M d, Y I:i A" }}</strong></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100"><span class="text-[10px] font-bold text-slate-400 block mb-0.5">Last Updated</span><strong class="text-slate-800">{{ enquiry.updated_at|date:"M d, Y h:i A" }}</strong></div>
             </div>
         </div>
 
@@ -165,5 +165,36 @@
             if (typeof showEnquiryToast === 'function') showEnquiryToast('Server error processing action', 'error');
         }
     };
+
+    if (!window.promptApproveTeacherEnquiry) {
+        window.promptApproveTeacherEnquiry = function(id) {
+            if (confirm('Are you sure you want to approve this teacher registration?')) {
+                window.sendTeacherEnquiryAction(id, 'approve');
+            }
+        };
+    }
+    if (!window.promptRejectTeacherEnquiry) {
+        window.promptRejectTeacherEnquiry = function(id) {
+            const reason = prompt('Enter rejection reason (optional):');
+            if (reason !== null) {
+                window.sendTeacherEnquiryAction(id, 'reject', reason);
+            }
+        };
+    }
+    if (!window.promptSuspendTeacherEnquiry) {
+        window.promptSuspendTeacherEnquiry = function(id) {
+            const reason = prompt('Enter suspension reason (optional):');
+            if (reason !== null) {
+                window.sendTeacherEnquiryAction(id, 'suspend', reason);
+            }
+        };
+    }
+    if (!window.promptRemoveTeacherEnquiry) {
+        window.promptRemoveTeacherEnquiry = function(id) {
+            if (confirm('Are you sure you want to remove this teacher enquiry?')) {
+                window.sendTeacherEnquiryAction(id, 'remove');
+            }
+        };
+    }
 </script>
 {% endblock %}

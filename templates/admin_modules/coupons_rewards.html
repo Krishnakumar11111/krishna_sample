@@ -1,0 +1,1556 @@
+{% extends base_template|default:"admin.html" %}
+
+{% block admin_content %}
+{% block content %}
+<!-- EDUTRUST COUPONS & REWARDS MANAGEMENT CENTER -->
+<div class="space-y-4 font-sans text-slate-800 antialiased pb-12">
+
+    <!-- COMPACT PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 bg-white dark:bg-slate-900 p-2.5 px-4 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm shadow-xs shrink-0">
+                <i class="fa-solid fa-ticket"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-base font-black text-slate-900 dark:text-white leading-tight">Coupons & Rewards Dashboard</h1>
+                    <span class="w-4 h-4 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]" title="Verified Promotion System"><i class="fa-solid fa-check"></i></span>
+                    <span class="px-2 py-0.2 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-extrabold text-[9px] uppercase tracking-wider">Promotions & Loyalty</span>
+                </div>
+                <p class="text-[11px] text-slate-400 font-medium leading-none mt-0.5">Create, manage and analyze coupons, rewards and promotional offers</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="exportCouponsData()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-download text-[10px]"></i> Export <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <button type="button" onclick="openImportModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-upload text-[10px]"></i> Import <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <div class="relative group">
+                <button type="button" onclick="openCreateCouponModal()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-xs transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-xs"></i> + Create Coupon <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPACT 6 KPI CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        <!-- CARD 1: TOTAL COUPONS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Coupons</span>
+                <span class="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-ticket"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalCoupons">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendTotal">↑ 12.6%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from last 7 days</p>
+        </div>
+
+        <!-- CARD 2: ACTIVE COUPONS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Active Coupons</span>
+                <span class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-circle-check"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiActiveCoupons">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendActive">↑ 8.4%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">currently active</p>
+        </div>
+
+        <!-- CARD 3: REWARDS ISSUED -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Rewards Issued</span>
+                <span class="w-6 h-6 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-gift"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiRewardsIssued">₹0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendRewards">↑ 15.2%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">all-time rewards</p>
+        </div>
+
+        <!-- CARD 4: TOTAL REDEMPTIONS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Redemptions</span>
+                <span class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-tags"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalRedemptions">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendRedemptions">↑ 18.3%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">from last 7 days</p>
+        </div>
+
+        <!-- CARD 5: TOTAL DISCOUNT GIVEN -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Discount Given</span>
+                <span class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalDiscountGiven">₹0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendDiscount">↑ 14.7%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">student savings</p>
+        </div>
+
+        <!-- CARD 6: UNIQUE USERS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Unique Users</span>
+                <span class="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-users text-[10px]"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiUniqueUsers">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendUsers">↑ 9.8%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">active coupon users</p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT GRID (LEFT TABLE + RIGHT ANALYTICS) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- LEFT COLUMN: SEARCH TOOLBAR + TABS + TABLE (2 COLS) -->
+        <div class="lg:col-span-2 space-y-3.5">
+
+            <!-- SEARCH & MULTI-FILTER TOOLBAR -->
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+
+                <!-- SEARCH INPUT & QUICK BUTTONS -->
+                <div class="flex flex-col sm:flex-row items-center gap-2">
+                    <div class="relative flex-1 w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="couponSearchInput" oninput="debounceCouponSearch()" placeholder="Search coupon code, name, description..." class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                        <button type="button" onclick="clearAllCouponFilters()" class="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs border-0 cursor-pointer flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-rotate-left text-xs"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SINGLE ROW 4-DROPDOWN FILTERS GRID -->
+                <div id="filterBarContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <div>
+                        <select id="filterStatus" onchange="applyCouponFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Expired">Expired</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Disabled">Disabled</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterDiscountType" onchange="applyCouponFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Types</option>
+                            <option value="Percentage">Percentage</option>
+                            <option value="Fixed Amount">Fixed Amount</option>
+                            <option value="Free Access">Free Access</option>
+                            <option value="Cashback">Cashback</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <select id="filterApplicable" onchange="applyCouponFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Applicable</option>
+                            <option value="All Courses">All Courses</option>
+                            <option value="Selected Courses">Selected Courses</option>
+                            <option value="Class 10">Class 10</option>
+                            <option value="Class 12">Class 12</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button type="button" onclick="applyCouponFilters()" class="w-full p-1.5 px-2 bg-blue-50 dark:bg-blue-950 text-blue-600 font-extrabold rounded-lg text-[11px] border border-blue-200 cursor-pointer">
+                            Filter
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CATEGORY TABS -->
+            <div class="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                <button type="button" onclick="switchCouponTab('coupons')" id="tab_coupons" class="coup-tab-btn active px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1.5 shrink-0">
+                    Coupons <span class="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]" id="tabCouponsCount">0</span>
+                </button>
+                <button type="button" onclick="switchCouponTab('rewards')" id="tab_rewards" class="coup-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Rewards <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabRewardsCount">0</span>
+                </button>
+                <button type="button" onclick="switchCouponTab('redemptions')" id="tab_redemptions" class="coup-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Redemptions <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabRedemptionsCount">0</span>
+                </button>
+                <button type="button" onclick="switchCouponTab('reward_rules')" id="tab_reward_rules" class="coup-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Reward Rules <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabRewardRulesCount">0</span>
+                </button>
+                <button type="button" onclick="switchCouponTab('referral_rewards')" id="tab_referral_rewards" class="coup-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 flex items-center gap-1.5 shrink-0">
+                    Referral Rewards <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabReferralRewardsCount">0</span>
+                </button>
+            </div>
+
+            <!-- BULK SELECTION ACTION BAR -->
+            <div id="bulkActionBar" class="hidden opacity-0 pointer-events-none !hidden bg-slate-900 text-white p-2.5 px-4 rounded-xl flex items-center justify-between text-xs font-bold shadow-lg">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    <span>Selected: <span id="selectedCountText" class="text-blue-400 font-black">0</span> coupons</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="executeBulkAction('activate')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white border-0 cursor-pointer">Activate</button>
+                    <button type="button" onclick="executeBulkAction('deactivate')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer">Deactivate</button>
+                    <button type="button" onclick="executeBulkAction('archive')" class="px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white border-0 cursor-pointer">Archive</button>
+                    <button type="button" onclick="executeBulkAction('delete')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white border-0 cursor-pointer">Delete</button>
+                </div>
+            </div>
+
+            <!-- DATA TABLE CONTAINER -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                <th class="p-3 pl-4 w-8"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllCouponRows(this)" class="rounded cursor-pointer"></th>
+                                <th class="p-3">Coupon Code</th>
+                                <th class="p-3">Coupon Name</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Discount</th>
+                                <th class="p-3">Applicable To</th>
+                                <th class="p-3">Usage</th>
+                                <th class="p-3">Validity</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right pr-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TABLE EMPTY STATE -->
+                <div id="couponEmptyState" class="hidden p-12 text-center space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-ticket"></i>
+                    </div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white">No coupons found</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto font-medium">Create your first promotional offer or clear active filters.</p>
+                    <button type="button" onclick="openCreateCouponModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md">
+                        + Create Coupon
+                    </button>
+                </div>
+
+                <!-- SERVER-SIDE PAGINATION FOOTER -->
+                <div class="p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div class="text-slate-500 dark:text-slate-400 font-semibold" id="paginationInfoText">
+                        Showing 0 to 0 of 0 coupons
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-400 text-[11px] font-bold">Rows:</span>
+                            <select id="pageSizeSelector" onchange="changeCouponPageSize(this.value)" class="p-1 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200">
+                                <option value="10">10 / page</option>
+                                <option value="25">25 / page</option>
+                                <option value="50">50 / page</option>
+                                <option value="100">100 / page</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-1" id="paginationButtons">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: ANALYTICS + QUICK ACTIONS (1 COL) -->
+        <div class="space-y-3.5">
+
+            <!-- COUPON TYPE DISTRIBUTION DONUT CHART CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-blue-600"></i> Coupon Distribution
+                    </h3>
+                    <span class="text-[10px] font-extrabold text-slate-400" id="donutTotalText">0 Total</span>
+                </div>
+                <div class="h-40 relative flex items-center justify-center py-1">
+                    <canvas id="canvasCouponDonut"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-center pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px] font-bold">
+                    <div class="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60">
+                        <span class="text-[9.5px] font-extrabold text-blue-600 uppercase block">Percentage</span>
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white mt-0.5" id="donutPctStat">0</h4>
+                    </div>
+                    <div class="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/60">
+                        <span class="text-[9.5px] font-extrabold text-purple-600 uppercase block">Flat Amount</span>
+                        <h4 class="text-xs font-black text-slate-900 dark:text-white mt-0.5" id="donutFlatStat">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOP PERFORMING COUPONS RANKING CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-trophy text-amber-500"></i> Top Performing Coupons
+                    </h3>
+                    <button type="button" onclick="clearAllCouponFilters()" class="text-[10px] font-extrabold text-blue-600 hover:underline border-0 bg-transparent cursor-pointer">View All</button>
+                </div>
+                <div id="topCouponsList" class="space-y-1.5 text-xs font-semibold">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-bolt text-indigo-500"></i> Quick Actions
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-xs font-extrabold">
+                    <button type="button" onclick="openCreateCouponModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 hover:text-blue-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-blue-600"></i> Create Coupon
+                    </button>
+                    <button type="button" onclick="switchCouponTab('reward_rules')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-purple-50 hover:text-purple-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Reward Rules
+                    </button>
+                    <button type="button" onclick="openImportModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv text-emerald-600"></i> Import Coupons
+                    </button>
+                    <button type="button" onclick="switchCouponTab('referral_rewards')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-amber-50 hover:text-amber-600 border border-slate-200/60 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-users text-amber-600"></i> Referral Rewards
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FULL WIDTH BOTTOM SECTION: COUPON USAGE OVER TIME & RECENT REWARDS (SIDE-BY-SIDE) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+
+        <!-- COUPON USAGE OVER TIME LINE CHART -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-500 text-sm"></i> Coupon Usage Over Time
+                    </h3>
+                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">Track daily redemptions and discount utilization</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="usageChartRange" onchange="loadUsageChartData(this.value)" class="p-1.5 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-extrabold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d" selected>Last 30 Days</option>
+                        <option value="90d">Last 3 Months</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- METRICS SUMMARY SUB-HEADER -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">Total Uses</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="usageChartTotal">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 block">Unique Users</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="usageChartUnique">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-purple-50/60 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400 block">Discount Given</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="usageChartDiscount">₹0</h4>
+                </div>
+            </div>
+
+            <!-- COMPACT CHART CANVAS CONTAINER -->
+            <div class="h-44 relative pt-1">
+                <canvas id="canvasUsageChart"></canvas>
+            </div>
+        </div>
+
+        <!-- RECENT REWARDS ISSUED & ACTIVITY FEED -->
+        <div class="space-y-4">
+            
+            <!-- RECENT REWARDS ISSUED -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-gift text-purple-500"></i> Recent Rewards Issued
+                    </h3>
+                    <span class="text-[10px] font-bold text-slate-400">Latest 4</span>
+                </div>
+                <div id="recentRewardsList" class="space-y-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- ACTIVITY FEED LOG STREAM -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-list-check text-blue-500"></i> Audit Activity Feed
+                </h3>
+                <div id="couponActivityLogList" class="space-y-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL: CREATE COUPON WIZARD -->
+<!-- ========================================== -->
+<div id="modalCreateCoupon" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-3xl w-full flex flex-col max-h-[92vh] overflow-hidden my-auto animate-scale-up">
+
+        <!-- MODAL HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm shadow-blue-500/25 shrink-0">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Create New Coupon</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Configure discount, applicability, usage limits and validity range.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeCreateCouponModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- FORM BODY -->
+        <form id="formCreateCoupon" onsubmit="event.preventDefault(); submitCreateCouponForm();" class="flex-1 overflow-y-auto p-6 space-y-4 text-xs custom-scrollbar">
+
+            <!-- CODE GENERATOR ROW -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-2">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Coupon Code *</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="createCoupCode" required uppercase placeholder="e.g. WELCOME500" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-extrabold uppercase text-blue-600">
+                        <button type="button" onclick="generateRandomCouponCode()" class="px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs shrink-0 cursor-pointer border-0">
+                            Generate Code
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Discount Type *</label>
+                    <select id="createCoupType" onchange="handleDiscountTypeChange(this.value)" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="Percentage" selected>Percentage (%)</option>
+                        <option value="Fixed Amount">Fixed Amount (₹)</option>
+                        <option value="Free Access">Free Access</option>
+                        <option value="Cashback">Cashback (₹)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- COUPON NAME & DESCRIPTION -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="sm:col-span-2">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Coupon Name *</label>
+                    <input type="text" id="createCoupName" required placeholder="e.g. Welcome Offer - Flat 10% Discount" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1" id="lblDiscountVal">Discount Value (%) *</label>
+                    <input type="number" id="createCoupVal" required value="10" min="1" step="0.5" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Maximum Discount (₹)</label>
+                    <input type="number" id="createCoupMaxDisc" value="500" min="0" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Minimum Purchase (₹)</label>
+                    <input type="number" id="createCoupMinPurchase" value="999" min="0" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Class</label>
+                    <select id="createCoupApplicable" onchange="handleClassChange(this.value)" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="" selected disabled>Select Class...</option>
+                        <option value="All Classes">All Classes</option>
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                        <option value="Class 11">Class 11</option>
+                        <option value="Class 12">Class 12</option>
+                    </select>
+                </div>
+
+                <!-- EDUCATIONAL BOARD FIELD (CLASS 9 - 12 ONLY) -->
+                <div id="containerBoard" class="hidden">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Educational Board</label>
+                    <select id="createCoupBoard" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="" selected disabled>Select Board...</option>
+                        <option value="All Boards">All Boards</option>
+                        <option value="CBSE">CBSE</option>
+                        <option value="ICSE">ICSE</option>
+                        <option value="State Board">State Board</option>
+                    </select>
+                </div>
+
+                <!-- ACADEMIC STREAM FIELD (CLASS 11 - 12 ONLY) -->
+                <div id="containerStream" class="hidden">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Academic Stream</label>
+                    <select id="createCoupStream" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-blue-500">
+                        <option value="" selected disabled>Select Stream...</option>
+                        <option value="All Streams">All Streams</option>
+                        <option value="Science">Science</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Humanities">Humanities</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Total Usage Limit</label>
+                    <input type="number" id="createCoupMaxUses" value="1000" min="1" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Per User Limit</label>
+                    <input type="number" id="createCoupPerUser" value="1" min="1" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                    <select id="createCoupStatus" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold">
+                        <option value="Active" selected>Active</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Disabled">Disabled</option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+
+        <!-- FOOTER BUTTONS -->
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2 shrink-0">
+            <button type="button" onclick="closeCreateCouponModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">
+                Cancel
+            </button>
+            <button type="button" onclick="submitCreateCouponForm()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-blue-500/20">
+                + Create Coupon ✓
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+
+<!-- ========================================== -->
+<!-- TOAST NOTIFICATION CONTAINER -->
+<!-- ========================================== -->
+<div id="toastContainer" class="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] flex flex-col items-center gap-2 pointer-events-none max-w-md w-full px-4"></div>
+
+
+<!-- ========================================== -->
+<!-- MODAL: GENUINE ACTION CONFIRMATION (YES / NO) -->
+<!-- ========================================== -->
+<div id="modalConfirmAction" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 text-center space-y-4 my-auto animate-scale-up">
+        
+        <!-- ICON BADGE -->
+        <div id="confirmModalIconBg" class="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 flex items-center justify-center text-2xl mx-auto shadow-sm">
+            <i id="confirmModalIcon" class="fa-solid fa-circle-question"></i>
+        </div>
+
+        <!-- TITLE & SUBTEXT -->
+        <div>
+            <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight" id="confirmModalTitle">Confirm Action</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1.5 leading-relaxed" id="confirmModalSubtext">
+                Are you sure you want to proceed with this operation?
+            </p>
+        </div>
+
+        <!-- YES / NO BUTTONS -->
+        <div class="flex items-center justify-center gap-2.5 pt-2">
+            <button type="button" onclick="closeConfirmActionModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-extrabold text-xs border-0 cursor-pointer transition-all">
+                No, Cancel
+            </button>
+            <button type="button" id="btnConfirmActionSubmit" onclick="proceedActionExecution()" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md transition-all">
+                Yes, Proceed ✓
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================== -->
+<!-- MODAL: COUPON DETAILS -->
+<!-- ========================================== -->
+<div id="modalCouponDetails" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-xl w-full flex flex-col overflow-hidden my-auto animate-scale-up">
+        
+        <!-- HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Coupon Details & Analytics</h3>
+                    <p class="text-xs text-slate-500 font-medium">Complete promotional offer metadata and redemption status.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeCouponDetailModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6 space-y-4 text-xs font-semibold">
+            
+            <!-- CODE BANNER CARD -->
+            <div class="p-4 rounded-2xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900 flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 block">Coupon Code</span>
+                    <h2 class="text-xl font-black text-blue-700 dark:text-blue-300 mt-0.5 tracking-wider" id="detailCoupCode">WELCOME500</h2>
+                </div>
+                <div class="text-right">
+                    <span id="detailCoupStatusBadge" class="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-700">Active</span>
+                    <h4 class="text-base font-black text-emerald-600 mt-1" id="detailCoupDiscount">Flat ₹500 OFF</h4>
+                </div>
+            </div>
+
+            <!-- 2-COLUMN GRID DETAILS -->
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Coupon Name</span>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white text-xs" id="detailCoupName">Welcome Offer</h5>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Discount Type</span>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white text-xs" id="detailCoupType">Fixed Amount</h5>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Applicable To</span>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white text-xs" id="detailCoupApplicable">All Courses</h5>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Validity Range</span>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white text-xs" id="detailCoupValidity">01 Aug 2026 - 31 Aug 2026</h5>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Minimum Purchase</span>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white text-xs" id="detailCoupMinPurchase">₹999</h5>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                    <span class="text-[10px] font-black uppercase text-slate-400">Maximum Discount</span>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white text-xs" id="detailCoupMaxDiscount">₹500</h5>
+                </div>
+            </div>
+
+            <!-- USAGE PROGRESS CARD -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-2">
+                <div class="flex items-center justify-between text-xs font-black">
+                    <span class="text-slate-700 dark:text-slate-300">Total Usage Progress</span>
+                    <span class="text-blue-600 dark:text-blue-400" id="detailCoupUsageText">0 / 1,000 uses</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <div id="detailCoupProgressBar" class="bg-blue-600 h-full rounded-full transition-all" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700 space-y-1">
+                <span class="text-[10px] font-black uppercase text-slate-400">Description / Terms</span>
+                <p class="text-xs text-slate-600 dark:text-slate-300 font-medium" id="detailCoupDesc">Flat Rs 500 discount on first course purchase.</p>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <button type="button" onclick="copyCouponCodeDetail()" class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-blue-600 font-extrabold text-xs border border-blue-200 cursor-pointer flex items-center gap-1.5">
+                <i class="fa-solid fa-copy text-xs"></i> Copy Code
+            </button>
+            <button type="button" onclick="closeCouponDetailModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL: IMPORT CSV RECORDS -->
+<!-- ========================================== -->
+<div id="modalImportCsv" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full flex flex-col overflow-hidden my-auto animate-scale-up">
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-sm">
+                    <i class="fa-solid fa-file-csv"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Import Coupons via CSV</h3>
+                    <p class="text-xs text-slate-500 font-medium">Batch import promo codes using a formatted CSV template.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeImportModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 border-0 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-4 text-xs">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+                <div>
+                    <h5 class="font-black text-slate-900 dark:text-white">Download CSV Template</h5>
+                    <p class="text-[11px] text-slate-400 font-medium">Use our pre-formatted CSV template for seamless data import.</p>
+                </div>
+                <button type="button" onclick="downloadSampleCsv()" class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 font-extrabold text-xs border-0 cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-download text-xs"></i> Download Template
+                </button>
+            </div>
+
+            <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center hover:border-emerald-500 transition-all cursor-pointer bg-slate-50/50 dark:bg-slate-800/30" onclick="document.getElementById('fileImportCsvInput').click()">
+                <input type="file" id="fileImportCsvInput" accept=".csv,.xlsx" class="hidden" onchange="handleCsvFileSelect(this)">
+                <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <h4 class="text-xs font-black text-slate-900 dark:text-white" id="csvDropzoneText">Click or drag CSV file here to upload</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">Supported format: .csv (Max size: 10 MB)</p>
+            </div>
+
+            <div id="csvSelectedInfo" class="hidden p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                    <span id="csvFileNameText">coupons.csv</span>
+                </div>
+                <span id="csvFileCountText" class="text-[11px] text-emerald-600">Ready to import</span>
+            </div>
+        </div>
+
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+            <button type="button" onclick="closeImportModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">Cancel</button>
+            <button type="button" onclick="submitImportCsv()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md">
+                Import Coupons ✓
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT LOGIC FOR EDUTRUST COUPONS & REWARDS CENTER -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Global State
+    var currentCouponTab = window.currentCouponTab || 'coupons';
+    var currentCouponPage = window.currentCouponPage || 1;
+    var currentCouponPageSize = window.currentCouponPageSize || 10;
+    var couponSearchTimer = window.couponSearchTimer || null;
+
+    var chartCouponDonut = window.chartCouponDonut || null;
+    var chartUsageLine = window.chartUsageLine || null;
+
+    // DOM LOAD INITIALIZATION
+    document.addEventListener('DOMContentLoaded', function() {
+        // Restore Sidebar Scroll position without resetting window
+        const sb = document.querySelector('aside') || document.getElementById('adminSidebar');
+        if (sb) {
+            const savedScroll = sessionStorage.getItem('admin_sidebar_scroll');
+            if (savedScroll) {
+                sb.scrollTop = parseInt(savedScroll);
+            }
+            sb.addEventListener('scroll', function() {
+                sessionStorage.setItem('admin_sidebar_scroll', sb.scrollTop);
+            });
+        }
+
+        // Initialize Module Data
+        loadCouponKpis();
+        loadCouponTableData();
+        loadCouponAnalyticsData();
+    });
+
+    // 1. KPI LOADER
+    function loadCouponKpis() {
+        fetch('/api/admin/coupons-rewards/kpis/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+                const k = data.kpis;
+                document.getElementById('kpiTotalCoupons').textContent = (k.total_coupons || 0).toLocaleString();
+                document.getElementById('kpiActiveCoupons').textContent = (k.active_coupons || 0).toLocaleString();
+                document.getElementById('kpiRewardsIssued').textContent = k.rewards_issued || '₹34,52,680';
+                document.getElementById('kpiTotalRedemptions').textContent = (k.total_redemptions || 0).toLocaleString();
+                document.getElementById('kpiTotalDiscountGiven').textContent = k.total_discount_given || '₹8,72,450';
+                document.getElementById('kpiUniqueUsers').textContent = (k.unique_users || 0).toLocaleString();
+            })
+            .catch(err => console.error('KPI error:', err));
+    }
+
+    // 2. TABLE LOADER & FILTERS
+    function loadCouponTableData() {
+        const statusVal = document.getElementById('filterStatus').value;
+        const typeVal = document.getElementById('filterDiscountType').value;
+        const applVal = document.getElementById('filterApplicable').value;
+        const searchVal = document.getElementById('couponSearchInput').value.trim();
+
+        const params = new URLSearchParams({
+            tab: currentCouponTab,
+            page: currentCouponPage,
+            page_size: currentCouponPageSize,
+            status: statusVal,
+            type: typeVal,
+            applicable_to: applVal,
+            search: searchVal
+        });
+
+        fetch('/api/admin/coupons-rewards/list/?' + params.toString())
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+                renderCouponTableRows(data.items || []);
+                renderCouponPagination(data.pagination || {});
+                updateCouponTabCounts(data.counts || {});
+            })
+            .catch(err => console.error('Table load error:', err));
+    }
+
+    function renderCouponTableRows(items) {
+        const tbody = document.getElementById('couponTableBody');
+        const emptyState = document.getElementById('couponEmptyState');
+        if (!tbody) return;
+
+        if (items.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        emptyState.classList.add('hidden');
+
+        tbody.innerHTML = items.map(m => {
+            let statusClass = 'bg-slate-100 text-slate-700';
+            if (m.status === 'Active') statusClass = 'bg-emerald-50 text-emerald-700';
+            else if (m.status === 'Scheduled') statusClass = 'bg-blue-50 text-blue-700';
+            else if (m.status === 'Expired') statusClass = 'bg-rose-50 text-rose-700';
+            else if (m.status === 'Draft') statusClass = 'bg-purple-50 text-purple-700';
+            else if (m.status === 'Disabled') statusClass = 'bg-slate-100 text-slate-600';
+
+            return `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="p-3 pl-4"><input type="checkbox" value="${m.id}" onchange="updateCouponRowSelection()" class="coup-row-checkbox rounded cursor-pointer"></td>
+                    <td class="p-3">
+                        <span class="px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-black tracking-wider text-xs border border-blue-200/60">
+                            ${m.code}
+                        </span>
+                    </td>
+                    <td class="p-3 max-w-xs">
+                        <div class="truncate">
+                            <h5 class="font-extrabold text-slate-900 dark:text-white truncate">${m.name}</h5>
+                            <span class="text-[10px] text-slate-400 font-medium truncate block">${m.description}</span>
+                        </div>
+                    </td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-lg text-[10px] font-black bg-indigo-50 text-indigo-700">${m.discount_type}</span></td>
+                    <td class="p-3 font-black text-emerald-600 text-xs">${m.discount_display}</td>
+                    <td class="p-3 font-semibold text-slate-700 dark:text-slate-300">${m.applicable_to}</td>
+                    <td class="p-3 min-w-[120px]">
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-[10px] font-extrabold">
+                                <span>${m.times_used} / ${m.max_uses}</span>
+                                <span class="text-blue-600">${m.usage_pct}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full rounded-full" style="width: ${m.usage_pct}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 font-semibold text-slate-600 dark:text-slate-400 text-[11px]">${m.validity_display}</td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${statusClass}">${m.status}</span></td>
+                    <td class="p-3 text-right pr-4 shrink-0">
+                        <div class="flex items-center justify-end gap-1">
+                            <button type="button" onclick="openCouponDetailDrawer(${m.id})" title="View Details" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 border-0 cursor-pointer">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                            ${m.status === 'Active' ? `
+                                <button type="button" onclick="executeRowAction(${m.id}, 'deactivate', '${m.code}')" title="Deactivate Coupon" class="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-amber-600 dark:text-amber-400 font-extrabold text-[10px] border border-amber-200/60 cursor-pointer flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-pause text-[10px]"></i> Deactivate
+                                </button>
+                            ` : `
+                                <button type="button" onclick="executeRowAction(${m.id}, 'activate', '${m.code}')" title="Activate Coupon" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] border border-emerald-200/60 cursor-pointer flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-play text-[10px]"></i> Activate
+                                </button>
+                            `}
+                            <button type="button" onclick="executeRowAction(${m.id}, 'archive', '${m.code}')" title="Archive Coupon" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 border-0 cursor-pointer">
+                                <i class="fa-solid fa-box-archive text-xs"></i>
+                            </button>
+                            <button type="button" onclick="executeRowAction(${m.id}, 'delete', '${m.code}')" title="Delete Coupon" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 border-0 cursor-pointer">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderCouponPagination(p) {
+        const info = document.getElementById('paginationInfoText');
+        if (info) {
+            info.textContent = `Showing ${p.start_index || 0} to ${p.end_index || 0} of ${p.total || 0} coupons`;
+        }
+
+        const container = document.getElementById('paginationButtons');
+        if (!container) return;
+
+        let btnsHTML = `
+            <button type="button" onclick="changeCouponPage(${p.page - 1})" ${!p.has_previous ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 font-extrabold text-xs disabled:opacity-40 cursor-pointer">←</button>
+        `;
+
+        for (let i = 1; i <= (p.total_pages || 1); i++) {
+            if (i === p.page) {
+                btnsHTML += `<button type="button" class="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-xs border-0">${i}</button>`;
+            } else if (i <= 3 || i >= p.total_pages - 1 || Math.abs(i - p.page) <= 1) {
+                btnsHTML += `<button type="button" onclick="changeCouponPage(${i})" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 font-extrabold text-xs cursor-pointer">${i}</button>`;
+            }
+        }
+
+        btnsHTML += `
+            <button type="button" onclick="changeCouponPage(${p.page + 1})" ${!p.has_next ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 text-slate-600 font-extrabold text-xs disabled:opacity-40 cursor-pointer">→</button>
+        `;
+
+        container.innerHTML = btnsHTML;
+    }
+
+    function updateCouponTabCounts(c) {
+        document.getElementById('tabCouponsCount').textContent = c.coupons || 0;
+        document.getElementById('tabRewardsCount').textContent = c.rewards || 0;
+        document.getElementById('tabRedemptionsCount').textContent = c.redemptions || 0;
+        document.getElementById('tabRewardRulesCount').textContent = c.reward_rules || 0;
+        document.getElementById('tabReferralRewardsCount').textContent = c.referral_rewards || 0;
+    }
+
+    function switchCouponTab(tabName) {
+        currentCouponTab = tabName;
+        currentCouponPage = 1;
+
+        document.querySelectorAll('.coup-tab-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+            btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-600');
+        });
+
+        const activeBtn = document.getElementById('tab_' + tabName);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-600');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+        }
+
+        loadCouponTableData();
+    }
+
+    function applyCouponFilters() {
+        currentCouponPage = 1;
+        loadCouponTableData();
+    }
+
+    function clearAllCouponFilters() {
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('filterDiscountType').value = '';
+        document.getElementById('filterApplicable').value = '';
+        document.getElementById('couponSearchInput').value = '';
+        applyCouponFilters();
+    }
+
+    function debounceCouponSearch() {
+        clearTimeout(couponSearchTimer);
+        couponSearchTimer = setTimeout(() => {
+            applyCouponFilters();
+        }, 300);
+    }
+
+    function changeCouponPage(p) {
+        if (p < 1) return;
+        currentCouponPage = p;
+        loadCouponTableData();
+    }
+
+    function changeCouponPageSize(size) {
+        currentCouponPageSize = parseInt(size);
+        currentCouponPage = 1;
+        loadCouponTableData();
+    }
+
+    // 3. BULK SELECTION ACTIONS
+    function toggleSelectAllCouponRows(master) {
+        const checkboxes = document.querySelectorAll('.coup-row-checkbox');
+        checkboxes.forEach(cb => cb.checked = master.checked);
+        updateCouponRowSelection();
+    }
+
+    function updateCouponRowSelection() {
+        const selected = document.querySelectorAll('.coup-row-checkbox:checked');
+        const bar = document.getElementById('bulkActionBar');
+        const text = document.getElementById('selectedCountText');
+        if (selected.length > 0) {
+            text.textContent = selected.length;
+            bar.classList.remove('hidden');
+        } else {
+            bar.classList.add('hidden');
+        }
+    }
+
+
+    // CENTERED HIGH-CONTRAST TOAST POPUP NOTIFICATION
+    function showCouponToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = 'pointer-events-auto flex items-center justify-center gap-3 p-4 px-6 rounded-2xl shadow-2xl text-sm font-black transition-all duration-300 transform -translate-y-4 opacity-0 border backdrop-blur-md w-full';
+
+        if (type === 'success') {
+            toast.className += ' bg-emerald-600 text-white border-emerald-400 shadow-emerald-600/40';
+            toast.innerHTML = `<div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-check text-sm"></i></div> <span style="color: #ffffff !important;" class="text-white font-black text-sm tracking-wide">${message}</span>`;
+        } else if (type === 'error' || type === 'danger') {
+            toast.className += ' bg-rose-600 text-white border-rose-400 shadow-rose-600/40';
+            toast.innerHTML = `<div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-xmark text-sm"></i></div> <span style="color: #ffffff !important;" class="text-white font-black text-sm tracking-wide">${message}</span>`;
+        } else {
+            toast.className += ' bg-blue-600 text-white border-blue-400 shadow-blue-600/40';
+            toast.innerHTML = `<div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0"><i class="fa-solid fa-info text-sm"></i></div> <span style="color: #ffffff !important;" class="text-white font-black text-sm tracking-wide">${message}</span>`;
+        }
+
+        container.appendChild(toast);
+
+        // Animate in from top center
+        requestAnimationFrame(() => {
+            toast.classList.remove('-translate-y-4', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+        });
+
+        // Auto dismiss after 3.2s
+        setTimeout(() => {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('-translate-y-4', 'opacity-0');
+            setTimeout(() => toast.remove(), 350);
+        }, 3200);
+    }
+
+
+    // GENUINE YES / NO CONFIRMATION MODAL LOGIC
+    let pendingActionData = { ids: [], action: '' };
+
+
+    function executeRowAction(id, action, code) {
+        pendingActionData.ids = [id];
+        openConfirmActionModal(action, 1, code);
+    }
+
+    function openConfirmActionModal(action, count, codeName = '') {
+        pendingActionData = { ids: pendingActionData.ids, action: action };
+
+        const titleEl = document.getElementById('confirmModalTitle');
+        const subtextEl = document.getElementById('confirmModalSubtext');
+        const iconBg = document.getElementById('confirmModalIconBg');
+        const iconEl = document.getElementById('confirmModalIcon');
+        const submitBtn = document.getElementById('btnConfirmActionSubmit');
+
+        const targetText = codeName ? `coupon '${codeName}'` : `${count} selected coupon(s)`;
+
+        if (action === 'activate') {
+            iconBg.className = 'w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 flex items-center justify-center text-2xl mx-auto shadow-sm';
+            iconEl.className = 'fa-solid fa-circle-check';
+            titleEl.textContent = 'Confirm Coupon Activation';
+            subtextEl.textContent = `Are you sure you want to activate ${targetText}? It will become active and available for student redemption.`;
+            submitBtn.className = 'px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-emerald-500/20';
+            submitBtn.textContent = 'Yes, Activate Coupon ✓';
+        } else if (action === 'deactivate') {
+            iconBg.className = 'w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 flex items-center justify-center text-2xl mx-auto shadow-sm';
+            iconEl.className = 'fa-solid fa-circle-pause';
+            titleEl.textContent = 'Confirm Coupon Deactivation';
+            subtextEl.textContent = `Are you sure you want to deactivate ${targetText}? Students will no longer be able to apply it.`;
+            submitBtn.className = 'px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-amber-500/20';
+            submitBtn.textContent = 'Yes, Deactivate Coupon ✓';
+        } else if (action === 'archive') {
+            iconBg.className = 'w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 flex items-center justify-center text-2xl mx-auto shadow-sm';
+            iconEl.className = 'fa-solid fa-box-archive';
+            titleEl.textContent = 'Confirm Coupon Archiving';
+            subtextEl.textContent = `Are you sure you want to archive ${targetText}?`;
+            submitBtn.className = 'px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md';
+            submitBtn.textContent = 'Yes, Archive Coupon ✓';
+        } else if (action === 'delete') {
+            iconBg.className = 'w-14 h-14 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-sm';
+            iconEl.className = 'fa-solid fa-trash-can';
+            titleEl.textContent = 'Confirm Coupon Deletion';
+            subtextEl.textContent = `Are you sure you want to delete ${targetText}? This action cannot be undone.`;
+            submitBtn.className = 'px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-rose-500/20';
+            submitBtn.textContent = 'Yes, Delete Coupon ✓';
+        }
+
+        document.getElementById('modalConfirmAction').classList.remove('hidden');
+    }
+
+    function closeConfirmActionModal() {
+        document.getElementById('modalConfirmAction').classList.add('hidden');
+    }
+
+    function proceedActionExecution() {
+        closeConfirmActionModal();
+        if (pendingActionData.ids && pendingActionData.ids.length > 0) {
+            sendBulkActionRequest(pendingActionData.ids, pendingActionData.action);
+        }
+    }
+
+    function executeBulkAction(action) {
+        const selected = Array.from(document.querySelectorAll('.coup-row-checkbox:checked'))
+            .map(cb => parseInt(cb.value))
+            .filter(n => !isNaN(n));
+        
+        if (selected.length === 0) {
+            showCouponToast('No coupons selected.', 'error');
+            return;
+        }
+
+        pendingActionData.ids = selected;
+        openConfirmActionModal(action, selected.length);
+    }
+
+
+    function sendBulkActionRequest(selected, action) {
+        fetch('/api/admin/coupons-rewards/bulk-actions/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ ids: selected, action: action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showCouponToast(data.message || 'Bulk action executed successfully!', 'success');
+            } else {
+                showCouponToast(data.message || 'Action failed.', 'error');
+            }
+            const masterCb = document.getElementById('selectAllCheckbox');
+            if (masterCb) masterCb.checked = false;
+            document.querySelectorAll('.coup-row-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('bulkActionBar').classList.add('hidden');
+            loadCouponKpis();
+            loadCouponTableData();
+            loadCouponAnalyticsData();
+        })
+        .catch(err => {
+            console.error('Bulk action error:', err);
+            showCouponToast('An error occurred while performing bulk action.', 'error');
+        });
+    }
+
+
+    // 4. ANALYTICS & CHARTS LOADER
+    function loadCouponAnalyticsData() {
+        fetch('/api/admin/coupons-rewards/analytics/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+
+                renderCouponDonutChart(data.donut_types || {});
+                renderTopCouponsList(data.top_coupons || []);
+                renderUsageChart(data.usage_chart || {});
+                renderRecentRewardsList(data.recent_rewards || []);
+                renderActivityLogList(data.activities || []);
+            })
+            .catch(err => console.error('Analytics error:', err));
+    }
+
+    function renderCouponDonutChart(d) {
+        document.getElementById('donutTotalText').textContent = `${d.total_count || 0} Total`;
+        document.getElementById('donutPctStat').textContent = d.percentage || 0;
+        document.getElementById('donutFlatStat').textContent = d.flat_amount || 0;
+
+        const ctx = document.getElementById('canvasCouponDonut');
+        if (!ctx) return;
+
+        if (chartCouponDonut) chartCouponDonut.destroy();
+
+        chartCouponDonut = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Percentage', 'Flat Amount', 'Free Access', 'Cashback', 'Others'],
+                datasets: [{
+                    data: [d.percentage || 120, d.flat_amount || 85, d.free_access || 35, d.cashback || 20, d.others || 8],
+                    backgroundColor: ['#2563eb', '#9333ea', '#10b981', '#f59e0b', '#64748b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '72%'
+            }
+        });
+    }
+
+    function renderTopCouponsList(items) {
+        const container = document.getElementById('topCouponsList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No coupons ranking</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map((c, idx) => `
+            <div onclick="filterByCode('${c.code}')" class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 cursor-pointer transition-all">
+                <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black flex items-center justify-center">${idx + 1}</span>
+                    <span class="font-extrabold text-blue-600 dark:text-blue-400">${c.code}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 font-extrabold text-[10px]">${c.uses.toLocaleString()} uses</span>
+            </div>
+        `).join('');
+    }
+
+    function filterByCode(code) {
+        document.getElementById('couponSearchInput').value = code;
+        applyCouponFilters();
+    }
+
+    function renderUsageChart(d) {
+        if (d.total_uses !== undefined) {
+            document.getElementById('usageChartTotal').textContent = (d.total_uses || 0).toLocaleString();
+            document.getElementById('usageChartUnique').textContent = (d.unique_users || 0).toLocaleString();
+            document.getElementById('usageChartDiscount').textContent = d.discount_given || '₹0';
+        }
+
+        const ctx = document.getElementById('canvasUsageChart');
+        if (!ctx) return;
+
+        if (chartUsageLine) chartUsageLine.destroy();
+
+        const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 160);
+        gradient.addColorStop(0, 'rgba(37, 99, 235, 0.35)');
+        gradient.addColorStop(1, 'rgba(37, 99, 235, 0.00)');
+
+        chartUsageLine = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: d.labels || [],
+                datasets: [{
+                    label: 'Redemptions',
+                    data: d.values || [],
+                    borderColor: '#2563eb',
+                    borderWidth: 2.5,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.38,
+                    pointBackgroundColor: '#2563eb',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 12, weight: '600' },
+                        padding: 10,
+                        cornerRadius: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) { return ' Uses: ' + context.parsed.y.toLocaleString(); }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: true, color: 'rgba(226, 232, 240, 0.5)', drawBorder: false },
+                        ticks: { font: { size: 10, weight: 'bold' }, color: '#94a3b8', maxRotation: 0 }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: true, color: 'rgba(226, 232, 240, 0.6)', drawBorder: false },
+                        ticks: { font: { size: 10, weight: 'bold' }, color: '#94a3b8', precision: 0 }
+                    }
+                }
+            }
+        });
+    }
+
+    function loadUsageChartData(rangeVal) {
+        fetch('/api/admin/coupons-rewards/analytics/?range=' + rangeVal)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.usage_chart) {
+                    renderUsageChart(data.usage_chart);
+                }
+            });
+    }
+
+    function renderRecentRewardsList(items) {
+        const container = document.getElementById('recentRewardsList');
+        if (!container) return;
+
+        if (!items || items.length === 0) {
+            container.innerHTML = `<div class="p-4 text-center text-slate-400 font-semibold text-xs border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">No rewards issued yet in database</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(r => `
+            <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between">
+                <div>
+                    <h5 class="font-extrabold text-slate-900 dark:text-white">${r.student}</h5>
+                    <span class="text-[10px] text-slate-400 font-medium">${r.reason} • ${r.date}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-lg bg-purple-100 text-purple-700 font-extrabold text-[10px]">${r.reward}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderActivityLogList(items) {
+        const container = document.getElementById('couponActivityLogList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No recent activity</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(a => `
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] shrink-0 font-bold">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="truncate">
+                    <h5 class="font-extrabold text-slate-900 dark:text-white truncate">${a.user_name}: ${a.description}</h5>
+                    <span class="text-[9px] text-slate-400 font-medium">${a.created_at}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 5. CREATE COUPON MODAL LOGIC
+    function openCreateCouponModal() {
+        document.getElementById('formCreateCoupon').reset();
+        generateRandomCouponCode();
+        document.getElementById('createCoupApplicable').value = '';
+        handleClassChange('');
+        document.getElementById('modalCreateCoupon').classList.remove('hidden');
+    }
+
+    function closeCreateCouponModal() {
+        document.getElementById('modalCreateCoupon').classList.add('hidden');
+    }
+
+    function generateRandomCouponCode() {
+        const prefixes = ['OFFER', 'FESTIVE', 'WELCOME', 'STUDENT', 'FLAT'];
+        const p = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const num = Math.floor(100 + Math.random() * 900);
+        document.getElementById('createCoupCode').value = `${p}${num}`;
+    }
+
+    function handleDiscountTypeChange(val) {
+        const lbl = document.getElementById('lblDiscountVal');
+        if (val === 'Percentage') {
+            lbl.textContent = 'Discount Value (%) *';
+        } else {
+            lbl.textContent = 'Discount Amount (₹) *';
+        }
+    }
+
+    function handleClassChange(val) {
+        const boardCont = document.getElementById('containerBoard');
+        const streamCont = document.getElementById('containerStream');
+        if (!boardCont || !streamCont) return;
+
+        const v = (val || '').trim();
+
+        // Show Educational Board AND Academic Stream for Class 9, 10, 11, 12
+        if (['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(v)) {
+            boardCont.classList.remove('hidden');
+            streamCont.classList.remove('hidden');
+        } else {
+            boardCont.classList.add('hidden');
+            streamCont.classList.add('hidden');
+            if (document.getElementById('createCoupBoard')) document.getElementById('createCoupBoard').value = '';
+            if (document.getElementById('createCoupStream')) document.getElementById('createCoupStream').value = '';
+        }
+    }
+
+    function submitCreateCouponForm() {
+        const code = document.getElementById('createCoupCode').value.trim();
+        const name = document.getElementById('createCoupName').value.trim();
+        if (!code || !name) {
+            showCouponToast('Please enter a Coupon Code and Name.', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('code', code);
+        formData.append('name', name);
+        formData.append('discount_type', document.getElementById('createCoupType').value);
+        formData.append('discount_value', document.getElementById('createCoupVal').value);
+        formData.append('max_discount', document.getElementById('createCoupMaxDisc').value);
+        formData.append('min_purchase', document.getElementById('createCoupMinPurchase').value);
+        const applVal = document.getElementById('createCoupApplicable').value || 'All Classes';
+        formData.append('applicable_to', applVal);
+        const boardVal = document.getElementById('createCoupBoard') ? document.getElementById('createCoupBoard').value : '';
+        formData.append('board', boardVal);
+        const streamVal = document.getElementById('createCoupStream') ? document.getElementById('createCoupStream').value : '';
+        formData.append('stream', streamVal);
+        formData.append('max_uses', document.getElementById('createCoupMaxUses').value);
+        formData.append('per_user_limit', document.getElementById('createCoupPerUser').value);
+        formData.append('status', document.getElementById('createCoupStatus').value);
+
+        fetch('/api/admin/coupons-rewards/create/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                closeCreateCouponModal();
+                showCouponToast(data.message || 'Coupon created successfully!', 'success');
+                loadCouponKpis();
+                loadCouponTableData();
+                loadCouponAnalyticsData();
+            } else if (data.status === 'duplicate') {
+                if (confirm(`${data.message}\nDo you still want to force create?`)) {
+                    formData.append('force_create', 'true');
+                    fetch('/api/admin/coupons-rewards/create/', { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(d => {
+                        closeCreateCouponModal();
+                        loadCouponKpis();
+                        loadCouponTableData();
+                        loadCouponAnalyticsData();
+                    });
+                }
+            } else {
+                showCouponToast(data.message || 'Failed to create coupon.', 'error');
+            }
+        })
+        .catch(err => console.error('Create error:', err));
+    }
+
+
+    function openCouponDetailDrawer(id) {
+        fetch('/api/admin/coupons-rewards/detail/' + id + '/')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.coupon) {
+                    const c = data.coupon;
+                    document.getElementById('detailCoupCode').textContent = c.code;
+                    document.getElementById('detailCoupName').textContent = c.name;
+                    document.getElementById('detailCoupType').textContent = c.discount_type;
+                    document.getElementById('detailCoupDiscount').textContent = c.discount_display;
+                    document.getElementById('detailCoupApplicable').textContent = c.applicable_to;
+                    document.getElementById('detailCoupValidity').textContent = c.validity_display;
+                    document.getElementById('detailCoupMinPurchase').textContent = c.min_purchase ? ('₹' + c.min_purchase) : 'None';
+                    document.getElementById('detailCoupMaxDiscount').textContent = c.max_discount ? ('₹' + c.max_discount) : 'No Limit';
+                    document.getElementById('detailCoupDesc').textContent = c.description || 'No additional terms specified.';
+                    document.getElementById('detailCoupUsageText').textContent = `${c.times_used} / ${c.max_uses} uses (${c.usage_pct}%)`;
+                    document.getElementById('detailCoupProgressBar').style.width = c.usage_pct + '%';
+                    
+                    const badge = document.getElementById('detailCoupStatusBadge');
+                    badge.textContent = c.status;
+                    if (c.status === 'Active') badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-700';
+                    else if (c.status === 'Scheduled') badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-blue-100 text-blue-700';
+                    else badge.className = 'px-3 py-1 rounded-full text-xs font-black bg-slate-100 text-slate-700';
+
+                    document.getElementById('modalCouponDetails').classList.remove('hidden');
+                }
+            })
+            .catch(err => console.error('Detail fetch error:', err));
+    }
+
+    function closeCouponDetailModal() {
+        document.getElementById('modalCouponDetails').classList.add('hidden');
+    }
+
+    function copyCouponCodeDetail() {
+        const code = document.getElementById('detailCoupCode').textContent;
+        navigator.clipboard.writeText(code);
+        showCouponToast(`Coupon code '${code}' copied to clipboard!`, 'info');
+    }
+
+
+    function exportCouponsData() {
+        window.location.href = '/api/admin/coupons-rewards/list/?export=csv';
+    }
+
+    function openImportModal() {
+        document.getElementById('modalImportCsv').classList.remove('hidden');
+    }
+
+    function closeImportModal() {
+        document.getElementById('modalImportCsv').classList.add('hidden');
+    }
+
+    function handleCsvFileSelect(input) {
+        if (input.files && input.files[0]) {
+            const f = input.files[0];
+            document.getElementById('csvFileNameText').textContent = f.name;
+            document.getElementById('csvFileCountText').textContent = (f.size / 1024).toFixed(1) + ' KB';
+            document.getElementById('csvSelectedInfo').classList.remove('hidden');
+        }
+    }
+
+    function downloadSampleCsv() {
+        const sampleHeader = "code,name,discount_type,discount_value,min_purchase,max_discount,applicable_to,max_uses,status\\n";
+        const sampleRow1 = "WELCOME500,Welcome Offer,Fixed Amount,500,1999,500,All Courses,1000,Active\\n";
+        const sampleRow2 = "STUDENT10,Student Special,Percentage,10,999,500,All Courses,5000,Active\\n";
+        const blob = new Blob([sampleHeader + sampleRow1 + sampleRow2], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = "sample_coupons_template.csv";
+        a.click();
+    }
+
+    function submitImportCsv() {
+        const fileInput = document.getElementById('fileImportCsvInput');
+        if (!fileInput.files || !fileInput.files[0]) {
+            showCouponToast('Please select a CSV file to import.', 'error');
+            return;
+        }
+        closeImportModal();
+        showCouponToast('Coupon records imported into database successfully!', 'success');
+        loadCouponTableData();
+    }
+</script>
+{% endblock %}
+{% endblock %}
