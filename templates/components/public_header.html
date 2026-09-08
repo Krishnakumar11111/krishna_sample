@@ -327,9 +327,33 @@
                     <a href="{% url 'login' %}" style="border: 1px solid #2563EB; color: #2563EB; border-radius: 8px; padding: 8px 18px; font-weight: 500;" class="bg-white hover:bg-blue-50 text-sm transition-all no-underline">
                         Login
                     </a>
-                    <a href="{% url 'student_registration' %}" style="background-color: #2563EB; color: #FFFFFF; border-radius: 8px; padding: 8px 18px; font-weight: 500;" class="hover:bg-blue-700 text-sm shadow-xs transition-all no-underline">
-                        Student Register
-                    </a>
+                    <!-- Registration Dropdown -->
+                    <div class="relative inline-block text-left" id="registrationDropdownContainer">
+                        <button type="button" id="registrationDropdownBtn" onclick="toggleRegistrationDropdown(event)" style="background-color: #2563EB; color: #FFFFFF; border-radius: 8px; padding: 8px 18px; font-weight: 500;" class="hover:bg-blue-700 text-sm shadow-xs transition-all flex items-center gap-2 cursor-pointer border-0">
+                            <span>Registration</span>
+                            <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" id="registrationDropdownChevron"></i>
+                        </button>
+                        <div id="registrationDropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-2 fade-in space-y-1">
+                            <a href="{% url 'student_registration' %}" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:text-[#2563EB] hover:bg-blue-50 text-sm font-semibold transition-colors no-underline">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                                    <i class="fas fa-user-graduate text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-slate-900 leading-tight">Student Registration</div>
+                                    <div class="text-[10px] text-slate-500 font-normal">Register as a Student</div>
+                                </div>
+                            </a>
+                            <a href="{% url 'teacher_registration' %}" class="flex items-center gap-3 p-2.5 rounded-xl text-slate-700 hover:text-[#2563EB] hover:bg-blue-50 text-sm font-semibold transition-colors no-underline">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                                    <i class="fas fa-chalkboard-teacher text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-slate-900 leading-tight">Teacher Registration</div>
+                                    <div class="text-[10px] text-slate-500 font-normal">Register as a Teacher</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                 {% endif %}
             </div>
 
@@ -393,7 +417,22 @@
                 <a href="{% url 'logout' %}" class="w-full bg-rose-50 text-rose-600 font-bold text-sm py-2 rounded-lg text-center no-underline">Logout</a>
             {% else %}
                 <a href="{% url 'login' %}" class="w-full border border-[#2563EB] text-[#2563EB] font-bold text-sm py-2 rounded-lg text-center no-underline">Login</a>
-                <a href="{% url 'student_registration' %}" class="w-full bg-[#2563EB] text-white font-bold text-sm py-2.5 rounded-lg text-center no-underline shadow-sm">Student Register</a>
+                <div class="space-y-1">
+                    <button type="button" onclick="toggleMobileRegDropdown()" class="w-full flex items-center justify-between bg-[#2563EB] text-white font-bold text-sm py-2.5 px-4 rounded-lg shadow-sm border-0 cursor-pointer">
+                        <span>Registration</span>
+                        <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="mobileRegChevron"></i>
+                    </button>
+                    <div id="mobileRegMenu" class="hidden pl-2 pt-1 space-y-1">
+                        <a href="{% url 'student_registration' %}" class="flex items-center gap-2.5 p-2 rounded-lg bg-blue-50 text-[#2563EB] font-bold text-xs no-underline">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Student Registration</span>
+                        </a>
+                        <a href="{% url 'teacher_registration' %}" class="flex items-center gap-2.5 p-2 rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs no-underline">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Teacher Registration</span>
+                        </a>
+                    </div>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -609,6 +648,45 @@
         if (modal) modal.classList.add('hidden');
     }
 
+    function toggleRegistrationDropdown(event) {
+        if (event) event.stopPropagation();
+        const menu = document.getElementById('registrationDropdownMenu');
+        const chevron = document.getElementById('registrationDropdownChevron');
+        if (!menu) return;
+
+        closeSupportCenterDropdown();
+        const profilePopup = document.getElementById('studentProfilePopupDropdown');
+        if (profilePopup) profilePopup.classList.add('hidden');
+
+        const isHidden = menu.classList.contains('hidden');
+        if (isHidden) {
+            menu.classList.remove('hidden');
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+        } else {
+            menu.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function closeRegistrationDropdown() {
+        const menu = document.getElementById('registrationDropdownMenu');
+        const chevron = document.getElementById('registrationDropdownChevron');
+        if (menu && !menu.classList.contains('hidden')) {
+            menu.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    function toggleMobileRegDropdown() {
+        const menu = document.getElementById('mobileRegMenu');
+        const chevron = document.getElementById('mobileRegChevron');
+        if (!menu) return;
+        menu.classList.toggle('hidden');
+        if (chevron) {
+            chevron.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+    }
+
     // Close popups on outside click
     document.addEventListener('click', function(e) {
         const supportDropdown = document.getElementById('supportCenterDropdown');
@@ -628,12 +706,21 @@
                 if (chevron) chevron.style.transform = 'rotate(0deg)';
             }
         }
+
+        const regMenu = document.getElementById('registrationDropdownMenu');
+        const regBtn = document.getElementById('registrationDropdownBtn');
+        if (regMenu && !regMenu.classList.contains('hidden')) {
+            if (!regMenu.contains(e.target) && (!regBtn || !regBtn.contains(e.target))) {
+                closeRegistrationDropdown();
+            }
+        }
     });
 
     // Close popups and modal on Escape key press
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeSupportCenterDropdown();
+            closeRegistrationDropdown();
             const popup = document.getElementById('studentProfilePopupDropdown');
             if (popup && !popup.classList.contains('hidden')) {
                 popup.classList.add('hidden');
