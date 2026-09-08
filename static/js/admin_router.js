@@ -108,6 +108,24 @@
             window.initUserLogsModule();
         } else if (moduleName === 'payments' && typeof window.initPaymentsModule === 'function') {
             window.initPaymentsModule();
+        } else if (moduleName === 'teacher_enquiries') {
+            if (typeof window.initTeacherEnquiries === 'function') {
+                try { window.initTeacherEnquiries(); } catch (e) { console.error('[ADMIN MODULE INIT ERROR] teacher_enquiries:', e); }
+            }
+            if (typeof window.switchAdminTab === 'function') {
+                window.switchAdminTab('teachers_enquiry');
+            }
+        } else if (moduleName === 'student_parent_enquiries') {
+            if (typeof window.initStudentParentEnquiries === 'function') {
+                try { window.initStudentParentEnquiries(); } catch (e) { console.error('[ADMIN MODULE INIT ERROR] student_parent_enquiries:', e); }
+            }
+        } else if (moduleName === 'messages' || moduleName === 'notices' || moduleName === 'announcements') {
+            if (typeof window.initMessagesModule === 'function') window.initMessagesModule();
+        } else if (moduleName === 'live_classes' || moduleName === 'live_class') {
+            if (typeof window.initLiveClassesModule === 'function') window.initLiveClassesModule();
+            else if (typeof window.initLiveClasses === 'function') window.initLiveClasses();
+        } else if (moduleName === 'demo_bookings' || moduleName === 'demo_enquiries') {
+            if (typeof window.initDemoBookings === 'function') window.initDemoBookings();
         }
     }
     window.triggerModuleInit = triggerModuleInit;
@@ -126,8 +144,9 @@
         if (!mainContent) return false;
 
         const currentActive = mainContent.getAttribute('data-active-module') || mainContent.dataset.activeModule;
-        if (currentActive === canonical && activeLoadingModule === canonical) {
-            console.log('[ADMIN NAV] Module already loading, skipping duplicate request:', canonical);
+        if (currentActive === canonical && !moduleLoadPromises[canonical]) {
+            console.log('[ADMIN NAV] Module already active, skipping duplicate request:', canonical);
+            highlightSidebar(canonical);
             return false;
         }
 
@@ -278,8 +297,9 @@
 
         const mainContent = document.getElementById('main-content');
         const currentActive = mainContent ? (mainContent.getAttribute('data-active-module') || mainContent.dataset.activeModule) : '';
-        if (currentActive === canonical && activeLoadingModule === canonical) {
-            console.log('[ADMIN NAV] Module already active and loading:', canonical);
+        if (currentActive === canonical && !moduleLoadPromises[canonical]) {
+            console.log('[ADMIN NAV] Module already active, skipping duplicate request:', canonical);
+            highlightSidebar(canonical);
             return false;
         }
 

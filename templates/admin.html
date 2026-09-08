@@ -2660,60 +2660,7 @@
         };
         window.ADMIN_MODULES = ADMIN_MODULES;
 
-        function triggerModuleInit(moduleName) {
-            const canonical = (moduleName || '').replace('-', '_');
-            console.log('[MODULE INIT TRIGGERED]', canonical);
-
-            if (canonical === 'dashboard') {
-                if (typeof initDashboard === 'function') initDashboard();
-                if (typeof initDashboardCharts === 'function') initDashboardCharts();
-                if (typeof initDashboardRealtimeSystem === 'function') initDashboardRealtimeSystem();
-            } else if (canonical === 'courses') {
-                if (typeof initCourses === 'function') initCourses();
-                if (typeof initBatchControlCenter === 'function') initBatchControlCenter();
-            } else if (canonical === 'course_wizard') {
-                if (typeof initCourseWizard === 'function') initCourseWizard();
-            } else if (canonical === 'manage_course') {
-                if (typeof initManageCourse === 'function') initManageCourse();
-            } else if (canonical === 'live_classes') {
-                if (typeof initLiveClasses === 'function') initLiveClasses();
-            } else if (canonical === 'payments') {
-                if (typeof initPayments === 'function') initPayments();
-            } else if (canonical === 'study_material') {
-                if (typeof initStudyMaterial === 'function') initStudyMaterial();
-                if (typeof loadAdminRealtimeRecordedLectures === 'function') loadAdminRealtimeRecordedLectures();
-            } else if (canonical === 'messages' || canonical === 'notices' || canonical === 'announcements') {
-                if (typeof window.initMessagesModule === 'function') window.initMessagesModule();
-            } else if (canonical === 'live_classes' || canonical === 'live_class') {
-                if (typeof window.initLiveClassesModule === 'function') window.initLiveClassesModule();
-            } else if (canonical === 'user_logs') {
-                if (typeof initUserLogs === 'function') initUserLogs();
-                if (typeof executeUserLogsFilter === 'function') executeUserLogsFilter();
-            } else if (canonical === 'teacher_enquiries') {
-                if (typeof window.initTeacherEnquiries === 'function') {
-                    try {
-                        window.initTeacherEnquiries();
-                    } catch (e) {
-                        console.error('[ADMIN MODULE INIT ERROR] teacher_enquiries:', e);
-                    }
-                }
-                if (typeof switchAdminTab === 'function') {
-                    switchAdminTab('teachers_enquiry');
-                }
-            } else if (canonical === 'student_parent_enquiries') {
-                if (typeof window.initStudentParentEnquiries === 'function') {
-                    try {
-                        window.initStudentParentEnquiries();
-                    } catch (e) {
-                        console.error('[ADMIN MODULE INIT ERROR] student_parent_enquiries:', e);
-                    }
-                }
-            } else if (canonical === 'demo_bookings' || canonical === 'demo_enquiries') {
-                if (typeof initDemoBookings === 'function') initDemoBookings();
-            } else if (canonical === 'settings') {
-                if (typeof window.initSettingsModule === 'function') window.initSettingsModule();
-            }
-        }
+        // Module initializers are authoritatively dispatched by static/js/admin_router.js
 
         
         function getCleanAdminModulePath(moduleName) {
