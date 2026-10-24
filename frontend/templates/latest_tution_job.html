@@ -1,0 +1,3000 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Tuition Jobs & Requirements - EduTrust Platform</title>
+    <script src="{% static 'js/tutor_application_flow.js' %}?v=1.0"></script>
+
+    <!-- Style css -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- SEO & Accessibility -->
+    <meta name="description" content="Explore latest tuition jobs and student requirements for Nursery to Class 12th. Apply as a tutor and connect instantly.">
+    <meta name="keywords" content="tuition jobs, latest tuition requirements, find tuition work, home tuition jobs, online tuition jobs">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Bootstrap 5 CSS for modals/forms compatibility -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+        <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        handwritten: ['"Caveat"', 'cursive'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        navy: {
+                            800: '#11294d',
+                            900: '#0f1b3d',
+                            950: '#071a3d',
+                        },
+                        accent: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 30px -10px rgba(37, 99, 235, 0.08)',
+                        'card': '0 4px 20px -2px rgba(37, 99, 235, 0.07), 0 2px 6px -1px rgba(0, 0, 0, 0.03)',
+                        'card-hover': '0 12px 28px -4px rgba(37, 99, 235, 0.13), 0 4px 10px -2px rgba(0, 0, 0, 0.05)',
+                        'floating': '0 20px 40px -15px rgba(37, 99, 235, 0.15)',
+                        'pill': '0 2px 8px rgba(37, 99, 235, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-handwritten {
+            font-family: 'Caveat', cursive;
+        }
+        /* Reset Global Box Sizing & Master Centering Architecture */
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.07) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        /* Dedicated Page Wrapper — Single Source of Truth for Horizontal Alignment */
+        .page-container {
+            width: min(1480px, calc(100% - 48px)) !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                width: calc(100% - 32px) !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-container {
+                width: calc(100% - 24px) !important;
+            }
+        }
+
+        /* Custom Filter Dropdown Styling */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+        .custom-select-menu {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+            animation: customSelectFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes customSelectFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .custom-select-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-select-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-select-menu::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .custom-select-menu::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Master Structure & Positioning */
+        #latestJobsPage {
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+            padding-top: 124px;
+            padding-bottom: 80px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 640px) {
+            #latestJobsPage {
+                padding-top: 116px;
+            }
+        }
+
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 50;
+        }
+
+        #filterSidebar {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* Strict Horizontal Carousel Bounds & Viewport-Calculated Cards */
+        #jobCarouselWrapper {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+            cursor: pointer !important;
+        }
+
+        #jobCarouselWrapper::-webkit-scrollbar {
+            display: none !important;
+        }
+
+        #jobCarouselTrack {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            gap: 16px !important;
+            width: max-content !important;
+            align-items: stretch !important;
+            scroll-behavior: auto !important;
+            cursor: pointer !important;
+        }
+
+        /* Compact Card Sizing Architecture */
+        .job-carousel-card {
+            flex: 0 0 auto !important;
+            flex-shrink: 0 !important;
+            min-height: 0 !important;
+            height: auto !important;
+            box-sizing: border-box;
+            border-radius: 16px !important;
+            padding: 12px !important;
+        }
+
+        .job-card-badge {
+            font-size: 10px !important;
+            padding: 3px 6px !important;
+            border-radius: 6px !important;
+        }
+
+        .job-title-compact {
+            font-size: 13px !important;
+            line-height: 1.3 !important;
+            margin-bottom: 3px !important;
+        }
+
+        .job-description-compact {
+            font-size: 10.5px !important;
+            line-height: 1.35 !important;
+            display: -webkit-box;
+            line-clamp: 2;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .job-details-grid {
+            padding: 6px 8px !important;
+            gap: 5px !important;
+            border-radius: 10px !important;
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+
+        .job-action-btn {
+            font-size: 9px !important;
+            padding: 4px 7px !important;
+            border-radius: 8px !important;
+            height: 28px !important;
+            line-height: 1 !important;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #jobCarouselWrapper::-webkit-scrollbar {
+            display: none !important;
+        }
+        #jobCarouselWrapper {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            cursor: pointer !important;
+        }
+        #jobCarouselTrack {
+            cursor: pointer !important;
+        }
+
+        .ambient-blob-1 {
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.12) 0%, rgba(14, 165, 233, 0.05) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: floatBlob 12s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        .ambient-blob-2 {
+            position: absolute;
+            top: 40%;
+            right: -100px;
+            width: 450px;
+            height: 450px;
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+            filter: blur(90px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: floatBlob2 15s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(50px) scale(1.1); }
+        }
+
+        @keyframes floatBlob2 {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(-60px) scale(1.15); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .requirement-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            will-change: transform, box-shadow;
+            transform: translateZ(0);
+        }
+        @keyframes blueCardFlash {
+            0%, 100% {
+                border-color: rgba(37, 99, 235, 0.45);
+                box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35), 0 12px 28px -5px rgba(37, 99, 235, 0.25);
+            }
+            50% {
+                border-color: rgba(37, 99, 235, 0.95);
+                box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.65), 0 20px 40px -4px rgba(37, 99, 235, 0.45);
+            }
+        }
+        .requirement-card:hover {
+            transform: translateY(-4px) translateZ(0);
+            animation: blueCardFlash 1.2s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 font-sans antialiased">
+
+    <!-- Ambient Animated Background Elements -->
+    <div class="ambient-blob-1"></div>
+    <div class="ambient-blob-2"></div>
+
+    {% include "components/public_header.html" %}
+
+    <!-- Main Content Area with Proper Navbar Spacing -->
+    <main id="latestJobsPage">
+        <div class="page-container">
+            
+            <!-- ========================================================= -->
+            <!-- 1. TOP HERO SECTION (EDUTRUST TUITION JOBS)               -->
+            <!-- ========================================================= -->
+            <section class="mb-8 sm:mb-10 relative overflow-hidden">
+                
+                <!-- Ambient Subtle Educational Background Outlines -->
+                <div class="absolute inset-0 pointer-events-none -z-10 flex justify-between items-center px-4 overflow-hidden select-none">
+                    <!-- Left: Light Graduation Cap Outline -->
+                    <div class="opacity-[0.04] -translate-x-10 text-brand-700">
+                        <svg class="w-64 h-64 sm:w-80 sm:h-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+                        </svg>
+                    </div>
+                    <!-- Right: Light Document / Certificate Outline -->
+                    <div class="opacity-[0.04] translate-x-10 text-brand-700">
+                        <svg class="w-64 h-64 sm:w-80 sm:h-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-center mb-6 sm:mb-8">
+                    
+                    <!-- ===================================================== -->
+                    <!-- LEFT SIDE CREATIVE TEXT (HANDWRITTEN)                 -->
+                    <!-- ===================================================== -->
+                    <div class="hidden lg:flex lg:col-span-3 flex-col items-center justify-center pt-2 -rotate-6 transition-transform duration-300 hover:-rotate-3 select-none">
+                        <div class="relative bg-white/70 backdrop-blur-xs px-5 py-3.5 rounded-2xl border border-blue-200/60 shadow-card">
+                            <!-- Decorative Sparkle / Star Top-Left -->
+                            <svg class="absolute -top-3 -left-3 w-6 h-6 text-brand-500 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.5-6.5l-2.5 2.5m-8 8l-2.5 2.5m13 0l-2.5-2.5m-8-8l-2.5-2.5"/>
+                            </svg>
+
+                            <!-- Handwritten 4-line Text -->
+                            <div class="font-handwritten text-brand-600 font-bold text-2xl sm:text-[27px] leading-[1.15] text-left">
+                                <span class="block text-slate-700">Share Your</span>
+                                <span class="block text-brand-600 font-extrabold text-[28px]">Knowledge.</span>
+                                <span class="block text-slate-700">Shape Brighter</span>
+                                <span class="block text-brand-700 font-extrabold text-[28px]">Futures.</span>
+                            </div>
+
+                            <!-- Decorative Little Curved Stroke Underneath -->
+                            <svg class="w-20 h-2 text-brand-400/70 mt-1" viewBox="0 0 80 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 6C25 2 55 2 78 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Dotted Blue Arrow Pointing ↘ Toward Main Content -->
+                        <div class="pt-2 pl-6">
+                            <svg class="w-20 h-16 text-brand-500/85" viewBox="0 0 80 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 8 C 22 35, 52 42, 66 52" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 4" stroke-linecap="round" fill="none"/>
+                                <path d="M54 52 L 67 53 L 63 41" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- ===================================================== -->
+                    <!-- CENTER HERO MAIN CONTENT                              -->
+                    <!-- ===================================================== -->
+                    <div class="col-span-1 lg:col-span-6 flex flex-col items-center text-center space-y-4 sm:space-y-5">
+                        
+                        <!-- Mobile / Tablet Inline Callout Strip -->
+                        <div class="flex lg:hidden items-center justify-between w-full max-w-md px-2 pt-1 pb-1">
+                            <div class="font-handwritten text-brand-600 font-bold text-sm sm:text-base leading-tight -rotate-3 text-left">
+                                <span class="text-slate-700">Share Knowledge</span><br>
+                                <span class="text-brand-700 font-black">Shape Futures ↘</span>
+                            </div>
+                            <div class="font-handwritten text-brand-600 font-bold text-sm sm:text-base leading-tight rotate-3 text-right">
+                                <span class="text-slate-700">Your Skills</span><br>
+                                <span class="text-brand-700 font-black">↙ Create Growth</span>
+                            </div>
+                        </div>
+
+                        <!-- Small Pill/Badge: 💼 TUTOR JOB OPPORTUNITIES -->
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 border border-blue-200/90 text-brand-600 text-xs font-black uppercase tracking-wider shadow-pill mb-3 sm:mb-4">
+                            <span class="w-5 h-5 rounded-full bg-brand-600 text-white flex items-center justify-center text-[10px]">
+                                <i class="fas fa-briefcase"></i>
+                            </span>
+                            <span>TUTOR JOB OPPORTUNITIES</span>
+                        </div>
+
+                        <!-- Main Heading: Find Your Next Opportunity -->
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-black text-[#0F1B3D] tracking-tight leading-[1.2] sm:leading-[1.18] m-0">
+                            <span class="block text-[#0F1B3D]">Find Your</span>
+                            <span class="text-brand-600 relative inline-block mt-1 sm:mt-1.5 pb-3.5 sm:pb-4">
+                                Next Opportunity
+                                <!-- Subtle blue hand-drawn underline beneath "Next Opportunity" with clear separation -->
+                                <svg class="absolute -bottom-1 left-0 w-full h-3.5 text-brand-500/85 pointer-events-none" viewBox="0 0 240 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 11 C 60 3, 180 3, 237 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                        </h1>
+
+                        <!-- Subtitle / Description with comfortable top clearance -->
+                        <p class="text-slate-600 text-sm sm:text-base md:text-lg max-w-2xl font-normal leading-relaxed m-0 mt-3 sm:mt-4">
+                            Discover teaching opportunities, connect with learning communities, and grow your career with EduTrust.
+                        </p>
+
+                        <!-- CTA Register button & Quick Links in Hero -->
+                        <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+                            <a href="{% url 'teacher_registration' %}" onclick="event.preventDefault(); openAuthModal('teacher-registration');" class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-500/20 transition-all transform hover:-translate-y-0.5 no-underline cursor-pointer border-0">
+                                <span>👨‍🏫 Register as a Tutor</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </a>
+                            <a href="#filterSidebar" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-blue-100/90 text-slate-700 hover:text-brand-600 hover:border-blue-200 text-xs sm:text-sm font-bold shadow-2xs transition-all no-underline">
+                                <i class="fas fa-filter text-brand-500 text-xs"></i>
+                                <span>Explore Filters</span>
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- ===================================================== -->
+                    <!-- RIGHT SIDE CREATIVE TEXT (HANDWRITTEN)                -->
+                    <!-- ===================================================== -->
+                    <div class="hidden lg:flex lg:col-span-3 flex-col items-center justify-center pt-2 rotate-6 transition-transform duration-300 hover:rotate-3 select-none">
+                        <div class="relative bg-white/70 backdrop-blur-xs px-5 py-3.5 rounded-2xl border border-blue-200/60 shadow-card">
+                            <!-- Decorative Sparkle / Star Top-Right -->
+                            <svg class="absolute -top-3 -right-3 w-6 h-6 text-brand-500 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v4m0 12v4M2 12h4m12 0h4m-3.5-6.5l-2.5 2.5m-8 8l-2.5 2.5m13 0l-2.5-2.5m-8-8l-2.5-2.5"/>
+                            </svg>
+
+                            <!-- Handwritten 3-line Text -->
+                            <div class="font-handwritten text-brand-600 font-bold text-2xl sm:text-[27px] leading-[1.15] text-right">
+                                <span class="block text-slate-700">Your Skills</span>
+                                <span class="block text-brand-600 font-extrabold text-[28px]">Can Create</span>
+                                <span class="block text-brand-700 font-extrabold text-[28px]">Real Opportunities.</span>
+                            </div>
+
+                            <!-- Decorative Little Curved Stroke Underneath -->
+                            <svg class="w-20 h-2 text-brand-400/70 mt-1 ml-auto" viewBox="0 0 80 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 6C25 2 55 2 78 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Dotted Blue Arrow Pointing ↙ Toward Main Content -->
+                        <div class="pt-2 pr-6">
+                            <svg class="w-20 h-16 text-brand-500/85 ml-auto" viewBox="0 0 80 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M65 8 C 58 35, 28 42, 14 52" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 4" stroke-linecap="round" fill="none"/>
+                                <path d="M26 52 L 13 53 L 17 41" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ========================================================= -->
+                <!-- 2. BOTTOM FOUR-ITEM FEATURE STRIP                         -->
+                <!-- ========================================================= -->
+                <div class="bg-white border border-[#E2EAF5] rounded-[18px] p-3 sm:p-3.5 shadow-[0_4px_20px_-4px_rgba(37,99,235,0.05)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 divide-y sm:divide-y-0 sm:divide-x divide-[#EBF2FA] relative overflow-hidden bg-gradient-to-r from-blue-50/20 via-white to-sky-50/20">
+                    
+                    <!-- 1. Verified Opportunities (Blue) -->
+                    <div class="flex items-center gap-2.5 pt-2 sm:pt-0 sm:px-3 first:pt-0 first:px-0">
+                        <span class="w-9 h-9 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center text-sm shrink-0 border border-blue-100/90 shadow-2xs">
+                            <i class="fas fa-circle-check"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-xs sm:text-[13px] font-extrabold text-[#0F1B3D] m-0 leading-tight">Verified Opportunities</h3>
+                            <p class="text-[10.5px] sm:text-[11px] text-slate-500 font-medium m-0 mt-0.5 leading-tight">Genuine and trusted job listings</p>
+                        </div>
+                    </div>
+
+                    <!-- 2. For Every Teacher (Green) -->
+                    <div class="flex items-center gap-2.5 pt-2 sm:pt-0 sm:px-3">
+                        <span class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shrink-0 border border-emerald-100/90 shadow-2xs">
+                            <i class="fas fa-chalkboard-user"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-xs sm:text-[13px] font-extrabold text-[#0F1B3D] m-0 leading-tight">For Every Teacher</h3>
+                            <p class="text-[10.5px] sm:text-[11px] text-slate-500 font-medium m-0 mt-0.5 leading-tight">School, Home & Online Tuition</p>
+                        </div>
+                    </div>
+
+                    <!-- 3. Grow Your Career (Purple) -->
+                    <div class="flex items-center gap-2.5 pt-2 sm:pt-0 sm:px-3">
+                        <span class="w-9 h-9 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-sm shrink-0 border border-purple-100/90 shadow-2xs">
+                            <i class="fas fa-arrow-trend-up"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-xs sm:text-[13px] font-extrabold text-[#0F1B3D] m-0 leading-tight">Grow Your Career</h3>
+                            <p class="text-[10.5px] sm:text-[11px] text-slate-500 font-medium m-0 mt-0.5 leading-tight">Build your profile and get noticed</p>
+                        </div>
+                    </div>
+
+                    <!-- 4. Need Help? (Warm Yellow / Orange) -->
+                    <div class="flex items-center gap-2.5 pt-2 sm:pt-0 sm:px-3">
+                        <span class="w-9 h-9 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm shrink-0 border border-amber-100/90 shadow-2xs">
+                            <i class="fas fa-headset"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-xs sm:text-[13px] font-extrabold text-[#0F1B3D] m-0 leading-tight">Need Help?</h3>
+                            <p class="text-[10.5px] sm:text-[11px] text-slate-500 font-medium m-0 mt-0.5 leading-tight">We're here to support you</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 3. ADVANCED FILTERS CARD (COMPACT SINGLE-ROW LANDSCAPE)    -->
+            <!-- ========================================================= -->
+            <section id="filterSidebar" class="mb-3.5 w-full bg-white border border-[#E2EAF5] rounded-[18px] sm:rounded-[20px] p-3 sm:p-3.5 shadow-[0_4px_20px_-4px_rgba(37,99,235,0.05)] transition-all duration-300 relative overflow-visible z-20">
+                
+                <!-- Background subtle decorative illustration on top right -->
+                <div class="absolute right-0 top-0 w-32 sm:w-40 h-full pointer-events-none opacity-[0.05] flex items-center justify-end select-none pr-3 overflow-hidden rounded-r-[18px]">
+                    <svg viewBox="0 0 160 120" fill="none" class="w-full h-full text-[#2563EB]" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20 L150 20 L95 75 L95 110 L65 95 L65 75 Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <circle cx="80" cy="18" r="4" fill="currentColor"/>
+                        <path d="M30 35 L130 35" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M45 48 L115 48" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <!-- Header Row: Title & Subtitle + Sort & Reset -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 mb-2.5 border-b border-[#EDF3FA] gap-2 relative z-10">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-[#2563EB] flex items-center justify-center text-xs sm:text-sm shrink-0 border border-blue-100 shadow-2xs">
+                            <i class="fas fa-filter text-[#2563EB]"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xs sm:text-sm font-black text-[#0F1B3D] m-0 tracking-tight leading-tight">
+                                Advanced Filters
+                            </h2>
+                            <p class="text-[10px] sm:text-[10.5px] text-slate-500 font-medium m-0 leading-tight">
+                                Find the perfect tuition job with the right filters
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                        <!-- Quick Sort Dropdown -->
+                        <div class="relative min-w-[145px]">
+                            <select id="sortSelect" class="w-full">
+                                <option value="latest">Sort: Latest Posted</option>
+                                <option value="budget-high">Highest Budget</option>
+                                <option value="budget-low">Lowest Budget</option>
+                            </select>
+                        </div>
+                        <button type="button" id="resetFiltersDesktop" class="text-[10.5px] font-extrabold text-[#2563EB] hover:text-blue-800 transition-colors border-0 bg-transparent cursor-pointer inline-flex items-center gap-1 px-1 py-0.5 rounded hover:bg-blue-50/60">
+                            <i class="fas fa-rotate-right text-[9px]"></i>
+                            <span>Reset All</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Professional Filter Form Controls in One Compact Row -->
+                <form id="filterForm" class="text-xs relative z-10">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-2 items-end">
+                        
+                        <!-- 1. Location -->
+                        <div class="space-y-0.5">
+                            <label class="font-extrabold text-[#0F1B3D] flex items-center gap-1 text-[10px]">
+                                <i class="fas fa-location-dot text-[#2563EB] text-[9.5px]"></i> Location
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] pointer-events-none">
+                                    <i class="fas fa-city"></i>
+                                </span>
+                                <input type="text" id="filterCity" placeholder="City" class="w-full bg-white hover:bg-blue-50/20 border border-[#DBE5F2] hover:border-blue-400 focus:border-[#2563EB] focus:bg-white rounded-lg pl-6 pr-3 py-1 text-[#0F1B3D] font-bold placeholder:text-slate-400 focus:ring-1 focus:ring-blue-500/20 focus:outline-none transition-all text-[11px] h-[34px] shadow-2xs">
+                            </div>
+                        </div>
+
+                        <!-- 2. Preferred Gender -->
+                        <div class="space-y-0.5">
+                            <label class="font-extrabold text-[#0F1B3D] flex items-center gap-1 text-[10px]">
+                                <i class="fas fa-venus-mars text-[#2563EB] text-[9.5px]"></i> Gender
+                            </label>
+                            <div class="relative">
+                                <select id="filterGender" class="w-full">
+                                    <option value="">No Pref</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 3. Class -->
+                        <div class="space-y-0.5">
+                            <label class="font-extrabold text-[#0F1B3D] flex items-center gap-1 text-[10px]">
+                                <i class="fas fa-graduation-cap text-[#2563EB] text-[9.5px]"></i> Class
+                            </label>
+                            <div class="relative">
+                                <select id="filterClass" class="w-full">
+                                    <option value="">All Classes</option>
+                                    <option value="Nursery">Nursery</option>
+                                    <option value="LKG">LKG</option>
+                                    <option value="UKG">UKG</option>
+                                    <option value="Class 1">Class 1</option>
+                                    <option value="Class 2">Class 2</option>
+                                    <option value="Class 3">Class 3</option>
+                                    <option value="Class 4">Class 4</option>
+                                    <option value="Class 5">Class 5</option>
+                                    <option value="Class 6">Class 6</option>
+                                    <option value="Class 7">Class 7</option>
+                                    <option value="Class 8">Class 8</option>
+                                    <option value="Class 9">Class 9</option>
+                                    <option value="Class 10">Class 10</option>
+                                    <option value="Class 11">Class 11</option>
+                                    <option value="Class 12">Class 12</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 4. Subject -->
+                        <div class="space-y-0.5">
+                            <label class="font-extrabold text-[#0F1B3D] flex items-center gap-1 text-[10px]">
+                                <i class="fas fa-book-open text-[#2563EB] text-[9.5px]"></i> Subject
+                            </label>
+                            <div class="relative">
+                                <select id="filterSubject" class="w-full">
+                                    <option value="">All Subjects</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 5. Mode of Tuition -->
+                        <div class="space-y-0.5">
+                            <label class="font-extrabold text-[#0F1B3D] flex items-center gap-1 text-[10px]">
+                                <i class="fas fa-chalkboard text-[#2563EB] text-[9.5px]"></i> Mode
+                            </label>
+                            <div class="relative">
+                                <select id="filterMode" class="w-full">
+                                    {% if is_home_tuition_mode %}
+                                    <option value="Home Tuition" selected>Home Tuition</option>
+                                    {% elif is_online_tuition_mode %}
+                                    <option value="Online" selected>Online</option>
+                                    {% else %}
+                                    <option value="">All Modes</option>
+                                    <option value="Home Tuition" selected>Home Tuition</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 6. Budget Slider & Amount -->
+                        <div class="space-y-0.5">
+                            <div class="flex justify-between items-center text-[10px]">
+                                <label class="font-extrabold text-[#0F1B3D] flex items-center gap-1">
+                                    <i class="fas fa-wallet text-[#2563EB] text-[9.5px]"></i> Budget:
+                                </label>
+                                <span id="budgetVal" class="font-black text-[#2563EB] text-[10.5px]">₹25k</span>
+                            </div>
+                            <div class="h-[34px] flex items-center px-0.5">
+                                <input type="range" id="filterFee" min="3000" max="25000" step="1000" value="25000" class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#2563EB]">
+                            </div>
+                        </div>
+
+                        <!-- 7. Search Button -->
+                        <div>
+                            <button type="button" id="applyFiltersBtn" class="w-full h-[34px] bg-gradient-to-r from-[#2563EB] to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-extrabold rounded-lg transition-all shadow-2xs hover:shadow-xs hover:-translate-y-0.5 text-[10.5px] uppercase tracking-wider border-0 cursor-pointer flex items-center justify-center gap-1">
+                                <i class="fas fa-magnifying-glass text-[9px]"></i>
+                                <span>SEARCH</span>
+                            </button>
+                        </div>
+
+                        <!-- 8. Reset Button -->
+                        <div>
+                            <button type="reset" id="resetFiltersBtn" class="w-full h-[34px] bg-white hover:bg-slate-50 text-slate-700 hover:text-[#2563EB] border border-[#DBE5F2] hover:border-[#2563EB] font-extrabold rounded-lg transition-all text-[10.5px] uppercase tracking-wider cursor-pointer flex items-center justify-center gap-1 shadow-2xs">
+                                <i class="fas fa-rotate-right text-[9px]"></i>
+                                <span>RESET</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- 4. QUICK FILTER BLOCKS (POPULAR LOCATIONS & SUBJECTS)      -->
+            <!-- ========================================================= -->
+            <section class="mb-4 w-full grid grid-cols-1 md:grid-cols-2 gap-3">
+                
+                <!-- Left: Popular Locations Card -->
+                <div class="bg-white border border-[#E2EAF5] rounded-[18px] p-3 sm:p-3.5 shadow-[0_4px_16px_-4px_rgba(37,99,235,0.05)] relative overflow-hidden flex flex-col justify-between">
+                    
+                    <!-- Background subtle globe / map illustration -->
+                    <div class="absolute right-0 top-0 w-28 h-full pointer-events-none opacity-[0.05] flex items-center justify-end select-none pr-2">
+                        <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full text-[#2563EB]">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <ellipse cx="50" cy="50" rx="45" ry="20" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                            <ellipse cx="50" cy="50" rx="20" ry="45" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="5" y1="50" x2="95" y2="50" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-center gap-2 pb-2 relative z-10">
+                        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center text-[10px] shrink-0 border border-blue-100/90 shadow-2xs">
+                            <i class="fas fa-location-dot"></i>
+                        </div>
+                        <h4 class="font-extrabold text-[#0F1B3D] text-xs sm:text-[13px] m-0">
+                            Popular Locations
+                        </h4>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5 pt-0.5 relative z-10">
+                        <button type="button" onclick="quickFilterCity('Lucknow')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-city text-[#2563EB] text-[10px]"></i>
+                            <span>Lucknow</span>
+                        </button>
+                        <button type="button" onclick="quickFilterCity('Delhi')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-city text-[#2563EB] text-[10px]"></i>
+                            <span>Delhi</span>
+                        </button>
+                        <button type="button" onclick="quickFilterCity('Mumbai')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-city text-[#2563EB] text-[10px]"></i>
+                            <span>Mumbai</span>
+                        </button>
+                        <button type="button" onclick="quickFilterCity('Bangalore')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-city text-[#2563EB] text-[10px]"></i>
+                            <span>Bangalore</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Popular Subjects Card -->
+                <div class="bg-white border border-[#E2EAF5] rounded-[18px] p-3 sm:p-3.5 shadow-[0_4px_16px_-4px_rgba(37,99,235,0.05)] relative overflow-hidden flex flex-col justify-between">
+                    
+                    <!-- Background subtle stacked books with graduation cap illustration -->
+                    <div class="absolute right-2 top-1/2 -translate-y-1/2 w-24 h-16 pointer-events-none opacity-[0.12] select-none">
+                        <svg viewBox="0 0 100 80" fill="none" class="w-full h-full text-[#2563EB]" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="15" y="52" width="70" height="12" rx="3" fill="#2563EB"/>
+                            <rect x="10" y="38" width="80" height="12" rx="3" fill="#3B82F6"/>
+                            <path d="M50 10 L88 24 L50 38 L12 24 Z" fill="#1E40AF"/>
+                            <path d="M80 28 L80 44" stroke="#F59E0B" stroke-width="2"/>
+                            <circle cx="80" cy="46" r="2.5" fill="#F59E0B"/>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-center gap-2 pb-2 relative z-10">
+                        <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-50 text-[#2563EB] flex items-center justify-center text-[10px] shrink-0 border border-blue-100/90 shadow-2xs">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h4 class="font-extrabold text-[#0F1B3D] text-xs sm:text-[13px] m-0">
+                            Popular Subjects
+                        </h4>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5 pt-0.5 relative z-10">
+                        <button type="button" onclick="quickFilterSubject('Mathematics')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <span class="font-black text-[#2563EB]">Σ</span>
+                            <span>Mathematics</span>
+                        </button>
+                        <button type="button" onclick="quickFilterSubject('Physics')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-atom text-[#2563EB] text-[10px]"></i>
+                            <span>Physics</span>
+                        </button>
+                        <button type="button" onclick="quickFilterSubject('Chemistry')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-flask text-[#2563EB] text-[10px]"></i>
+                            <span>Chemistry</span>
+                        </button>
+                        <button type="button" onclick="quickFilterSubject('English Grammar')" class="bg-white hover:bg-blue-50 text-[#0F1B3D] hover:text-[#2563EB] text-[11px] font-bold px-2.5 py-1 rounded-full border border-[#DBE5F2] hover:border-[#2563EB] transition-all cursor-pointer shadow-2xs inline-flex items-center gap-1 hover:-translate-y-0.5">
+                            <i class="fas fa-book text-[#2563EB] text-[10px]"></i>
+                            <span>English Grammar</span>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Main Content Area: Professional Continuous Horizontal Carousel for Job Cards -->
+            <section class="space-y-4">
+                <div id="jobCarouselWrapper" class="overflow-x-hidden relative rounded-3xl select-none pb-4 cursor-pointer">
+                    <div id="jobCarouselTrack" class="flex gap-4 items-stretch will-change-transform">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Three Professional Bottom Information Cards Section -->
+            <section class="w-full mt-5 sm:mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 items-stretch">
+                
+                <!-- Card 1: Why Choose EduTrust? -->
+                <div class="group bg-white border border-[#DCE6F3] hover:border-blue-300 rounded-[18px] sm:rounded-[20px] p-3.5 sm:p-4 shadow-[0_3px_16px_-4px_rgba(37,99,235,0.05)] hover:shadow-[0_8px_22px_-4px_rgba(37,99,235,0.1)] hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+                    <!-- Soft Ambient Glow & Decorative Dots Top-Right -->
+                    <div class="absolute -top-4 -right-4 w-20 h-20 bg-blue-100/40 rounded-full blur-xl pointer-events-none"></div>
+                    <div class="absolute top-2.5 right-10 w-1.5 h-1.5 bg-blue-400/30 rounded-full pointer-events-none"></div>
+                    <div class="absolute top-6 right-5 w-2 h-2 bg-blue-300/40 rounded-full pointer-events-none"></div>
+
+                    <div>
+                        <!-- Header Icon Container -->
+                        <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center text-sm sm:text-base mb-2 border border-blue-100/90 shadow-2xs">
+                            <i class="fas fa-award text-[#2563EB]"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="font-extrabold text-[14.5px] sm:text-[15.5px] text-[#0F1B3D] tracking-tight leading-snug mb-1">
+                            Why Choose EduTrust?
+                        </h3>
+
+                        <!-- Description -->
+                        <p class="text-[10.5px] sm:text-[11.5px] text-slate-500 font-normal leading-tight mb-2.5">
+                            We provide genuine, verified and high-quality tuition opportunities to help you grow with confidence.
+                        </p>
+
+                        <!-- Feature Points List -->
+                        <div class="space-y-1 sm:space-y-1.5 mb-2.5 relative z-10 max-w-[80%] sm:max-w-[76%]">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[7.5px] shrink-0 shadow-2xs">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D]">Verified Student Requirements</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[7.5px] shrink-0 shadow-2xs">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D]">Trusted Platform</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[7.5px] shrink-0 shadow-2xs">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D]">Genuine Tuition Jobs</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[7.5px] shrink-0 shadow-2xs">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D]">Daily New Jobs</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[7.5px] shrink-0 shadow-2xs">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D]">Fast Application Process</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded-full bg-[#10B981] text-white flex items-center justify-center text-[7.5px] shrink-0 shadow-2xs">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D]">Safe & Secure Communication</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lower Right Certificate/Rosette Illustration -->
+                    <div class="absolute right-0.5 bottom-11 sm:bottom-12 w-16 sm:w-20 h-16 sm:h-20 pointer-events-none select-none opacity-85 group-hover:opacity-100 transition-opacity duration-300 z-0">
+                        <svg viewBox="0 0 140 140" fill="none" class="w-full h-full drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="70" cy="70" r="48" fill="#EFF6FF" opacity="0.85"/>
+                            <g transform="translate(24, 20)">
+                                <rect x="0" y="0" width="60" height="78" rx="10" fill="#FFFFFF" stroke="#DBEAFE" stroke-width="1.5"/>
+                                <circle cx="16" cy="18" r="5" fill="#93C5FD"/>
+                                <rect x="26" y="15" width="22" height="4" rx="2" fill="#CBD5E1"/>
+                                <rect x="26" y="22" width="14" height="3" rx="1.5" fill="#E2E8F0"/>
+                                <rect x="12" y="34" width="36" height="3.5" rx="1.75" fill="#DBEAFE"/>
+                                <rect x="12" y="42" width="36" height="3.5" rx="1.75" fill="#DBEAFE"/>
+                                <rect x="12" y="50" width="28" height="3.5" rx="1.75" fill="#DBEAFE"/>
+                            </g>
+                            <g transform="translate(68, 52)">
+                                <path d="M12 28 L6 48 L18 42 L24 48 L22 28 Z" fill="#1D4ED8"/>
+                                <path d="M22 28 L28 48 L18 42 L12 48 L14 28 Z" fill="#2563EB"/>
+                                <circle cx="18" cy="18" r="16" fill="#2563EB"/>
+                                <circle cx="18" cy="18" r="12" fill="#3B82F6"/>
+                                <path d="M12 18 L16 22 L24 14" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </g>
+                            <path d="M78 22 L79 26 L83 27 L79 28 L78 32 L77 28 L73 27 L77 26 Z" fill="#38BDF8" opacity="0.8"/>
+                            <path d="M64 16 L65 19 L68 20 L65 21 L64 24 L63 21 L60 20 L63 19 Z" fill="#10B981" opacity="0.8"/>
+                            <path d="M92 24 L93 27 L96 28 L93 29 L92 32 L91 29 L88 28 L91 27 Z" fill="#F59E0B" opacity="0.8"/>
+                        </svg>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="{% url 'latest_tuition_job' %}" class="w-full py-2 px-3 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-xs shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-1.5 no-underline z-10 relative">
+                        <span>Browse Jobs</span>
+                        <i class="fas fa-arrow-right text-[9px]"></i>
+                    </a>
+                </div>
+
+                <!-- Card 2: Need Help with Tuition Jobs? -->
+                <div class="group bg-white border border-[#DCE6F3] hover:border-blue-300 rounded-[18px] sm:rounded-[20px] p-3.5 sm:p-4 shadow-[0_3px_16px_-4px_rgba(37,99,235,0.05)] hover:shadow-[0_8px_22px_-4px_rgba(37,99,235,0.1)] hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+                    <!-- Soft Ambient Glow & Decorative Dots Top-Right -->
+                    <div class="absolute -top-4 -right-4 w-20 h-20 bg-blue-100/40 rounded-full blur-xl pointer-events-none"></div>
+                    <div class="absolute top-2.5 right-10 w-1.5 h-1.5 bg-blue-400/30 rounded-full pointer-events-none"></div>
+                    <div class="absolute top-6 right-5 w-2 h-2 bg-blue-300/40 rounded-full pointer-events-none"></div>
+
+                    <div>
+                        <!-- Header Icon Container -->
+                        <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center text-sm sm:text-base mb-2 border border-blue-100/90 shadow-2xs">
+                            <i class="fas fa-headset text-[#2563EB]"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="font-extrabold text-[14.5px] sm:text-[15.5px] text-[#0F1B3D] tracking-tight leading-snug mb-1">
+                            Need Help with Tuition Jobs?
+                        </h3>
+
+                        <!-- Description -->
+                        <p class="text-[10.5px] sm:text-[11.5px] text-slate-500 font-normal leading-tight mb-2.5">
+                            Our support team helps tutors connect directly with verified student requirements instantly. Get guidance, resolve your queries and start your tuition journey with ease.
+                        </p>
+
+                        <!-- Feature Points List -->
+                        <div class="space-y-1.5 mb-2.5 relative z-10 max-w-[80%] sm:max-w-[76%]">
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-user-group"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Personalized Assistance</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Get help based on your profile and skills</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-clock"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Quick Support</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Resolve your queries in minutes</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-comment-dots"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Guidance at Every Step</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">From application to getting tuition jobs</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lower Right Headset Illustration -->
+                    <div class="absolute right-0.5 bottom-11 sm:bottom-12 w-16 sm:w-20 h-16 sm:h-20 pointer-events-none select-none opacity-85 group-hover:opacity-100 transition-opacity duration-300 z-0">
+                        <svg viewBox="0 0 140 140" fill="none" class="w-full h-full drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="70" cy="70" r="48" fill="#EFF6FF" opacity="0.85"/>
+                            <path d="M22 55 C22 45 28 35 36 28" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 3"/>
+                            <path d="M118 55 C118 45 112 35 104 28" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 3"/>
+                            <circle cx="28" cy="70" r="2" fill="#60A5FA" opacity="0.6"/>
+                            <circle cx="112" cy="70" r="2" fill="#60A5FA" opacity="0.6"/>
+                            <rect x="42" y="44" width="56" height="38" rx="14" fill="#FFFFFF" stroke="#DBEAFE" stroke-width="1.5"/>
+                            <circle cx="58" cy="63" r="3" fill="#3B82F6"/>
+                            <circle cx="70" cy="63" r="3" fill="#3B82F6"/>
+                            <circle cx="82" cy="63" r="3" fill="#3B82F6"/>
+                            <path d="M38 72 C38 46 52 32 70 32 C88 32 102 46 102 72" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+                            <rect x="32" y="66" width="12" height="24" rx="6" fill="#1D4ED8"/>
+                            <rect x="34" y="68" width="8" height="20" rx="4" fill="#60A5FA"/>
+                            <rect x="96" y="66" width="12" height="24" rx="6" fill="#1D4ED8"/>
+                            <rect x="98" y="68" width="8" height="20" rx="4" fill="#60A5FA"/>
+                            <path d="M102 78 C102 96 90 102 74 102" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+                            <rect x="66" y="97" width="10" height="10" rx="5" fill="#1D4ED8"/>
+                        </svg>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="tel:{{ website_contact_phone|default:'+919876543210' }}" onclick="if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768 && ('ontouchstart' in window || navigator.maxTouchPoints > 0)))){ event.preventDefault(); window.location.href='{% url 'contact' %}'; }" class="w-full py-2 px-3 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-xs shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-1.5 no-underline z-10 relative">
+                        <i class="fas fa-phone-alt text-[9px]"></i>
+                        <span>Contact Support</span>
+                    </a>
+                </div>
+
+                <!-- Card 3: Grow Your Tuition Career -->
+                <div class="group bg-white border border-[#DCE6F3] hover:border-blue-300 rounded-[18px] sm:rounded-[20px] p-3.5 sm:p-4 shadow-[0_3px_16px_-4px_rgba(37,99,235,0.05)] hover:shadow-[0_8px_22px_-4px_rgba(37,99,235,0.1)] hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden flex flex-col justify-between md:col-span-2 lg:col-span-1">
+                    <!-- Soft Ambient Glow & Decorative Dots Top-Right -->
+                    <div class="absolute -top-4 -right-4 w-20 h-20 bg-blue-100/40 rounded-full blur-xl pointer-events-none"></div>
+                    <div class="absolute top-2.5 right-10 w-1.5 h-1.5 bg-blue-400/30 rounded-full pointer-events-none"></div>
+                    <div class="absolute top-6 right-5 w-2 h-2 bg-blue-300/40 rounded-full pointer-events-none"></div>
+
+                    <div>
+                        <!-- Header Icon Container -->
+                        <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center text-sm sm:text-base mb-2 border border-blue-100/90 shadow-2xs">
+                            <i class="fas fa-chart-line text-[#2563EB]"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="font-extrabold text-[14.5px] sm:text-[15.5px] text-[#0F1B3D] tracking-tight leading-snug mb-1">
+                            Grow Your Tuition Career
+                        </h3>
+
+                        <!-- Description -->
+                        <p class="text-[10.5px] sm:text-[11.5px] text-slate-500 font-normal leading-tight mb-2.5">
+                            Find the right opportunities, build your reputation and grow your income with EduTrust. We make it simple, fast and reliable.
+                        </p>
+
+                        <!-- Feature Points List -->
+                        <div class="space-y-1.5 mb-2.5 relative z-10 max-w-[80%] sm:max-w-[76%]">
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-blue-100 text-[#2563EB] flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-bolt"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Apply Instantly</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Start applying to tuition jobs with one click</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Premium Students</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Connect with serious and genuine students</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-home"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Home & Online Jobs</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Choose opportunities as per your preference</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-star"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Verified Leads</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Get trusted and quality tuition requirements</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-1.5">
+                                <span class="w-4.5 h-4.5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-[8px] shrink-0 mt-0.5 shadow-2xs">
+                                    <i class="fas fa-arrows-rotate"></i>
+                                </span>
+                                <div>
+                                    <h4 class="font-bold text-[11px] sm:text-[11.5px] text-[#0F1B3D] leading-tight m-0">Quick Matching</h4>
+                                    <p class="text-[9.5px] sm:text-[10px] text-slate-500 font-medium leading-tight m-0 mt-0.5">Find suitable jobs faster</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lower Right Growth Chart Illustration -->
+                    <div class="absolute right-0.5 bottom-11 sm:bottom-12 w-16 sm:w-20 h-16 sm:h-20 pointer-events-none select-none opacity-85 group-hover:opacity-100 transition-opacity duration-300 z-0">
+                        <svg viewBox="0 0 140 140" fill="none" class="w-full h-full drop-shadow-sm" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="70" cy="70" r="48" fill="#EFF6FF" opacity="0.85"/>
+                            <path d="M18 96 C10 82 20 68 28 64 C30 74 24 88 18 96 Z" fill="#10B981" opacity="0.4"/>
+                            <path d="M120 96 C128 82 118 68 110 64 C108 74 114 88 120 96 Z" fill="#10B981" opacity="0.4"/>
+                            <g transform="translate(36, 44)">
+                                <rect x="4" y="36" width="14" height="28" rx="4" fill="#DBEAFE"/>
+                                <rect x="24" y="22" width="14" height="42" rx="4" fill="#93C5FD"/>
+                                <rect x="44" y="8" width="14" height="56" rx="4" fill="#3B82F6"/>
+                                <rect x="64" y="0" width="14" height="64" rx="4" fill="#2563EB"/>
+                            </g>
+                            <path d="M30 84 C50 68 76 56 112 36" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round"/>
+                            <path d="M98 34 L114 35 L113 51" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M116 22 L117 25 L120 26 L117 27 L116 30 L115 27 L112 26 L115 25 Z" fill="#F59E0B" opacity="0.8"/>
+                        </svg>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="{% url 'student_registration' %}" class="w-full py-2 px-3 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-xs shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:shadow-[0_4px_12px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-1.5 no-underline z-10 relative">
+                        <span>Start Applying</span>
+                        <i class="fas fa-arrow-right text-[9px]"></i>
+                    </a>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    {% include "components/public_footer.html" %}
+    <!-- DYNAMIC JOB DETAILS MODAL POPUP -->
+    <div id="jobDetailsModal" onclick="if(event.target === this) closeJobDetailsModal()" class="fixed inset-0 z-[20000] flex items-center justify-center bg-slate-900/60 backdrop-blur-xs hidden transition-all duration-300 p-3 sm:p-4 md:p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modalJobTitle">
+        <div class="bg-white rounded-[26px] sm:rounded-[28px] p-5 sm:p-7 max-w-4xl w-full max-h-[92vh] shadow-2xl border border-blue-100/80 flex flex-col justify-between transform transition-all scale-95 opacity-0 my-auto relative overflow-hidden" id="jobDetailsModalCard">
+            
+            <!-- 1. Top Header Row: Badges, Date/Time Info & Close Button -->
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0 gap-3">
+                <!-- Badges -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span id="modalJobBadgeId" class="bg-blue-50 text-blue-700 font-extrabold text-xs px-3 py-1 rounded-full border border-blue-100/80">ID: #--</span>
+                    <span id="modalJobBadgeVerified" class="bg-emerald-50 text-emerald-700 font-bold text-xs px-3 py-1 rounded-full border border-emerald-100/80 flex items-center gap-1.5"><i class="fas fa-check-circle text-emerald-500"></i> Verified</span>
+                    <span id="modalJobBadgeUrgent" class="bg-rose-50 text-rose-600 font-bold text-xs px-3 py-1 rounded-full border border-rose-100/80 flex items-center gap-1.5"><i class="fas fa-bolt text-rose-500"></i> Urgent</span>
+                </div>
+
+                <!-- Date/Time info & Close Button -->
+                <div class="flex items-center gap-4">
+                    <div class="hidden sm:flex items-center gap-2 text-right">
+                        <i class="far fa-calendar-alt text-slate-400 text-sm"></i>
+                        <div class="text-left">
+                            <p id="modalJobHeaderPosted" class="text-xs font-bold text-slate-700 m-0 leading-tight">Posted on Recently</p>
+                            <p class="text-[10px] text-slate-400 font-medium m-0 leading-tight">Last updated 2 hours ago</p>
+                        </div>
+                    </div>
+                    <button type="button" id="closeJobDetails" onclick="closeJobDetailsModal()" aria-label="Close modal" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100/80 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors flex items-center justify-center border-0 cursor-pointer text-sm font-bold shadow-2xs">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Content Body (2 Columns on Desktop) -->
+            <div class="py-3.5 sm:py-4 overflow-y-auto flex-1 pr-1 custom-scrollbar">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                    
+                    <!-- LEFT COLUMN (Span 8 cols) -->
+                    <div class="lg:col-span-8 space-y-3.5">
+                        
+                        <!-- 2. Job Title Area with Location & Educational Graphic -->
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                            <div class="space-y-1 min-w-0 flex-1">
+                                <h2 id="modalJobTitle" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug m-0">Tuition: Mathematics for Class 10</h2>
+                                <div class="flex items-center gap-1.5 text-xs text-slate-600 font-bold mt-1">
+                                    <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                    <span id="modalJobLocationHeader">Lucknow, Uttar Pradesh</span>
+                                </div>
+                                <p id="modalJobSubSummary" class="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed m-0 pt-1">
+                                    A student has submitted a demo booking request for Mathematics (Class 10) in Lucknow. Please review the details below and take the required action.
+                                </p>
+                            </div>
+
+                            <!-- Educational Graphic (Speech Bubble, Books, Sticky Note, Calculator) -->
+                            <div class="hidden sm:flex items-center justify-center shrink-0 w-48 sm:w-56 h-28 relative select-none">
+                                <svg class="w-full h-full" viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Soft glow backdrop -->
+                                    <ellipse cx="140" cy="65" rx="70" ry="45" fill="#eff6ff" opacity="0.85"/>
+                                    
+                                    <!-- Speech Bubble "Better Teachers Brighter Futures" -->
+                                    <g transform="translate(10, 8)">
+                                        <path d="M12 0 C5.37 0 0 5.37 0 12 C0 18.63 5.37 24 12 24 L55 24 L65 30 L62 24 L78 24 C84.63 24 90 18.63 90 12 C90 5.37 84.63 0 78 0 Z" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.2"/>
+                                        <path d="M7 8 C5.5 8 4.5 9 4.5 10.5 C4.5 12 5.5 13 7 13 C7 14 6 15 4.5 15.5 M12 8 C10.5 8 9.5 9 9.5 10.5 C9.5 12 10.5 13 12 13 C12 14 11 15 9.5 15.5" stroke="#3b82f6" stroke-width="1.2" stroke-linecap="round"/>
+                                        <text x="49" y="10" font-family="'Plus Jakarta Sans', sans-serif" font-size="6" font-weight="800" fill="#1e40af" text-anchor="middle">Better Teachers</text>
+                                        <text x="49" y="18" font-family="'Plus Jakarta Sans', sans-serif" font-size="6" font-weight="800" fill="#2563eb" text-anchor="middle">Brighter Futures</text>
+                                    </g>
+
+                                    <!-- Sticky Note "Learn Practice Improve Grow" -->
+                                    <g transform="rotate(6 160 20)">
+                                        <rect x="135" y="4" width="46" height="48" rx="5" fill="#fef9c3" stroke="#fde047" stroke-width="1.2"/>
+                                        <text x="158" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" font-weight="800" fill="#854d0e" text-anchor="middle">Learn</text>
+                                        <text x="158" y="25" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" font-weight="800" fill="#854d0e" text-anchor="middle">Practice</text>
+                                        <text x="158" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" font-weight="800" fill="#854d0e" text-anchor="middle">Improve</text>
+                                        <text x="158" y="43" font-family="'Plus Jakarta Sans', sans-serif" font-size="6.5" font-weight="800" fill="#a16207" text-anchor="middle">Grow ⭐</text>
+                                    </g>
+
+                                    <!-- Stack of Books -->
+                                    <rect x="92" y="80" width="82" height="15" rx="3" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+                                    <rect x="88" y="80" width="10" height="15" rx="2" fill="#3b82f6" stroke="#2563eb" stroke-width="1.2"/>
+                                    <path d="M98 83 L168 83" stroke="#e2e8f0" stroke-width="1"/>
+                                    <path d="M98 88 L168 88" stroke="#e2e8f0" stroke-width="1"/>
+                                    <path d="M98 92 L168 92" stroke="#e2e8f0" stroke-width="1"/>
+                                    
+                                    <!-- Top Book (Mathematics) -->
+                                    <rect x="96" y="66" width="76" height="14" rx="3" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5"/>
+                                    <rect x="92" y="66" width="9" height="14" rx="2" fill="#1d4ed8" stroke="#1e40af" stroke-width="1.2"/>
+                                    <text x="136" y="76" font-family="'Plus Jakarta Sans', sans-serif" font-size="6" font-weight="700" fill="#ffffff" text-anchor="middle">Mathematics</text>
+
+                                    <!-- Pen / Pencil Holder Cup -->
+                                    <rect x="115" y="44" width="22" height="24" rx="3" fill="#60a5fa" stroke="#3b82f6" stroke-width="1.2"/>
+                                    <line x1="119" y1="44" x2="114" y2="30" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                                    <line x1="126" y1="44" x2="126" y2="26" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+                                    <line x1="131" y1="44" x2="137" y2="28" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+                                    <line x1="122" y1="44" x2="120" y2="24" stroke="#64748b" stroke-width="1.8" stroke-linecap="round"/>
+
+                                    <!-- Calculator -->
+                                    <g transform="translate(170, 62)">
+                                        <rect x="0" y="0" width="28" height="38" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.2"/>
+                                        <rect x="4" y="4" width="20" height="9" rx="2" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
+                                        <text x="21" y="11" font-family="monospace" font-size="5.5" font-weight="700" fill="#1e40af" text-anchor="end">123.4</text>
+                                        <rect x="4" y="16" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="11.5" y="16" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="19" y="16" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="4" y="22" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="11.5" y="22" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="19" y="22" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="4" y="28" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="11.5" y="28" width="4.5" height="4" rx="1" fill="#bfdbfe"/>
+                                        <rect x="19" y="28" width="4.5" height="4" rx="1" fill="#f59e0b"/>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- 3. Compact Trust Banner -->
+                        <div class="p-3 sm:px-4 rounded-2xl bg-blue-50/40 border border-blue-100/80 flex items-center justify-between gap-3 shadow-2xs">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-blue-100/80 text-blue-600 flex items-center justify-center text-sm shrink-0 border border-blue-200/60">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h5 class="text-xs font-black text-slate-900 m-0 leading-tight">Trusted Tuition Opportunity</h5>
+                                    <p class="text-[10.5px] text-slate-500 font-medium m-0 leading-tight mt-0.5">Verified request • Genuine student • Reviewed by EduTrust</p>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100/80 text-blue-700 border border-blue-200/80 shrink-0 inline-flex items-center gap-1">
+                                <i class="fas fa-check-circle text-blue-600"></i> Safe &amp; Verified
+                            </span>
+                        </div>
+
+                        <!-- 4. Job Details Panel (Light-blue rounded container with 6 items) -->
+                        <div class="bg-blue-50/30 rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-blue-100/70">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                                <!-- Location -->
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-blue-600 shadow-2xs flex items-center justify-center shrink-0 border border-blue-100/70">
+                                        <i class="fas fa-map-marker-alt text-sm text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[11px] font-medium text-slate-400 block mb-0.5">Location</span>
+                                        <strong id="modalJobLocation" class="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">Location</strong>
+                                        <span id="modalJobLocationPill" class="inline-flex items-center gap-1 text-[10.5px] font-bold text-blue-600 hover:text-blue-700 mt-1 cursor-pointer">View on Map <i class="fas fa-arrow-right text-[8px]"></i></span>
+                                    </div>
+                                </div>
+
+                                <!-- Class & Subject -->
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-blue-600 shadow-2xs flex items-center justify-center shrink-0 border border-blue-100/70">
+                                        <i class="fas fa-graduation-cap text-sm text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[11px] font-medium text-slate-400 block mb-0.5">Class &amp; Subject</span>
+                                        <strong id="modalJobClassSubject" class="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">Class &amp; Subject</strong>
+                                        <span id="modalJobStreamPill" class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-blue-600 border border-blue-200/60 mt-1">All Subjects Welcome</span>
+                                    </div>
+                                </div>
+
+                                <!-- Mode of Tuition -->
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-blue-600 shadow-2xs flex items-center justify-center shrink-0 border border-blue-100/70">
+                                        <i class="fas fa-laptop text-sm text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[11px] font-medium text-slate-400 block mb-0.5">Mode of Tuition</span>
+                                        <strong id="modalJobModeSchedule" class="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">Home Tuition</strong>
+                                        <span id="modalJobSchedulePill" class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-blue-600 border border-blue-200/60 mt-1">Flexible Timing</span>
+                                    </div>
+                                </div>
+
+                                <!-- Preferred Start Date -->
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-blue-600 shadow-2xs flex items-center justify-center shrink-0 border border-blue-100/70">
+                                        <i class="far fa-calendar-alt text-sm text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[11px] font-medium text-slate-400 block mb-0.5">Preferred Start Date</span>
+                                        <strong id="modalJobStartDate" class="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">As soon as possible</strong>
+                                        <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-100 mt-1">Urgent Requirement</span>
+                                    </div>
+                                </div>
+
+                                <!-- Preferred Schedule -->
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-blue-600 shadow-2xs flex items-center justify-center shrink-0 border border-blue-100/70">
+                                        <i class="far fa-clock text-sm text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[11px] font-medium text-slate-400 block mb-0.5">Preferred Schedule</span>
+                                        <strong id="modalJobPreferredSchedule" class="text-xs sm:text-sm font-extrabold text-slate-900 block truncate">Flexible</strong>
+                                        <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-blue-600 border border-blue-200/60 mt-1">Weekdays/Weekends</span>
+                                    </div>
+                                </div>
+
+                                <!-- Budget / Fees -->
+                                <div class="flex items-start gap-2.5">
+                                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-blue-600 shadow-2xs flex items-center justify-center shrink-0 border border-blue-100/70">
+                                        <i class="fas fa-wallet text-sm text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[11px] font-medium text-slate-400 block mb-0.5">Budget / Fees</span>
+                                        <strong id="modalJobBudget" class="text-xs sm:text-sm font-black text-slate-900 block truncate">₹5,000 / month</strong>
+                                        <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-blue-600 border border-blue-200/60 mt-1">Per Month</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Secondary Information: Ideal Tutor Profile & Additional Notes -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- Ideal Tutor Profile -->
+                            <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-blue-100/80 shadow-2xs flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm shrink-0 border border-blue-100/70">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-black text-xs text-slate-900 m-0">Ideal Tutor Profile</h4>
+                                    <p id="modalJobTutorPref" class="text-xs text-slate-600 font-normal leading-relaxed m-0 mt-1">
+                                        Experienced and friendly tutors who can explain concepts clearly and help with regular practice.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Additional Notes (if any) -->
+                            <div class="p-3.5 sm:p-4 rounded-2xl bg-white border border-blue-100/80 shadow-2xs flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-sm shrink-0 border border-blue-100/70">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="font-black text-xs text-slate-900 m-0">Additional Notes (if any)</h4>
+                                    <p id="modalJobDescription" class="text-xs text-slate-600 font-normal leading-relaxed m-0 mt-1">
+                                        Focus on concepts, doubt solving and board exam preparation.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT SIDEBAR COLUMN (Span 4 cols) -->
+                    <div class="lg:col-span-4 space-y-3.5">
+                        
+                        <!-- 6. Card: About the Student -->
+                        <div class="p-4 sm:p-5 rounded-2xl bg-blue-50/40 border border-blue-100/80 shadow-2xs">
+                            <div class="flex items-center gap-2 pb-2.5 border-b border-blue-100/80">
+                                <i class="fas fa-user-circle text-blue-600 text-base"></i>
+                                <h4 class="font-black text-xs sm:text-sm text-slate-900 m-0">About the Student</h4>
+                            </div>
+
+                            <div class="space-y-2 pt-2.5">
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="fas fa-file-alt text-blue-500 text-xs w-4"></i>
+                                        <span>Request Type</span>
+                                    </div>
+                                    <span id="modalSidebarReqType" class="font-bold text-slate-800 text-xs">Demo Booking</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="fas fa-graduation-cap text-blue-500 text-xs w-4"></i>
+                                        <span>Student Level</span>
+                                    </div>
+                                    <span id="modalSidebarLevel" class="font-bold text-slate-800 text-xs">Class 10</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="fas fa-book text-blue-500 text-xs w-4"></i>
+                                        <span>Subject Focus</span>
+                                    </div>
+                                    <span id="modalSidebarSubject" class="font-bold text-slate-800 text-xs">Mathematics</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="fas fa-map-marker-alt text-blue-500 text-xs w-4"></i>
+                                        <span>Location</span>
+                                    </div>
+                                    <span id="modalSidebarLocation" class="font-bold text-slate-800 text-xs truncate max-w-[130px] text-right block">Lucknow, Uttar Pradesh</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="fas fa-laptop text-blue-500 text-xs w-4"></i>
+                                        <span>Mode</span>
+                                    </div>
+                                    <span id="modalSidebarMode" class="font-bold text-slate-800 text-xs">Home Tuition</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="far fa-clock text-blue-500 text-xs w-4"></i>
+                                        <span>Schedule</span>
+                                    </div>
+                                    <span id="modalSidebarSchedule" class="font-bold text-slate-800 text-xs">Flexible</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1 border-b border-blue-100/50">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="fas fa-wallet text-blue-500 text-xs w-4"></i>
+                                        <span>Budget</span>
+                                    </div>
+                                    <span id="modalSidebarBudget" class="font-black text-slate-900 text-xs">₹5,000 / month</span>
+                                </div>
+
+                                <div class="flex items-center justify-between text-xs py-1">
+                                    <div class="flex items-center gap-2 text-slate-500 font-medium">
+                                        <i class="far fa-calendar-alt text-blue-500 text-xs w-4"></i>
+                                        <span>Posted</span>
+                                    </div>
+                                    <span id="modalSidebarPosted" class="font-bold text-slate-800 text-[11px]">Aug 16, 2026, 10:24 AM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Card: Why Apply? -->
+                        <div class="p-4 sm:p-5 rounded-2xl bg-blue-50/40 border border-blue-100/80 shadow-2xs space-y-3 relative overflow-hidden">
+                            <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-blue-100/80">
+                                <div class="flex items-center gap-1.5">
+                                    <i class="fas fa-star text-amber-500 text-sm"></i>
+                                    <h4 class="font-black text-xs sm:text-sm text-slate-900 m-0">Why Apply?</h4>
+                                </div>
+                                <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200/80 text-[10px] font-bold text-amber-700">
+                                    <i class="fas fa-lightbulb text-amber-500"></i> Teach &amp; Grow
+                                </div>
+                            </div>
+
+                            <div class="space-y-2.5 pt-1">
+                                <div class="flex items-center gap-2.5 text-xs text-slate-700 font-semibold">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <span>Verified &amp; genuine student requests</span>
+                                </div>
+                                <div class="flex items-center gap-2.5 text-xs text-slate-700 font-semibold">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                                        <i class="far fa-clock"></i>
+                                    </div>
+                                    <span>Flexible schedule and fair budget</span>
+                                </div>
+                                <div class="flex items-center gap-2.5 text-xs text-slate-700 font-semibold">
+                                    <div class="w-6 h-6 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                    <span>Make a real impact in a student's journey</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 8. Footer Area with Trust Banner and Action Buttons -->
+            <div class="pt-3.5 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+                <!-- Trust Message -->
+                <div class="flex items-center gap-2.5 p-2 px-3 rounded-2xl bg-blue-50/50 border border-blue-100/60 w-full sm:w-auto">
+                    <div class="w-8 h-8 rounded-xl bg-blue-100/80 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <span class="block text-xs font-black text-slate-900 leading-tight">Help students find the right tutor</span>
+                        <span class="block text-[10.5px] text-slate-400 font-medium leading-tight">Review the request and connect at the earliest.</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                    <button type="button" onclick="closeJobDetailsModal()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border-0 cursor-pointer transition-colors shadow-2xs">
+                        Close
+                    </button>
+                    <button type="button" id="modalApplyBtn" onclick="applyForSelectedJob()" class="flex-1 sm:flex-initial px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs rounded-xl border-0 cursor-pointer shadow-md transition-all inline-flex items-center justify-center gap-2 active:scale-95">
+                        <i class="fas fa-paper-plane text-xs"></i> Apply for this Job
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-brand-600 text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-brand-700 hover:-translate-y-1 z-50 border-0 cursor-pointer">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript Engine -->
+    <script>
+        window.liveTuitionJobs = [];
+        let lastLiveJobsDataStr = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Fetch Real Live Jobs from Django Database API ---
+            function fetchLiveJobs(forceRefresh = false) {
+                fetch('/api/jobs/live/')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.jobs) {
+                            const newDataStr = JSON.stringify(data.jobs);
+                            if (!forceRefresh && newDataStr === lastLiveJobsDataStr) {
+                                return; // Data unchanged -> DO NOT mutate DOM -> NO BLINKING!
+                            }
+                            lastLiveJobsDataStr = newDataStr;
+                            window.liveTuitionJobs = data.jobs.map(j => {
+                                let bVal = j.budget || j.fees || '';
+                                if (!bVal || bVal.startsWith('Mode:') || bVal.toLowerCase().includes('market') || bVal === 'Fee on Request') {
+                                    bVal = '₹5,000 / mo';
+                                }
+                                const digits = bVal.replace(/,/g, '').match(/\d+/);
+                                const numB = digits ? parseInt(digits[0]) : 5000;
+
+                                return {
+                                    id: j.id,
+                                    title: `${j.type || 'Tuition'}: ${j.subject || 'Subject'} for ${j.class || 'Class'}`,
+                                    location: j.location || 'India',
+                                    tutorClass: j.class || '',
+                                    subject: j.subject || '',
+                                    gender: j.gender || 'No Preference',
+                                    mode: j.mode || j.tuition_mode || 'Home Tuition',
+                                    days: j.timing || 'Flexible',
+                                    budget: bVal,
+                                    budgetNum: numB,
+                                    date: j.posted || 'Recently',
+                                    description: `Student ${j.student_name || 'Student'} submitted demo booking for ${j.subject || ''} (${j.class || ''}) in ${j.location || ''}.`,
+                                    verified: true,
+                                    urgent: true
+                                };
+                            });
+                            renderJobs();
+                        }
+                    })
+                    .catch(err => console.error("Error fetching live jobs:", err));
+            }
+
+            fetchLiveJobs(true);
+            setInterval(() => fetchLiveJobs(false), 10000);
+
+            // Mobile Drawer Toggle logic
+            const mobileFilterToggle = document.getElementById('mobileFilterToggle');
+            const closeFilterMobile = document.getElementById('closeFilterMobile');
+            const filterSidebar = document.getElementById('filterSidebar');
+
+            if (mobileFilterToggle && filterSidebar) {
+                mobileFilterToggle.addEventListener('click', () => {
+                    filterSidebar.classList.remove('-translate-x-full');
+                });
+            }
+            if (closeFilterMobile && filterSidebar) {
+                closeFilterMobile.addEventListener('click', () => {
+                    filterSidebar.classList.add('-translate-x-full');
+                });
+            }
+
+            // Navbar scroll effect & Back to top
+            const backToTop = document.getElementById('backToTop');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    if (backToTop) {
+                        backToTop.classList.remove('opacity-0', 'invisible');
+                        backToTop.classList.add('opacity-100', 'visible');
+                    }
+                } else {
+                    if (backToTop) {
+                        backToTop.classList.add('opacity-0', 'invisible');
+                        backToTop.classList.remove('opacity-100', 'visible');
+                    }
+                }
+            });
+
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- Modern EduTrust Custom Select Component Engine ---
+            function initCustomSelect(selectEl) {
+                if (!selectEl || selectEl.dataset.customInit === 'true') return;
+                selectEl.dataset.customInit = 'true';
+                selectEl.classList.add('hidden');
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'custom-select-wrapper relative w-full';
+
+                let iconHtml = '';
+                if (selectEl.id === 'filterGender') iconHtml = '<i class="fas fa-user-group text-[9.5px] text-slate-400 mr-2 shrink-0"></i>';
+                else if (selectEl.id === 'filterClass') iconHtml = '<i class="fas fa-graduation-cap text-[9.5px] text-slate-400 mr-2 shrink-0"></i>';
+                else if (selectEl.id === 'filterSubject') iconHtml = '<i class="fas fa-book text-[9.5px] text-slate-400 mr-2 shrink-0"></i>';
+                else if (selectEl.id === 'filterMode') iconHtml = '<i class="fas fa-house text-[9.5px] text-[#2563EB] mr-2 shrink-0"></i>';
+                else if (selectEl.id === 'sortSelect') iconHtml = '<i class="fas fa-arrow-down-wide-short text-[9px] text-[#2563EB] mr-1.5 shrink-0"></i>';
+
+                const isMode = selectEl.id === 'filterMode';
+                const isSort = selectEl.id === 'sortSelect';
+
+                const trigger = document.createElement('button');
+                trigger.type = 'button';
+                trigger.className = isSort 
+                    ? 'w-full bg-white hover:bg-blue-50/40 border border-[#DBE5F2] hover:border-[#2563EB] rounded-lg px-2.5 py-1 text-[10.5px] font-bold text-[#0F1B3D] flex items-center justify-between cursor-pointer transition-all shadow-2xs h-[30px]'
+                    : isMode
+                    ? 'w-full bg-blue-50/50 hover:bg-blue-50/80 border-2 border-[#2563EB] rounded-lg px-2.5 py-1 text-[#0F1B3D] font-black text-[11px] h-[34px] shadow-2xs flex items-center justify-between cursor-pointer transition-all'
+                    : 'w-full bg-white hover:bg-blue-50/20 border border-[#DBE5F2] hover:border-blue-400 focus:border-[#2563EB] rounded-lg px-2.5 py-1 text-[#0F1B3D] font-bold text-[11px] h-[34px] shadow-2xs flex items-center justify-between cursor-pointer transition-all';
+
+                const leftContent = document.createElement('div');
+                leftContent.className = 'flex items-center min-w-0 flex-1 mr-1 truncate text-left';
+                leftContent.innerHTML = `${iconHtml}<span class="truncate selected-text font-bold"></span>`;
+
+                const chevron = document.createElement('i');
+                chevron.className = `fas fa-chevron-down text-[8px] ${isMode ? 'text-[#2563EB]' : 'text-slate-400'} transition-transform duration-200 shrink-0`;
+
+                trigger.appendChild(leftContent);
+                trigger.appendChild(chevron);
+
+                const menu = document.createElement('div');
+                menu.className = 'custom-select-menu hidden absolute left-0 top-[calc(100%+4px)] min-w-[170px] w-full bg-white rounded-xl shadow-[0_12px_32px_rgba(15,27,61,0.14),0_2px_8px_rgba(0,0,0,0.04)] border border-[#DBE5F2] p-1.5 z-[100] max-h-60 overflow-y-auto';
+
+                selectEl.parentNode.insertBefore(wrapper, selectEl);
+                wrapper.appendChild(selectEl);
+                wrapper.appendChild(trigger);
+                wrapper.appendChild(menu);
+
+                function syncUI() {
+                    const selIdx = selectEl.selectedIndex >= 0 ? selectEl.selectedIndex : 0;
+                    const selectedOpt = selectEl.options[selIdx];
+                    const labelSpan = trigger.querySelector('.selected-text');
+                    if (labelSpan && selectedOpt) {
+                        labelSpan.textContent = selectedOpt.textContent;
+                    }
+
+                    menu.querySelectorAll('.custom-select-item').forEach(item => {
+                        const val = item.dataset.value;
+                        const isSelected = val === selectEl.value;
+                        if (isSelected) {
+                            item.className = 'custom-select-item px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-[#2563EB] bg-blue-50 flex items-center justify-between transition-all cursor-pointer';
+                            const chk = item.querySelector('.check-icon');
+                            if (chk) chk.classList.remove('opacity-0');
+                        } else {
+                            item.className = 'custom-select-item px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-700 hover:text-[#2563EB] hover:bg-blue-50/70 flex items-center justify-between transition-all cursor-pointer';
+                            const chk = item.querySelector('.check-icon');
+                            if (chk) chk.classList.add('opacity-0');
+                        }
+                    });
+                }
+
+                function buildOptions() {
+                    menu.innerHTML = '';
+
+                    // Add mini search bar if list has more than 6 options
+                    if (selectEl.options.length > 6) {
+                        const searchBox = document.createElement('div');
+                        searchBox.className = 'p-1 pb-1.5 mb-1 border-b border-slate-100';
+                        searchBox.innerHTML = `
+                            <div class="relative">
+                                <i class="fas fa-magnifying-glass absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-[8.5px]"></i>
+                                <input type="text" placeholder="Search..." class="w-full pl-5 pr-2 py-1 text-[10.5px] bg-slate-50 hover:bg-white focus:bg-white rounded-md border border-slate-200 focus:border-[#2563EB] outline-none font-medium text-slate-800 transition-all">
+                            </div>
+                        `;
+                        const searchInput = searchBox.querySelector('input');
+                        searchInput.addEventListener('click', (e) => e.stopPropagation());
+                        searchInput.addEventListener('input', (e) => {
+                            const q = e.target.value.toLowerCase().trim();
+                            menu.querySelectorAll('.custom-select-item').forEach(item => {
+                                const txt = (item.dataset.text || '').toLowerCase();
+                                if (!q || txt.includes(q)) {
+                                    item.classList.remove('hidden');
+                                } else {
+                                    item.classList.add('hidden');
+                                }
+                            });
+                        });
+                        menu.appendChild(searchBox);
+                    }
+
+                    const itemsContainer = document.createElement('div');
+                    itemsContainer.className = 'space-y-0.5';
+
+                    Array.from(selectEl.options).forEach(opt => {
+                        const item = document.createElement('div');
+                        item.dataset.value = opt.value;
+                        item.dataset.text = opt.textContent;
+                        item.className = 'custom-select-item px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-slate-700 hover:text-[#2563EB] hover:bg-blue-50/70 flex items-center justify-between transition-all cursor-pointer';
+                        item.innerHTML = `
+                            <span class="truncate font-medium">${opt.textContent}</span>
+                            <i class="fas fa-check check-icon text-[#2563EB] text-[9px] opacity-0 transition-opacity ml-1.5 shrink-0"></i>
+                        `;
+                        item.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            selectEl.value = opt.value;
+                            syncUI();
+                            closeDropdown();
+                            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+                            if (typeof renderJobs === 'function') renderJobs();
+                        });
+                        itemsContainer.appendChild(item);
+                    });
+
+                    menu.appendChild(itemsContainer);
+                    syncUI();
+                }
+
+                function openDropdown() {
+                    document.querySelectorAll('.custom-select-menu').forEach(m => {
+                        if (m !== menu) {
+                            m.classList.add('hidden');
+                            m.closest('.custom-select-wrapper')?.querySelector('i.fa-chevron-down')?.classList.remove('rotate-180');
+                            const tr = m.closest('.custom-select-wrapper')?.querySelector('button');
+                            if (tr) tr.classList.remove('border-[#2563EB]', 'ring-2', 'ring-blue-500/20');
+                            const wr = m.closest('.custom-select-wrapper');
+                            if (wr) wr.style.zIndex = '';
+                        }
+                    });
+                    menu.classList.remove('hidden');
+                    chevron.classList.add('rotate-180');
+                    trigger.classList.add('border-[#2563EB]', 'ring-2', 'ring-blue-500/20');
+                    wrapper.style.zIndex = '99';
+
+                    const sInput = menu.querySelector('input');
+                    if (sInput) {
+                        sInput.value = '';
+                        menu.querySelectorAll('.custom-select-item').forEach(it => it.classList.remove('hidden'));
+                        setTimeout(() => sInput.focus(), 50);
+                    }
+                }
+
+                function closeDropdown() {
+                    menu.classList.add('hidden');
+                    chevron.classList.remove('rotate-180');
+                    trigger.classList.remove('border-[#2563EB]', 'ring-2', 'ring-blue-500/20');
+                    wrapper.style.zIndex = '';
+                }
+
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (menu.classList.contains('hidden')) {
+                        openDropdown();
+                    } else {
+                        closeDropdown();
+                    }
+                });
+
+                selectEl.addEventListener('change', () => {
+                    syncUI();
+                });
+
+                selectEl.refreshCustomSelect = function() {
+                    buildOptions();
+                };
+
+                buildOptions();
+            }
+
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.custom-select-menu').forEach(m => {
+                    m.classList.add('hidden');
+                    m.closest('.custom-select-wrapper')?.querySelector('i.fa-chevron-down')?.classList.remove('rotate-180');
+                    const tr = m.closest('.custom-select-wrapper')?.querySelector('button');
+                    if (tr) tr.classList.remove('border-[#2563EB]', 'ring-2', 'ring-blue-500/20');
+                    const wr = m.closest('.custom-select-wrapper');
+                    if (wr) wr.style.zIndex = '';
+                });
+            });
+
+            // --- Dynamic Class to Subject Mapping ---
+            const classSelect = document.getElementById('filterClass');
+            const subjectSelect = document.getElementById('filterSubject');
+
+            const classSubjectMap = {
+                "Nursery": ["English", "Hindi", "Maths", "EVS"],
+                "LKG": ["English", "Hindi", "Maths", "EVS"],
+                "UKG": ["English", "Hindi", "Maths", "EVS"],
+                "Class 1": ["English", "Hindi", "Mathematics", "EVS", "Computer"],
+                "Class 2": ["English", "Hindi", "Mathematics", "EVS", "Computer"],
+                "Class 3": ["English", "Hindi", "Mathematics", "EVS", "Computer"],
+                "Class 4": ["English", "Hindi", "Mathematics", "EVS", "Computer"],
+                "Class 5": ["English", "Hindi", "Mathematics", "EVS", "Computer"],
+                "Class 6": ["Mathematics", "Science", "English", "Hindi", "Social Science", "Sanskrit", "Computer"],
+                "Class 7": ["Mathematics", "Science", "English", "Hindi", "Social Science", "Sanskrit", "Computer"],
+                "Class 8": ["Mathematics", "Science", "English", "Hindi", "Social Science", "Sanskrit", "Computer"],
+                "Class 9": ["Mathematics", "Science", "English", "Hindi", "Social Science", "Computer"],
+                "Class 10": ["Mathematics", "Science", "English", "Hindi", "Social Science", "Computer"],
+                "Class 11": ["Physics", "Chemistry", "Biology", "Mathematics", "English", "Computer Science", "Accountancy", "Economics", "Business Studies", "History", "Political Science", "Geography"],
+                "Class 12": ["Physics", "Chemistry", "Biology", "Mathematics", "English", "Computer Science", "Accountancy", "Economics", "Business Studies", "History", "Political Science", "Geography"]
+            };
+
+            function updateSubjectsDropdown() {
+                const selectedClass = classSelect.value;
+                subjectSelect.innerHTML = '<option value="">All Subjects</option>';
+                
+                if (selectedClass && classSubjectMap[selectedClass]) {
+                    classSubjectMap[selectedClass].forEach(subj => {
+                        const opt = document.createElement('option');
+                        opt.value = subj;
+                        opt.textContent = subj;
+                        subjectSelect.appendChild(opt);
+                    });
+                } else {
+                    const allSubjsSet = new Set();
+                    Object.values(classSubjectMap).forEach(arr => arr.forEach(s => allSubjsSet.add(s)));
+                    allSubjsSet.forEach(subj => {
+                        const opt = document.createElement('option');
+                        opt.value = subj;
+                        opt.textContent = subj;
+                        subjectSelect.appendChild(opt);
+                    });
+                }
+
+                if (subjectSelect.refreshCustomSelect) {
+                    subjectSelect.refreshCustomSelect();
+                }
+            }
+
+            classSelect.addEventListener('change', () => {
+                updateSubjectsDropdown();
+                renderJobs();
+            });
+
+            // Initialize Custom Selects on all filter dropdowns
+            ['sortSelect', 'filterGender', 'filterClass', 'filterSubject', 'filterMode'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) initCustomSelect(el);
+            });
+
+            updateSubjectsDropdown();
+
+            // Budget slider value display
+            const feeSlider = document.getElementById('filterFee');
+            const budgetVal = document.getElementById('budgetVal');
+            if (feeSlider && budgetVal) {
+                feeSlider.addEventListener('input', () => {
+                    budgetVal.innerText = `₹${parseInt(feeSlider.value).toLocaleString()}/mo`;
+                    renderJobs();
+                });
+            }
+
+            // Real-time Filtering & Rendering Engine
+            const carouselTrack = document.getElementById('jobCarouselTrack');
+            const sortSelect = document.getElementById('sortSelect');
+            const applyBtn = document.getElementById('applyFiltersBtn');
+            const resetBtn = document.getElementById('resetFiltersBtn');
+            const resetDesktop = document.getElementById('resetFiltersDesktop');
+
+            function getFilteredJobs() {
+                const jobs = window.liveTuitionJobs || [];
+                
+                const cityQuery = document.getElementById('filterCity').value.trim().toLowerCase();
+                const selectedGender = document.getElementById('filterGender').value;
+                const selectedClass = document.getElementById('filterClass').value;
+                const selectedSubject = document.getElementById('filterSubject').value;
+                const selectedMode = document.getElementById('filterMode').value;
+                const maxBudget = parseInt(feeSlider.value) || 25000;
+
+                return jobs.filter(job => {
+                    // 1. City / Location Filter
+                    if (cityQuery && !(job.location || '').toLowerCase().includes(cityQuery)) {
+                        return false;
+                    }
+                    // 2. Gender Filter
+                    if (selectedGender && job.gender && job.gender !== 'No Preference' && job.gender !== 'Flexible' && job.gender.toLowerCase() !== selectedGender.toLowerCase()) {
+                        return false;
+                    }
+                    // 3. Class Filter
+                    if (selectedClass && job.tutorClass !== selectedClass) {
+                        return false;
+                    }
+                    // 4. Subject Filter
+                    if (selectedSubject && !((job.subject || '') + ' ' + (job.title || '')).toLowerCase().includes(selectedSubject.toLowerCase())) {
+                        return false;
+                    }
+                    // 5. Teaching Mode Filter
+                    if (selectedMode && !(job.mode || '').toLowerCase().includes(selectedMode.toLowerCase())) {
+                        return false;
+                    }
+                    // 6. Budget Slider Filter (Max Budget)
+                    if (job.budgetNum && job.budgetNum > maxBudget) {
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            function sortJobs(jobs, sortType) {
+                const copy = [...jobs];
+                if (sortType === 'budget-high') {
+                    return copy.sort((a, b) => (b.budgetNum || 0) - (a.budgetNum || 0));
+                } else if (sortType === 'budget-low') {
+                    return copy.sort((a, b) => (a.budgetNum || 0) - (b.budgetNum || 0));
+                } else { // 'latest' or default
+                    return copy.sort((a, b) => (b.id || 0) - (a.id || 0));
+                }
+            }
+
+            // Favourite system with LocalStorage persistence
+            window.toggleJobFavorite = function(jobId, btnElement) {
+                let favorites = JSON.parse(localStorage.getItem('favouriteTuitionJobs')) || [];
+                const icon = btnElement.querySelector('i');
+                const textSpan = btnElement.querySelector('span');
+                
+                btnElement.classList.add('scale-105', 'transition-transform');
+                setTimeout(() => btnElement.classList.remove('scale-105'), 200);
+
+                const index = favorites.indexOf(jobId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                    icon.classList.remove('fas', 'text-red-500');
+                    icon.classList.add('far');
+                    if(textSpan) textSpan.innerText = 'Favourite';
+                } else {
+                    favorites.push(jobId);
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'text-red-500');
+                    if(textSpan) textSpan.innerText = 'Saved';
+                }
+                localStorage.setItem('favouriteTuitionJobs', JSON.stringify(favorites));
+            };
+
+            // Carousel State Controller
+            let carouselAnimFrameId = null;
+            let isCarouselPaused = false;
+            let isCarouselDragging = false;
+            let isCarouselDragActive = false;
+            let carouselStartX = 0;
+            let carouselStartScrollLeft = 0;
+            let carouselResumeTimer = null;
+            const scrollSpeed = 0.8;
+            const dragThreshold = 6;
+
+            function stopJobCarousel() {
+                if (carouselAnimFrameId) {
+                    cancelAnimationFrame(carouselAnimFrameId);
+                    carouselAnimFrameId = null;
+                }
+            }
+
+            function scheduleCarouselResume() {
+                clearTimeout(carouselResumeTimer);
+                carouselResumeTimer = setTimeout(() => {
+                    const wrapper = document.getElementById('jobCarouselWrapper');
+                    const modal = document.getElementById('jobDetailsModal');
+                    const isModalOpen = modal && !modal.classList.contains('hidden');
+                    const isHovering = wrapper && wrapper.matches(':hover');
+                    if (!isCarouselDragging && !isHovering && !isModalOpen) {
+                        isCarouselPaused = false;
+                    }
+                }, 1200);
+            }
+
+            function startJobCarousel() {
+                stopJobCarousel();
+                isCarouselPaused = false;
+                isCarouselDragging = false;
+                isCarouselDragActive = false;
+
+                const wrapper = document.getElementById('jobCarouselWrapper');
+                const track = document.getElementById('jobCarouselTrack');
+                if (!wrapper || !track) return;
+
+                wrapper.style.overflowX = 'auto';
+                wrapper.style.overflowY = 'hidden';
+                wrapper.style.position = 'relative';
+                wrapper.style.width = '100%';
+                wrapper.style.cursor = 'pointer';
+                track.style.display = 'flex';
+                track.style.flexDirection = 'row';
+                track.style.flexWrap = 'nowrap';
+                track.style.width = 'max-content';
+                track.style.minWidth = 'max-content';
+                track.style.cursor = 'pointer';
+
+                if (!wrapper.dataset.manualControlsBound) {
+                    wrapper.dataset.manualControlsBound = 'true';
+
+                    wrapper.addEventListener('mouseenter', () => {
+                        isCarouselPaused = true;
+                        clearTimeout(carouselResumeTimer);
+                    });
+                    wrapper.addEventListener('mouseleave', () => {
+                        if (!isCarouselDragging) {
+                            isCarouselPaused = false;
+                        }
+                    });
+
+                    // Mouse Wheel Manual Horizontal Control
+                    wrapper.addEventListener('wheel', (e) => {
+                        isCarouselPaused = true;
+                        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                        wrapper.scrollLeft += delta;
+
+                        if (wrapper.scrollLeft >= (track.scrollWidth / 2)) {
+                            wrapper.scrollLeft = 0;
+                        } else if (wrapper.scrollLeft <= 0) {
+                            wrapper.scrollLeft = (track.scrollWidth / 2);
+                        }
+
+                        e.preventDefault();
+                        scheduleCarouselResume();
+                    }, { passive: false });
+
+                    // Pointer Events for Manual Mouse Dragging (LEFT ↔ RIGHT)
+                    const isInteractive = (target) => Boolean(target && target.closest('button, a, select, input, .btn, [onclick]'));
+
+                    const handlePointerDown = (e) => {
+                        if (e.button !== undefined && e.button !== 0) return;
+                        if (isInteractive(e.target)) return;
+
+                        isCarouselDragging = true;
+                        isCarouselDragActive = false;
+                        isCarouselPaused = true;
+                        clearTimeout(carouselResumeTimer);
+
+                        carouselStartX = e.clientX;
+                        carouselStartScrollLeft = wrapper.scrollLeft;
+                    };
+
+                    const handlePointerMove = (e) => {
+                        if (!isCarouselDragging) return;
+                        const deltaX = e.clientX - carouselStartX;
+
+                        if (!isCarouselDragActive) {
+                            if (Math.abs(deltaX) >= dragThreshold) {
+                                isCarouselDragActive = true;
+                            } else {
+                                return;
+                            }
+                        }
+
+                        wrapper.scrollLeft = carouselStartScrollLeft - deltaX;
+
+                        // Infinite loop in both directions
+                        if (wrapper.scrollLeft >= (track.scrollWidth / 2)) {
+                            wrapper.scrollLeft = 0;
+                            carouselStartX = e.clientX;
+                            carouselStartScrollLeft = 0;
+                        } else if (wrapper.scrollLeft <= 0) {
+                            wrapper.scrollLeft = (track.scrollWidth / 2);
+                            carouselStartX = e.clientX;
+                            carouselStartScrollLeft = track.scrollWidth / 2;
+                        }
+                    };
+
+                    const handlePointerUp = () => {
+                        if (isCarouselDragging) {
+                            isCarouselDragging = false;
+                            isCarouselDragActive = false;
+                            scheduleCarouselResume();
+                        }
+                    };
+
+                    if (window.PointerEvent) {
+                        wrapper.addEventListener('pointerdown', handlePointerDown);
+                        document.addEventListener('pointermove', handlePointerMove);
+                        document.addEventListener('pointerup', handlePointerUp);
+                        document.addEventListener('pointercancel', handlePointerUp);
+                        wrapper.addEventListener('pointerleave', handlePointerUp);
+                    } else {
+                        wrapper.addEventListener('mousedown', handlePointerDown);
+                        document.addEventListener('mousemove', (e) => {
+                            if (isCarouselDragging) {
+                                e.preventDefault();
+                                handlePointerMove(e);
+                            }
+                        });
+                        document.addEventListener('mouseup', handlePointerUp);
+
+                        wrapper.addEventListener('touchstart', (e) => {
+                            if (e.touches && e.touches[0]) handlePointerDown(e.touches[0]);
+                        }, { passive: true });
+                        wrapper.addEventListener('touchmove', (e) => {
+                            if (isCarouselDragging && e.touches && e.touches[0]) handlePointerMove(e.touches[0]);
+                        }, { passive: true });
+                        wrapper.addEventListener('touchend', handlePointerUp);
+                    }
+                }
+
+                function autoSlide() {
+                    if (!isCarouselPaused && !isCarouselDragging && wrapper && track) {
+                        wrapper.scrollLeft += scrollSpeed;
+                        if (wrapper.scrollLeft >= (track.scrollWidth / 2)) {
+                            wrapper.scrollLeft = 0;
+                        }
+                    }
+                    carouselAnimFrameId = requestAnimationFrame(autoSlide);
+                }
+                carouselAnimFrameId = requestAnimationFrame(autoSlide);
+            }
+
+            function renderJobs() {
+                const carouselWrapper = document.getElementById('jobCarouselWrapper');
+                const carouselTrack = document.getElementById('jobCarouselTrack');
+                if (!carouselWrapper || !carouselTrack) return;
+
+                // Point 10: Reset scroll position on every render/filter update
+                carouselWrapper.scrollLeft = 0;
+
+                const filtered = getFilteredJobs();
+                const sorted = sortJobs(filtered, sortSelect.value);
+
+                if (sorted.length === 0) {
+                    carouselTrack.innerHTML = `
+                        <div class="w-full text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm col-span-full">
+                            <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800 mb-1">No Live Tuition Jobs Yet</h3>
+                            <p class="text-sm text-gray-500 mb-4">When students submit Free Trial demo bookings, they will appear here live with real timestamps.</p>
+                        </div>
+                    `;
+                    stopJobCarousel();
+                    return;
+                }
+
+                const favorites = JSON.parse(localStorage.getItem('favouriteTuitionJobs')) || [];
+                let singleSetHtml = '';
+
+                sorted.forEach(job => {
+                    const isFav = favorites.includes(job.id);
+                    singleSetHtml += `
+                        <div class="job-carousel-card requirement-card bg-white/95 backdrop-blur-md shadow-soft border border-gray-100 p-3 flex flex-col justify-between gap-2 flex-shrink-0" style="border-radius:16px;">
+                            <!-- Top Header Row -->
+                            <div class="flex items-center justify-between gap-1.5 pb-2 border-b border-gray-100">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="bg-brand-50 text-brand-700 font-extrabold job-card-badge">ID: ${job.id}</span>
+                                    ${job.verified ? '<span class="bg-green-50 text-green-700 font-bold job-card-badge flex items-center gap-1"><i class="fas fa-check-circle"></i> Verified</span>' : ''}
+                                    ${job.urgent ? '<span class="bg-red-50 text-red-600 font-bold job-card-badge flex items-center gap-1"><i class="fas fa-bolt"></i> Urgent</span>' : ''}
+                                </div>
+                                <span class="text-[11px] text-gray-400 font-medium whitespace-nowrap"><i class="far fa-clock"></i> ${job.date}</span>
+                            </div>
+
+                            <!-- Title & Description -->
+                            <div>
+                                <h3 class="font-extrabold text-gray-900 job-title-compact">${job.title}</h3>
+                                <p class="text-gray-600 job-description-compact m-0">${job.description}</p>
+                            </div>
+
+                            <!-- Details Grid with Professional Icons -->
+                            <div class="job-details-grid bg-gray-50/80 text-[10px]">
+                                <div>
+                                    <span class="text-gray-400 block mb-0.5 text-[10px]">Location</span>
+                                    <strong class="text-gray-800 text-[11px] leading-tight block truncate"><i class="fas fa-map-marker-alt text-brand-600"></i> ${job.location}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-gray-400 block mb-0.5 text-[10px]">Class & Subject</span>
+                                    <strong class="text-gray-800 text-[11px] leading-tight block truncate"><i class="fas fa-graduation-cap text-brand-600"></i> ${job.tutorClass} (${job.subject})</strong>
+                                </div>
+                                <div>
+                                    <span class="text-gray-400 block mb-0.5 text-[10px]">Mode & Schedule</span>
+                                    <strong class="text-gray-800 text-[11px] leading-tight block truncate"><i class="fas fa-chalkboard text-brand-600"></i> ${job.mode}</strong>
+                                </div>
+                                <div>
+                                    <span class="text-gray-400 block mb-0.5 text-[10px]">Budget</span>
+                                    <strong class="text-brand-700 font-extrabold text-[11px] leading-tight block truncate"><i class="fas fa-wallet"></i> ${job.budget}</strong>
+                                </div>
+                            </div>
+
+                            <!-- Preferred Tutor Row -->
+                            <div class="text-[10px] text-gray-500 font-medium pt-0.5">
+                                Preferred Tutor: <span class="font-bold text-gray-800"><i class="fas fa-user text-brand-600"></i> ${job.gender}</span>
+                            </div>
+
+                            <!-- Dedicated Action Footer Container (Anchored at Bottom of Card) -->
+                            <div class="job-card-actions mt-auto pt-2 border-t border-gray-100/80 flex items-center gap-1.5 w-full">
+                                <button type="button" onclick="toggleJobFavorite('${job.id}', this)" class="favourite-btn bg-gray-100 hover:bg-gray-200 text-gray-700 job-action-btn font-semibold transition-all border-0 cursor-pointer flex-1 inline-flex items-center justify-center gap-1 whitespace-nowrap">
+                                    <i class="${isFav ? 'fas text-red-500' : 'far'} fa-heart text-xs"></i> <span>${isFav ? 'Saved' : 'Favourite'}</span>
+                                </button>
+                                <button type="button" class="view-btn view-job-btn bg-brand-50 hover:bg-brand-100 text-brand-700 job-action-btn font-semibold transition-colors border-0 cursor-pointer flex-1 inline-flex items-center justify-center gap-1 whitespace-nowrap" data-job-id="${job.id}">
+                                    <i class="far fa-eye text-xs"></i> <span>View</span>
+                                </button>
+                                <button type="button" data-job-id="${job.id}" data-job-title="${job.title}" onclick="applyForJobDirect('${job.id}', '${job.title}')" class="apply-btn bg-brand-600 hover:bg-brand-700 text-white job-action-btn font-semibold shadow-xs transition-colors border-0 cursor-pointer flex-1 inline-flex items-center justify-center gap-1 whitespace-nowrap">
+                                    <i class="fas fa-paper-plane text-xs"></i> <span>Apply</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            function updateCardWidths() {
+                const wrapper = document.getElementById('jobCarouselWrapper');
+                if (!wrapper) return;
+                const wrapperWidth = wrapper.clientWidth;
+                if (!wrapperWidth || wrapperWidth <= 0) return;
+
+                let cardsPerView = 4;
+                if (wrapperWidth >= 1200) {
+                    cardsPerView = 4;
+                } else if (wrapperWidth >= 850) {
+                    cardsPerView = 3;
+                } else if (wrapperWidth >= 580) {
+                    cardsPerView = 2;
+                } else {
+                    cardsPerView = 1;
+                }
+
+                const gap = 16;
+                const cardWidth = Math.floor((wrapperWidth - ((cardsPerView - 1) * gap)) / cardsPerView);
+
+                const cards = wrapper.querySelectorAll('.job-carousel-card');
+                cards.forEach(card => {
+                    card.style.flex = `0 0 ${cardWidth}px`;
+                    card.style.maxWidth = `${cardWidth}px`;
+                    card.style.width = `${cardWidth}px`;
+                    card.style.minWidth = `${cardWidth}px`;
+                });
+            }
+
+            window.addEventListener('resize', updateCardWidths);
+            document.addEventListener('DOMContentLoaded', () => {
+                const wrapperEl = document.getElementById('jobCarouselWrapper');
+                if (wrapperEl && window.ResizeObserver) {
+                    new ResizeObserver(updateCardWidths).observe(wrapperEl);
+                }
+            });
+
+            // Point 9: Duplicate cards for 3 or more jobs; single set for fewer
+            if (sorted.length >= 3) {
+                carouselTrack.innerHTML = singleSetHtml + singleSetHtml;
+                updateCardWidths();
+                startJobCarousel();
+            } else {
+                carouselTrack.innerHTML = singleSetHtml;
+                updateCardWidths();
+                stopJobCarousel();
+            }
+        }
+
+            function refreshAllFilterSelects() {
+                ['sortSelect', 'filterGender', 'filterClass', 'filterSubject', 'filterMode'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.refreshCustomSelect) el.refreshCustomSelect();
+                });
+            }
+
+            window.resetAllFilters = function() {
+                document.getElementById('filterForm').reset();
+                if(feeSlider) feeSlider.value = 25000;
+                if(budgetVal) budgetVal.innerText = '₹25,000/mo';
+                updateSubjectsDropdown();
+                refreshAllFilterSelects();
+                renderJobs();
+            };
+
+            window.quickFilterCity = function(city) {
+                document.getElementById('filterCity').value = city;
+                renderJobs();
+                if (window.innerWidth < 1024 && filterSidebar) {
+                    filterSidebar.classList.add('-translate-x-full');
+                }
+            };
+
+            window.quickFilterSubject = function(subj) {
+                const fSubj = document.getElementById('filterSubject');
+                if (fSubj) {
+                    fSubj.value = subj;
+                    if (fSubj.refreshCustomSelect) fSubj.refreshCustomSelect();
+                }
+                renderJobs();
+            };
+
+            if (applyBtn) {
+                applyBtn.addEventListener('click', () => {
+                    renderJobs();
+                    if (window.innerWidth < 1024 && filterSidebar) {
+                        filterSidebar.classList.add('-translate-x-full');
+                    }
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    setTimeout(() => {
+                        if(feeSlider) feeSlider.value = 25000;
+                        if(budgetVal) budgetVal.innerText = '₹25,000/mo';
+                        updateSubjectsDropdown();
+                        refreshAllFilterSelects();
+                        renderJobs();
+                    }, 50);
+                });
+            }
+
+            if (resetDesktop) {
+                resetDesktop.addEventListener('click', () => {
+                    document.getElementById('filterForm').reset();
+                    if(feeSlider) feeSlider.value = 25000;
+                    if(budgetVal) budgetVal.innerText = '₹25,000/mo';
+                    updateSubjectsDropdown();
+                    refreshAllFilterSelects();
+                    renderJobs();
+                });
+            }
+
+            if (sortSelect) {
+                sortSelect.addEventListener('change', renderJobs);
+            }
+
+            // Real-time filter event listeners
+            const filterInputs = document.querySelectorAll('#filterForm input, #filterForm select');
+            filterInputs.forEach(input => {
+                input.addEventListener('input', renderJobs);
+                input.addEventListener('change', renderJobs);
+            });
+
+            // Initial render on page load
+            renderJobs();
+
+            // Strict Card Hover State Rules:
+            // 1. Cursor over any .job-carousel-card or #jobCarouselWrapper => SLIDER PAUSED
+            // 2. Cursor leaves card & wrapper area => SLIDER RESUMES
+            document.addEventListener('mouseover', function(e) {
+                const card = e.target.closest('.job-carousel-card, #jobCarouselWrapper');
+                if (card) {
+                    isCarouselPaused = true;
+                    clearTimeout(carouselResumeTimer);
+                }
+            });
+
+            document.addEventListener('mouseout', function(e) {
+                const card = e.target.closest('.job-carousel-card, #jobCarouselWrapper');
+                if (!card) return;
+
+                const related = e.relatedTarget;
+                if (related && (card.contains(related) || (related.closest && related.closest('.job-carousel-card, #jobCarouselWrapper')))) {
+                    return; // Still inside card or wrapper -> STAY PAUSED
+                }
+
+                const modal = document.getElementById('jobDetailsModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    return; // Modal is open -> STAY PAUSED
+                }
+
+                if (!isCarouselDragging) {
+                    isCarouselPaused = false;
+                }
+            });
+
+        });
+
+        let selectedJobId = null;
+
+        window.openJobDetails = function(jobId) {
+            selectedJobId = String(jobId);
+            isCarouselPaused = true; // Freeze slider when popup is open
+
+            const jobs = window.liveTuitionJobs || [];
+            const job = jobs.find(
+                j =>
+                    String(j.id) === String(jobId) ||
+                    String(j.raw_id) === String(jobId) ||
+                    String(j.job_id) === String(jobId)
+            );
+
+            if (!job) {
+                console.error('Unable to open job details.', {
+                    requestedJobId: jobId,
+                    availableJobs: jobs
+                });
+                return;
+            }
+
+            const modal = document.getElementById('jobDetailsModal');
+            const modalCard = document.getElementById('jobDetailsModalCard');
+
+            if (!modal || !modalCard) {
+                console.error('Job Details Modal elements not found.');
+                return;
+            }
+
+            document.getElementById('modalJobBadgeId').textContent = `ID: #${job.id}`;
+            
+            const verBadge = document.getElementById('modalJobBadgeVerified');
+            if (verBadge) {
+                if (job.verified !== false) {
+                    verBadge.classList.remove('hidden');
+                } else {
+                    verBadge.classList.add('hidden');
+                }
+            }
+
+            const urgBadge = document.getElementById('modalJobBadgeUrgent');
+            if (urgBadge) {
+                if (job.urgent) {
+                    urgBadge.classList.remove('hidden');
+                } else {
+                    urgBadge.classList.add('hidden');
+                }
+            }
+
+            const headerPostedEl = document.getElementById('modalJobHeaderPosted');
+            if (headerPostedEl) {
+                headerPostedEl.textContent = `Posted on ${job.date || 'Recently'}`;
+            }
+
+            document.getElementById('modalJobTitle').textContent = job.title || 'Tuition Job Requirement';
+            
+            const locHeaderEl = document.getElementById('modalJobLocationHeader');
+            if (locHeaderEl) {
+                locHeaderEl.textContent = job.location || job.city || 'India';
+            }
+            
+            const subSummaryEl = document.getElementById('modalJobSubSummary');
+            if (subSummaryEl) {
+                subSummaryEl.textContent = `A student has submitted a demo booking request for ${job.subject || 'relevant subject'} (${job.tutorClass || 'Class'}) in ${job.location || 'India'}. Please review the details below and take the required action.`;
+            }
+
+            // Job Details Panel
+            document.getElementById('modalJobLocation').textContent = job.location || job.city || 'India';
+            document.getElementById('modalJobClassSubject').textContent = `${job.tutorClass || ''} (${job.subject || ''})`;
+            
+            const streamPill = document.getElementById('modalJobStreamPill');
+            if (streamPill) {
+                if (job.stream) {
+                    streamPill.textContent = `${job.stream} Stream`;
+                } else if (job.tutorClass && (job.tutorClass.includes('11') || job.tutorClass.includes('12'))) {
+                    streamPill.textContent = 'Higher Secondary';
+                } else {
+                    streamPill.textContent = 'All Subjects Welcome';
+                }
+            }
+
+            document.getElementById('modalJobModeSchedule').textContent = job.mode || 'Home Tuition';
+            
+            const schPill = document.getElementById('modalJobSchedulePill');
+            if (schPill) {
+                schPill.textContent = job.days || 'Flexible Timing';
+            }
+
+            const prefSch = document.getElementById('modalJobPreferredSchedule');
+            if (prefSch) {
+                prefSch.textContent = job.days || 'Flexible';
+            }
+
+            document.getElementById('modalJobBudget').textContent = job.budget || '₹5,000 / month';
+            
+            const tutorPrefEl = document.getElementById('modalJobTutorPref');
+            if (tutorPrefEl) {
+                tutorPrefEl.textContent = job.gender && job.gender !== 'No Preference' && job.gender !== 'Flexible' 
+                    ? `Looking for ${job.gender} tutor who can explain concepts clearly and help with regular practice.`
+                    : `Experienced and friendly tutors who can explain concepts clearly and help with regular practice.`;
+            }
+
+            document.getElementById('modalJobDescription').textContent = job.requirement || job.description || 'Focus on concepts, doubt solving and board exam preparation.';
+
+            // Right Sidebar "About the Student"
+            const sbReqType = document.getElementById('modalSidebarReqType');
+            if (sbReqType) sbReqType.textContent = job.type || 'Demo Booking';
+
+            const sbLevel = document.getElementById('modalSidebarLevel');
+            if (sbLevel) sbLevel.textContent = job.tutorClass || 'Class 10';
+
+            const sbSubject = document.getElementById('modalSidebarSubject');
+            if (sbSubject) sbSubject.textContent = job.subject || 'All Subjects';
+
+            const sbLoc = document.getElementById('modalSidebarLocation');
+            if (sbLoc) sbLoc.textContent = job.location || 'India';
+
+            const sbMode = document.getElementById('modalSidebarMode');
+            if (sbMode) sbMode.textContent = job.mode || 'Home Tuition';
+
+            const sbSch = document.getElementById('modalSidebarSchedule');
+            if (sbSch) sbSch.textContent = job.days || 'Flexible';
+
+            const sbBudget = document.getElementById('modalSidebarBudget');
+            if (sbBudget) sbBudget.textContent = job.budget || '₹5,000 / month';
+
+            const sbPosted = document.getElementById('modalSidebarPosted');
+            if (sbPosted) sbPosted.textContent = job.date || 'Recently';
+
+            document.body.style.overflow = 'hidden';
+            modal.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                modalCard.classList.remove('scale-95', 'opacity-0');
+                modalCard.classList.add('scale-100', 'opacity-100');
+            });
+        };
+
+        window.closeJobDetailsModal = function() {
+            const modal = document.getElementById('jobDetailsModal');
+            const card = document.getElementById('jobDetailsModalCard');
+            if (!modal || !card) return;
+
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+
+                const wrapper = document.getElementById('jobCarouselWrapper');
+                if (wrapper && !wrapper.matches(':hover')) {
+                    isCarouselPaused = false;
+                }
+            }, 200);
+        };
+
+        window.applyForSelectedJob = function() {
+            if (!selectedJobId) return;
+
+            const job = (window.liveTuitionJobs || []).find(
+                j => String(j.id) === String(selectedJobId) || String(j.raw_id) === String(selectedJobId)
+            );
+
+            const title = job ? job.title : `Job #${selectedJobId}`;
+
+            closeJobDetailsModal();
+
+            if (typeof applyForJobDirect === 'function') {
+                applyForJobDirect(selectedJobId, title);
+            }
+        };
+
+        // Global Event Delegation for View Buttons (handles original & duplicated slider cards)
+        document.addEventListener('click', function(event) {
+            const viewButton = event.target.closest('.view-btn, .view-job-btn');
+
+            if (!viewButton) return;
+
+            const jobId = viewButton.dataset.jobId || viewButton.getAttribute('data-job-id');
+
+            if (!jobId) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            window.openJobDetails(jobId);
+        });
+
+        // Global Event Delegation for Apply Buttons (handles original & duplicated slider cards)
+        document.addEventListener('click', function(event) {
+            const applyButton = event.target.closest('.apply-btn');
+            if (!applyButton) return;
+
+            const jobId = applyButton.dataset.jobId || applyButton.getAttribute('data-job-id');
+            const jobTitle = applyButton.dataset.jobTitle || applyButton.getAttribute('data-job-title');
+
+            if (!jobId) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            handleTutorApply(jobId, jobTitle);
+        });
+
+        // Close on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeJobDetailsModal();
+            }
+        });
+
+        // Close on Backdrop Click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('jobDetailsModal');
+            if (modal && !modal.classList.contains('hidden') && e.target === modal) {
+                closeJobDetailsModal();
+            }
+        });
+
+        let isTeacherLoggedIn = ("{% if request.session.role == 'Teacher' or request.session.teacher_name or request.session.user_role == 'Teacher' or request.user.is_authenticated %}true{% else %}false{% endif %}" === "true");
+        let pendingApplicationJobId = sessionStorage.getItem('pendingJobId') || null;
+        let pendingApplicationJobTitle = sessionStorage.getItem('pendingJobTitle') || null;
+
+        function handleTutorApply(jobId, jobTitle) {
+            sessionStorage.setItem('pendingJobId', String(jobId));
+            sessionStorage.setItem('pendingJobTitle', jobTitle || `Tuition Job #${jobId}`);
+            if (typeof window.openTutorLoginModal === 'function') {
+                window.openTutorLoginModal(jobId, jobTitle);
+            }
+        }
+        window.handleTutorApply = handleTutorApply;
+
+        function applyForJobDirect(jobId, jobTitle) {
+            handleTutorApply(jobId, jobTitle);
+        }
+        window.applyForJobDirect = applyForJobDirect;
+
+        let applicationSubmissionInProgress = false;
+
+        function submitJobApplication(jobId, jobTitle) {
+            if (applicationSubmissionInProgress) return;
+
+            const targetJobId = jobId || pendingApplicationJobId || sessionStorage.getItem('pendingJobId');
+            const targetJobTitle = jobTitle || pendingApplicationJobTitle || sessionStorage.getItem('pendingJobTitle') || 'Tuition Job Application';
+
+            if (!targetJobId) return;
+
+            applicationSubmissionInProgress = true;
+
+            fetch('/api/jobs/apply/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    job_id: targetJobId,
+                    job_title: targetJobTitle,
+                    source_page: 'Latest Job Page'
+                })
+            })
+            .then(res => {
+                applicationSubmissionInProgress = false;
+                if (res.status === 401) {
+                    isTeacherLoggedIn = false;
+                    openTutorLoginModal();
+                    throw new Error('Unauthenticated');
+                }
+                return res.json();
+            })
+            .then(data => {
+                applicationSubmissionInProgress = false;
+                if (data.status === 'already_applied') {
+                    showAlreadyAppliedPopup(data.application_id, data.applied_at, data.current_status);
+                } else if (data && (data.status === 'success' || data.application_id)) {
+                    sessionStorage.removeItem('pendingJobId');
+                    sessionStorage.removeItem('pendingJobTitle');
+                    showSuccessPopup(data.application_id);
+                } else {
+                    sessionStorage.removeItem('pendingJobId');
+                    sessionStorage.removeItem('pendingJobTitle');
+                    alert(data.message || 'Unable to submit application. Please try again.');
+                }
+            })
+            .catch(err => {
+                applicationSubmissionInProgress = false;
+                if (err.message !== 'Unauthenticated') {
+                    console.log('Apply error:', err);
+                }
+            });
+        }
+
+        function showAlreadyAppliedPopup(appId, appliedAt, status) {
+            const modal = document.getElementById('alreadyAppliedModal');
+            const card = document.getElementById('alreadyAppliedModalCard');
+            const idSpan = document.getElementById('alreadyAppliedAppId');
+            const dateSpan = document.getElementById('alreadyAppliedDate');
+            const statusSpan = document.getElementById('alreadyAppliedStatus');
+
+            if (idSpan) idSpan.textContent = appId || 'APP-1001';
+            if (dateSpan) dateSpan.textContent = appliedAt || 'Recently';
+            if (statusSpan) statusSpan.textContent = status || 'Submitted';
+
+            if (modal && card) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    card.classList.remove('scale-95', 'opacity-0');
+                    card.classList.add('scale-100', 'opacity-100');
+                });
+            }
+        }
+
+        function closeAlreadyAppliedPopup() {
+            const modal = document.getElementById('alreadyAppliedModal');
+            const card = document.getElementById('alreadyAppliedModalCard');
+            if (!modal || !card) return;
+
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }, 200);
+        }
+
+        function updateApplyButtonState(jobId) {
+            // Apply button remains active as "Apply" to allow other users to apply
+        }
+
+        function copySuccessApplicationId(event) {
+            if (event) event.stopPropagation();
+            const appIdEl = document.getElementById('successAppIdDisplay') || document.getElementById('successAppId') || document.getElementById('tutorJobSuccessAppId');
+            const btnText = document.getElementById('copyAppIdBtnText');
+            const icon = document.getElementById('copyAppIdIcon');
+            const textToCopy = appIdEl ? appIdEl.textContent.trim() : '';
+
+            if (!textToCopy) return;
+
+            const setCopiedState = () => {
+                if (btnText) btnText.textContent = 'Copied!';
+                if (icon) icon.className = 'fas fa-check text-emerald-600 text-sm';
+                setTimeout(() => {
+                    if (btnText) btnText.textContent = 'Copy';
+                    if (icon) icon.className = 'far fa-copy text-sm group-hover:scale-110 transition-transform';
+                }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(setCopiedState).catch(() => fallbackCopy(textToCopy));
+            } else {
+                fallbackCopy(textToCopy);
+            }
+
+            function fallbackCopy(text) {
+                const temp = document.createElement('input');
+                temp.value = text;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                setCopiedState();
+            }
+        }
+        window.copySuccessApplicationId = copySuccessApplicationId;
+
+        function showSuccessPopup(appId) {
+            const popup = document.getElementById('jobAppSuccessPopup') || document.getElementById('tutorJobSuccessModal');
+            const content = document.getElementById('successPopupContent') || document.getElementById('tutorJobSuccessCard');
+            const appIdDisplay = document.getElementById('successAppIdDisplay');
+            const appIdEl = document.getElementById('successAppId');
+            const tutorAppIdEl = document.getElementById('tutorJobSuccessAppId');
+
+            const cleanAppId = appId ? (String(appId).startsWith('EDU-APP-') || String(appId).startsWith('APP-') ? String(appId) : `EDU-APP-${appId}`) : 'EDU-APP-000001';
+            if (appIdDisplay) appIdDisplay.textContent = cleanAppId;
+            if (appIdEl) appIdEl.textContent = cleanAppId;
+            if (tutorAppIdEl) tutorAppIdEl.textContent = cleanAppId;
+
+            if (popup) {
+                popup.classList.remove('hidden');
+                popup.style.display = 'flex';
+                setTimeout(() => {
+                    popup.classList.remove('opacity-0');
+                    if (content) content.classList.add('scale-100', 'pop-in');
+                }, 10);
+            }
+        }
+        window.showSuccessPopup = showSuccessPopup;
+
+        function closeSuccessPopup() {
+            const popup = document.getElementById('jobAppSuccessPopup') || document.getElementById('tutorJobSuccessModal');
+            const content = document.getElementById('successPopupContent') || document.getElementById('tutorJobSuccessCard');
+            if (content) {
+                content.classList.remove('scale-100', 'pop-in');
+                content.classList.add('scale-95');
+            }
+            if (popup) {
+                popup.classList.add('opacity-0');
+                setTimeout(() => {
+                    popup.classList.add('hidden');
+                    popup.style.display = 'none';
+                }, 200);
+            }
+        }
+        window.closeSuccessPopup = closeSuccessPopup;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const pendingId = sessionStorage.getItem('pendingJobId');
+            const pendingTitle = sessionStorage.getItem('pendingJobTitle');
+            if (pendingId && isTeacherLoggedIn) {
+                sessionStorage.removeItem('pendingJobId');
+                sessionStorage.removeItem('pendingJobTitle');
+                submitJobApplication(pendingId, pendingTitle);
+            }
+        });
+
+        // Close Modals on ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeJobDetailsModal();
+                closeTutorLoginModal();
+            }
+        });
+
+        // Close Tutor Login Modal on Backdrop Click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('tutorLoginModal');
+            if (modal && !modal.classList.contains('hidden') && e.target === modal) {
+                closeTutorLoginModal();
+            }
+        });
+    </script>
+
+    <!-- Same-Page Teacher/Tutor Login Modal (Reusable Component) -->
+    {% include "components/tutor_login_modal.html" %}
+
+    <!-- ALREADY APPLIED MODAL -->
+    <div id="alreadyAppliedModal" class="fixed inset-0 z-[25000] hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 fade-in">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 text-center m-4">
+            <button type="button" onclick="closeAlreadyAppliedPopup()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center border-0 cursor-pointer text-base font-bold">
+                ✕
+            </button>
+            <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg shadow-amber-500/20">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-slate-900 mb-1">Already Applied</h3>
+            <p class="text-slate-500 text-xs font-medium mb-4">You have already applied for this tuition requirement.</p>
+            
+            <div class="bg-slate-50 rounded-2xl p-4 mb-6 text-left border border-slate-100 space-y-2.5 text-xs">
+                <div class="flex justify-between items-center"><span class="text-slate-500 font-semibold">Application ID:</span><span id="alreadyAppId" class="font-extrabold text-brand-600">APP-XXXXXX</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500 font-semibold">Applied Date:</span><span id="alreadyAppDate" class="font-bold text-slate-800">14 Aug 2026</span></div>
+                <div class="flex justify-between items-center"><span class="text-slate-500 font-semibold">Current Status:</span><span id="alreadyAppStatus" class="font-bold text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full text-[10px]">Applied</span></div>
+            </div>
+
+            <button type="button" onclick="closeAlreadyAppliedPopup()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3.5 rounded-xl transition-all border-0 cursor-pointer text-xs uppercase tracking-wider shadow-md">
+                Got It
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- PREMIUM EDUTRUST APPLICATION SUBMITTED CONFIRMATION MODAL -->
+    <!-- ========================================================= -->
+    <div id="jobAppSuccessPopup" class="hidden fixed inset-0 z-[9999999] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-md transition-all duration-300 opacity-0" aria-hidden="true" role="dialog" aria-modal="true">
+        <div id="successPopupContent" onclick="event.stopPropagation()" class="relative w-full max-w-[390px] bg-gradient-to-b from-[#fbfdff] via-white to-[#f4f8fe] rounded-[22px] sm:rounded-[24px] p-4 sm:p-5 shadow-2xl shadow-blue-900/15 border border-[#D9E3F0] text-center overflow-hidden transform scale-95 transition-all duration-300">
+            
+            <!-- Top Right Close Button -->
+            <button type="button" onclick="closeSuccessPopup()" aria-label="Close" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-100/80 hover:bg-rose-500 hover:text-white text-slate-400 flex items-center justify-center text-xs transition-all border border-slate-200/60 cursor-pointer z-50 shadow-2xs">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Subtle Background Decorative Graphic Shapes -->
+            <div class="absolute -top-10 -left-10 w-28 h-28 rounded-full bg-blue-100/30 blur-xl pointer-events-none select-none"></div>
+            <div class="absolute -bottom-10 -right-10 w-28 h-28 rounded-full bg-emerald-100/30 blur-xl pointer-events-none select-none"></div>
+            
+            <!-- Bottom Left Botanical Leaves Background Accent -->
+            <div class="absolute bottom-0 left-0 w-20 h-24 pointer-events-none select-none opacity-20 z-0">
+                <svg viewBox="0 0 100 120" fill="none" class="w-full h-full text-teal-400" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-10 130C5 90 25 60 55 50C40 70 35 100 25 130Z" fill="currentColor"/>
+                    <path d="M10 90C25 60 55 50 80 45C60 60 50 85 40 110Z" fill="currentColor" fill-opacity="0.7"/>
+                    <path d="M30 60C45 35 75 25 100 20C80 35 70 60 60 80Z" fill="currentColor" fill-opacity="0.5"/>
+                </svg>
+            </div>
+
+            <!-- Bottom Right Decorative Leaves Accent -->
+            <div class="absolute bottom-0 right-0 w-20 h-24 pointer-events-none select-none opacity-20 z-0">
+                <svg viewBox="0 0 100 120" fill="none" class="w-full h-full text-blue-400" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M110 130C95 90 75 60 45 50C60 70 65 100 75 130Z" fill="currentColor"/>
+                    <path d="M90 90C75 60 45 50 20 45C40 60 50 85 60 110Z" fill="currentColor" fill-opacity="0.7"/>
+                </svg>
+            </div>
+
+            <!-- Right Side Watermark Document Outline Graphic -->
+            <div class="absolute top-1/2 right-1 -translate-y-1/2 w-20 h-24 pointer-events-none select-none opacity-10 z-0">
+                <svg viewBox="0 0 100 120" fill="none" class="w-full h-full text-blue-500" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="15" y="10" width="70" height="95" rx="10" stroke="currentColor" stroke-width="3" stroke-dasharray="4 4" fill="#f0f7ff"/>
+                    <circle cx="80" cy="90" r="14" fill="#3b82f6"/>
+                    <path d="M74 90L78 94L87 85" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Top Left Decorative Handwritten Text -->
+            <div class="absolute top-4 left-3 text-left select-none pointer-events-none edutrust-handwriting text-[#2563eb] text-[10.5px] sm:text-[11px] font-bold leading-tight rotate-[-8deg] opacity-90 hidden xs:block z-10">
+                Keep<br>Learning<br><span class="text-indigo-600">Keep Growing</span>
+            </div>
+
+            <!-- Top Right Decorative Handwritten Text -->
+            <div class="absolute top-4 right-10 text-right select-none pointer-events-none edutrust-handwriting text-[#2563eb] text-[10.5px] sm:text-[11px] font-bold leading-tight rotate-[8deg] opacity-90 hidden xs:block z-10">
+                Great<br>Opportunities<br><span class="text-indigo-600">Ahead!</span>
+            </div>
+
+            <div class="relative z-10">
+                <!-- TOP SUCCESS AREA: Green Circular Check Icon + Glowing Ring + Celebratory Particles -->
+                <div class="relative mx-auto mb-2 w-20 h-20 flex items-center justify-center">
+                    <!-- Celebratory Confetti Particles -->
+                    <div class="absolute top-1 left-4 w-1.5 h-3 rounded-full bg-teal-400 rotate-[-30deg] shadow-xs"></div>
+                    <div class="absolute top-1 right-4 w-1.5 h-3 rounded-full bg-blue-500 rotate-[30deg] shadow-xs"></div>
+                    <div class="absolute top-9 left-1 w-2 h-2 rounded-full bg-amber-400"></div>
+                    <div class="absolute top-9 right-1 w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                    <span class="absolute -top-1 right-7 text-blue-400 text-[9px] font-bold select-none">✦</span>
+                    <span class="absolute bottom-1 left-5 text-blue-400 text-[9px] font-bold select-none">✦</span>
+                    <span class="absolute top-4 right-2 text-amber-400 text-xs font-bold select-none">✨</span>
+                    <div class="absolute bottom-0 right-5 w-1.5 h-3 rounded-full bg-blue-400 rotate-[-45deg]"></div>
+                    <div class="absolute bottom-1 left-3 w-2.5 h-1 rounded-full bg-teal-400 rotate-[20deg]"></div>
+
+                    <!-- Outer Glowing Soft Ring -->
+                    <div class="w-18 h-18 rounded-full bg-[#10b981]/15 flex items-center justify-center shadow-inner">
+                        <!-- Inner Glowing Soft Ring -->
+                        <div class="w-14 h-14 rounded-full bg-[#10b981]/25 flex items-center justify-center shadow-xs">
+                            <!-- Main Green Check Circle -->
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#059669] to-[#10b981] text-white flex items-center justify-center text-base sm:text-lg shadow-md shadow-emerald-500/35 transform hover:scale-105 transition-transform duration-300">
+                                <i class="fas fa-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN HEADING -->
+                <h3 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight mb-0.5">
+                    Application <span class="text-[#2563eb]">Submitted!</span>
+                </h3>
+
+                <!-- SUBTITLE -->
+                <p class="text-[11px] sm:text-[11.5px] text-slate-600 font-medium leading-relaxed max-w-[290px] mx-auto mb-2.5">
+                    Your application has been submitted successfully.<br>
+                    <span class="text-slate-500 text-[10.5px]">We’ll keep you updated via email and dashboard.</span>
+                </p>
+
+                <!-- APPLICATION ID SECTION -->
+                <div class="bg-white rounded-xl border border-blue-200/90 p-2 sm:p-2.5 mb-2 shadow-2xs flex items-center justify-between gap-2.5 text-left">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center text-sm border border-blue-100/80 shadow-2xs shrink-0">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[9px] font-bold text-slate-400 block leading-tight uppercase tracking-wider">Application ID</span>
+                            <strong id="successAppIdDisplay" class="text-sm sm:text-base font-black text-[#2563eb] font-mono tracking-tight truncate block leading-tight">APP-1001</strong>
+                            <span id="successAppId" class="hidden"></span>
+                            <span id="tutorJobSuccessAppId" class="hidden"></span>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="copySuccessApplicationId(event)" class="flex flex-col items-center justify-center px-2.5 py-1 rounded-lg bg-blue-50/80 hover:bg-blue-100 text-[#2563eb] border border-blue-200/80 transition-all cursor-pointer group shrink-0 shadow-2xs" title="Copy Application ID">
+                        <i id="copyAppIdIcon" class="far fa-copy text-xs group-hover:scale-110 transition-transform"></i>
+                        <span id="copyAppIdBtnText" class="text-[9px] font-extrabold mt-0.5">Copy</span>
+                    </button>
+                </div>
+
+                <!-- ONE CLEAN INFORMATION / UPDATE PANEL -->
+                <div class="bg-blue-50/70 border border-blue-100/90 rounded-xl p-2 sm:p-2.5 mb-2.5 text-left flex items-start gap-2">
+                    <div class="w-4 h-4 rounded-full bg-[#2563eb] text-white flex items-center justify-center text-[8.5px] shrink-0 mt-0.5 shadow-2xs">
+                        <i class="fas fa-info"></i>
+                    </div>
+                    <p class="text-[10px] sm:text-[10.5px] text-slate-700 font-medium leading-snug m-0">
+                        You will receive an email notification once updated. Check status anytime in dashboard.
+                    </p>
+                </div>
+
+                <!-- BOTTOM ACTION: "Got It!" Button -->
+                <button type="button" onclick="closeSuccessPopup()" class="w-full py-2.5 px-4 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] text-white font-black text-xs tracking-wider uppercase rounded-xl shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 transition-all duration-200 flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                    <i class="fas fa-check text-[11px]"></i>
+                    <span>Got It!</span>
+                    <i class="fas fa-arrow-right text-[11px] ml-0.5"></i>
+                </button>
+
+                <!-- FOOTER -->
+                <div class="flex items-center justify-center gap-2 mt-2.5 pt-2 border-t border-slate-100 select-none">
+                    <div class="h-[1px] w-6 sm:w-10 bg-slate-200"></div>
+                    <span class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 tracking-[0.16em] uppercase">THANK YOU FOR CHOOSING EDUTRUST</span>
+                    <div class="h-[1px] w-6 sm:w-10 bg-slate-200"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <style>
+        .success-circle {
+            stroke-dasharray: 226;
+            stroke-dashoffset: 226;
+            animation: circleAnim 0.6s ease-out 0.2s forwards;
+        }
+        .success-check {
+            stroke-dasharray: 60;
+            stroke-dashoffset: 60;
+            animation: checkAnim 0.4s ease-out 0.7s forwards;
+        }
+        @keyframes circleAnim { to { stroke-dashoffset: 0; } }
+        @keyframes checkAnim { to { stroke-dashoffset: 0; } }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: popIn 0.5s ease-out forwards; }
+    </style>
+</body>
+
+</html>

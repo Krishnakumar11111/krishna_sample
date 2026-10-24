@@ -1,0 +1,1089 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: STUDY MATERIAL & ACADEMIC VAULT          -->
+<!-- ======================================================== -->
+<div id="teacherModule_study_material" class="teacher-module-view space-y-3.5 hidden">
+
+    <!-- MODULE HEADER (COMPACT & CLEAN) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-white dark:bg-slate-900 p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs font-bold">
+                    <i class="fas fa-folder-open text-[11px]"></i>
+                </span>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Study Material & Academic Vault</h2>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Manage DPPs, chapter notes, formula sheets, mock quizzes, PYQ banks, NCERT solutions and lecture slides with upload date, time, and day details.</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openUploadMaterialModal()" class="px-2.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors border-0 cursor-pointer flex items-center gap-1.5 shadow-xs">
+                <i class="fas fa-file-upload text-[11px]"></i> <span>+ Upload Study Material</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- METRIC SUMMARY CARDS (COMPACT 4-GRID) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <!-- Total Uploads -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Total Materials</span>
+                <i class="fas fa-layer-group text-amber-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-amber-600 leading-tight">8 Documents</div>
+            <p class="text-[10px] text-slate-400">Active repository</p>
+        </div>
+
+        <!-- DPP & Worksheets -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">DPPs & Worksheets</span>
+                <i class="fas fa-tasks text-indigo-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-indigo-600 leading-tight">3 Practice Sets</div>
+            <p class="text-[10px] text-slate-400">Daily practice assignments</p>
+        </div>
+
+        <!-- Notes & Formula Sheets -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Notes & Formulas</span>
+                <i class="fas fa-book-open text-rose-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-rose-600 leading-tight">3 Revision Notes</div>
+            <p class="text-[10px] text-slate-400">Handwritten & mind maps</p>
+        </div>
+
+        <!-- Total Downloads -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Total Downloads</span>
+                <i class="fas fa-download text-emerald-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-emerald-600 leading-tight">1,840+</div>
+            <p class="text-[10px] text-slate-400">By enrolled students</p>
+        </div>
+    </div>
+
+    <!-- FILTER TOOLBAR (SEARCH + TYPE + CLASS + SUBJECT + COURSE DROPDOWNS) -->
+    <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2 items-center">
+            
+            <!-- 1. Search Box -->
+            <div class="lg:col-span-3 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                <input type="text" id="matSearchInput" oninput="applyMaterialFilters()" placeholder="Search title, chapter, topic, keyword..." class="w-full bg-slate-50/80 hover:bg-white focus:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:focus:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-medium rounded-lg pl-8 pr-7 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all shadow-2xs">
+                <button type="button" onclick="document.getElementById('matSearchInput').value=''; applyMaterialFilters();" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-[10px] border-0 bg-transparent cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- 2. Custom Material Type Dropdown -->
+            <div class="lg:col-span-3 relative custom-mat-dropdown-container">
+                <input type="hidden" id="matTypeFilter" value="all">
+                <button type="button" onclick="toggleMatCustomDropdown('matTypeMenu', 'matTypeChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-tags text-amber-600 dark:text-amber-400 text-[11px] shrink-0"></i>
+                        <span id="matTypeLabel" class="truncate">All Material Types</span>
+                    </div>
+                    <i id="matTypeChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <div id="matTypeMenu" class="hidden absolute top-full mt-1.5 left-0 w-full min-w-[200px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectMatCustomFilter('type', 'all', 'All Material Types', this)" class="custom-mat-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 cursor-pointer">
+                        <span>All Material Types</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'dpp', 'DPP / Worksheets', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>DPP / Worksheets</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'notes', 'Chapter Revision Notes', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Chapter Revision Notes</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'formula', 'Formula Sheets & Mind Maps', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Formula Sheets & Mind Maps</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'quiz', 'Practice Quiz / Mock Test', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Practice Quiz / Mock Test</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'pyq', 'PYQ Question Bank', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>PYQ Question Bank</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'ncert', 'NCERT Exemplar Solutions', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>NCERT Exemplar Solutions</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('type', 'slides', 'Lecture Slides & PPT', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Lecture Slides & PPT</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Custom Class Grade Dropdown -->
+            <div class="lg:col-span-2 relative custom-mat-dropdown-container">
+                <input type="hidden" id="matClassFilter" value="all">
+                <button type="button" onclick="toggleMatCustomDropdown('matClassMenu', 'matClassChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-graduation-cap text-purple-600 dark:text-purple-400 text-[11px] shrink-0"></i>
+                        <span id="matClassLabel" class="truncate">All Classes</span>
+                    </div>
+                    <i id="matClassChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <div id="matClassMenu" class="hidden absolute top-full mt-1.5 left-0 w-full min-w-[145px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectMatCustomFilter('class', 'all', 'All Classes', this)" class="custom-mat-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 cursor-pointer">
+                        <span>All Classes</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 6', 'Class 6', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 6</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 7', 'Class 7', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 7</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 8', 'Class 8', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 8</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 9', 'Class 9', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 9</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 10', 'Class 10', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 10</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 11', 'Class 11', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 11</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('class', 'Class 12', 'Class 12', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 12</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Custom Subject Dropdown -->
+            <div class="lg:col-span-2 relative custom-mat-dropdown-container">
+                <input type="hidden" id="matSubjectFilter" value="all">
+                <button type="button" onclick="toggleMatCustomDropdown('matSubjectMenu', 'matSubjectChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-book text-blue-600 dark:text-blue-400 text-[11px] shrink-0"></i>
+                        <span id="matSubjectLabel" class="truncate">All Subjects</span>
+                    </div>
+                    <i id="matSubjectChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <div id="matSubjectMenu" class="hidden absolute top-full mt-1.5 left-0 w-full min-w-[170px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectMatCustomFilter('subject', 'all', 'All Subjects', this)" class="custom-mat-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 cursor-pointer">
+                        <span>All Subjects</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('subject', 'Mathematics', 'Mathematics', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Mathematics</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('subject', 'Physics', 'Physics', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Physics</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('subject', 'Chemistry', 'Chemistry', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Chemistry</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('subject', 'Biology', 'Biology', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Biology</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('subject', 'Science', 'Science', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Science</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. Custom Course / Batch Dropdown -->
+            <div class="lg:col-span-2 relative custom-mat-dropdown-container">
+                <input type="hidden" id="matCourseFilter" value="all">
+                <button type="button" onclick="toggleMatCustomDropdown('matCourseMenu', 'matCourseChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-chalkboard-teacher text-teal-600 dark:text-teal-400 text-[11px] shrink-0"></i>
+                        <span id="matCourseLabel" class="truncate">All Batches</span>
+                    </div>
+                    <i id="matCourseChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <div id="matCourseMenu" class="hidden absolute top-full mt-1.5 right-0 w-full min-w-[210px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectMatCustomFilter('course', 'all', 'All Batches', this)" class="custom-mat-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-300 cursor-pointer">
+                        <span>All Batches</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('course', 'CBSE Target 100', 'CBSE Target 100', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>CBSE Target 100</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('course', 'Board Achievers', 'Board Achievers', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Board Achievers</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('course', 'Target JEE / NEET', 'Target JEE / NEET', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Target JEE / NEET</span>
+                    </button>
+                    <button type="button" onclick="selectMatCustomFilter('course', 'Foundation Builder', 'Foundation Builder', this)" class="custom-mat-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Foundation Builder</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Filter Stats & Quick Reset Bar -->
+        <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800/80 text-[11px]">
+            <div class="flex items-center gap-2">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">
+                    Showing: <strong id="matResultCount" class="text-amber-600 dark:text-amber-400 font-bold">8 study materials</strong>
+                </span>
+            </div>
+            <button type="button" onclick="resetAllMaterialFilters()" class="text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 font-semibold border-0 bg-transparent cursor-pointer flex items-center gap-1 transition-colors">
+                <i class="fas fa-undo-alt text-[10px]"></i> <span>Reset Filters</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- STRUCTURED DATA TABLE (COMPACT & SLEEK)                  -->
+    <!-- ======================================================== -->
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[920px]">
+                
+                <!-- Table Header (Compact) -->
+                <thead>
+                    <tr class="border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
+                        <th class="py-2 px-3 w-24">CLASS</th>
+                        <th class="py-2 px-3 w-28">SUBJECT</th>
+                        <th class="py-2 px-3 w-40">COURSE / BATCH</th>
+                        <th class="py-2 px-3 min-w-[180px]">TOPIC / CHAPTER</th>
+                        <th class="py-2 px-3 w-32">CREATED TIME</th>
+                        <th class="py-2 px-3 w-36">MATERIAL TYPE</th>
+                        <th class="py-2 px-3 w-28">STATUS</th>
+                        <th class="py-2 px-3 w-32">DOWNLOADS</th>
+                        <th class="py-2 px-3 w-24 text-right">ACTIONS</th>
+                    </tr>
+                </thead>
+
+                <!-- Table Body (Compact) -->
+                <tbody id="materialTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/80 text-[11px]">
+
+                    <!-- ROW 1: DPP (Class 10 Mathematics) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="dpp"
+                        data-class="Class 10"
+                        data-subject="Mathematics"
+                        data-course="CBSE Target 100"
+                        data-title="Quadratic Equations Nature of Roots & Word Problems DPP-05"
+                        data-day="Wednesday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800">
+                                Class 10
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Mathematics
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">CBSE Target 100</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: MATH-10-A</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Quadratic Equations</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">DPP-05: Nature of Roots & Word Problems</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">07 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">09:15 AM (Wed)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-indigo-600 dark:text-indigo-400 text-[11px]">DPP / Worksheet</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">6 Pages • PDF (2.4 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">142 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">89% Reach (34/38)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Quadratic Equations DPP-05', 'DPP / Worksheet', 'Class 10 CBSE', 'Mathematics', '07 Oct 2026, 09:15 AM', '2.4 MB • 6 Pages • 30 Questions')" class="p-1 rounded-md bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('Class10_Quadratic_DPP05.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/dpp-05')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 2: Chapter Notes (Class 12 Physics) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="notes"
+                        data-class="Class 12"
+                        data-subject="Physics"
+                        data-course="Board Achievers"
+                        data-title="Ray Optics Lens Formula & Telescope Handwritten Theory Notes"
+                        data-day="Tuesday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800">
+                                Class 12
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Physics
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Board Achievers</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: PHY-12-B</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Ray Optics</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">Lens Formula & Telescope Derivations</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">06 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">03:40 PM (Tue)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-rose-600 dark:text-rose-400 text-[11px]">Chapter Notes</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">18 Pages • PDF (5.8 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">312 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">95% Reach (28 Enrolled)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Ray Optics Theory Notes', 'Chapter Revision Notes', 'Class 12 CBSE', 'Physics', '06 Oct 2026, 03:40 PM', '5.8 MB • 18 Pages • Handwritten Proofs')" class="p-1 rounded-md bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('Class12_Ray_Optics_Notes.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/ray-optics')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 3: Formula Sheet (Class 11 Chemistry) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="formula"
+                        data-class="Class 11"
+                        data-subject="Chemistry"
+                        data-course="Target JEE / NEET"
+                        data-title="Chemical Bonding Chapter 4: VSEPR & Hybridization Mind Map"
+                        data-day="Monday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800">
+                                Class 11
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Chemistry
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Target JEE / NEET</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: CHEM-11-A</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Chemical Bonding</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">Chapter 4: VSEPR & Hybridization Sheet</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">06 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">06:20 PM (Mon)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-amber-600 dark:text-amber-400 text-[11px]">Formula & Map</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">4 Pages • PDF (1.6 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">245 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">82% Reach (22 Enrolled)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Chemical Bonding Formula Map', 'Formula Sheet & Mind Map', 'Class 11 CBSE', 'Chemistry', '06 Oct 2026, 06:20 PM', '1.6 MB • 4 Pages • Quick Cheat Sheet')" class="p-1 rounded-md bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:hover:bg-amber-900 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('Chemical_Bonding_MindMap.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/chem-bonding')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 4: PYQ Bank (Class 10 Mathematics) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="pyq"
+                        data-class="Class 10"
+                        data-subject="Mathematics"
+                        data-course="CBSE Target 100"
+                        data-title="Trigonometry NCERT Exemplar & Last 10 Years PYQs"
+                        data-day="Sunday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800">
+                                Class 10
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Mathematics
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">CBSE Target 100</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: MATH-10-A</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Trigonometry</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">NCERT Exemplar & PYQs (2014-2024)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">05 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">02:10 PM (Sun)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-sky-600 dark:text-sky-400 text-[11px]">PYQ Question Bank</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">16 Pages • PDF (3.2 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">410 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">98% Reach (36/38)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Trigonometry PYQ Bank 2014-2024', 'PYQ Question Bank', 'Class 10 CBSE', 'Mathematics', '05 Oct 2026, 02:10 PM', '3.2 MB • 16 Pages • Solved Solutions')" class="p-1 rounded-md bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('Class10_Trig_PYQ_Bank.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/trig-pyq')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 5: Lecture Slides (Class 12 Physics) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="slides"
+                        data-class="Class 12"
+                        data-subject="Physics"
+                        data-course="Board Achievers"
+                        data-title="Wave Optics Young's Double Slit & Huygens Wavefront Slides"
+                        data-day="Saturday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800">
+                                Class 12
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Physics
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Board Achievers</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: PHY-12-B</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Wave Optics</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">Young's Double Slit & Wavefront PPT</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">04 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">11:00 AM (Sat)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-orange-600 dark:text-orange-400 text-[11px]">Lecture Slides</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">32 Slides • PPTX/PDF (8.2 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">165 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">94% Reach (30/32)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Wave Optics Presentation Deck', 'Lecture Slides & PPT', 'Class 12 CBSE', 'Physics', '04 Oct 2026, 11:00 AM', '8.2 MB • 32 Slides • 3D Visuals')" class="p-1 rounded-md bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/60 dark:hover:bg-orange-900 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('Wave_Optics_Slides.pptx')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/wave-optics')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 6: NCERT Solved Proofs (Class 9 Foundation Science) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="ncert"
+                        data-class="Class 9"
+                        data-subject="Science"
+                        data-course="Foundation Builder"
+                        data-title="Atoms & Molecules Mole Concept & Problem Set NCERT Exemplar"
+                        data-day="Wednesday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800">
+                                Class 9
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Foundation Science
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Foundation Builder</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: FOUND-9-A</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Atoms & Molecules</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">Mole Concept & Problem Set Proofs</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">07 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">08:45 AM (Draft)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-teal-600 dark:text-teal-400 text-[11px]">NCERT Exemplar</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">14 Pages • PDF (3.7 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                                <i class="fas fa-edit text-[8px]"></i> DRAFT
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-500 dark:text-slate-400 text-[11px]">0 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">Unpublished draft</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Atoms & Molecules Solved Proofs', 'NCERT Exemplar Solutions', 'Class 9 Foundation', 'Science', '07 Oct 2026, 08:45 AM', '3.7 MB • 14 Pages • Step-by-Step')" class="p-1 rounded-md bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('Class9_Atoms_Molecules_Exemplar.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/atoms-molecules')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 7: Practice Quiz (Class 12 Biology) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="quiz"
+                        data-class="Class 12"
+                        data-subject="Biology"
+                        data-course="Target JEE / NEET"
+                        data-title="Human Reproduction & Reproductive Health Mock Quiz 04"
+                        data-day="Sunday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800">
+                                Class 12
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Biology
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Target JEE / NEET</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: BIO-12-A</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Human Reproduction</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">Mock Quiz 04 (+ Solved Step Hints)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">05 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">06:30 PM (Sun)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">Practice Quiz</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">10 Pages • 50 MCQs (3.1 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">410 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">92% Reach (410 Total)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('Mock Quiz 04: Human Reproduction', 'Practice Quiz / Mock Test', 'Class 12 CBSE', 'Biology', '05 Oct 2026, 06:30 PM', '3.1 MB • 10 Pages • 50 MCQs')" class="p-1 rounded-md bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('NEET_Mock_Quiz_04.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/mock-quiz-04')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ROW 8: DPP-06: Organic Chemistry (Class 12 Chemistry) -->
+                    <tr class="material-table-row hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
+                        data-type="dpp"
+                        data-class="Class 12"
+                        data-subject="Chemistry"
+                        data-course="Target JEE / NEET"
+                        data-title="Haloalkanes & Haloarenes SN1, SN2 Mechanisms DPP-06"
+                        data-day="Wednesday">
+                        
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800">
+                                Class 12
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="font-bold text-slate-900 dark:text-white text-[11px]">
+                                Chemistry
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Target JEE / NEET</div>
+                            <div class="text-[9.5px] text-slate-400 font-mono">Code: CHEM-12-B</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-slate-900 dark:text-white text-[11px] leading-tight">Haloalkanes & Haloarenes</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium truncate max-w-[200px]">DPP-06: SN1, SN2 & E1, E2 Mechanisms</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">01 Oct 2026</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">08:00 AM (Wed)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-indigo-600 dark:text-indigo-400 text-[11px]">DPP / Worksheet</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">8 Pages • PDF (2.9 MB)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                            </span>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle">
+                            <div class="font-extrabold text-emerald-600 dark:text-emerald-400 text-[11px]">270 Downloads</div>
+                            <div class="text-[9.5px] text-slate-400 font-medium">88% Reach (Verified)</div>
+                        </td>
+
+                        <td class="py-2 px-3 align-middle text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <button type="button" onclick="previewStudyMaterial('DPP-06: Organic Chemistry Reaction Mechanisms', 'DPP / Worksheet', 'Class 12 CBSE', 'Chemistry', '01 Oct 2026, 08:00 AM', '2.9 MB • 8 Pages • 35 Problems')" class="p-1 rounded-md bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 cursor-pointer transition-colors" title="Preview Document">
+                                    <i class="fas fa-eye text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="downloadStudyMaterial('DPP_06_Organic_Chemistry.pdf')" class="p-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-colors" title="Download File">
+                                    <i class="fas fa-download text-[10px]"></i>
+                                </button>
+                                <button type="button" onclick="copyMaterialShareLink('http://127.0.0.1:8000/study-material/dpp-06')" class="p-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border-0 cursor-pointer transition-colors" title="Share Link">
+                                    <i class="fas fa-share-alt text-[10px]"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- EMPTY STATE WHEN NO ROWS MATCH -->
+        <div id="matEmptyState" class="p-8 text-center border-t border-slate-100 dark:border-slate-800 space-y-1.5 hidden">
+            <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-500 mx-auto flex items-center justify-center text-sm">
+                <i class="fas fa-folder-open"></i>
+            </div>
+            <h4 class="text-xs font-bold text-slate-800 dark:text-white">No Study Materials Match Filters</h4>
+            <p class="text-[11px] text-slate-400 max-w-sm mx-auto">Try clearing search keywords or changing the selected material type, class grade, and subject.</p>
+            <button type="button" onclick="resetAllMaterialFilters()" class="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-semibold rounded-lg border-0 cursor-pointer transition-colors shadow-2xs">
+                Reset Filters
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- STUDY MATERIAL INTERACTIVE PREVIEW MODAL -->
+<!-- ============================================ -->
+<div id="studyMaterialPreviewModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[1000] hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full p-4 sm:p-5 space-y-4 relative max-h-[90vh] overflow-y-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center text-sm font-bold">
+                    <i class="fas fa-file-alt"></i>
+                </span>
+                <div>
+                    <h3 id="prevMatTitle" class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate max-w-md">Material Document Preview</h3>
+                    <p id="prevMatMeta" class="text-[10px] text-slate-400 font-medium">Class 10 CBSE • Mathematics • DPP / Worksheet</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeStudyMaterialPreview()" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-white flex items-center justify-center border-0 cursor-pointer text-xs">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Simulated Document Viewer Canvas -->
+        <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-4 space-y-3">
+            <div class="flex items-center justify-between text-[11px] bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-bold text-slate-700 dark:text-slate-300" id="prevMatUploadInfo">Uploaded: 07 Oct 2026, 09:15 AM</span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400" id="prevMatFileInfo">2.4 MB • 6 Pages</span>
+            </div>
+
+            <!-- Preview Graphic Placeholder -->
+            <div class="aspect-[16/9] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 rounded-lg flex flex-col items-center justify-center p-6 text-center space-y-2 border border-dashed border-slate-300 dark:border-slate-700">
+                <i class="fas fa-file-pdf text-4xl text-amber-500/80"></i>
+                <h4 id="prevMatInnerTitle" class="text-xs font-bold text-slate-800 dark:text-slate-200 max-w-md">Document Content Verified</h4>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 max-w-sm">All questions, proofs, derivations, and solutions are compiled and formatted with HD vector quality for high-speed student access.</p>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="flex items-center justify-between pt-1">
+            <span class="text-[10px] text-slate-400">PDF Reader • Print & Download Enabled</span>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="closeStudyMaterialPreview()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">
+                    Close
+                </button>
+                <button type="button" onclick="alert('Starting High-Speed Download...'); closeStudyMaterialPreview();" class="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs border-0 cursor-pointer flex items-center gap-1.5 shadow-2xs">
+                    <i class="fas fa-download text-[10px]"></i> <span>Download File</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- JAVASCRIPT: STUDY MATERIAL FILTER LOGIC      -->
+<!-- ============================================ -->
+<script>
+    // Custom Dropdown Open/Close Controller for Study Material
+    function toggleMatCustomDropdown(menuId, chevronId) {
+        const menu = document.getElementById(menuId);
+        const chevron = document.getElementById(chevronId);
+        if (!menu) return;
+
+        const isClosed = menu.classList.contains('hidden');
+
+        // Close all other dropdown menus first
+        document.querySelectorAll('.custom-mat-dropdown-container div[id$="Menu"]').forEach(m => {
+            m.classList.add('hidden');
+        });
+        document.querySelectorAll('.custom-mat-dropdown-container i[id$="Chevron"]').forEach(c => {
+            c.classList.remove('rotate-180');
+        });
+
+        if (isClosed) {
+            menu.classList.remove('hidden');
+            if (chevron) chevron.classList.add('rotate-180');
+        }
+    }
+
+    // Select filter option
+    function selectMatCustomFilter(filterType, value, label, btnElement) {
+        if (filterType === 'type') {
+            document.getElementById('matTypeFilter').value = value;
+            document.getElementById('matTypeLabel').textContent = label;
+        } else if (filterType === 'class') {
+            document.getElementById('matClassFilter').value = value;
+            document.getElementById('matClassLabel').textContent = label;
+        } else if (filterType === 'subject') {
+            document.getElementById('matSubjectFilter').value = value;
+            document.getElementById('matSubjectLabel').textContent = label;
+        } else if (filterType === 'course') {
+            document.getElementById('matCourseFilter').value = value;
+            document.getElementById('matCourseLabel').textContent = label;
+        }
+
+        // Highlight selected button inside the menu
+        if (btnElement && btnElement.parentElement) {
+            btnElement.parentElement.querySelectorAll('.custom-mat-opt-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-amber-50', 'dark:bg-amber-950/60', 'text-amber-600', 'dark:text-amber-300');
+                btn.classList.add('text-slate-700', 'dark:text-slate-200');
+                const check = btn.querySelector('i.fa-check');
+                if (check) check.remove();
+            });
+
+            btnElement.classList.add('active', 'bg-amber-50', 'dark:bg-amber-950/60', 'text-amber-600', 'dark:text-amber-300');
+            btnElement.classList.remove('text-slate-700', 'dark:text-slate-200');
+            if (!btnElement.querySelector('i.fa-check')) {
+                const check = document.createElement('i');
+                check.className = 'fas fa-check text-[10px]';
+                btnElement.appendChild(check);
+            }
+        }
+
+        // Close all menus
+        document.querySelectorAll('.custom-mat-dropdown-container div[id$="Menu"]').forEach(m => {
+            m.classList.add('hidden');
+        });
+        document.querySelectorAll('.custom-mat-dropdown-container i[id$="Chevron"]').forEach(c => {
+            c.classList.remove('rotate-180');
+        });
+
+        applyMaterialFilters();
+    }
+
+    // Main Filter Engine for Study Materials Table Rows
+    function applyMaterialFilters() {
+        const searchVal = (document.getElementById('matSearchInput')?.value || '').toLowerCase().trim();
+        const typeVal = document.getElementById('matTypeFilter')?.value || 'all';
+        const classVal = document.getElementById('matClassFilter')?.value || 'all';
+        const subjectVal = document.getElementById('matSubjectFilter')?.value || 'all';
+        const courseVal = document.getElementById('matCourseFilter')?.value || 'all';
+
+        const rows = document.querySelectorAll('#materialTableBody .material-table-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowType = row.getAttribute('data-type') || '';
+            const rowClass = row.getAttribute('data-class') || '';
+            const rowSubject = row.getAttribute('data-subject') || '';
+            const rowCourse = row.getAttribute('data-course') || '';
+            const rowText = (row.textContent || '').toLowerCase();
+
+            const matchesSearch = !searchVal || rowText.includes(searchVal);
+            const matchesType = typeVal === 'all' || rowType === typeVal;
+            const matchesClass = classVal === 'all' || rowClass.toLowerCase() === classVal.toLowerCase();
+            const matchesSubject = subjectVal === 'all' || rowSubject.toLowerCase() === subjectVal.toLowerCase();
+            const matchesCourse = courseVal === 'all' || rowCourse.toLowerCase() === courseVal.toLowerCase();
+
+            if (matchesSearch && matchesType && matchesClass && matchesSubject && matchesCourse) {
+                row.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                row.classList.add('hidden');
+            }
+        });
+
+        // Update result counter
+        const countEl = document.getElementById('matResultCount');
+        if (countEl) {
+            countEl.textContent = `${visibleCount} study material${visibleCount === 1 ? '' : 's'}`;
+        }
+
+        // Handle empty state
+        const emptyState = document.getElementById('matEmptyState');
+        if (emptyState) {
+            if (visibleCount === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+    }
+
+    // Reset All Filters
+    function resetAllMaterialFilters() {
+        const searchInput = document.getElementById('matSearchInput');
+        if (searchInput) searchInput.value = '';
+
+        document.getElementById('matTypeFilter').value = 'all';
+        document.getElementById('matTypeLabel').textContent = 'All Material Types';
+
+        document.getElementById('matClassFilter').value = 'all';
+        document.getElementById('matClassLabel').textContent = 'All Classes';
+
+        document.getElementById('matSubjectFilter').value = 'all';
+        document.getElementById('matSubjectLabel').textContent = 'All Subjects';
+
+        document.getElementById('matCourseFilter').value = 'all';
+        document.getElementById('matCourseLabel').textContent = 'All Batches';
+
+        // Reset visual state of all dropdown buttons
+        document.querySelectorAll('.custom-mat-dropdown-container').forEach(container => {
+            const btns = container.querySelectorAll('.custom-mat-opt-btn');
+            btns.forEach((btn, index) => {
+                const check = btn.querySelector('i.fa-check');
+                if (check) check.remove();
+                if (index === 0) {
+                    btn.classList.add('active', 'bg-amber-50', 'dark:bg-amber-950/60', 'text-amber-600', 'dark:text-amber-300');
+                    btn.classList.remove('text-slate-700', 'dark:text-slate-200');
+                    const newCheck = document.createElement('i');
+                    newCheck.className = 'fas fa-check text-[10px]';
+                    btn.appendChild(newCheck);
+                } else {
+                    btn.classList.remove('active', 'bg-amber-50', 'dark:bg-amber-950/60', 'text-amber-600', 'dark:text-amber-300');
+                    btn.classList.add('text-slate-700', 'dark:text-slate-200');
+                }
+            });
+        });
+
+        applyMaterialFilters();
+    }
+
+    // Close custom dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-mat-dropdown-container')) {
+            document.querySelectorAll('.custom-mat-dropdown-container div[id$="Menu"]').forEach(m => {
+                m.classList.add('hidden');
+            });
+            document.querySelectorAll('.custom-mat-dropdown-container i[id$="Chevron"]').forEach(c => {
+                c.classList.remove('rotate-180');
+            });
+        }
+    });
+
+    // Preview Study Material Modal Trigger
+    function previewStudyMaterial(title, type, className, subject, uploadInfo, fileInfo) {
+        const modal = document.getElementById('studyMaterialPreviewModal');
+        if (!modal) return;
+
+        document.getElementById('prevMatTitle').textContent = title;
+        document.getElementById('prevMatInnerTitle').textContent = title;
+        document.getElementById('prevMatMeta').textContent = `${className} • ${subject} • ${type}`;
+        document.getElementById('prevMatUploadInfo').textContent = `Uploaded: ${uploadInfo}`;
+        document.getElementById('prevMatFileInfo').textContent = fileInfo;
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeStudyMaterialPreview() {
+        const modal = document.getElementById('studyMaterialPreviewModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // Download action
+    function downloadStudyMaterial(filename) {
+        alert('📥 Downloading File: ' + filename + '\nFile verified and preparing download package...');
+    }
+
+    // Copy link action with toast feedback
+    function copyMaterialShareLink(link) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(link).then(() => {
+                showStudyMaterialToast('🔗 Study material share link copied to clipboard!');
+            }).catch(() => {
+                prompt('Copy this link:', link);
+            });
+        } else {
+            prompt('Copy this link:', link);
+        }
+    }
+
+    function showStudyMaterialToast(msg) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-5 right-5 z-[999999] bg-slate-900 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl border border-slate-700 flex items-center gap-2 animate-bounce';
+        toast.innerHTML = `<i class="fas fa-check-circle text-emerald-400"></i> <span>${msg}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+</script>

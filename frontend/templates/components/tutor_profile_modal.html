@@ -1,0 +1,718 @@
+<!-- Reusable Unified Tutor Profile Popup Modal Component -->
+<div id="reusableTutorProfileModal" onclick="if(event.target === this) closeTutorProfileModal()" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto select-none" aria-labelledby="tpmName" role="dialog" aria-modal="true">
+    <div class="relative w-full max-w-3xl lg:max-w-[820px] bg-white rounded-[24px] sm:rounded-[28px] shadow-2xl border border-blue-100/90 overflow-hidden my-auto flex flex-col max-h-[85vh] transition-all" onclick="event.stopPropagation()">
+        
+        <!-- Top Header with Icon, Title, Subtitle, Educational Illustration Banner, "Learn • Grow • Succeed" & Close Button -->
+        <div class="flex items-center justify-between p-3 sm:p-4 border-b border-gray-100/90 shrink-0 gap-2 sm:gap-4 relative overflow-hidden bg-white">
+            <!-- Left: Profile Icon + Title + Subtitle -->
+            <div class="flex items-center gap-2.5 z-10 shrink-0">
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm border border-blue-100/80 shadow-2xs">
+                    <i class="fas fa-user text-blue-600 text-xs"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-base sm:text-lg text-slate-900 m-0 tracking-tight leading-tight">Tutor Profile</h3>
+                    <p class="text-[11px] text-slate-400 font-medium m-0 leading-tight">Get to know your tutor better</p>
+                </div>
+            </div>
+            
+            <!-- Center: Subtle Educational Decorative Banner (Knowledge Today Brighter Tomorrow) -->
+            <div class="hidden md:flex items-center gap-2.5 px-3 py-1 rounded-2xl bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-blue-50/40 border border-blue-100/70 shadow-2xs z-10 select-none">
+                <!-- Stacked 3D Books with Graduation Cap Vector -->
+                <div class="w-10 h-9 relative shrink-0">
+                    <svg class="w-full h-full" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 26 C4 20 4 14 8 12 C12 14 12 20 8 26 Z" fill="#34d399" opacity="0.9"/>
+                        <path d="M40 26 C44 20 44 14 40 12 C36 14 36 20 40 26 Z" fill="#34d399" opacity="0.9"/>
+                        <rect x="10" y="28" width="28" height="6" rx="1.5" fill="#f59e0b"/>
+                        <rect x="8" y="28" width="4" height="6" rx="1" fill="#d97706"/>
+                        <rect x="12" y="22" width="26" height="6" rx="1.5" fill="#0ea5e9"/>
+                        <rect x="10" y="22" width="4" height="6" rx="1" fill="#0284c7"/>
+                        <rect x="11" y="16" width="26" height="6" rx="1.5" fill="#2563eb"/>
+                        <rect x="9" y="16" width="4" height="6" rx="1" fill="#1d4ed8"/>
+                        <path d="M24 6 L38 12 L24 18 L10 12 Z" fill="#1e3a8a"/>
+                        <path d="M24 16 L33 19.5 V23 C33 24 24 26 24 26 C24 26 15 24 15 23 V19.5 Z" fill="#1e40af"/>
+                        <path d="M33 14 L36 22" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/>
+                        <circle cx="36" cy="23" r="1.2" fill="#f59e0b"/>
+                    </svg>
+                </div>
+                <!-- Banner Typography -->
+                <div class="flex flex-col justify-center leading-tight">
+                    <div class="flex items-center gap-1 text-[11px] font-extrabold text-slate-800 tracking-tight leading-none">
+                        <span>Knowledge</span>
+                        <span>Today</span>
+                    </div>
+                    <div class="flex items-center gap-1 leading-none mt-0.5">
+                        <span class="font-handwritten text-sm sm:text-base text-blue-600 font-extrabold tracking-wide">Brighter</span>
+                        <span class="text-[11px] font-extrabold text-slate-800 tracking-tight">Tomorrow</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: "Learn • Grow • Succeed" & Close Button -->
+            <div class="flex items-center gap-2.5 sm:gap-3 z-10 shrink-0">
+                <div class="hidden sm:flex flex-col items-end select-none">
+                    <span class="font-handwritten text-base sm:text-lg text-slate-800 font-bold leading-none tracking-wide">
+                        Learn &nbsp;•&nbsp; Grow &nbsp;•&nbsp; Succeed
+                    </span>
+                    <svg class="w-20 h-1.5 mt-0.5" viewBox="0 0 80 6" fill="none">
+                        <path d="M2 4 C25 1, 55 1, 78 4" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <button type="button" onclick="closeTutorProfileModal()" aria-label="Close modal" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100/80 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors border-0 cursor-pointer text-xs font-bold shadow-2xs">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable 2-Column Body -->
+        <div class="p-3.5 sm:p-4 overflow-y-auto custom-scrollbar flex-1 bg-white">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start">
+                
+                <!-- LEFT COLUMN (Span 7 cols) -->
+                <div class="lg:col-span-7 space-y-2.5 sm:space-y-3">
+                    
+                    <!-- 1. Identity Row: Square Avatar + Details + Tutor Strengths Card -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3 items-center">
+                        
+                        <!-- Left Part (Span 6): Avatar + Name + Verified Badge + Rating + Subject -->
+                        <div class="sm:col-span-6 flex items-start gap-2.5 min-w-0">
+                            <!-- Square Avatar with rounded corners -->
+                            <div class="relative w-20 h-20 sm:w-22 sm:h-22 rounded-[18px] bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white font-black text-xl sm:text-2xl flex items-center justify-center shadow-md overflow-hidden shrink-0 border-2 border-white ring-2 ring-blue-100/80 select-none">
+                                <img id="tpmAvatarImg" src="" alt="Tutor Avatar" class="w-full h-full object-cover rounded-[16px] hidden cursor-pointer hover:opacity-95 transition-opacity" onclick="if(this.src && !this.classList.contains('hidden')) openTutorPhotoLightbox(this.src, document.getElementById('tpmName')?.textContent || 'Tutor');" title="Click to view full photo" onerror="this.classList.add('hidden'); document.getElementById('tpmAvatarInitials').classList.remove('hidden');">
+                                <span id="tpmAvatarInitials" class="tracking-wider">TR</span>
+                                <!-- Graduation Cap Badge Top-Right -->
+                                <div class="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-white text-blue-600 shadow-md flex items-center justify-center text-[9px] border border-blue-100">
+                                    <i class="fas fa-graduation-cap text-blue-600"></i>
+                                </div>
+                                <!-- Active Green Dot Bottom-Right -->
+                                <span class="absolute bottom-1 right-1 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full shadow-xs"></span>
+                            </div>
+
+                            <!-- Identity Info -->
+                            <div class="space-y-0.5 min-w-0 flex-1">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/80">
+                                    <i class="fas fa-check-circle text-emerald-500 text-[9px]"></i> Verified Tutor
+                                </span>
+                                <h4 id="tpmName" class="text-base sm:text-lg font-black text-slate-900 tracking-tight m-0 pt-0.5 truncate">Verified Tutor</h4>
+                                <div id="tpmRating" class="flex items-center gap-1 text-[11px] text-amber-500 font-bold">
+                                    <i class="fas fa-star text-amber-500 text-[10px]"></i>
+                                    <span class="font-extrabold text-slate-900" id="tpmRatingVal">5.0</span>
+                                    <span class="text-slate-400 font-medium text-[10px]" id="tpmReviewCount">(1 reviews)</span>
+                                </div>
+                                <p id="tpmSubjects" class="text-xs font-black text-blue-600 m-0 truncate">Mathematics</p>
+                            </div>
+                        </div>
+
+                        <!-- Right Part (Span 6): Compact "Tutor Strengths" Card with Burst -->
+                        <div class="sm:col-span-6 relative p-2 sm:p-2.5 rounded-xl bg-blue-50/50 border border-blue-100/80 shadow-2xs space-y-1.5">
+                            <!-- Burst mark top right -->
+                            <div class="absolute -top-1.5 -right-1 text-blue-400 font-bold text-[10px] pointer-events-none select-none tracking-widest">
+                                &#x2727;
+                            </div>
+
+                            <!-- 1. Concept Clarity -->
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-lg bg-white text-blue-600 flex items-center justify-center text-[10px] shrink-0 border border-blue-100 shadow-2xs">
+                                    <i class="fas fa-lightbulb text-blue-500"></i>
+                                </div>
+                                <div class="min-w-0 flex-1 leading-tight">
+                                    <strong class="text-[11px] font-black text-slate-900 block truncate">Concept Clarity</strong>
+                                    <span class="text-[9.5px] text-slate-500 font-medium block truncate">Build strong fundamentals</span>
+                                </div>
+                            </div>
+
+                            <!-- 2. Personalized Guidance -->
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-lg bg-white text-blue-600 flex items-center justify-center text-[10px] shrink-0 border border-blue-100 shadow-2xs">
+                                    <i class="fas fa-users text-blue-500"></i>
+                                </div>
+                                <div class="min-w-0 flex-1 leading-tight">
+                                    <strong class="text-[11px] font-black text-slate-900 block truncate">Personalized Guidance</strong>
+                                    <span class="text-[9.5px] text-slate-500 font-medium block truncate">Learn at your own pace</span>
+                                </div>
+                            </div>
+
+                            <!-- 3. Better Results -->
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-lg bg-white text-blue-600 flex items-center justify-center text-[10px] shrink-0 border border-blue-100 shadow-2xs">
+                                    <i class="fas fa-chart-line text-blue-500"></i>
+                                </div>
+                                <div class="min-w-0 flex-1 leading-tight">
+                                    <strong class="text-[11px] font-black text-slate-900 block truncate">Better Results</strong>
+                                    <span class="text-[9.5px] text-slate-500 font-medium block truncate">Achieve your goals with confidence</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 2. Tutor Attributes / Personality Tags Row -->
+                    <div id="tpmAttributesContainer" class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50/70 text-blue-600 border border-blue-100/80 inline-flex items-center gap-1 shadow-2xs">
+                            <i class="fas fa-heart text-blue-500 text-[9px]"></i> Patient
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50/70 text-blue-600 border border-blue-100/80 inline-flex items-center gap-1 shadow-2xs">
+                            <i class="fas fa-bullseye text-blue-500 text-[9px]"></i> Student-Focused
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50/70 text-blue-600 border border-blue-100/80 inline-flex items-center gap-1 shadow-2xs">
+                            <i class="fas fa-user-friends text-blue-500 text-[9px]"></i> Supportive
+                        </span>
+                    </div>
+
+                    <!-- 3. Basic Details Information Card (Horizontal 3-Col) -->
+                    <div class="p-2.5 sm:p-3 rounded-2xl bg-blue-50/30 border border-blue-100/80 grid grid-cols-1 sm:grid-cols-3 gap-2.5 divide-y sm:divide-y-0 sm:divide-x divide-blue-100/80 shadow-2xs">
+                        <!-- Location -->
+                        <div class="flex items-start gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-white text-blue-600 flex items-center justify-center text-xs shrink-0 border border-blue-100 shadow-2xs">
+                                <i class="fas fa-map-marker-alt text-[11px]"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[10px] font-medium text-slate-400 block leading-none">Location</span>
+                                <strong id="tpmLocSub" class="text-xs font-bold text-slate-800 block truncate mt-0.5">Lucknow, Uttar Pradesh</strong>
+                            </div>
+                        </div>
+
+                        <!-- Tuition Mode -->
+                        <div class="flex items-start gap-2 sm:pl-2.5 pt-2 sm:pt-0">
+                            <div class="w-7 h-7 rounded-lg bg-white text-blue-600 flex items-center justify-center text-xs shrink-0 border border-blue-100 shadow-2xs">
+                                <i class="fas fa-graduation-cap text-[11px]"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[10px] font-medium text-slate-400 block leading-none">Tuition Mode</span>
+                                <strong id="tpmModeSub" class="text-xs font-bold text-slate-800 block truncate mt-0.5">Home Tuition</strong>
+                            </div>
+                        </div>
+
+                        <!-- Languages -->
+                        <div class="flex items-start gap-2 sm:pl-2.5 pt-2 sm:pt-0">
+                            <div class="w-7 h-7 rounded-lg bg-white text-blue-600 flex items-center justify-center text-xs shrink-0 border border-blue-100 shadow-2xs">
+                                <i class="fas fa-language text-[11px]"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[10px] font-medium text-slate-400 block leading-none">Languages</span>
+                                <strong id="tpmLangSub" class="text-xs font-bold text-slate-800 block truncate mt-0.5">English, Hindi</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Teaching Approach Feature Card (Passionate about teaching) -->
+                    <div class="p-3 sm:p-3.5 rounded-2xl bg-blue-50/40 border border-blue-100/80 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <!-- SVG Graphic (Stacked Books + Lightbulb) -->
+                        <div class="hidden sm:flex items-center justify-center shrink-0 w-20 h-16 relative select-none">
+                            <svg class="w-full h-full" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 55 C12 45 10 32 18 28 C26 30 24 45 18 55 Z" fill="#34d399" opacity="0.9"/>
+                                <path d="M22 48 C20 40 28 35 32 38 C32 45 26 48 22 48 Z" fill="#10b981" opacity="0.9"/>
+                                <rect x="22" y="58" width="58" height="11" rx="2.5" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.2"/>
+                                <rect x="18" y="58" width="7" height="11" rx="1.5" fill="#1e40af"/>
+                                <path d="M25 61 L75 61 M25 64 L75 64 M25 67 L75 67" stroke="#ffffff" stroke-width="0.8" opacity="0.85"/>
+                                <rect x="26" y="47" width="52" height="11" rx="2.5" fill="#3b82f6" stroke="#2563eb" stroke-width="1.2"/>
+                                <rect x="22" y="47" width="7" height="11" rx="1.5" fill="#1d4ed8"/>
+                                <path d="M29 50 L73 50 M29 53 L73 53 M29 56 L73 56" stroke="#ffffff" stroke-width="0.8" opacity="0.85"/>
+                                <circle cx="58" cy="24" r="9" fill="#fef08a" stroke="#facc15" stroke-width="1.2"/>
+                                <path d="M55 22 L61 22 M56 25 L60 25 M57 28 L59 28" stroke="#ca8a04" stroke-width="1" stroke-linecap="round"/>
+                                <rect x="56" y="32" width="4" height="2" rx="0.5" fill="#94a3b8"/>
+                                <path d="M58 11 L58 8 M47 16 L44 14 M69 16 L72 14 M44 26 L41 26 M72 26 L75 26" stroke="#facc15" stroke-width="1.2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+
+                        <!-- Text & Bullet points -->
+                        <div class="space-y-1 flex-1 min-w-0">
+                            <h5 class="text-xs font-black text-slate-900 m-0">Passionate about teaching</h5>
+                            <p id="tpmApproachDesc" class="text-[10.5px] text-slate-500 font-normal leading-relaxed m-0">
+                                Helping students build confidence and achieve their academic goals.
+                            </p>
+                            <div class="space-y-0.5 pt-0.5 text-[10.5px] text-slate-700 font-semibold">
+                                <div class="flex items-center gap-1.5"><i class="fas fa-check-circle text-blue-500 text-[10px]"></i> Concept Clarity</div>
+                                <div class="flex items-center gap-1.5"><i class="fas fa-check-circle text-blue-500 text-[10px]"></i> Personalized Learning</div>
+                                <div class="flex items-center gap-1.5"><i class="fas fa-check-circle text-blue-500 text-[10px]"></i> Better Results</div>
+                            </div>
+                        </div>
+
+                        <!-- Handwritten "Education Creates Brighter Futures" -->
+                        <div class="hidden sm:flex flex-col items-center justify-center text-center shrink-0 pr-1 select-none">
+                            <span class="font-handwritten text-xs sm:text-sm text-blue-800 font-bold leading-tight">Education</span>
+                            <span class="font-handwritten text-xs sm:text-sm text-blue-700 font-bold leading-tight">Creates</span>
+                            <span class="font-handwritten text-xs sm:text-sm text-blue-600 font-bold leading-tight">Brighter</span>
+                            <span class="font-handwritten text-xs sm:text-sm text-blue-500 font-bold leading-tight">Futures</span>
+                            <svg class="w-14 h-1.5 mt-0.5" viewBox="0 0 60 6" fill="none">
+                                <path d="M2 4 C15 1, 45 1, 58 4" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN (Span 5 cols) -->
+                <div class="lg:col-span-5 space-y-2.5 sm:space-y-3">
+                    
+                    <!-- 5. Tutor Overview Card -->
+                    <div class="p-3 sm:p-3.5 rounded-2xl bg-blue-50/30 border border-blue-100/80 shadow-2xs space-y-2">
+                        <div class="flex items-center justify-between pb-2 border-b border-blue-100/80">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-6 h-6 rounded-lg bg-blue-100/80 text-blue-600 flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-chart-line text-blue-600"></i>
+                                </div>
+                                <h4 class="font-black text-xs text-slate-900 m-0">Tutor Overview</h4>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-blue-100 text-blue-700 border border-blue-200/80 inline-flex items-center gap-1">
+                                <i class="fas fa-shield-alt text-blue-600 text-[8px]"></i> Reliable &amp; Qualified
+                            </span>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <!-- Fee (per month) -->
+                            <div class="flex items-center justify-between p-1.5 px-2 rounded-xl bg-white border border-blue-100/60 shadow-2xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                        <i class="fas fa-indian-rupee-sign"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[9.5px] text-slate-400 font-medium block leading-none">Fee (per month)</span>
+                                        <strong id="tpmFee" class="text-xs font-black text-blue-600 block truncate leading-tight">₹2,000 – ₹4,000</strong>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-slate-300 text-[10px] pr-1"></i>
+                            </div>
+
+                            <!-- Experience -->
+                            <div class="flex items-center justify-between p-1.5 px-2 rounded-xl bg-white border border-blue-100/60 shadow-2xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[9.5px] text-slate-400 font-medium block leading-none">Experience</span>
+                                        <strong id="tpmExp" class="text-xs font-bold text-slate-800 block truncate leading-tight">1 Year</strong>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-slate-300 text-[10px] pr-1"></i>
+                            </div>
+
+                            <!-- Classes -->
+                            <div class="flex items-center justify-between p-1.5 px-2 rounded-xl bg-white border border-blue-100/60 shadow-2xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[9.5px] text-slate-400 font-medium block leading-none">Classes</span>
+                                        <strong id="tpmClasses" class="text-xs font-bold text-slate-800 block truncate leading-tight">Class 11</strong>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-slate-300 text-[10px] pr-1"></i>
+                            </div>
+
+                            <!-- Subjects -->
+                            <div class="flex items-center justify-between p-1.5 px-2 rounded-xl bg-white border border-blue-100/60 shadow-2xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[9.5px] text-slate-400 font-medium block leading-none">Subjects</span>
+                                        <strong id="tpmOverviewSubjects" class="text-xs font-bold text-slate-800 block truncate leading-tight">Mathematics</strong>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-slate-300 text-[10px] pr-1"></i>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="flex items-center justify-between p-1.5 px-2 rounded-xl bg-white border border-blue-100/60 shadow-2xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[9.5px] text-slate-400 font-medium block leading-none">Location</span>
+                                        <strong id="tpmLocation" class="text-xs font-bold text-slate-800 block truncate leading-tight">Lucknow</strong>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-slate-300 text-[10px] pr-1"></i>
+                            </div>
+
+                            <!-- Mode -->
+                            <div class="flex items-center justify-between p-1.5 px-2 rounded-xl bg-white border border-blue-100/60 shadow-2xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[9.5px] text-slate-400 font-medium block leading-none">Mode</span>
+                                        <strong id="tpmMode" class="text-xs font-bold text-slate-800 block truncate leading-tight">Home Tuition</strong>
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-slate-300 text-[10px] pr-1"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. About Me Card -->
+                    <div class="p-3 sm:p-3.5 rounded-2xl bg-blue-50/40 border border-blue-100/80 shadow-2xs relative">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-blue-100/80">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-6 h-6 rounded-lg bg-blue-100/80 text-blue-600 flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-file-alt text-blue-600"></i>
+                                </div>
+                                <h4 class="font-black text-xs text-slate-900 m-0">About Me</h4>
+                            </div>
+                            <i class="fas fa-quote-right text-blue-200 text-xs"></i>
+                        </div>
+
+                        <div class="pt-1.5">
+                            <p id="tpmAbout" class="text-[11px] text-slate-700 leading-relaxed font-medium m-0 min-h-[36px] break-words"></p>
+                        </div>
+
+                        <div class="flex justify-end pt-0.5">
+                            <i class="fas fa-quote-right text-blue-200 text-xs"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer Action Buttons & Tagline -->
+        <div class="p-3 sm:p-4 bg-white border-t border-gray-100/90 flex flex-col sm:flex-row items-center justify-between gap-2.5 shrink-0">
+            <button type="button" onclick="closeTutorProfileModal()" class="px-5 py-2 rounded-xl border border-slate-200/80 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5">
+                <i class="fas fa-times text-[10px]"></i> Close
+            </button>
+            <div class="flex flex-col sm:items-end w-full sm:w-auto">
+                <button type="button" onclick="bookFreeTrialFromProfileModal()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2 px-6 rounded-xl text-xs shadow-md transition-all flex items-center justify-center gap-2 border-0 cursor-pointer active:scale-[0.98]">
+                    <i class="fas fa-paper-plane text-xs"></i> Book Free Trial <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+                <span class="text-[10px] text-slate-400 font-medium text-center sm:text-right mt-0.5">Connect and start learning today!</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    let currentModalTutor = null;
+
+    function getInitials(name) {
+        if (!name) return 'TR';
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        } else if (parts.length === 1 && parts[0].length >= 2) {
+            return parts[0].substring(0, 2).toUpperCase();
+        } else if (parts.length === 1 && parts[0].length === 1) {
+            return parts[0][0].toUpperCase();
+        }
+        return 'TR';
+    }
+
+    function formatFee(feeVal) {
+        if (!feeVal) return 'Fee on Request';
+        let rawFee = String(feeVal).trim();
+        if (!rawFee || rawFee.toLowerCase().includes('request') || rawFee.toLowerCase().includes('market')) {
+            return 'Fee on Request';
+        }
+        if (/^\d+$/.test(rawFee)) {
+            return '₹' + parseInt(rawFee, 10).toLocaleString('en-IN') + '/month';
+        } else if (!rawFee.includes('₹') && !rawFee.toLowerCase().includes('rs')) {
+            return '₹' + rawFee;
+        }
+        return rawFee;
+    }
+
+    function populateModalData(tutor) {
+        if (!tutor) return;
+        currentModalTutor = tutor;
+
+        const name = tutor.name || tutor.full_name || 'Verified Tutor';
+        const initials = getInitials(name);
+        const photo = tutor.photo || tutor.photo_url || '';
+        const rating = (tutor.rating && parseFloat(tutor.rating) > 0) ? parseFloat(tutor.rating).toFixed(1) : '5.0';
+        const reviews = tutor.reviews || tutor.total_reviews || '1';
+        const subjects = tutor.subject || tutor.subjects || 'General Subjects';
+        const location = tutor.location || tutor.city || 'Lucknow';
+        const state = tutor.state || '';
+        let fullLoc = location;
+        if (state && state !== location && !location.includes(state)) {
+            fullLoc = `${location}, ${state}`;
+        }
+        const mode = tutor.mode || tutor.tuition_mode || 'Home Tuition';
+        const languages = tutor.languages || 'English, Hindi';
+        const fee = formatFee(tutor.fee || tutor.expected_fee);
+        const exp = tutor.exp || tutor.experience || '1 Year';
+        const tutorClass = tutor.tutorClass || tutor.teaching_classes || 'Class 1-12';
+        const about = tutor.bio || tutor.intro || tutor.about || 'Dedicated and experienced tutor focused on concept clarity, regular practice, and personalized student guidance.';
+
+        // Populate elements
+        const nameEl = document.getElementById('tpmName');
+        if (nameEl) nameEl.textContent = name;
+
+        const initialsEl = document.getElementById('tpmAvatarInitials');
+        if (initialsEl) initialsEl.textContent = initials;
+
+        const avatarEl = document.getElementById('tpmAvatarImg');
+        if (avatarEl) {
+            if (photo && !photo.includes('ui-avatars.com') && !photo.includes('default')) {
+                avatarEl.src = photo;
+                avatarEl.alt = name;
+                avatarEl.classList.remove('hidden');
+                if (initialsEl) initialsEl.classList.add('hidden');
+            } else {
+                avatarEl.src = '';
+                avatarEl.classList.add('hidden');
+                if (initialsEl) initialsEl.classList.remove('hidden');
+            }
+        }
+
+        const ratingValEl = document.getElementById('tpmRatingVal');
+        if (ratingValEl) ratingValEl.textContent = rating;
+
+        const reviewCountEl = document.getElementById('tpmReviewCount');
+        if (reviewCountEl) reviewCountEl.textContent = `(${reviews} reviews)`;
+
+        const subjectsEl = document.getElementById('tpmSubjects');
+        if (subjectsEl) subjectsEl.textContent = subjects;
+
+        const overviewSubjectsEl = document.getElementById('tpmOverviewSubjects');
+        if (overviewSubjectsEl) overviewSubjectsEl.textContent = subjects;
+
+        const locSubEl = document.getElementById('tpmLocSub');
+        if (locSubEl) locSubEl.textContent = fullLoc;
+
+        const modeSubEl = document.getElementById('tpmModeSub');
+        if (modeSubEl) modeSubEl.textContent = mode;
+
+        const langSubEl = document.getElementById('tpmLangSub');
+        if (langSubEl) langSubEl.textContent = languages;
+
+        const feeEl = document.getElementById('tpmFee');
+        if (feeEl) feeEl.textContent = fee;
+
+        const expEl = document.getElementById('tpmExp');
+        if (expEl) expEl.textContent = exp;
+
+        const classesEl = document.getElementById('tpmClasses');
+        if (classesEl) classesEl.textContent = tutorClass;
+
+        const locationEl = document.getElementById('tpmLocation');
+        if (locationEl) locationEl.textContent = location;
+
+        const modeEl = document.getElementById('tpmMode');
+        if (modeEl) modeEl.textContent = mode;
+
+        const aboutEl = document.getElementById('tpmAbout');
+        if (aboutEl) aboutEl.textContent = about;
+
+        // Legacy compatibility IDs
+        const legacyMap = {
+            'ftpModalName': name,
+            'ftpModalAvatarInitials': initials,
+            'ftpModalSubjects': subjects,
+            'ftpModalLocSub': fullLoc,
+            'ftpModalModeSub': mode,
+            'ftpModalLangSub': languages,
+            'ftpModalFee': fee,
+            'ftpModalExp': exp,
+            'ftpModalClasses': tutorClass,
+            'ftpModalLocation': location,
+            'ftpModalMode': mode,
+            'ftpModalAbout': about,
+            'topTeacherName': name,
+            'topTeacherPhotoInitials': initials,
+            'topTeacherSubjects': subjects,
+            'topTeacherRating': rating,
+            'topTeacherExperience': exp,
+            'topTeacherClasses': tutorClass,
+            'topTeacherMode': mode,
+            'topTeacherFee': fee,
+            'topTeacherLanguages': languages,
+            'topTeacherBio': about
+        };
+        for (const [id, val] of Object.entries(legacyMap)) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        }
+    }
+
+    window.openTutorProfileModal = function(tutorArg) {
+        if (!tutorArg) return;
+        const modal = document.getElementById('reusableTutorProfileModal');
+        if (!modal) return;
+
+        // If an object is passed
+        if (typeof tutorArg === 'object' && tutorArg !== null) {
+            populateModalData(tutorArg);
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.style.display = 'flex';
+            document.body.classList.add('overflow-hidden');
+            return;
+        }
+
+        // If tutorId (string or number) is passed
+        const tutorId = tutorArg;
+
+        // Check if tutor exists in window.dbTutors (Find Tutor page)
+        if (window.dbTutors && Array.isArray(window.dbTutors)) {
+            const found = window.dbTutors.find(t => t.id == tutorId);
+            if (found) {
+                populateModalData(found);
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                modal.style.display = 'flex';
+                document.body.classList.add('overflow-hidden');
+                return;
+            }
+        }
+
+        // Check if tutor exists in any global array on page
+        if (window.latestTutorsList && Array.isArray(window.latestTutorsList)) {
+            const found = window.latestTutorsList.find(t => t.id == tutorId);
+            if (found) {
+                populateModalData(found);
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                modal.style.display = 'flex';
+                document.body.classList.add('overflow-hidden');
+                return;
+            }
+        }
+
+        // Show modal immediately
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+        document.body.classList.add('overflow-hidden');
+
+        // Fetch from public API
+        fetch(`/api/tutors/${tutorId}/`)
+            .then(res => {
+                if (!res.ok) throw new Error('Not found');
+                return res.json();
+            })
+            .then(data => {
+                if (data.status === 'success' && data.tutor) {
+                    populateModalData(data.tutor);
+                }
+            })
+            .catch(err => {
+                console.error("Error fetching tutor profile:", err);
+            });
+    };
+
+    window.closeTutorProfileModal = function() {
+        const modal = document.getElementById('reusableTutorProfileModal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+        document.body.classList.remove('overflow-hidden');
+    };
+
+    window.bookFreeTrialFromProfileModal = function() {
+        if (!currentModalTutor) return;
+        const t = currentModalTutor;
+        closeTutorProfileModal();
+
+        const tutorData = {
+            id: t.id,
+            teacher_id: t.teacher_id || ('TUT-' + t.id),
+            name: t.name || t.full_name || 'Verified Tutor',
+            full_name: t.name || t.full_name || 'Verified Tutor',
+            photo: t.photo || t.photo_url || '',
+            photo_url: t.photo || t.photo_url || '',
+            subject: t.subject || t.subjects || '',
+            subjects: t.subject || t.subjects || '',
+            tutorClass: t.tutorClass || t.teaching_classes || '',
+            teaching_classes: t.tutorClass || t.teaching_classes || '',
+            qualification: t.qualification || '',
+            exp: t.exp || t.experience || '',
+            experience: t.exp || t.experience || '',
+            location: t.location || t.city || '',
+            city: t.location || t.city || '',
+            fee: t.fee || t.expected_fee || '',
+            expected_fee: t.fee || t.expected_fee || '',
+            mode: t.mode || t.tuition_mode || '',
+            tuition_mode: t.mode || t.tuition_mode || '',
+            rating: t.rating || '',
+            intro: t.intro || t.bio || '',
+            bio: t.intro || t.bio || ''
+        };
+
+        if (typeof window.openBookDemoModal === 'function') {
+            window.openBookDemoModal(tutorData);
+        } else if (typeof window.navigateToBookDemo === 'function') {
+            window.navigateToBookDemo(null, t.id);
+        } else {
+            window.location.href = `/book-demo/?tutor_id=${t.id}`;
+        }
+    };
+
+    // Lightbox handlers for tutor profile photo
+    window.openTutorPhotoLightbox = function(photoUrl, tutorName) {
+        if (!photoUrl || photoUrl.includes('ui-avatars.com')) return;
+        const lightbox = document.getElementById('tutorPhotoLightboxModal');
+        const img = document.getElementById('tutorPhotoLightboxImg');
+        const caption = document.getElementById('tutorPhotoLightboxCaption');
+        if (!lightbox || !img) return;
+
+        img.src = photoUrl;
+        img.alt = tutorName || 'Tutor Profile Photo';
+        if (caption) {
+            caption.textContent = tutorName || 'Tutor Profile Photo';
+            caption.style.display = tutorName ? 'block' : 'none';
+        }
+
+        lightbox.classList.remove('hidden');
+        lightbox.classList.add('flex');
+        lightbox.style.display = 'flex';
+        document.body.classList.add('overflow-hidden');
+    };
+
+    window.closeTutorPhotoLightbox = function() {
+        const lightbox = document.getElementById('tutorPhotoLightboxModal');
+        if (!lightbox) return;
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        lightbox.style.display = 'none';
+        const profileModal = document.getElementById('reusableTutorProfileModal');
+        if (!profileModal || profileModal.classList.contains('hidden') || profileModal.style.display === 'none') {
+            document.body.classList.remove('overflow-hidden');
+        }
+    };
+
+    // Global aliases for full backward and cross-page compatibility
+    window.openFindTutorProfileModal = window.openTutorProfileModal;
+    window.openTopTeacherProfileModal = window.openTutorProfileModal;
+    window.closeFindTutorProfileModal = window.closeTutorProfileModal;
+    window.closeTopTeacherProfileModal = window.closeTutorProfileModal;
+    window.bookDemoFromProfileModal = window.bookFreeTrialFromProfileModal;
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const lightbox = document.getElementById('tutorPhotoLightboxModal');
+            if (lightbox && (!lightbox.classList.contains('hidden') || lightbox.style.display === 'flex')) {
+                closeTutorPhotoLightbox();
+            } else {
+                closeTutorProfileModal();
+            }
+        }
+    });
+})();
+</script>
+
+<!-- Tutor Profile Photo Lightbox Modal -->
+<div id="tutorPhotoLightboxModal" class="fixed inset-0 z-[99999] hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 transition-all duration-200" onclick="if(event.target === this) closeTutorPhotoLightbox();">
+    <div class="relative max-w-xl max-h-[90vh] w-auto flex flex-col items-center justify-center p-2">
+        <!-- Close Button -->
+        <button type="button" onclick="closeTutorPhotoLightbox()" class="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-slate-800 hover:text-red-600 shadow-xl flex items-center justify-center border border-slate-200 transition-transform hover:scale-110 cursor-pointer z-20" aria-label="Close Lightbox">
+            <i class="fas fa-times text-base"></i>
+        </button>
+
+        <!-- Container for full image -->
+        <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-slate-900 border border-white/20 flex flex-col items-center">
+            <img id="tutorPhotoLightboxImg" src="" alt="Tutor Photo" class="max-w-[85vw] sm:max-w-md max-h-[75vh] w-auto h-auto object-contain rounded-t-2xl block select-none bg-slate-950">
+            <!-- Tutor Name Caption Bar -->
+            <div id="tutorPhotoLightboxCaption" class="w-full text-center py-2 px-4 bg-slate-900 text-white font-bold text-xs sm:text-sm tracking-wide border-t border-white/10 truncate">
+            </div>
+        </div>
+    </div>
+</div>
+

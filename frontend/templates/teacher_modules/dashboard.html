@@ -1,0 +1,477 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: DASHBOARD (OVERVIEW)                     -->
+<!-- ======================================================== -->
+<div id="teacherModule_dashboard" class="teacher-module-view space-y-6">
+
+    <!-- HERO GREETING BANNER -->
+    <div class="glass-card rounded-3xl p-6 shadow-soft border border-slate-200/80 dark:border-slate-800 flex items-center justify-between relative overflow-hidden bg-gradient-to-r from-white via-blue-50/40 to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900">
+        <div class="space-y-1.5 max-w-xl">
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                <span id="dynamicTeacherGreeting">Good Day</span>, <span id="dynamicTeacherName">{{ teacher_name|default:"Teacher" }}</span>! 👋
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                You have <strong class="text-blue-600 font-bold">{{ teacher_live_classes|length }} classes scheduled</strong>. Let's inspire students today!
+            </p>
+        </div>
+
+        <!-- Right Illustration Graphic -->
+        <div class="hidden lg:flex items-center justify-end">
+            <div id="teacherHeroImageContainer" class="relative group flex items-center justify-center p-1.5 rounded-3xl transition-all duration-300 bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-purple-500/15 dark:from-blue-400/25 dark:via-indigo-400/20 dark:to-purple-400/25 border border-slate-200/80 dark:border-slate-700/60 shadow-xl backdrop-blur-md">
+                <img id="teacherHeroGlowImage" src="https://cdni.iconscout.com/illustration/premium/thumb/teacher-explaining-graph-illustration-download-in-svg-png-gif-file-formats--analytics-presentation-learning-education-pack-school-illustrations-4518776.png?f=webp&h=200" alt="" class="absolute inset-0 w-full h-full object-contain blur-md opacity-15 dark:opacity-20 pointer-events-none transition-all duration-300">
+                <img id="teacherHeroProfileImage" src="https://cdni.iconscout.com/illustration/premium/thumb/teacher-explaining-graph-illustration-download-in-svg-png-gif-file-formats--analytics-presentation-learning-education-pack-school-illustrations-4518776.png?f=webp&h=200" alt="Teacher Illustration" data-default-src="https://cdni.iconscout.com/illustration/premium/thumb/teacher-explaining-graph-illustration-download-in-svg-png-gif-file-formats--analytics-presentation-learning-education-pack-school-illustrations-4518776.png?f=webp&h=200" class="h-28 object-contain drop-shadow-md relative z-10 transition-all duration-300">
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS ROW (9 Interactive Buttons) -->
+    <div class="glass-card rounded-3xl p-5 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-3">
+        <div class="flex items-center justify-between px-1">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                <i class="fas fa-bolt text-blue-600"></i> Quick Actions
+            </span>
+        </div>
+
+        <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 items-start">
+            <button onclick="openLiveClassModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-video"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Start Live Class</span>
+            </button>
+
+            <button onclick="openUploadLectureModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Upload Lecture</span>
+            </button>
+
+            <button onclick="openCreateTestModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-file-edit"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Create Test</span>
+            </button>
+
+            <button onclick="openHomeworkModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Create Assignment</span>
+            </button>
+
+            <button onclick="openAttendanceModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Mark Attendance</span>
+            </button>
+
+            <button onclick="openAnnouncementModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Send Message</span>
+            </button>
+
+            <button onclick="openUploadMaterialModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-folder-plus"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Upload Material</span>
+            </button>
+
+            <button onclick="switchTeacherModule('performance')" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">View Reports</span>
+            </button>
+
+            <button onclick="openQuestionBankModal()" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-slate-200/60 dark:border-slate-700/60 transition-all hover:scale-105 group cursor-pointer">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-bold shadow-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 mt-2 text-center">Question Bank</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN 3-COLUMN DASHBOARD GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT & CENTER COMBINED AREA (8 COLS) -->
+        <div class="lg:col-span-8 space-y-6">
+
+            <!-- SECTION 1: MY CLASSES OVERVIEW TABLE -->
+            <div id="myClassesOverviewSection" class="glass-card rounded-3xl p-6 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-slate-900 dark:text-white text-base">My Classes Overview</h3>
+                    <button onclick="switchTeacherModule('my_classes')" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline bg-transparent border-0 cursor-pointer">View All +</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="text-[10px] font-extrabold uppercase text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
+                                <th class="py-2.5 px-3">Class</th>
+                                <th class="py-2.5 px-3 text-center">Students</th>
+                                <th class="py-2.5 px-3">Subject</th>
+                                <th class="py-2.5 px-3">Today's Class</th>
+                                <th class="py-2.5 px-3">Status</th>
+                                <th class="py-2.5 px-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold text-slate-700 dark:text-slate-300">
+                            {% for b in teacher_batches %}
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                <td class="py-3 px-3">
+                                    <strong class="text-slate-900 dark:text-white font-extrabold block text-xs">{{ b.title|default:b.class_name }}</strong>
+                                    <span class="text-[10px] text-slate-400">Batch #{{ b.id }}</span>
+                                </td>
+                                <td class="py-3 px-3 text-center font-bold text-slate-900 dark:text-white">
+                                    {{ b.enrollments.count|default:b.enrolled_count|default:"24" }}
+                                </td>
+                                <td class="py-3 px-3">
+                                    <span class="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold">
+                                        {{ b.subject|default:subject_name|default:"General" }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3 text-slate-500 dark:text-slate-400 text-[11px]">
+                                    {{ b.schedule_time|default:"05:00 PM - 06:00 PM" }}
+                                </td>
+                                <td class="py-3 px-3">
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center gap-1 w-max">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3 text-right">
+                                    <button onclick="openLiveClassModal()" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition-all border-0 cursor-pointer shadow-xs">
+                                        Start Class
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                <td class="py-3 px-3">
+                                    <strong class="text-slate-900 dark:text-white font-extrabold block text-xs">Class 10 - Mathematics Batch A</strong>
+                                    <span class="text-[10px] text-slate-400">Section A • Morning</span>
+                                </td>
+                                <td class="py-3 px-3 text-center font-bold text-slate-900 dark:text-white">28</td>
+                                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold">Mathematics</span></td>
+                                <td class="py-3 px-3 text-slate-500 dark:text-slate-400 text-[11px]">04:00 PM - 05:00 PM</td>
+                                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center gap-1 w-max"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span></td>
+                                <td class="py-3 px-3 text-right"><button onclick="openLiveClassModal()" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition-all border-0 cursor-pointer shadow-xs">Start Class</button></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                                <td class="py-3 px-3">
+                                    <strong class="text-slate-900 dark:text-white font-extrabold block text-xs">Class 12 - Physics Advanced</strong>
+                                    <span class="text-[10px] text-slate-400">Section B • Evening</span>
+                                </td>
+                                <td class="py-3 px-3 text-center font-bold text-slate-900 dark:text-white">32</td>
+                                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 text-[10px] font-bold">Physics</span></td>
+                                <td class="py-3 px-3 text-slate-500 dark:text-slate-400 text-[11px]">06:00 PM - 07:30 PM</td>
+                                <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 flex items-center gap-1 w-max"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Scheduled</span></td>
+                                <td class="py-3 px-3 text-right"><button onclick="openLiveClassModal()" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition-all border-0 cursor-pointer shadow-xs">Start Class</button></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 2: TEACHING & STUDENT ANALYTICS (2 CHARTS) -->
+            <div id="analyticsSection" class="glass-card rounded-3xl p-6 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Teaching & Student Analytics</h3>
+                        <p class="text-xs text-slate-400 font-medium mt-0.5">Classes conducted and student engagement trends</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-xs font-bold">Last 30 Days</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-600 dark:text-slate-400">Weekly Classes Conducted</span>
+                            <span class="font-extrabold text-blue-600">{{ classes_conducted_count|default:0 }} Total</span>
+                        </div>
+                        <div class="h-44 w-full relative">
+                            <canvas id="weeklyClassesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-600 dark:text-slate-400">Student Engagement & Attendance</span>
+                            <span class="font-extrabold text-emerald-600">{{ avg_attendance_display|default:"87%" }}</span>
+                        </div>
+                        <div class="h-44 w-full relative">
+                            <canvas id="engagementRateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR COLUMN (4 COLS) -->
+        <div class="lg:col-span-4 space-y-6">
+
+            <!-- SCHEDULE CARD -->
+            <div id="todaysScheduleSection" class="glass-card rounded-3xl p-5 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">Today's Schedule</h3>
+                    <button onclick="switchTeacherModule('live_classes')" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline bg-transparent border-0 cursor-pointer">Live Hub →</button>
+                </div>
+
+                <div class="space-y-3">
+                    {% for lc in teacher_live_classes %}
+                    <div class="p-3.5 rounded-2xl bg-blue-50/60 dark:bg-slate-800/60 border border-blue-100/80 dark:border-slate-700/60 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold {% if lc.status == 'Live' %}bg-rose-500 text-white animate-pulse{% else %}bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300{% endif %}">
+                                {% if lc.status == 'Live' %}LIVE NOW{% else %}{{ lc.start_time|default:"05:00 PM" }}{% endif %}
+                            </span>
+                            <span class="text-[10px] text-slate-400 font-bold">{{ lc.class_name|default:"Class 10" }}</span>
+                        </div>
+                        <h4 class="font-extrabold text-xs text-slate-900 dark:text-white m-0">{{ lc.title }}</h4>
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-[10px] text-slate-500 font-semibold"><i class="far fa-user text-blue-500"></i> {{ lc.enrolled_count|default:"24" }} Students</span>
+                            <button onclick="openLiveClassModal()" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-extrabold border-0 cursor-pointer">
+                                Join Room
+                            </button>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-3.5 rounded-2xl bg-blue-50/60 dark:bg-slate-800/60 border border-blue-100/80 dark:border-slate-700/60 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">05:00 PM - 06:00 PM</span>
+                            <span class="text-[10px] text-slate-400 font-bold">Class 10 CBSE</span>
+                        </div>
+                        <h4 class="font-extrabold text-xs text-slate-900 dark:text-white m-0">Quadratic Equations & Problem Solving</h4>
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-[10px] text-slate-500 font-semibold"><i class="far fa-user text-blue-500"></i> 28 Enrolled</span>
+                            <button onclick="openLiveClassModal()" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-extrabold border-0 cursor-pointer">
+                                Start Class
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- TEACHING TIP CARD -->
+            <div class="rounded-3xl p-5 bg-gradient-to-br from-indigo-900 via-blue-950 to-slate-900 text-white space-y-3 relative overflow-hidden border border-indigo-500/30 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <span class="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center font-bold text-sm">💡</span>
+                    <span class="text-[9px] font-extrabold bg-blue-500/30 text-blue-300 px-2 py-0.5 rounded-md border border-blue-400/20">PRO TIP</span>
+                </div>
+                <h4 class="font-extrabold text-sm text-white">Interactive Quizzes Increase Retention</h4>
+                <p class="text-xs text-slate-200 font-medium leading-relaxed">
+                    Use quick 5-question polls at the beginning of each class to test prerequisite recall.
+                </p>
+                <button onclick="switchTeacherModule('question_bank')" class="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-extrabold rounded-xl transition-all border-0 cursor-pointer">
+                    Explore Question Bank →
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- BOTTOM 3-COLUMN CARDS GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- CARD 1: RECENT LECTURES -->
+        <div id="recentLecturesSection" class="glass-card rounded-3xl p-6 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">Recent Lectures</h3>
+                <button onclick="switchTeacherModule('recorded_lectures')" class="text-xs font-bold text-blue-600 hover:underline bg-transparent border-0 cursor-pointer">View All →</button>
+            </div>
+
+            <div class="space-y-3">
+                {% for lec in recent_lectures %}
+                <div class="flex items-center gap-3 p-2 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+                    <div class="relative w-16 h-12 rounded-xl bg-slate-900 overflow-hidden flex-shrink-0 flex items-center justify-center text-white">
+                        <img src="{% if lec.thumbnail %}{{ lec.thumbnail.url }}{% else %}https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=150&q=80{% endif %}" alt="Lecture" class="w-full h-full object-cover opacity-60">
+                        <i class="fas fa-file-pdf text-xs absolute"></i>
+                        <span class="absolute bottom-1 right-1 px-1 rounded text-[8px] font-mono bg-black/80 text-white">{{ lec.file_size|default:"PDF" }}</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <strong class="block text-xs font-bold text-slate-900 dark:text-white truncate">{{ lec.title }}</strong>
+                        <span class="text-[10px] text-slate-400 font-semibold block">{{ lec.class_name|default:"General" }} • {{ lec.created_at|date:"d M Y" }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-6 text-slate-400">
+                    <i class="fas fa-book-open text-2xl mb-1 block"></i>
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400">No lectures uploaded yet.</p>
+                    <p class="text-[10px]">Use Quick Access to upload your study materials.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- CARD 2: TOP STUDENTS PERFORMANCE LEADERBOARD -->
+        <div id="topStudentsSection" class="glass-card rounded-3xl p-6 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">Top Students Performance</h3>
+                <button onclick="switchTeacherModule('students')" class="text-xs font-bold text-blue-600 hover:underline bg-transparent border-0 cursor-pointer">View All →</button>
+            </div>
+
+            <div class="space-y-3">
+                {% for s in top_students %}
+                <div class="flex items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <img src="https://ui-avatars.com/api/?name={{ s.name|urlencode }}&background=10b981&color=fff&size=80" class="w-8 h-8 rounded-full object-cover">
+                        <div class="truncate">
+                            <strong class="block text-slate-900 dark:text-white font-bold truncate">{{ s.name }}</strong>
+                            <span class="text-[10px] text-slate-400 font-semibold">{{ s.class_name|default:"Class 10" }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-16 bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full" style="width: {{ s.score_pct|default:0 }}%;"></div>
+                        </div>
+                        <span class="font-extrabold text-emerald-600 text-xs">{{ s.score_display }}</span>
+                        <span class="text-[10px] font-bold text-slate-400">{{ s.tests_count }} tests</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-6 text-slate-400">
+                    <i class="fas fa-user-graduate text-2xl mb-1 block"></i>
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400">No student performance data available.</p>
+                    <p class="text-[10px]">Test results will appear here once students attempt tests.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="pt-2 text-center">
+                <button onclick="switchTeacherModule('performance')" class="text-xs font-bold text-blue-600 hover:underline bg-transparent border-0 cursor-pointer">
+                    View Detailed Report →
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 3: ASSIGNMENT OVERVIEW DONUT CHART -->
+        <div id="assignmentOverviewSection" class="glass-card rounded-3xl p-6 shadow-soft border border-slate-200/80 dark:border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-slate-900 dark:text-white text-sm">Assignment Overview</h3>
+                <button onclick="switchTeacherModule('assignments')" class="text-xs font-bold text-blue-600 hover:underline bg-transparent border-0 cursor-pointer">View All →</button>
+            </div>
+
+            <div class="flex items-center justify-around gap-4">
+                <div class="h-28 w-28 relative">
+                    <canvas id="assignmentDonutChart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span class="text-lg font-extrabold text-slate-900 dark:text-white">{{ total_assignments_given|default:0 }}</span>
+                        <span class="text-[8px] font-bold text-slate-400 uppercase">Total</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5 text-xs font-bold">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        <span class="text-slate-600 dark:text-slate-400">Published: <strong>{{ published_assignments_count|default:0 }}</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                        <span class="text-slate-600 dark:text-slate-400">Submitted: <strong>{{ submitted_assignments_count|default:0 }}</strong></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        <span class="text-slate-600 dark:text-slate-400">Pending: <strong>{{ pending_assignments_count|default:0 }}</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3">
+                <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider block">Recent Assignments</span>
+                {% for a in recent_assignments %}
+                <div class="flex items-center justify-between text-xs p-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <div>
+                        <strong class="block text-slate-900 dark:text-white font-bold text-[11px]">{{ a.title }}</strong>
+                        <span class="text-[9px] text-slate-400">{{ a.class_name|default:a.subject }}</span>
+                    </div>
+                    <span class="font-extrabold text-emerald-600 text-xs">Active</span>
+                </div>
+                {% empty %}
+                <p class="text-[10px] text-slate-400 font-semibold py-1">No recent assignments.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ROW 5: QUICK INSIGHTS BOTTOM BAR (6 Cards) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div class="glass-card p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
+                🏆
+            </div>
+            <div class="min-w-0">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Best Performing</span>
+                <strong class="block text-xs font-extrabold text-slate-900 dark:text-white truncate">{{ best_class_name|default:"—" }}</strong>
+                <span class="text-[9px] text-emerald-600 font-bold">Avg. {{ best_class_score|default:"0%" }}</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
+                👥
+            </div>
+            <div class="min-w-0">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Active Students</span>
+                <strong class="block text-xs font-extrabold text-slate-900 dark:text-white truncate">{{ submitted_pct|default:"0%" }}</strong>
+                <span class="text-[9px] text-slate-500 font-medium">Submissions</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
+                ⚠️
+            </div>
+            <div class="min-w-0">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Attendance Alert</span>
+                <strong class="block text-xs font-extrabold text-slate-900 dark:text-white truncate">{{ avg_attendance_display|default:"87%" }}</strong>
+                <span class="text-[9px] text-amber-600 font-bold">Average Attendance</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
+                ⭐
+            </div>
+            <div class="min-w-0">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Feedback</span>
+                <strong class="block text-xs font-extrabold text-slate-900 dark:text-white truncate">{{ teacher_rating_display|default:"0 / 5" }}</strong>
+                <span class="text-[9px] text-slate-500 font-medium">{{ teacher_total_reviews|default:0 }} reviews</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
+                🏆
+            </div>
+            <div class="min-w-0">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Faculty Rank</span>
+                <strong class="block text-xs font-extrabold text-slate-900 dark:text-white truncate">Top 5%</strong>
+                <span class="text-[9px] text-slate-500 font-medium">Ranked Faculty</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
+                📚
+            </div>
+            <div class="min-w-0">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block truncate">Resources</span>
+                <strong class="block text-xs font-extrabold text-slate-900 dark:text-white truncate">{{ lectures_uploaded_count|default:0 }}</strong>
+                <span class="text-[9px] text-slate-500 font-medium">Uploaded</span>
+            </div>
+        </div>
+    </div>
+
+</div>

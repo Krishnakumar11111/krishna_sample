@@ -1,0 +1,1207 @@
+{% extends base_template|default:'admin.html' %}
+
+{% block admin_content %}
+<!-- DETAIL MODAL -->
+<div id="contactEnquiryDetailModal" class="hidden fixed inset-0 z-[99999] overflow-y-auto bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6" onclick="if(event.target === this) closeContactEnquiryDetailModal();">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 relative space-y-4 my-auto max-h-[92vh] flex flex-col">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div id="ced-avatar" class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 font-black flex items-center justify-center text-sm shadow-2xs">
+                    CE
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="ced-id-badge" class="text-[11px] font-extrabold text-blue-600 uppercase tracking-wider">#ENQ-0</span>
+                        <span id="ced-type-badge" class="px-2 py-0.5 rounded-full font-bold text-[10px] bg-slate-100 text-slate-700">General</span>
+                        <span id="ced-status-badge" class="px-2 py-0.5 rounded-full font-extrabold text-[10px] bg-amber-100 text-amber-700">NEW</span>
+                    </div>
+                    <h3 id="ced-name" class="text-base sm:text-lg font-black text-slate-900 leading-tight mb-0">Sender Name</h3>
+                </div>
+            </div>
+            <button type="button" onclick="closeContactEnquiryDetailModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border-0 cursor-pointer text-sm font-bold transition-all">
+                ✕
+            </button>
+        </div>
+
+        <!-- Modal Body Content -->
+        <div class="space-y-3.5 text-xs text-slate-700 overflow-y-auto max-h-[62vh] pr-1.5 custom-scrollbar">
+            <!-- Contact Info Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">Email Address</span>
+                    <div class="flex items-center justify-between">
+                        <span id="ced-email" class="font-bold text-slate-800 break-all">-</span>
+                        <button type="button" onclick="copyContactText(document.getElementById('ced-email').innerText)" class="text-slate-400 hover:text-blue-600 ml-1 border-0 bg-transparent cursor-pointer p-0.5" title="Copy Email">
+                            <i class="far fa-copy text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block mb-0.5">Mobile Number</span>
+                    <div class="flex items-center justify-between">
+                        <span id="ced-mobile" class="font-bold text-slate-800">-</span>
+                        <a id="ced-mobile-link" href="#" class="text-blue-600 hover:text-blue-700 font-bold ml-1 text-[11px] no-underline">
+                            <i class="fas fa-phone-alt text-[10px] mr-1"></i>Call
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject & Message Box -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block">Subject / Topic</span>
+                <div id="ced-subject" class="font-black text-slate-900 text-sm">-</div>
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block pt-2 border-t border-slate-200/60">Full Message Content</span>
+                <div id="ced-message" class="text-slate-700 font-medium whitespace-pre-wrap leading-relaxed bg-white p-3 rounded-lg border border-slate-200/80 text-xs">-</div>
+            </div>
+
+            <!-- Previous Reply (If any) -->
+            <div id="ced-reply-section" class="hidden bg-emerald-50/70 p-3 rounded-xl border border-emerald-200/80 space-y-1.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[9px] font-black text-emerald-800 uppercase tracking-wider flex items-center gap-1">
+                        <i class="fas fa-reply text-emerald-600"></i> Admin Reply Sent
+                    </span>
+                    <span id="ced-replied-at-text" class="text-[10px] font-bold text-emerald-700">-</span>
+                </div>
+                <div id="ced-reply-subject" class="font-bold text-emerald-900 text-xs">-</div>
+                <div id="ced-reply-body" class="text-emerald-950 font-medium whitespace-pre-wrap bg-white p-2.5 rounded-lg border border-emerald-200 text-xs">-</div>
+            </div>
+
+            <!-- Meta & Timestamps Timeline -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <span class="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block mb-2">Activity Timestamps</span>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                    <div class="bg-white p-1.5 rounded-lg border border-slate-100">
+                        <span class="text-[8px] font-bold text-slate-400 block uppercase">Submitted</span>
+                        <span id="ced-submitted-at" class="font-bold text-slate-800 text-[10px]">-</span>
+                    </div>
+                    <div class="bg-white p-1.5 rounded-lg border border-slate-100">
+                        <span class="text-[8px] font-bold text-slate-400 block uppercase">Read At</span>
+                        <span id="ced-read-at" class="font-bold text-slate-800 text-[10px]">-</span>
+                    </div>
+                    <div class="bg-white p-1.5 rounded-lg border border-slate-100">
+                        <span class="text-[8px] font-bold text-slate-400 block uppercase">Replied At</span>
+                        <span id="ced-replied-at" class="font-bold text-slate-800 text-[10px]">-</span>
+                    </div>
+                    <div class="bg-white p-1.5 rounded-lg border border-slate-100">
+                        <span class="text-[8px] font-bold text-slate-400 block uppercase">Closed At</span>
+                        <span id="ced-closed-at" class="font-bold text-slate-800 text-[10px]">-</span>
+                    </div>
+                </div>
+                <div class="mt-2 text-[10px] text-slate-400 flex items-center justify-between">
+                    <span>IP Address: <strong id="ced-ip" class="text-slate-600">-</strong></span>
+                    <span>Enquiry Type: <strong id="ced-type-full" class="text-slate-600">-</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+            <div id="ced-modal-actions" class="flex items-center gap-1.5 flex-wrap">
+                <!-- Action Buttons dynamically updated -->
+            </div>
+            <button type="button" onclick="closeContactEnquiryDetailModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl border-0 cursor-pointer text-xs transition-all">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- REPLY MODAL (PREMIUM REDESIGN) -->
+<div id="contactEnquiryReplyModal" class="hidden fixed inset-0 z-[99999] overflow-y-auto bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5" onclick="if(event.target === this) closeContactEnquiryReplyModal();">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 relative space-y-4 my-auto max-h-[92vh] flex flex-col">
+        <!-- Header -->
+        <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center p-1 overflow-hidden shrink-0">
+                    <img src="{{ platform_logo_url|default:'/media/branding/logo_db17f0.png' }}" class="w-full h-full object-contain" alt="EduTrust Logo" onerror="this.onerror=null; this.src='/static/images/admin_logo.png';">
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 leading-tight mb-0">Send Email Reply</h3>
+                        <span class="px-2 py-0.5 rounded-full font-extrabold text-[10px] bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Dynamic SMTP Live
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium mt-0.5 mb-0">The typed message will be delivered directly to the user's inbox as a branded HTML email.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeContactEnquiryReplyModal()" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center border-0 cursor-pointer text-sm font-bold transition-all shrink-0">
+                ✕
+            </button>
+        </div>
+
+        <!-- Scrollable Modal Body -->
+        <div class="overflow-y-auto pr-1 space-y-3.5 custom-scrollbar">
+            <!-- Recipient Badge / Info Card -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2.5">
+                    <div id="reply-recipient-avatar" class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-xs shrink-0">
+                        CE
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Recipient:</span>
+                            <span id="reply-to-name" class="font-black text-slate-900 text-xs">-</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="reply-to-email-val" class="font-bold text-slate-700 text-xs break-all">-</span>
+                            <button type="button" onclick="copyContactText(document.getElementById('reply-to-email-val').innerText)" class="text-slate-400 hover:text-emerald-600 border-0 bg-transparent cursor-pointer p-0.5" title="Copy Email">
+                                <i class="far fa-copy text-[11px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0 self-start sm:self-center">
+                    <span id="reply-enquiry-badge" class="px-2 py-1 rounded-lg font-bold text-[10px] bg-white border border-slate-200 text-slate-700">#ENQ-0</span>
+                </div>
+            </div>
+
+            <!-- Collapsible Original Enquiry Preview -->
+            <div class="bg-amber-50/60 border border-amber-200/70 rounded-xl overflow-hidden">
+                <button type="button" onclick="toggleOrigEnquiryBox()" class="w-full px-3 py-2 text-left bg-amber-100/50 hover:bg-amber-100/80 border-0 cursor-pointer flex items-center justify-between transition-colors">
+                    <span class="text-[11px] font-black text-amber-900 flex items-center gap-1.5">
+                        <i class="fas fa-quote-left text-amber-600 text-[10px]"></i> User's Original Message Preview
+                    </span>
+                    <span id="orig-box-icon" class="text-amber-700 text-xs transition-transform">
+                        <i class="fas fa-chevron-down text-[10px]"></i>
+                    </span>
+                </button>
+                <div id="reply-orig-message-box" class="p-3 text-xs text-amber-950 font-medium whitespace-pre-wrap leading-relaxed border-t border-amber-200/50 bg-amber-50/30 max-h-36 overflow-y-auto">
+                    <!-- populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Reply Form -->
+            <form id="contactReplyForm" action="javascript:void(0);" method="POST" onsubmit="event.preventDefault(); submitContactReply(event); return false;" class="space-y-3.5 text-xs">
+                <input type="hidden" id="reply-enquiry-id" name="enquiry_id" value="">
+
+                <!-- Quick Response Templates Grid & Dropdown -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="font-black text-slate-700 block text-[11px] mb-0">
+                            <i class="fas fa-magic text-emerald-600 mr-1"></i> Quick Response Preset Templates
+                        </label>
+                        <span class="text-[10px] text-slate-400 font-semibold">1-Click Auto Fill</span>
+                    </div>
+
+                    <!-- 1-Click Quick Preset Chips -->
+                    <div class="flex flex-wrap gap-1.5" id="reply-template-chips">
+                        <button type="button" onclick="applyReplyTemplate('general')" data-tpl="general" class="reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1">
+                            <span>✨ General Support</span>
+                        </button>
+                        <button type="button" onclick="applyReplyTemplate('tutor')" data-tpl="tutor" class="reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1">
+                            <span>🎓 Tutor Guidance</span>
+                        </button>
+                        <button type="button" onclick="applyReplyTemplate('student')" data-tpl="student" class="reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1">
+                            <span>📚 Student / Demo</span>
+                        </button>
+                        <button type="button" onclick="applyReplyTemplate('schedule')" data-tpl="schedule" class="reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1">
+                            <span>📞 Direct Callback</span>
+                        </button>
+                        <button type="button" onclick="applyReplyTemplate('fee')" data-tpl="fee" class="reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1">
+                            <span>💳 Fees & Admissions</span>
+                        </button>
+                    </div>
+
+                    <!-- Dropdown Alternative -->
+                    <div class="relative">
+                        <select id="reply-template-select" onchange="applyReplyTemplate(this.value)" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all cursor-pointer">
+                            <option value="">-- Or choose from all templates dropdown --</option>
+                            <option value="general">✨ General Acknowledgment & Support Assistance</option>
+                            <option value="tutor">🎓 Tutor Application & Profile Guidance</option>
+                            <option value="student">📚 Student / Parent Course & Free Demo Guidance</option>
+                            <option value="schedule">📞 Schedule Direct Callback / Phone Discussion</option>
+                            <option value="fee">💳 Fee Structure & Course Enrollment Details</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Subject -->
+                <div>
+                    <label class="font-black text-slate-700 block mb-1 text-[11px]">
+                        Email Subject Line <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <input type="text" id="reply-subject" name="subject" required placeholder="Re: Your enquiry with EduTrust" class="w-full pl-8 pr-3 bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
+                    </div>
+                </div>
+
+                <!-- Message Body -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-black text-slate-700 block text-[11px]">
+                            Reply Message Body <span class="text-rose-500">*</span>
+                        </label>
+                        <span id="reply-char-count" class="text-[10px] text-slate-400 font-bold">0 characters</span>
+                    </div>
+                    <textarea id="reply-message" name="message" rows="7" required oninput="document.getElementById('reply-char-count').innerText = this.value.length + ' characters'" placeholder="Type your response to the user here. It will be sent via SMTP with branded styling..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-medium rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 custom-scrollbar transition-all leading-relaxed"></textarea>
+                </div>
+
+                <!-- Footer Buttons -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                    <button type="button" onclick="clearReplyForm()" class="text-slate-400 hover:text-slate-600 font-bold px-2 py-1 border-0 bg-transparent cursor-pointer text-xs transition-all">
+                        <i class="fas fa-undo text-[10px] mr-1"></i> Clear Form
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeContactEnquiryReplyModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl border-0 cursor-pointer text-xs transition-all">
+                            Cancel
+                        </button>
+                        <button type="submit" id="btn-submit-reply" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black px-5 py-2 rounded-xl border-0 cursor-pointer text-xs shadow-md shadow-emerald-600/20 hover:shadow-lg transition-all inline-flex items-center gap-2">
+                            <i class="fas fa-paper-plane text-xs"></i> <span>Send Email to User</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="contactEnquiryDeleteModal" class="hidden fixed inset-0 z-[99999] overflow-y-auto bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target === this) closeContactEnquiryDeleteModal();">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 text-center space-y-3 my-auto">
+        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-lg shadow-2xs">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <div>
+            <h3 class="text-base font-black text-slate-900 mb-1">Delete Contact Enquiry?</h3>
+            <p class="text-xs text-slate-500 font-medium">Are you sure you want to permanently delete enquiry <strong id="del-enquiry-id" class="text-slate-800">#ENQ</strong> from <strong id="del-enquiry-name" class="text-slate-800"></strong>? This action cannot be undone.</p>
+        </div>
+        <div class="flex items-center justify-center gap-2 pt-2">
+            <button type="button" onclick="closeContactEnquiryDeleteModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl border-0 cursor-pointer text-xs transition-all">
+                Cancel
+            </button>
+            <button type="button" id="btn-confirm-delete" onclick="executeDeleteContactEnquiry()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-5 py-2 rounded-xl border-0 cursor-pointer text-xs shadow-sm transition-all">
+                Delete Record
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN CONTACT ENQUIRIES VIEW -->
+<div id="contact_enquiries_view" class="space-y-4 fade-in">
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-0.5">
+                <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 no-underline text-slate-400">Dashboard</a> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span>Enquiry</span> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span class="text-blue-600 font-extrabold">Contact Enquiries</span>
+            </div>
+            <h2 class="text-lg font-black text-slate-900 leading-tight">Contact Enquiries</h2>
+            <p class="text-[11px] text-slate-500 font-medium">Manage and respond to all enquiries submitted through the public Contact Us portal and general inquiries.</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            <a href="{% url 'admin_contact_enquiries_export' %}?q={{ filters.q }}&enquiry_type={{ filters.enquiry_type }}&status={{ filters.status }}&date_filter={{ filters.date_filter }}&start_date={{ filters.start_date }}&end_date={{ filters.end_date }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-lg transition-all shadow-2xs no-underline inline-flex items-center gap-1.5">
+                <i class="fas fa-file-export text-slate-400 text-[10px]"></i> Export CSV
+            </a>
+            <a href="{% url 'admin_contact_enquiries' %}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-lg transition-all shadow-2xs no-underline inline-flex items-center gap-1.5">
+                <i class="fas fa-sync-alt text-slate-400 text-[10px]"></i> Refresh
+            </a>
+        </div>
+    </div>
+
+    <!-- 5 DYNAMIC KPI SUMMARY CARDS (COMPACT ROW) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+        <!-- Card 1: Total Enquiries -->
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between h-[82px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8.5px] font-black text-slate-400 uppercase tracking-wider">Total Enquiries</span>
+                <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-envelope"></i></div>
+            </div>
+            <div id="kpi-ce-total" class="text-base font-black text-slate-900 leading-none my-0.5">{{ kpi.total }}</div>
+            <span class="text-[7.5px] font-semibold text-slate-400 truncate">All contact submissions</span>
+        </div>
+
+        <!-- Card 2: New Enquiries -->
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between h-[82px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8.5px] font-black text-amber-500 uppercase tracking-wider">New</span>
+                <div class="w-6 h-6 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-bell"></i></div>
+            </div>
+            <div id="kpi-ce-new" class="text-base font-black text-amber-600 leading-none my-0.5">{{ kpi.new }}</div>
+            <span class="text-[7.5px] font-semibold text-slate-400 truncate">Awaiting review</span>
+        </div>
+
+        <!-- Card 3: Read Enquiries -->
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between h-[82px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8.5px] font-black text-indigo-500 uppercase tracking-wider">Read</span>
+                <div class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-envelope-open"></i></div>
+            </div>
+            <div id="kpi-ce-read" class="text-base font-black text-indigo-600 leading-none my-0.5">{{ kpi.read }}</div>
+            <span class="text-[7.5px] font-semibold text-slate-400 truncate">Viewed by team</span>
+        </div>
+
+        <!-- Card 4: Replied Enquiries -->
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between h-[82px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8.5px] font-black text-emerald-600 uppercase tracking-wider">Replied</span>
+                <div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-paper-plane"></i></div>
+            </div>
+            <div id="kpi-ce-replied" class="text-base font-black text-emerald-600 leading-none my-0.5">{{ kpi.replied }}</div>
+            <span class="text-[7.5px] font-semibold text-slate-400 truncate">Response delivered</span>
+        </div>
+
+        <!-- Card 5: Closed Enquiries -->
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between h-[82px]">
+            <div class="flex items-center justify-between">
+                <span class="text-[8.5px] font-black text-slate-500 uppercase tracking-wider">Closed</span>
+                <div class="w-6 h-6 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-[10px] shrink-0"><i class="fas fa-archive"></i></div>
+            </div>
+            <div id="kpi-ce-closed" class="text-base font-black text-slate-600 leading-none my-0.5">{{ kpi.closed }}</div>
+            <span class="text-[7.5px] font-semibold text-slate-400 truncate">Resolved / archived</span>
+        </div>
+    </div>
+
+    <!-- SEARCH & FILTERS -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+        <form method="GET" action="{% url 'admin_contact_enquiries' %}" class="flex flex-col lg:flex-row gap-2 items-center justify-between">
+            <div class="relative w-full lg:w-72">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]"></i>
+                <input type="text" name="q" value="{{ filters.q }}" placeholder="Search name, email, mobile, subject, #ID..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 w-full lg:w-auto text-xs">
+                <!-- Enquiry Type -->
+                <select name="enquiry_type" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.enquiry_type == 'ALL' %}selected{% endif %}>All Enquiry Types</option>
+                    {% for et in enquiry_type_options %}
+                    <option value="{{ et }}" {% if filters.enquiry_type == et %}selected{% endif %}>{{ et }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Status -->
+                <select name="status" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.status == 'ALL' %}selected{% endif %}>All Status</option>
+                    {% for st in status_options %}
+                    <option value="{{ st }}" {% if filters.status == st %}selected{% endif %}>{{ st }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Date Range Filter -->
+                <select name="date_filter" id="dateFilterSelect" onchange="handleDateFilterChange(this.value)" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.date_filter == 'ALL' or not filters.date_filter %}selected{% endif %}>All Time</option>
+                    <option value="today" {% if filters.date_filter == 'today' %}selected{% endif %}>Today</option>
+                    <option value="yesterday" {% if filters.date_filter == 'yesterday' %}selected{% endif %}>Yesterday</option>
+                    <option value="last_7_days" {% if filters.date_filter == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+                    <option value="last_30_days" {% if filters.date_filter == 'last_30_days' %}selected{% endif %}>Last 30 Days</option>
+                    <option value="custom" {% if filters.date_filter == 'custom' %}selected{% endif %}>Custom Date Range</option>
+                </select>
+
+                <!-- Custom Date Inputs -->
+                <div id="customDateInputs" class="{% if filters.date_filter != 'custom' %}hidden{% endif %} flex items-center gap-1">
+                    <input type="date" name="start_date" value="{{ filters.start_date }}" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-2 py-1 focus:outline-none">
+                    <span class="text-slate-400 text-[10px]">to</span>
+                    <input type="date" name="end_date" value="{{ filters.end_date }}" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg px-2 py-1 focus:outline-none">
+                </div>
+
+                <button type="submit" class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg border-0 cursor-pointer hover:bg-blue-700 transition-colors inline-flex items-center gap-1">
+                    <i class="fas fa-filter text-[10px]"></i> Filter
+                </button>
+                <a href="{% url 'admin_contact_enquiries' %}" class="bg-slate-100 text-slate-600 font-bold text-xs px-2.5 py-1.5 rounded-lg border-0 cursor-pointer hover:bg-slate-200 transition-colors no-underline inline-flex items-center gap-1">
+                    <i class="fas fa-undo text-[9px]"></i> Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- CONTACT ENQUIRIES TABLE -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-extrabold uppercase text-[9px] tracking-wider">
+                        <th class="px-3.5 py-3">Sr. No.</th>
+                        <th class="px-3.5 py-3">Sender Name</th>
+                        <th class="px-3.5 py-3">Email ID</th>
+                        <th class="px-3.5 py-3">Mobile Number</th>
+                        <th class="px-3.5 py-3">Subject</th>
+                        <th class="px-3.5 py-3">Message</th>
+                        <th class="px-3.5 py-3">Type</th>
+                        <th class="px-3.5 py-3">Submitted At</th>
+                        <th class="px-3.5 py-3">Status</th>
+                        <th class="px-3.5 py-3 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+                    {% for item in page_obj %}
+                    {% ifchanged item.date_group_label %}
+                    <tr class="date-group-header-row" style="background:#f1f5f9 !important; border-top:2px solid #cbd5e1; border-bottom:1px solid #e2e8f0;">
+                        <td colspan="10" class="px-3.5 py-2 date-group-header-cell" style="background:#f1f5f9 !important; color:#0f172a !important;">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-md {% if item.is_today %}bg-blue-600 text-white{% elif item.is_yesterday %}bg-slate-700 text-white{% else %}bg-slate-200 text-slate-700{% endif %} flex items-center justify-center text-[10px] font-bold shadow-2xs">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </div>
+                                    <span class="font-extrabold text-xs date-group-title-text tracking-tight" style="color:#0f172a !important;">
+                                        {{ item.date_group_label }}
+                                    </span>
+                                    {% if item.is_today %}
+                                        <span class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">TODAY</span>
+                                    {% elif item.is_yesterday %}
+                                        <span class="bg-slate-700 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">YESTERDAY</span>
+                                    {% endif %}
+                                </div>
+                                <span class="text-[10px] font-bold date-group-count-badge px-2.5 py-0.5 rounded-md shadow-2xs" style="background:#ffffff !important; color:#334155 !important; border:1px solid #cbd5e1 !important;">
+                                    <i class="far fa-clock mr-1 opacity-70" style="color:#64748b !important;"></i> {{ item.date_group_count }} Enquiry{{ item.date_group_count|pluralize }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endifchanged %}
+                    <tr id="contact-enquiry-row-{{ item.id }}" data-enquiry-id="{{ item.id }}" class="hover:bg-slate-50/80 transition-colors">
+                        <!-- Sr. No. / Enquiry ID -->
+                        <td class="px-3.5 py-3 whitespace-nowrap">
+                            <span class="font-black text-blue-600 text-xs">{% if item.enquiry_id %}{{ item.enquiry_id }}{% else %}#ENQ-{{ item.id }}{% endif %}</span>
+                        </td>
+
+                        <!-- Name -->
+                        <td class="px-3.5 py-3 whitespace-nowrap">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 font-black flex items-center justify-center text-xs shrink-0 shadow-2xs">
+                                    {{ item.name|slice:":2"|upper }}
+                                </div>
+                                <div>
+                                    <div class="font-black text-slate-900 leading-snug">{{ item.name }}</div>
+                                    <span class="text-[10px] text-slate-400 font-bold block">Visitor Enquiry</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Email -->
+                        <td class="px-3.5 py-3 whitespace-nowrap">
+                            <div class="flex items-center gap-1.5">
+                                <a href="mailto:{{ item.email }}" class="text-blue-600 hover:text-blue-700 font-semibold no-underline truncate max-w-[170px] inline-block" title="{{ item.email }}">{{ item.email }}</a>
+                                <button type="button" onclick="copyContactText('{{ item.email }}')" class="text-slate-300 hover:text-blue-600 border-0 bg-transparent cursor-pointer p-0.5" title="Copy Email">
+                                    <i class="far fa-copy text-[11px]"></i>
+                                </button>
+                            </div>
+                        </td>
+
+                        <!-- Mobile -->
+                        <td class="px-3.5 py-3 whitespace-nowrap font-semibold text-slate-700">
+                            {% if item.mobile %}
+                            <a href="tel:{{ item.mobile }}" class="text-slate-700 hover:text-blue-600 no-underline font-bold">{{ item.mobile }}</a>
+                            {% else %}
+                            <span class="text-slate-400">-</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Subject -->
+                        <td class="px-3.5 py-3 max-w-[180px]">
+                            <div class="font-bold text-slate-900 truncate" title="{{ item.subject }}">{{ item.subject|default:"General Enquiry" }}</div>
+                        </td>
+
+                        <!-- Message -->
+                        <td class="px-3.5 py-3 max-w-[240px]">
+                            <div class="text-slate-600 truncate text-[11.5px]" title="{{ item.message }}">{{ item.message|truncatechars:65 }}</div>
+                            <button type="button" onclick="openContactEnquiryModal({{ item.id }})" class="text-[10px] font-extrabold text-blue-600 hover:underline border-0 bg-transparent cursor-pointer p-0 mt-0.5">View Details</button>
+                        </td>
+
+                        <!-- Type -->
+                        <td class="px-3.5 py-3 whitespace-nowrap">
+                            {% if item.enquiry_type == 'Tutor' %}
+                                <span class="bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-md text-[10px] border border-indigo-200/60">Tutor</span>
+                            {% elif item.enquiry_type == 'Student' %}
+                                <span class="bg-cyan-50 text-cyan-700 font-bold px-2 py-0.5 rounded-md text-[10px] border border-cyan-200/60">Student</span>
+                            {% elif item.enquiry_type == 'Parent' %}
+                                <span class="bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded-md text-[10px] border border-purple-200/60">Parent</span>
+                            {% elif item.enquiry_type == 'Recruitment' %}
+                                <span class="bg-amber-50 text-amber-700 font-bold px-2 py-0.5 rounded-md text-[10px] border border-amber-200/60">Recruitment</span>
+                            {% elif item.enquiry_type == 'Support' %}
+                                <span class="bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded-md text-[10px] border border-rose-200/60">Support</span>
+                            {% else %}
+                                <span class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-md text-[10px] border border-slate-200/60">{{ item.enquiry_type|default:'General' }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Submitted At -->
+                        <td class="px-3.5 py-3 whitespace-nowrap">
+                            <div class="text-slate-800 font-bold text-[11px]">{{ item.created_at|date:"M d, Y" }}</div>
+                            <div class="text-slate-400 text-[10px] font-semibold">{{ item.created_at|date:"h:i A" }} <span class="text-blue-500 font-bold ml-0.5">({{ item.relative_time }})</span></div>
+                        </td>
+
+                        <!-- Status Badge -->
+                        <td class="px-3.5 py-3 whitespace-nowrap" id="status-cell-{{ item.id }}">
+                            {% if item.status == 'New' %}
+                                <span id="badge-status-{{ item.id }}" class="bg-amber-50 text-amber-700 border border-amber-200/80 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> NEW
+                                </span>
+                            {% elif item.status == 'Read' %}
+                                <span id="badge-status-{{ item.id }}" class="bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> READ
+                                </span>
+                            {% elif item.status == 'Replied' %}
+                                <span id="badge-status-{{ item.id }}" class="bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> REPLIED
+                                </span>
+                            {% elif item.status == 'Closed' %}
+                                <span id="badge-status-{{ item.id }}" class="bg-slate-100 text-slate-600 border border-slate-200/80 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> CLOSED
+                                </span>
+                            {% else %}
+                                <span id="badge-status-{{ item.id }}" class="bg-slate-100 text-slate-600 font-extrabold px-2.5 py-0.5 rounded-full text-[10px]">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="px-3.5 py-3 whitespace-nowrap text-right">
+                            <div class="relative inline-block text-left" id="actions-cell-{{ item.id }}">
+                                <!-- Three Dots Trigger Button -->
+                                <button type="button" 
+                                        onclick="toggleContactActionDropdown(event, {{ item.id }})" 
+                                        id="btn-action-dropdown-{{ item.id }}" 
+                                        class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 inline-flex items-center justify-center transition-all border border-slate-200 cursor-pointer text-xs focus:outline-hidden" 
+                                        title="Actions">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+
+                                <!-- Dropdown Menu -->
+                                <div id="dropdown-action-menu-{{ item.id }}" 
+                                     class="hidden contact-action-dropdown fixed w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-[99999] text-left">
+                                    
+                                    <!-- View Details -->
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); openContactEnquiryModal({{ item.id }})" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                        <span>View Details</span>
+                                    </button>
+
+                                    <!-- Reply via Email -->
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); openReplyModal({{ item.id }}, '{{ item.name|escapejs }}', '{{ item.email|escapejs }}', '{{ item.subject|escapejs }}', '{{ item.message|escapejs }}')" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </span>
+                                        <span>Reply via Email</span>
+                                    </button>
+
+                                    <div class="h-px bg-slate-100 my-1"></div>
+
+                                    <!-- Mark Read / Unread -->
+                                    {% if item.status == 'New' %}
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); markEnquiryAction({{ item.id }}, 'mark_read')" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                        <span>Mark as Read</span>
+                                    </button>
+                                    {% else %}
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); markEnquiryAction({{ item.id }}, 'mark_unread')" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-indigo-50 text-indigo-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                        <span>Mark as New</span>
+                                    </button>
+                                    {% endif %}
+
+                                    <!-- Close / Reopen -->
+                                    {% if item.status == 'Closed' %}
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); markEnquiryAction({{ item.id }}, 'reopen')" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-amber-50 hover:text-amber-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-amber-50 text-amber-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-box-open"></i>
+                                        </span>
+                                        <span>Reopen Enquiry</span>
+                                    </button>
+                                    {% else %}
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); markEnquiryAction({{ item.id }}, 'close')" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-800 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-archive"></i>
+                                        </span>
+                                        <span>Close Enquiry</span>
+                                    </button>
+                                    {% endif %}
+
+                                    <div class="h-px bg-slate-100 my-1"></div>
+
+                                    <!-- Delete -->
+                                    <button type="button" 
+                                            onclick="closeAllContactDropdowns(); openDeleteModal({{ item.id }}, '{{ item.name|escapejs }}')" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </span>
+                                        <span>Delete Enquiry</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center py-16 text-slate-400">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3 text-xl shadow-2xs">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <div class="font-extrabold text-sm text-slate-700">No contact enquiries yet</div>
+                            <div class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Enquiries submitted by visitors through the public Contact Us form will appear here dynamically in real-time.</div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SERVER-SIDE PAGINATION -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="px-4 py-3 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <span class="text-slate-500 font-bold">
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ total_results }} enquiries
+            </span>
+            <div class="flex items-center gap-1">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&enquiry_type={{ filters.enquiry_type }}&status={{ filters.status }}&date_filter={{ filters.date_filter }}&start_date={{ filters.start_date }}&end_date={{ filters.end_date }}" class="px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-50 no-underline">
+                    <i class="fas fa-chevron-left text-[10px] mr-1"></i> Prev
+                </a>
+                {% endif %}
+
+                {% for p in page_obj.paginator.page_range %}
+                    {% if p == page_obj.number %}
+                        <span class="px-3 py-1.5 bg-blue-600 text-white font-black rounded-lg shadow-2xs">{{ p }}</span>
+                    {% elif p > page_obj.number|add:'-3' and p < page_obj.number|add:'3' %}
+                        <a href="?page={{ p }}&q={{ filters.q }}&enquiry_type={{ filters.enquiry_type }}&status={{ filters.status }}&date_filter={{ filters.date_filter }}&start_date={{ filters.start_date }}&end_date={{ filters.end_date }}" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-50 no-underline">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&enquiry_type={{ filters.enquiry_type }}&status={{ filters.status }}&date_filter={{ filters.date_filter }}&start_date={{ filters.start_date }}&end_date={{ filters.end_date }}" class="px-2.5 py-1.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-50 no-underline">
+                    Next <i class="fas fa-chevron-right text-[10px] ml-1"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div id="contactToast" class="hidden fixed bottom-5 right-5 z-[999999] bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-bold transition-all duration-300 transform translate-y-4">
+    <div id="toastIcon" class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px]">
+        <i class="fas fa-check"></i>
+    </div>
+    <span id="toastMessage">Success</span>
+</div>
+
+<script>
+// ====================================================
+// CONTACT ENQUIRIES FRONTEND CONTROLLER & MODAL LOGIC
+// ====================================================
+
+let activeContactEnquiryId = null;
+
+function showContactToast(msg, isError = false) {
+    const toast = document.getElementById('contactToast');
+    const toastMsg = document.getElementById('toastMessage');
+    const toastIcon = document.getElementById('toastIcon');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.innerText = msg;
+    if (isError) {
+        toastIcon.className = "w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px]";
+        toastIcon.innerHTML = '<i class="fas fa-times"></i>';
+    } else {
+        toastIcon.className = "w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px]";
+        toastIcon.innerHTML = '<i class="fas fa-check"></i>';
+    }
+
+    toast.classList.remove('hidden');
+    toast.classList.remove('translate-y-4');
+    toast.classList.add('translate-y-0');
+
+    setTimeout(() => {
+        toast.classList.add('translate-y-4');
+        setTimeout(() => toast.classList.add('hidden'), 300);
+    }, 3500);
+}
+
+function copyContactText(text) {
+    if (!text || text === '-') return;
+    navigator.clipboard.writeText(text).then(() => {
+        showContactToast('Copied to clipboard: ' + text);
+    }).catch(() => {
+        showContactToast('Failed to copy', true);
+    });
+}
+
+function handleDateFilterChange(val) {
+    const customDiv = document.getElementById('customDateInputs');
+    if (customDiv) {
+        if (val === 'custom') {
+            customDiv.classList.remove('hidden');
+        } else {
+            customDiv.classList.add('hidden');
+            document.querySelector('#contact_enquiries_view form').submit();
+        }
+    }
+}
+
+// 1. OPEN VIEW DETAILS MODAL
+async function openContactEnquiryModal(id) {
+    activeContactEnquiryId = id;
+    const modal = document.getElementById('contactEnquiryDetailModal');
+    if (!modal) return;
+
+    try {
+        const res = await fetch(`/api/admin/contact-enquiries/${id}/action/`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const json = await res.json();
+
+        if (json.status === 'success' && json.data) {
+            const d = json.data;
+            document.getElementById('ced-avatar').innerText = (d.name || 'CE').slice(0, 2).toUpperCase();
+            document.getElementById('ced-id-badge').innerText = `#ENQ-${d.id}`;
+            document.getElementById('ced-type-badge').innerText = d.enquiry_type || 'General';
+            document.getElementById('ced-name').innerText = d.name || 'Anonymous';
+            document.getElementById('ced-email').innerText = d.email || '-';
+            document.getElementById('ced-mobile').innerText = d.mobile || '-';
+            if (d.mobile) {
+                document.getElementById('ced-mobile-link').href = `tel:${d.mobile}`;
+                document.getElementById('ced-mobile-link').classList.remove('hidden');
+            } else {
+                document.getElementById('ced-mobile-link').classList.add('hidden');
+            }
+            document.getElementById('ced-subject').innerText = d.subject || 'General Enquiry';
+            document.getElementById('ced-message').innerText = d.message || '-';
+
+            // Status badge in modal
+            const statusBadge = document.getElementById('ced-status-badge');
+            statusBadge.innerText = (d.status || 'NEW').toUpperCase();
+            if (d.status === 'New') {
+                statusBadge.className = 'px-2 py-0.5 rounded-full font-extrabold text-[10px] bg-amber-100 text-amber-700';
+            } else if (d.status === 'Read') {
+                statusBadge.className = 'px-2 py-0.5 rounded-full font-extrabold text-[10px] bg-indigo-100 text-indigo-700';
+            } else if (d.status === 'Replied') {
+                statusBadge.className = 'px-2 py-0.5 rounded-full font-extrabold text-[10px] bg-emerald-100 text-emerald-700';
+            } else if (d.status === 'Closed') {
+                statusBadge.className = 'px-2 py-0.5 rounded-full font-extrabold text-[10px] bg-slate-100 text-slate-700';
+            }
+
+            // Reply section
+            const replySec = document.getElementById('ced-reply-section');
+            if (d.reply_message) {
+                replySec.classList.remove('hidden');
+                document.getElementById('ced-replied-at-text').innerText = d.replied_at || '';
+                document.getElementById('ced-reply-subject').innerText = d.reply_subject || 'Re: Enquiry';
+                document.getElementById('ced-reply-body').innerText = d.reply_message || '';
+            } else {
+                replySec.classList.add('hidden');
+            }
+
+            // Timestamps
+            document.getElementById('ced-submitted-at').innerText = d.created_at || '-';
+            document.getElementById('ced-read-at').innerText = d.read_at || '-';
+            document.getElementById('ced-replied-at').innerText = d.replied_at || '-';
+            document.getElementById('ced-closed-at').innerText = d.closed_at || '-';
+            document.getElementById('ced-ip').innerText = d.ip_address || '-';
+            document.getElementById('ced-type-full').innerText = d.enquiry_type || 'General';
+
+            // Actions in modal footer
+            const actionsContainer = document.getElementById('ced-modal-actions');
+            actionsContainer.innerHTML = `
+                <button type="button" onclick="closeContactEnquiryDetailModal(); openReplyModal(${d.id}, '${escapeQuote(d.name)}', '${escapeQuote(d.email)}', '${escapeQuote(d.subject)}', '${escapeQuote(d.message)}');" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl border-0 cursor-pointer text-xs inline-flex items-center gap-1 shadow-xs">
+                    <i class="fas fa-paper-plane text-[10px]"></i> Reply via Email
+                </button>
+                ${d.status === 'New' ? `
+                <button type="button" onclick="markEnquiryAction(${d.id}, 'mark_read')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-xl border-0 cursor-pointer text-xs inline-flex items-center gap-1">
+                    <i class="fas fa-check text-[10px]"></i> Mark Read
+                </button>` : `
+                <button type="button" onclick="markEnquiryAction(${d.id}, 'mark_unread')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border-0 cursor-pointer text-xs inline-flex items-center gap-1">
+                    <i class="fas fa-envelope text-[10px]"></i> Mark Unread
+                </button>`}
+                ${d.status === 'Closed' ? `
+                <button type="button" onclick="markEnquiryAction(${d.id}, 'reopen')" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold px-3 py-1.5 rounded-xl border-0 cursor-pointer text-xs inline-flex items-center gap-1">
+                    <i class="fas fa-box-open text-[10px]"></i> Reopen
+                </button>` : `
+                <button type="button" onclick="markEnquiryAction(${d.id}, 'close')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border-0 cursor-pointer text-xs inline-flex items-center gap-1">
+                    <i class="fas fa-archive text-[10px]"></i> Close
+                </button>`}
+                <button type="button" onclick="closeContactEnquiryDetailModal(); openDeleteModal(${d.id}, '${escapeQuote(d.name)}');" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-xl border-0 cursor-pointer text-xs inline-flex items-center gap-1">
+                    <i class="fas fa-trash-alt text-[10px]"></i> Delete
+                </button>
+            `;
+
+            // If it was New, update row status badge in table to Read since viewing marks as read
+            const tableBadge = document.getElementById(`badge-status-${d.id}`);
+            if (tableBadge && d.status === 'Read') {
+                tableBadge.className = 'bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1';
+                tableBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> READ';
+            }
+
+            modal.classList.remove('hidden');
+        } else {
+            showContactToast(json.message || 'Failed to fetch details', true);
+        }
+    } catch (e) {
+        console.error(e);
+        showContactToast('Network error loading enquiry', true);
+    }
+}
+
+function closeContactEnquiryDetailModal() {
+    const modal = document.getElementById('contactEnquiryDetailModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function escapeQuote(str) {
+    if (!str) return '';
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+// 2. REPLY MODAL LOGIC
+function clearReplyForm() {
+    const msgBox = document.getElementById('reply-message');
+    const charCount = document.getElementById('reply-char-count');
+    const select = document.getElementById('reply-template-select');
+    if (msgBox) msgBox.value = '';
+    if (charCount) charCount.innerText = '0 characters';
+    if (select) select.value = '';
+    document.querySelectorAll('.reply-tpl-chip').forEach(chip => {
+        chip.className = "reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1";
+    });
+}
+
+function openReplyModal(id, name, email, subject, origMessage) {
+    document.getElementById('reply-enquiry-id').value = id;
+    document.getElementById('reply-recipient-avatar').innerText = (name || 'CE').slice(0, 2).toUpperCase();
+    document.getElementById('reply-to-name').innerText = name || 'User';
+    document.getElementById('reply-to-email-val').innerText = email || 'No email provided';
+    document.getElementById('reply-enquiry-badge').innerText = `#ENQ-${id}`;
+    
+    // Set Subject
+    const subClean = (subject || '').replace(/^Re:\s*/i, '');
+    document.getElementById('reply-subject').value = `Re: ${subClean || 'Your Contact Enquiry with EduTrust'}`;
+    
+    // Set Original message preview
+    const origBox = document.getElementById('reply-orig-message-box');
+    if (origBox) {
+        origBox.innerText = origMessage || '(No message content provided)';
+    }
+
+    // Reset textarea, chips, and char count
+    clearReplyForm();
+
+    const modal = document.getElementById('contactEnquiryReplyModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeContactEnquiryReplyModal() {
+    const modal = document.getElementById('contactEnquiryReplyModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function toggleOrigEnquiryBox() {
+    const box = document.getElementById('reply-orig-message-box');
+    const icon = document.getElementById('orig-box-icon');
+    if (!box) return;
+    if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden');
+        if (icon) icon.innerHTML = '<i class="fas fa-chevron-down text-[10px]"></i>';
+    } else {
+        box.classList.add('hidden');
+        if (icon) icon.innerHTML = '<i class="fas fa-chevron-right text-[10px]"></i>';
+    }
+}
+
+function applyReplyTemplate(type) {
+    const msgBox = document.getElementById('reply-message');
+    const charCount = document.getElementById('reply-char-count');
+    const select = document.getElementById('reply-template-select');
+    const recipientName = (document.getElementById('reply-to-name') ? document.getElementById('reply-to-name').innerText : '') || 'User';
+
+    if (select) {
+        select.value = type || '';
+    }
+
+    // Update active style on chips
+    document.querySelectorAll('.reply-tpl-chip').forEach(chip => {
+        const chipType = chip.getAttribute('data-tpl');
+        if (type && chipType === type) {
+            chip.className = "reply-tpl-chip px-2.5 py-1 rounded-lg border border-emerald-500 bg-emerald-600 text-white font-black text-[11px] shadow-xs transition-all cursor-pointer flex items-center gap-1";
+        } else {
+            chip.className = "reply-tpl-chip px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 text-slate-700 hover:text-emerald-700 font-bold text-[11px] transition-all cursor-pointer flex items-center gap-1";
+        }
+    });
+
+    if (!type || !msgBox) {
+        if (msgBox && !type) {
+            msgBox.value = '';
+            if (charCount) charCount.innerText = '0 characters';
+        }
+        return;
+    }
+
+    if (type === 'general') {
+        msgBox.value = `Dear ${recipientName},\n\nThank you for reaching out to EduTrust. We have received your inquiry and are delighted to assist you.\n\nOur team is reviewing your requirements and will guide you with the best available options. Please feel free to reply directly to this email if you have any immediate questions.\n\nWarm regards,\nEduTrust Support Team\nEmail: support@edutrust.com\nWebsite: http://127.0.0.1:8000`;
+    } else if (type === 'tutor') {
+        msgBox.value = `Dear ${recipientName},\n\nThank you for contacting EduTrust regarding tutoring opportunities. We highly value qualified educators in our network.\n\nPlease ensure your teacher profile and qualification details are updated on our portal so we can match you with the latest home tuition requirements and online batches.\n\nBest regards,\nEduTrust Teacher Relations Team`;
+    } else if (type === 'student') {
+        msgBox.value = `Dear ${recipientName},\n\nThank you for choosing EduTrust for your educational requirements. We provide verified, top-rated home tutors and interactive online batch classes tailored to your academic syllabus.\n\nOne of our dedicated academic counselors will connect with you shortly to schedule a Free Demo Session.\n\nBest regards,\nEduTrust Academic Team`;
+    } else if (type === 'schedule') {
+        msgBox.value = `Dear ${recipientName},\n\nThank you for your message. To better understand your requirements and recommend the ideal learning roadmap, we would love to have a brief 5-minute phone consultation with you.\n\nPlease reply with your preferred callback time slot, and our team will get in touch.\n\nWarm regards,\nEduTrust Support Team`;
+    } else if (type === 'fee') {
+        msgBox.value = `Dear ${recipientName},\n\nThank you for your inquiry regarding course fee structure and enrollment options at EduTrust.\n\nOur course batches offer flexible monthly and term plans with comprehensive study material, live doubt solving, and recorded lectures. Detailed course brochures and fee breakdowns are available on our portal.\n\nPlease feel free to let us know which specific grade/subject you are interested in for detailed pricing.\n\nBest regards,\nEduTrust Admissions Team`;
+    }
+
+    if (charCount) {
+        charCount.innerText = msgBox.value.length + ' characters';
+    }
+}
+
+async function submitContactReply(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const id = document.getElementById('reply-enquiry-id').value;
+    const subject = document.getElementById('reply-subject').value.trim();
+    const message = document.getElementById('reply-message').value.trim();
+    const btn = document.getElementById('btn-submit-reply');
+
+    if (!subject || !message) {
+        showContactToast('Subject and Message are required', true);
+        return false;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i> <span>Sending Email to User...</span>';
+
+    try {
+        const res = await fetch(`/api/admin/contact-enquiries/${id}/action/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                action: 'reply',
+                subject: subject,
+                message: message
+            })
+        });
+        const json = await res.json();
+
+        if (json.status === 'success') {
+            closeContactEnquiryReplyModal();
+            showContactToast(json.message || 'Email successfully sent to user!');
+
+            // Update row status badge in table
+            const tableBadge = document.getElementById(`badge-status-${id}`);
+            if (tableBadge) {
+                tableBadge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-extrabold px-2.5 py-0.5 rounded-full text-[10px] inline-flex items-center gap-1';
+                tableBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> REPLIED';
+            }
+
+            // Update KPI count if present
+            const kpiReplied = document.getElementById('kpi-ce-replied');
+            if (kpiReplied) {
+                kpiReplied.innerText = parseInt(kpiReplied.innerText || '0') + 1;
+            }
+        } else {
+            showContactToast(json.message || 'Failed to send email reply', true);
+        }
+    } catch (err) {
+        console.error(err);
+        showContactToast('Network error sending reply email', true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane text-xs"></i> <span>Send Email to User</span>';
+    }
+}
+
+// 3. STATUS ACTIONS (MARK READ, UNREAD, CLOSE, REOPEN)
+async function markEnquiryAction(id, action) {
+    try {
+        const res = await fetch(`/api/admin/contact-enquiries/${id}/action/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ action: action })
+        });
+        const json = await res.json();
+
+        if (json.status === 'success') {
+            showContactToast(json.message);
+            closeContactEnquiryDetailModal();
+
+            // Reload module view seamlessly via router or page reload
+            if (typeof window.loadAdminModule === 'function') {
+                window.loadAdminModule('enquiries', false, true);
+            } else {
+                window.location.reload();
+            }
+        } else {
+            showContactToast(json.message || 'Failed to update enquiry', true);
+        }
+    } catch (err) {
+        console.error(err);
+        showContactToast('Network error performing action', true);
+    }
+}
+
+// 4. DELETE MODAL LOGIC
+let deleteEnquiryId = null;
+
+function openDeleteModal(id, name) {
+    deleteEnquiryId = id;
+    document.getElementById('del-enquiry-id').innerText = `#ENQ-${id}`;
+    document.getElementById('del-enquiry-name').innerText = name || 'this sender';
+    const modal = document.getElementById('contactEnquiryDeleteModal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeContactEnquiryDeleteModal() {
+    const modal = document.getElementById('contactEnquiryDeleteModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+async function executeDeleteContactEnquiry() {
+    if (!deleteEnquiryId) return;
+    const btn = document.getElementById('btn-confirm-delete');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i> Deleting...';
+
+    try {
+        const res = await fetch(`/api/admin/contact-enquiries/${deleteEnquiryId}/action/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ action: 'delete' })
+        });
+        const json = await res.json();
+
+        if (json.status === 'success') {
+            closeContactEnquiryDeleteModal();
+            showContactToast(json.message || 'Enquiry deleted successfully');
+
+            const row = document.getElementById(`contact-enquiry-row-${deleteEnquiryId}`);
+            if (row) {
+                row.remove();
+            }
+
+            // Update Total KPI
+            const kpiTotal = document.getElementById('kpi-ce-total');
+            if (kpiTotal) {
+                const cur = parseInt(kpiTotal.innerText || '1');
+                kpiTotal.innerText = Math.max(0, cur - 1);
+            }
+        } else {
+            showContactToast(json.message || 'Failed to delete record', true);
+        }
+    } catch (err) {
+        console.error(err);
+        showContactToast('Network error deleting record', true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Delete Record';
+        deleteEnquiryId = null;
+    }
+}
+
+// 5. THREE-DOTS ACTION DROPDOWN HANDLERS
+function closeAllContactDropdowns() {
+    document.querySelectorAll('.contact-action-dropdown').forEach(d => {
+        d.classList.add('hidden');
+    });
+}
+
+function positionContactDropdown(btn, menu) {
+    if (!btn || !menu) return;
+
+    // Reset styles for fixed positioning relative to viewport
+    menu.style.position = 'fixed';
+    menu.style.margin = '0';
+    menu.style.zIndex = '99999';
+
+    const rect = btn.getBoundingClientRect();
+    const menuWidth = menu.offsetWidth || 192;
+    const menuHeight = menu.offsetHeight || 220;
+
+    // Align right edge of menu with right edge of trigger button
+    let left = rect.right - menuWidth;
+    const padding = 8;
+
+    // Boundary checking: keep inside screen horizontally
+    if (left < padding) {
+        left = padding;
+    } else if (left + menuWidth > window.innerWidth - padding) {
+        left = window.innerWidth - menuWidth - padding;
+    }
+
+    // Vertical placement: default below button; flip above if overflowing viewport bottom
+    let top = rect.bottom + 4;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    if (spaceBelow < menuHeight + 12 && spaceAbove > spaceBelow) {
+        // Place above button
+        top = rect.top - menuHeight - 4;
+        if (top < padding) top = padding;
+    }
+
+    menu.style.top = Math.round(top) + 'px';
+    menu.style.left = Math.round(left) + 'px';
+    menu.style.right = 'auto';
+    menu.style.bottom = 'auto';
+}
+
+function toggleContactActionDropdown(event, id) {
+    if (event) {
+        event.stopPropagation();
+    }
+    const btn = document.getElementById(`btn-action-dropdown-${id}`);
+    const menu = document.getElementById(`dropdown-action-menu-${id}`);
+    if (!menu || !btn) return;
+
+    const isHidden = menu.classList.contains('hidden');
+    closeAllContactDropdowns();
+
+    if (isHidden) {
+        menu.classList.remove('hidden');
+        positionContactDropdown(btn, menu);
+    }
+}
+
+// Global click and scroll listeners to manage dropdown
+if (!window._contactEnquiriesDropdownListenerAttached) {
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.contact-action-dropdown') && !e.target.closest('[id^="btn-action-dropdown-"]')) {
+            closeAllContactDropdowns();
+        }
+    });
+
+    // Close dropdown on scroll or window resize so the fixed menu doesn't float away or cause layout shifts
+    window.addEventListener('scroll', closeAllContactDropdowns, { passive: true, capture: true });
+    window.addEventListener('resize', closeAllContactDropdowns, { passive: true });
+
+    window._contactEnquiriesDropdownListenerAttached = true;
+}
+
+// SPA Module Initializer
+window.initContactEnquiries = function() {
+    closeAllContactDropdowns();
+    console.log('[MODULE INIT SUCCESS] contact_enquiries initialized');
+};
+window.initContactEnquiries();
+</script>
+{% endblock %}

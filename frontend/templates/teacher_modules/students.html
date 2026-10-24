@@ -1,0 +1,123 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: STUDENTS DIRECTORY                       -->
+<!-- ======================================================== -->
+<div id="teacherModule_students" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-user-graduate"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Enrolled Students Directory</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">View student profiles, attendance histories, test performance records and parent communication logs.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openAnnouncementModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-bullhorn text-xs"></i> <span>Message All Students</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Total Enrolled</span>
+            <strong class="text-xl font-black text-slate-900 dark:text-white block">{{ total_students_count|default:"86" }}</strong>
+            <span class="text-[10px] text-blue-600 font-bold">Across 4 Batches</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">High Performers</span>
+            <strong class="text-xl font-black text-emerald-600 block">28</strong>
+            <span class="text-[10px] text-emerald-600 font-bold">> 85% score</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Regular Attendance</span>
+            <strong class="text-xl font-black text-purple-600 block">74</strong>
+            <span class="text-[10px] text-purple-600 font-bold">> 90% attendance</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Need Attention</span>
+            <strong class="text-xl font-black text-amber-600 block">4</strong>
+            <span class="text-[10px] text-amber-600 font-bold">Low attendance / score</span>
+        </div>
+    </div>
+
+    <!-- STUDENTS TABLE -->
+    <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Student Roster</h3>
+            <div class="flex items-center gap-2">
+                <input type="text" placeholder="Search by name, roll #..." class="px-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-200 font-medium w-64">
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="text-[10px] font-extrabold uppercase text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <th class="py-2.5 px-3">Student Name</th>
+                        <th class="py-2.5 px-3">Class & Batch</th>
+                        <th class="py-2.5 px-3 text-center">Attendance</th>
+                        <th class="py-2.5 px-3 text-center">Avg Test Score</th>
+                        <th class="py-2.5 px-3">Status</th>
+                        <th class="py-2.5 px-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold text-slate-700 dark:text-slate-300">
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3 px-3 flex items-center gap-3">
+                            <img src="https://ui-avatars.com/api/?name=Aman+Verma&background=2563eb&color=fff&size=80" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <strong class="text-slate-900 dark:text-white font-extrabold block text-xs">Aman Verma</strong>
+                                <span class="text-[10px] text-slate-400">Roll: #101 • aman@example.com</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold">Class 10 - Batch A</span></td>
+                        <td class="py-3 px-3 text-center font-bold text-emerald-600">96%</td>
+                        <td class="py-3 px-3 text-center font-bold text-blue-600">92%</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-700">Top Rank</span></td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="switchTeacherModule('messages')" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 font-bold text-[11px] border-0 cursor-pointer hover:bg-blue-100">Chat</button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3 px-3 flex items-center gap-3">
+                            <img src="https://ui-avatars.com/api/?name=Priya+Sharma&background=10b981&color=fff&size=80" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <strong class="text-slate-900 dark:text-white font-extrabold block text-xs">Priya Sharma</strong>
+                                <span class="text-[10px] text-slate-400">Roll: #102 • priya@example.com</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 text-[10px] font-bold">Class 12 - Batch B</span></td>
+                        <td class="py-3 px-3 text-center font-bold text-emerald-600">94%</td>
+                        <td class="py-3 px-3 text-center font-bold text-blue-600">89%</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-700">Excellent</span></td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="switchTeacherModule('messages')" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 font-bold text-[11px] border-0 cursor-pointer hover:bg-blue-100">Chat</button>
+                        </td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3 px-3 flex items-center gap-3">
+                            <img src="https://ui-avatars.com/api/?name=Rahul+Gupta&background=f59e0b&color=fff&size=80" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <strong class="text-slate-900 dark:text-white font-extrabold block text-xs">Rahul Gupta</strong>
+                                <span class="text-[10px] text-slate-400">Roll: #103 • rahul@example.com</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-[10px] font-bold">Class 10 - Batch A</span></td>
+                        <td class="py-3 px-3 text-center font-bold text-amber-600">76%</td>
+                        <td class="py-3 px-3 text-center font-bold text-amber-600">68%</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-100 text-amber-700">Need Help</span></td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="switchTeacherModule('messages')" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 font-bold text-[11px] border-0 cursor-pointer hover:bg-blue-100">Chat</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

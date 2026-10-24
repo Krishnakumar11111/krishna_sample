@@ -12,6 +12,11 @@ env/
 *.log
 db.sqlite3
 db.sqlite3-journal
+db.sqlite3.backup
+*.backup
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/database/*.backup
 
 # Environment variables / secrets
 .env
@@ -20,10 +25,12 @@ db.sqlite3-journal
 
 # Django media/uploads
 media/
+backend/media/
 teacher_photos/
 
 # Static collected files
 staticfiles/
+backend/staticfiles/
 
 # IDE
 .vscode/
@@ -36,5 +43,6 @@ Thumbs.db
 # Archives
 *.zip
 
-# Temporary files
+# Temporary & Scratch files
 scratch_*.js
+scratch/

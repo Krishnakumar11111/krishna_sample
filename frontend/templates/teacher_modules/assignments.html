@@ -1,0 +1,108 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: HOMEWORK & ASSIGNMENTS                   -->
+<!-- ======================================================== -->
+<div id="teacherModule_assignments" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-clipboard-list"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Homework & Assignments</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Create batch homework, track student submission statuses, and evaluate student PDF answers.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openHomeworkModal()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-plus-circle text-xs"></i> <span>Create Assignment</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Total Given</span>
+            <strong class="text-xl font-black text-slate-900 dark:text-white block">{{ total_assignments_given|default:"12" }}</strong>
+            <span class="text-[10px] text-blue-600 font-bold">Published tasks</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Submissions</span>
+            <strong class="text-xl font-black text-emerald-600 block">{{ submitted_assignments_count|default:"84" }}</strong>
+            <span class="text-[10px] text-emerald-600 font-bold">Received from students</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Pending Grading</span>
+            <strong class="text-xl font-black text-amber-600 block">{{ pending_assignments_count|default:"6" }}</strong>
+            <span class="text-[10px] text-amber-600 font-bold">Need evaluation</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Completion Rate</span>
+            <strong class="text-xl font-black text-purple-600 block">{{ submitted_pct|default:"92%" }}</strong>
+            <span class="text-[10px] text-purple-600 font-bold">Student on-time rate</span>
+        </div>
+    </div>
+
+    <!-- ASSIGNMENTS LIST -->
+    <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Active Assignments</h3>
+            <button onclick="openHomeworkModal()" class="text-xs font-bold text-blue-600 hover:underline bg-transparent border-0 cursor-pointer">+ New Homework</button>
+        </div>
+
+        <div class="space-y-3">
+            {% for a in recent_assignments %}
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">{{ a.class_name|default:a.subject }}</span>
+                        <span class="text-[11px] text-slate-400 font-bold">Due: {{ a.due_date|default:"Tomorrow, 11:59 PM" }}</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">{{ a.title }}</h4>
+                    <p class="text-[11px] text-slate-400 font-medium m-0">{{ a.description|default:"Solve all questions with neat step-by-step working and diagrams." }}</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="alert('Viewing submissions for assignment')" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs border-0 cursor-pointer shadow-xs">
+                        Submissions ({{ submitted_assignments_count|default:"24" }})
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Class 10 CBSE</span>
+                        <span class="text-[11px] text-slate-400 font-bold">Due: Friday, 08:00 PM</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">Assignment 4: Word Problems on Quadratic Equations</h4>
+                    <p class="text-[11px] text-slate-400 font-medium m-0">Speed-distance problems, age calculations and geometry dimensions problems from NCERT Exercise 4.3.</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="alert('Viewing 24 student submissions')" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs border-0 cursor-pointer shadow-xs">
+                        Evaluate (24/28)
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300">Class 12 CBSE</span>
+                        <span class="text-[11px] text-slate-400 font-bold">Due: Saturday, 10:00 PM</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">Physics Problem Set 2: Electric Dipole & Field Integrals</h4>
+                    <p class="text-[11px] text-slate-400 font-medium m-0">Torque on dipole in uniform field, dipole potential energy and axial vs equatorial fields.</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="alert('Viewing 28 student submissions')" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs border-0 cursor-pointer shadow-xs">
+                        Evaluate (28/32)
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>

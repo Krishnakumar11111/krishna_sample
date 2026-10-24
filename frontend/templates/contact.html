@@ -1,0 +1,662 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | EduTrust Support & Enquiries</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        handwritten: ['"Caveat"', 'cursive']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        navy: {
+                            800: '#11294d',
+                            900: '#0f2747',
+                            950: '#08172c'
+                        }
+                    },
+                    boxShadow: {
+                        '2xs': '0 1px 2px 0 rgba(15, 23, 42, 0.05)',
+                        'card': '0 4px 20px -2px rgba(37, 99, 235, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+                        'card-hover': '0 12px 30px -4px rgba(37, 99, 235, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-[#f3f9fe] text-slate-800 font-sans antialiased flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Global Public Header (Fixed 106px) -->
+    {% include "components/public_header.html" %}
+
+    <!-- Ambient Decorative Background Glows -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-b from-blue-200/50 via-cyan-100/35 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[600px] -left-40 w-[600px] h-[600px] bg-gradient-to-tr from-blue-100/40 via-sky-50/30 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[900px] -right-40 w-[600px] h-[600px] bg-gradient-to-tl from-indigo-100/40 via-blue-50/30 to-transparent rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- MAIN WRAPPER WITH TOP OFFSET FOR FIXED HEADER -->
+    <main class="flex-1 w-full pt-[120px] sm:pt-[130px] pb-16">
+
+        <!-- ========================================================= -->
+        <!-- 1. HERO SECTION -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative mb-10 sm:mb-12">
+            
+            <!-- Left Decorative Handwritten Annotation + Curved Arrow -->
+            <div class="hidden xl:flex flex-col items-center absolute -top-2 left-6 select-none pointer-events-none transform -rotate-6">
+                <span class="font-handwritten text-xl text-blue-600 font-bold tracking-wide">We'd love to hear from you!</span>
+                <svg class="w-14 h-12 text-blue-500 mt-1" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5 C 30 5, 45 25, 45 40" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <path d="M40 34 L 45 42 L 52 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Right Decorative Paper Plane + Handwritten Annotation -->
+            <div class="hidden xl:flex flex-col items-center absolute -top-2 right-6 select-none pointer-events-none transform rotate-6">
+                <div class="flex items-center gap-2">
+                    <span class="font-handwritten text-xl text-blue-600 font-bold tracking-wide">Fast Response ⚡</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm shadow-2xs border border-blue-200">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                </div>
+                <svg class="w-14 h-12 text-blue-500 mt-1" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 5 C 30 5, 15 25, 15 40" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <path d="M20 34 L 15 42 L 8 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Top Pill Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-blue-200/80 shadow-2xs backdrop-blur-sm mb-3.5">
+                <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                <span class="text-[11px] font-black uppercase tracking-wider text-blue-700">CONTACT US</span>
+            </div>
+
+            <!-- Hero Heading -->
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-[#0f2747] tracking-tight leading-tight mb-3">
+                Get in Touch with <span class="text-blue-600">EduTrust</span>
+            </h1>
+
+            <!-- Hero Subtitle -->
+            <p class="text-slate-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
+                Have questions about finding a tutor, booking demo sessions, batch enrollment, or partner inquiries? We’re here to help!
+            </p>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 2. SUPPORT HIGHLIGHTS (3 HORIZONTAL CARDS) -->
+        <!-- ========================================================= -->
+        <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-14">
+            <div class="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-blue-100/90 shadow-card grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                
+                <!-- Highlight 1: Quick Response -->
+                <div class="flex items-center gap-3.5 pt-3 md:pt-0 px-2 sm:px-4">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl shrink-0 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-sm sm:text-base text-[#0f2747] leading-tight mb-0.5">Quick Response</h4>
+                        <p class="text-xs text-slate-500 font-medium mb-0">We usually reply within 2 hours</p>
+                    </div>
+                </div>
+
+                <!-- Highlight 2: Expert Support -->
+                <div class="flex items-center gap-3.5 pt-3 md:pt-0 px-2 sm:px-4">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl shrink-0 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-sm sm:text-base text-[#0f2747] leading-tight mb-0.5">Expert Support</h4>
+                        <p class="text-xs text-slate-500 font-medium mb-0">Get help from our team</p>
+                    </div>
+                </div>
+
+                <!-- Highlight 3: Trusted & Secure -->
+                <div class="flex items-center gap-3.5 pt-3 md:pt-0 px-2 sm:px-4">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg sm:text-xl shrink-0 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-sm sm:text-base text-[#0f2747] leading-tight mb-0.5">Trusted & Secure</h4>
+                        <p class="text-xs text-slate-500 font-medium mb-0">Your information is always safe</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 3. MAIN CONTENT (TWO-COLUMN LAYOUT) -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- ==================== LEFT COLUMN (5 COLS) ==================== -->
+                <div class="lg:col-span-5 space-y-5">
+                    
+                    <!-- Card 1: Call Support -->
+                    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0 border border-blue-100 shadow-2xs">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-extrabold text-base text-[#0f2747] leading-tight mb-1">Call Support</h3>
+                            <p class="text-xs text-slate-500 mb-2 font-medium">Speak with our support team for any assistance.</p>
+                            <a href="tel:+919876543210" class="text-base sm:text-lg font-black text-blue-600 block leading-tight hover:text-blue-800 no-underline transition-colors">
+                                +91 98765 43210
+                            </a>
+                            <span class="text-[11px] font-semibold text-slate-400 mt-1 block">Mon-Sat: 9:00 AM – 8:00 PM</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Email Enquiries -->
+                    <div class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0 border border-emerald-100 shadow-2xs">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-extrabold text-base text-[#0f2747] leading-tight mb-1">Email Enquiries</h3>
+                            <p class="text-xs text-slate-500 mb-2 font-medium">Drop us an email and we'll get back to you.</p>
+                            <a href="mailto:support@edutrust.in" class="text-sm sm:text-base font-bold text-emerald-700 block leading-tight hover:text-emerald-900 no-underline transition-colors truncate">
+                                support@edutrust.in
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Why Choose EduTrust? -->
+                    <div class="bg-gradient-to-br from-[#0c2340] via-[#0f2747] to-[#153a66] text-white rounded-2xl sm:rounded-3xl p-6 sm:p-7 shadow-card relative overflow-hidden">
+                        <!-- Decorative ambient circle inside card -->
+                        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                        <div class="relative z-10">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-extrabold uppercase tracking-wider mb-2.5 border border-blue-400/20">
+                                <i class="fas fa-award text-amber-400 text-[9px]"></i>
+                                <span>Why EduTrust</span>
+                            </div>
+
+                            <h3 class="text-lg sm:text-xl font-black text-white mb-2 leading-tight">
+                                Why Choose EduTrust?
+                            </h3>
+
+                            <p class="text-xs text-blue-100/80 leading-relaxed mb-5 font-normal">
+                                We’re more than just a platform — we’re a learning community committed to your growth.
+                            </p>
+
+                            <!-- Feature Points with Clean Checkmarks -->
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-100">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] shrink-0 font-black border border-emerald-400/30">
+                                        ✓
+                                    </div>
+                                    <span>Verified & Experienced Tutors</span>
+                                </div>
+
+                                <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-100">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] shrink-0 font-black border border-emerald-400/30">
+                                        ✓
+                                    </div>
+                                    <span>Safe and Supportive Learning Environment</span>
+                                </div>
+
+                                <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-100">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] shrink-0 font-black border border-emerald-400/30">
+                                        ✓
+                                    </div>
+                                    <span>Flexible Learning Options</span>
+                                </div>
+
+                                <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-100">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] shrink-0 font-black border border-emerald-400/30">
+                                        ✓
+                                    </div>
+                                    <span>Dedicated Customer Support</span>
+                                </div>
+
+                                <div class="flex items-center gap-2.5 text-xs font-semibold text-slate-100">
+                                    <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] shrink-0 font-black border border-emerald-400/30">
+                                        ✓
+                                    </div>
+                                    <span>Trusted by Thousands of Students</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ==================== RIGHT COLUMN (7 COLS — ENQUIRY FORM) ==================== -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-9 border border-blue-100/90 shadow-card relative">
+                        
+                        <!-- Form Header -->
+                        <div class="mb-6">
+                            <h2 class="text-xl sm:text-2xl font-black text-[#0f2747] mb-1 tracking-tight">
+                                Send us an Enquiry
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                                Our academic counseling team responds within 2 business hours.
+                            </p>
+                        </div>
+
+                        <!-- Error Alert Message -->
+                        <div id="contactErrorAlert" class="hidden p-4 mb-6 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2.5 shadow-2xs">
+                            <div class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs shrink-0">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <span id="contactErrorMessage">Error submitting enquiry. Please check the fields and try again.</span>
+                        </div>
+
+                        <!-- Enquiry Form -->
+                        <form id="contactForm" method="POST" action="{% url 'contact' %}" class="space-y-4 sm:space-y-5">
+                            {% csrf_token %}
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Full Name -->
+                                <div class="space-y-1 text-left">
+                                    <label class="block text-xs font-extrabold text-[#0f2747]">
+                                        Your Full Name <span class="text-rose-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input type="text" name="name" required class="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400" placeholder="e.g. Rahul Sharma">
+                                    </div>
+                                </div>
+
+                                <!-- Mobile Number -->
+                                <div class="space-y-1 text-left">
+                                    <label class="block text-xs font-extrabold text-[#0f2747]">
+                                        Mobile Number <span class="text-rose-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                            <i class="fas fa-phone"></i>
+                                        </span>
+                                        <input type="tel" name="mobile" required maxlength="10" pattern="[0-9]{10}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" class="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400" placeholder="10-digit mobile number">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email Address -->
+                            <div class="space-y-1 text-left">
+                                <label class="block text-xs font-extrabold text-[#0f2747]">
+                                    Email Address <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                    <input type="email" name="email" required class="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400" placeholder="rahul@example.com">
+                                </div>
+                            </div>
+
+                            <!-- Subject / Topic -->
+                            <div class="space-y-1 text-left">
+                                <label class="block text-xs font-extrabold text-[#0f2747]">
+                                    Subject / Enquiry Topic
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                        <i class="fas fa-tag"></i>
+                                    </span>
+                                    <input type="text" name="subject" class="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400" placeholder="e.g. Tuition requirement or batch inquiry">
+                                </div>
+                            </div>
+
+                            <!-- Message / Requirements -->
+                            <div class="space-y-1 text-left">
+                                <label class="block text-xs font-extrabold text-[#0f2747]">
+                                    Message / Requirements <span class="text-rose-500">*</span>
+                                </label>
+                                <div class="relative">
+                                    <textarea name="message" rows="4" required class="w-full bg-slate-50/70 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 font-medium focus:bg-white focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-400 resize-none" placeholder="Provide details regarding your class, subjects, tuition requirements, or questions..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Send Enquiry Button -->
+                            <div class="pt-1">
+                                <button type="submit" id="contactSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs sm:text-sm py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg cursor-pointer border-0 flex items-center justify-center gap-2">
+                                    <span>Submit Enquiry</span>
+                                    <i class="fas fa-paper-plane text-xs"></i>
+                                </button>
+                            </div>
+
+                            <!-- Privacy / Security Note -->
+                            <div class="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium pt-1">
+                                <i class="fas fa-lock text-[10px] text-emerald-600"></i>
+                                <span>Your information is 100% safe & confidential.</span>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 4. BOTTOM SUPPORT CARDS (4 CARDS — CLEAN WITHOUT LINKS/ARROWS) -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-20">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                
+                <!-- Card 1: For Students -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-6 border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all text-center flex flex-col items-center">
+                    <div class="w-13 h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-3.5 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="text-base font-extrabold text-[#0f2747] mb-2 leading-tight">
+                        For Students
+                    </h3>
+                    <p class="text-xs text-slate-500 font-medium leading-relaxed mb-0">
+                        Need help finding the right tutor? We’re here to guide you.
+                    </p>
+                </div>
+
+                <!-- Card 2: For Tutors -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-6 border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all text-center flex flex-col items-center">
+                    <div class="w-13 h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-3.5 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3 class="text-base font-extrabold text-[#0f2747] mb-2 leading-tight">
+                        For Tutors
+                    </h3>
+                    <p class="text-xs text-slate-500 font-medium leading-relaxed mb-0">
+                        Have questions about joining EduTrust? Let’s connect.
+                    </p>
+                </div>
+
+                <!-- Card 3: For Institutions -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-6 border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all text-center flex flex-col items-center">
+                    <div class="w-13 h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-3.5 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3 class="text-base font-extrabold text-[#0f2747] mb-2 leading-tight">
+                        For Institutions
+                    </h3>
+                    <p class="text-xs text-slate-500 font-medium leading-relaxed mb-0">
+                        Looking for partnership opportunities? We’d love to hear from you.
+                    </p>
+                </div>
+
+                <!-- Card 4: General Help -->
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-6 border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all text-center flex flex-col items-center">
+                    <div class="w-13 h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-3.5 border border-blue-100 shadow-2xs">
+                        <i class="fas fa-circle-question"></i>
+                    </div>
+                    <h3 class="text-base font-extrabold text-[#0f2747] mb-2 leading-tight">
+                        General Help
+                    </h3>
+                    <p class="text-xs text-slate-500 font-medium leading-relaxed mb-0">
+                        Any other questions? Our team is happy to help.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    {% include "components/public_footer.html" %}
+
+    <!-- ========================================================= -->
+    <!-- CONTACT ENQUIRY SUCCESS MODAL (Exact Reference Redesign) -->
+    <!-- ========================================================= -->
+    <div id="contactSuccessModal" class="hidden fixed inset-0 z-[99999] overflow-y-auto bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300" onclick="if(event.target === this) closeContactSuccessModal();">
+        <div class="bg-white rounded-[26px] max-w-[480px] w-full p-6 sm:p-8 shadow-[0_25px_70px_-15px_rgba(37,99,235,0.28)] border border-blue-100/90 relative text-center transform transition-all duration-300 scale-95 opacity-0 my-auto overflow-hidden" id="contactSuccessModalCard">
+            
+            <!-- Top-Right Circular Close Button -->
+            <button type="button" onclick="closeContactSuccessModal()" class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 flex items-center justify-center absolute top-4 right-4 sm:top-5 sm:right-5 border-0 cursor-pointer transition-all z-20" aria-label="Close Modal">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+
+            <!-- Background Ambient Glows -->
+            <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-48 h-48 bg-emerald-100/40 rounded-full blur-2xl pointer-events-none -z-0"></div>
+
+            <!-- 1. TOP SUCCESS ICON WITH CELEBRATORY SPARKS -->
+            <div class="relative w-24 h-24 mx-auto mb-2 flex items-center justify-center">
+                <!-- Confetti Sparks & Dashes around Icon -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" fill="none">
+                    <!-- Top-Left Blue Dash -->
+                    <line x1="24" y1="20" x2="30" y2="28" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Top-Right Blue Dash -->
+                    <line x1="76" y1="20" x2="70" y2="28" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Left Gold Dot/Spark -->
+                    <circle cx="16" cy="48" r="2.5" fill="#f59e0b"/>
+                    <!-- Right Gold Dot/Spark -->
+                    <circle cx="84" cy="48" r="2.5" fill="#f59e0b"/>
+                    <!-- Bottom-Left Green Dash -->
+                    <line x1="20" y1="72" x2="28" y2="68" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Bottom-Right Green Dash -->
+                    <line x1="80" y1="72" x2="72" y2="68" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/>
+                    <!-- Top Gold Spark -->
+                    <circle cx="50" cy="8" r="2.5" fill="#f59e0b"/>
+                </svg>
+
+                <!-- Outer Soft Pale-Green Circle -->
+                <div class="w-20 h-20 rounded-full bg-emerald-100/70 flex items-center justify-center relative shadow-sm">
+                    <!-- Inner Vibrant Green Circle -->
+                    <div class="w-14 h-14 rounded-full bg-[#22c55e] text-white flex items-center justify-center text-2xl font-black shadow-md shadow-emerald-500/20">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. MAIN HEADINGS -->
+            <h2 class="text-2xl sm:text-3xl font-black text-[#0f1b3d] tracking-tight mb-1.5 leading-tight">
+                Thank You!
+            </h2>
+            <h3 class="text-sm sm:text-base font-bold text-[#2563eb] leading-snug mb-3">
+                Your enquiry has been submitted successfully.
+            </h3>
+
+            <!-- 3. DESCRIPTION -->
+            <p class="text-xs sm:text-[13px] text-slate-500 font-medium leading-relaxed max-w-sm mx-auto mb-5">
+                We’ve received your message and our team will review it shortly. We’ll get back to you as soon as possible.
+            </p>
+
+            <!-- 4. ENQUIRY RECEIVED INFO CARD -->
+            <div class="bg-[#eff6ff] rounded-[18px] p-3.5 sm:p-4 border border-blue-100/80 flex items-center gap-3.5 text-left mb-5 shadow-2xs">
+                <!-- Envelope Icon with check badge -->
+                <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-blue-600 text-lg shadow-2xs relative shrink-0">
+                    <i class="fas fa-envelope text-blue-600 text-lg"></i>
+                    <div class="w-4 h-4 rounded-full bg-[#22c55e] text-white flex items-center justify-center text-[8px] absolute -bottom-0.5 -right-0.5 border-2 border-white shadow-xs font-bold">
+                        ✓
+                    </div>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h4 class="font-extrabold text-[#1d4ed8] text-xs sm:text-sm leading-tight mb-0.5 flex items-center gap-1">
+                        Enquiry Received <span class="text-emerald-600">✓</span>
+                    </h4>
+                    <p class="text-[11px] sm:text-xs text-slate-500 font-medium mb-0 leading-tight">
+                        Your request has been securely submitted to the EduTrust support team.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 5. MOTIVATIONAL TAGLINE WITH HANDWRITTEN UNDERLINE -->
+            <div class="relative text-center mb-6">
+                <div class="flex items-center justify-center gap-2 text-slate-300">
+                    <span class="h-[1px] w-6 bg-slate-200"></span>
+                    <span class="font-handwritten text-[#2563eb] text-base sm:text-lg font-bold italic tracking-wide">
+                        Learn Better • Grow Smarter • Achieve More
+                    </span>
+                    <span class="h-[1px] w-6 bg-slate-200"></span>
+                </div>
+                <!-- Handwritten blue curved underline -->
+                <svg class="w-36 h-2 mx-auto text-blue-500/80 -mt-0.5" viewBox="0 0 150 10" fill="none">
+                    <path d="M5 4 C 50 8, 100 8, 145 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <!-- 6. BOTTOM FOOTER SECTION (ILLUSTRATION + DONE BUTTON + DOTTED GRID) -->
+            <div class="flex items-center justify-between relative pt-2">
+                
+                <!-- Lower-Left Educational Illustration (Books + Graduation Cap + Leaves) -->
+                <div class="w-20 h-16 relative flex items-end shrink-0 select-none pointer-events-none">
+                    <svg class="w-full h-full" viewBox="0 0 100 80" fill="none">
+                        <!-- Green Leaves left & right -->
+                        <path d="M12 55 C 8 40, 20 42, 22 55 C 22 62, 14 62, 12 55 Z" fill="#22c55e" opacity="0.8"/>
+                        <path d="M85 50 C 95 38, 92 50, 84 58 C 80 62, 78 55, 85 50 Z" fill="#22c55e" opacity="0.8"/>
+                        <!-- Book 1 (Bottom) -->
+                        <rect x="18" y="56" width="60" height="12" rx="3" fill="#1e40af"/>
+                        <rect x="22" y="58" width="54" height="8" rx="1.5" fill="#ffffff"/>
+                        <rect x="22" y="60" width="50" height="2" fill="#dbeafe"/>
+                        <!-- Book 2 (Middle) -->
+                        <rect x="22" y="44" width="54" height="12" rx="3" fill="#2563eb"/>
+                        <rect x="26" y="46" width="48" height="8" rx="1.5" fill="#ffffff"/>
+                        <rect x="26" y="48" width="44" height="2" fill="#dbeafe"/>
+                        <!-- Graduation Cap (Top) -->
+                        <!-- Cap Base / Skullcap -->
+                        <path d="M36 34 Q 48 40 60 34 L 58 38 Q 48 43 38 38 Z" fill="#0f172a"/>
+                        <!-- Diamond Board -->
+                        <polygon points="48,18 78,28 48,36 18,28" fill="#0f2747"/>
+                        <!-- Diamond highlight edge -->
+                        <polygon points="48,18 78,28 74,29 48,20" fill="#1e3a8a"/>
+                        <!-- Button on top -->
+                        <circle cx="48" cy="27" r="2" fill="#fbbf24"/>
+                        <!-- Tassel -->
+                        <path d="M48 27 Q 66 32 68 44" stroke="#fbbf24" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                        <circle cx="68" cy="44" r="1.5" fill="#f59e0b"/>
+                    </svg>
+                </div>
+
+                <!-- Primary Action Button -->
+                <button type="button" onclick="closeContactSuccessModal()" class="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-extrabold text-xs sm:text-sm px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-2 border-0 cursor-pointer z-10 whitespace-nowrap">
+                    <span>Thank You for Contacting Us</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+
+                <!-- Lower-Right Dotted Grid -->
+                <div class="w-16 h-12 grid grid-cols-4 gap-1.5 opacity-25 select-none pointer-events-none">
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                    <span class="w-1 h-1 rounded-full bg-blue-600"></span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal & Form Submit Scripts -->
+    <script>
+        function openContactSuccessModal() {
+            const modal = document.getElementById('contactSuccessModal');
+            const card = document.getElementById('contactSuccessModalCard');
+            if (!modal || !card) return;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+                card.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeContactSuccessModal() {
+            const modal = document.getElementById('contactSuccessModal');
+            const card = document.getElementById('contactSuccessModalCard');
+            if (!modal || !card) return;
+
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 250);
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('contactSubmitBtn');
+            const alertError = document.getElementById('contactErrorAlert');
+            if (alertError) alertError.classList.add('hidden');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1.5"></i><span>Submitting...</span>';
+
+            const formData = new FormData(this);
+            try {
+                const response = await fetch("{% url 'contact' %}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    openContactSuccessModal();
+                    document.getElementById('contactForm').reset();
+                } else {
+                    if (alertError) {
+                        alertError.classList.remove('hidden');
+                        document.getElementById('contactErrorMessage').textContent = data.message || 'Error submitting enquiry. Please check your fields and try again.';
+                        alertError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        alert(data.message || 'Error submitting enquiry.');
+                    }
+                }
+            } catch(err) {
+                console.error('Contact submission error:', err);
+                if (alertError) {
+                    alertError.classList.remove('hidden');
+                    document.getElementById('contactErrorMessage').textContent = 'Unable to connect to server. Please try again.';
+                    alertError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    alert('Server error submitting enquiry. Please try again later.');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Submit Enquiry</span> <i class="fas fa-paper-plane text-xs"></i>';
+            }
+        });
+    </script>
+</body>
+
+</html>

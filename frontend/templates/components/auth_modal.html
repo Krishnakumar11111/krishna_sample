@@ -1,0 +1,2554 @@
+{% load static %}
+<!-- ========================================================= -->
+<!-- UNIFIED HOMEPAGE AUTHENTICATION MODAL (EDUTRUST LMS)     -->
+<!-- PREMIUM LIGHT SKY-BLUE EDUCATION THEME                    -->
+<!-- FIXED LEFT PANEL + DYNAMIC RIGHT PANEL ARCHITECTURE       -->
+<!-- ========================================================= -->
+
+<style>
+    /* Custom scrollbar inside right modal panel for clean presentation */
+    .custom-auth-modal-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-auth-modal-scroll::-webkit-scrollbar-track {
+        background: rgba(226, 241, 254, 0.6);
+        border-radius: 9999px;
+    }
+    .custom-auth-modal-scroll::-webkit-scrollbar-thumb {
+        background: rgba(59, 130, 246, 0.4);
+        border-radius: 9999px;
+    }
+    .custom-auth-modal-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(59, 130, 246, 0.7);
+    }
+    .auth-glass-input {
+        background-color: #ffffff;
+        border: 1px solid #b9d9f5;
+        color: #0f2747;
+        transition: all 0.25s ease;
+    }
+    .auth-glass-input:focus {
+        background-color: #ffffff;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+        outline: none;
+    }
+    .auth-glass-input::placeholder {
+        color: #94a3b8;
+    }
+    .auth-sky-card {
+        background: linear-gradient(135deg, #eef7ff 0%, #e2f1fe 50%, #f4faff 100%);
+        border: 1px solid #93c5fd;
+        box-shadow: 0 20px 60px rgba(37, 99, 235, 0.18);
+    }
+</style>
+
+<!-- MODAL OVERLAY WRAPPER WITH LIGHT TRANSLUCENT OVERLAY (SOFT LIGHT BACKDROP) -->
+<div id="authModal" style="background-color: rgba(225, 235, 250, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);" class="hidden fixed inset-0 z-[999999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto transition-all duration-300 opacity-0" aria-hidden="true" role="dialog" aria-labelledby="authModalTitle">
+    
+    <!-- MAIN UNIFIED MODAL CARD (Fixed Width 880px, Light Sky Blue Theme) -->
+    <div id="authModalCard" onclick="event.stopPropagation()" class="w-full max-w-[880px] auth-sky-card rounded-3xl text-slate-900 relative transition-all duration-300 my-auto transform scale-95 overflow-hidden">
+        
+        <!-- SINGLE CLOSE BUTTON (×) TOP-RIGHT -->
+        <button type="button" onclick="closeAuthModal()" aria-label="Close Authentication Modal" class="absolute top-4 right-4 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-rose-500 hover:text-white text-slate-600 flex items-center justify-center text-base sm:text-lg transition-colors border border-blue-200 cursor-pointer z-40 shadow-sm">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- =================================================== -->
+        <!-- TWO-COLUMN GRID: SHARED FIXED LEFT + DYNAMIC RIGHT  -->
+        <!-- =================================================== -->
+        <div class="grid grid-cols-1 md:grid-cols-12 min-h-[530px] max-h-[90vh] overflow-hidden">
+            
+            <!-- =============================================== -->
+            <!-- 1. FIXED LEFT PANEL (PREMIUM LIGHT SKY-BLUE)    -->
+            <!-- =============================================== -->
+            <div class="md:col-span-5 bg-gradient-to-b from-[#eaf6ff] via-[#dff1ff] to-[#f4faff] p-6 sm:p-7 flex flex-col justify-between border-b md:border-b-0 md:border-r border-blue-200/80 relative overflow-hidden">
+                
+                <!-- Background Decorative Ambient Glow Blobs -->
+                <div class="absolute -top-20 -left-20 w-56 h-56 bg-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-20 -right-20 w-56 h-56 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 space-y-5">
+                    <!-- Brand Header -->
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white font-bold text-base shadow-md shadow-blue-500/20">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <span class="text-lg font-extrabold tracking-tight text-[#0f2747] block leading-tight">
+                                Edu<span class="text-blue-600">Trust</span>
+                            </span>
+                            <span class="text-[9.5px] font-bold text-blue-600 tracking-wider uppercase block">
+                                LEARN • TEACH • GROW
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Main Hero Text -->
+                    <div class="pt-1">
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2747] tracking-tight leading-snug">
+                            Learn Today<br>
+                            <span class="bg-gradient-to-r from-blue-700 via-indigo-600 to-cyan-600 bg-clip-text text-transparent">
+                                Build a Brighter Tomorrow
+                            </span>
+                        </h2>
+                        <p class="text-slate-600 text-xs mt-2 font-medium leading-relaxed">
+                            Join a trusted learning platform where students and teachers learn, teach and grow together.
+                        </p>
+                    </div>
+
+                    <!-- Standard Educational Benefits List -->
+                    <div class="space-y-3 pt-1">
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-5 h-5 rounded-full bg-blue-500/15 text-blue-600 flex items-center justify-center text-[10px] shrink-0 mt-0.5 border border-blue-300">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-[#0f2747] leading-tight">Flexible Learning</h4>
+                                <p class="text-[11px] text-slate-500 font-medium leading-tight">Learn at your own pace</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-5 h-5 rounded-full bg-indigo-500/15 text-indigo-600 flex items-center justify-center text-[10px] shrink-0 mt-0.5 border border-indigo-300">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-[#0f2747] leading-tight">Expert Teachers</h4>
+                                <p class="text-[11px] text-slate-500 font-medium leading-tight">Learn from verified experts</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <div class="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center text-[10px] shrink-0 mt-0.5 border border-emerald-300">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-[#0f2747] leading-tight">Better Opportunities</h4>
+                                <p class="text-[11px] text-slate-500 font-medium leading-tight">Build a successful future</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quote Section -->
+                <div class="relative z-10 pt-4 border-t border-blue-200/80 mt-4">
+                    <p class="text-[11.5px] text-slate-700 italic font-medium leading-relaxed">
+                        “Education is the most powerful weapon which you can use to change the world.”
+                    </p>
+                    <span class="text-[10.5px] font-bold text-blue-600 block mt-1">— Nelson Mandela</span>
+                </div>
+            </div>
+
+            <!-- =============================================== -->
+            <!-- 2. DYNAMIC RIGHT PANEL (PREMIUM LIGHT SKY-BLUE) -->
+            <!-- =============================================== -->
+            <div class="md:col-span-7 p-6 sm:p-7 md:p-8 flex flex-col justify-between max-h-[88vh] overflow-hidden relative bg-gradient-to-b from-[#f4faff] to-[#f8fcff]">
+                
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 1: LOGIN FORM (DEFAULT)         -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewLogin" class="flex flex-col justify-between h-full space-y-4">
+                    <div class="space-y-4">
+                        <!-- Trust Badge -->
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 text-xs font-bold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                A Trusted Learning Community
+                            </span>
+                        </div>
+
+                        <!-- Heading -->
+                        <div>
+                            <h2 id="authModalTitle" class="text-xl sm:text-2xl font-black text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>👋 Welcome Back</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-1 font-medium">Login to continue your learning journey</p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="loginModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- Login Form -->
+                        <form id="loginModalForm" onsubmit="handleLoginModalSubmit(event)" class="space-y-3.5">
+                            {% csrf_token %}
+                            
+                            <!-- Email Field -->
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">EMAIL ADDRESS</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <input type="email" id="loginModalEmail" placeholder="student@example.com" class="w-full auth-glass-input pl-10 pr-4 h-[50px] rounded-xl text-xs sm:text-sm shadow-xs" required>
+                                </div>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700">PASSWORD</label>
+                                    <button type="button" onclick="switchAuthView('forgot-password')" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-[11px] font-extrabold text-blue-600 border border-blue-200 transition-all cursor-pointer shadow-xs">
+                                        <i class="fas fa-key text-[9px] text-amber-500"></i>
+                                        <span>Forgot Password?</span>
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <input type="password" id="loginModalPassword" placeholder="•••••••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-10 pr-10 h-[50px] rounded-xl text-xs sm:text-sm shadow-xs" required>
+                                    <button type="button" onclick="toggleAuthPasswordVis('loginModalPassword', 'loginModalEyeIcon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 transition-colors border-0 bg-transparent cursor-pointer">
+                                        <i id="loginModalEyeIcon" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="loginModalBtn" class="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold h-[50px] rounded-xl text-xs sm:text-sm transition-all duration-300 shadow-md shadow-blue-500/20 hover:-translate-y-0.5 border-0 cursor-pointer flex items-center justify-center gap-2 mt-1">
+                                <span>Log In</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </form>
+
+                        <!-- Divider -->
+                        <div class="relative flex py-0.5 items-center">
+                            <div class="flex-grow border-t border-slate-200"></div>
+                            <span class="flex-shrink mx-3 text-[10px] font-extrabold text-slate-400 uppercase">OR</span>
+                            <div class="flex-grow border-t border-slate-200"></div>
+                        </div>
+
+                        <!-- Register CTA -->
+                        <div class="text-center flex items-center justify-center gap-2">
+                            <span class="text-xs text-slate-600 font-medium">Don't have an account?</span>
+                            <button type="button" onclick="switchAuthView('registration-choice')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-extrabold transition-all duration-200 cursor-pointer shadow-xs">
+                                <span>Register Here</span>
+                                <i class="fas fa-user-plus text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Security & Trust Footer -->
+                    <div class="pt-3 border-t border-blue-100 text-center space-y-1">
+                        <p class="text-xs font-extrabold text-slate-700 flex items-center justify-center gap-1.5 mb-0">
+                            <i class="fas fa-shield-alt text-emerald-600"></i>
+                            <span>Safe • Secure • Trusted</span>
+                        </p>
+                        <div class="text-[10px] text-slate-500 font-semibold pt-0.5">
+                            Secure Login &bull; Privacy Protected &bull; Trusted Platform
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 1B: LOGIN OTP VERIFICATION       -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewLoginOtp" class="hidden flex flex-col justify-between h-full space-y-4">
+                    <div class="space-y-4">
+                        <!-- Heading -->
+                        <div>
+                            <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs mb-2">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                                <span>Back to Login</span>
+                            </button>
+                            <h2 class="text-xl sm:text-2xl font-black text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>🛡️ Verify Your Login</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-1 font-medium leading-relaxed">
+                                Enter the 6-digit security code sent to <strong id="loginOtpMaskedEmail" class="text-blue-700">your email</strong>.
+                            </p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="loginOtpModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- OTP Form -->
+                        <form id="loginOtpModalForm" onsubmit="handleLoginOtpModalSubmit(event)" class="space-y-3.5">
+                            {% csrf_token %}
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">6-DIGIT OTP CODE</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <input type="text" id="loginOtpCode" maxlength="6" pattern="[0-9]{6}" placeholder="123456" class="w-full auth-glass-input pl-10 pr-4 h-[50px] rounded-xl text-center font-mono text-lg font-bold tracking-widest shadow-xs" required autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="loginOtpModalBtn" class="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold h-[50px] rounded-xl text-xs sm:text-sm transition-all duration-300 shadow-md shadow-blue-500/20 border-0 cursor-pointer flex items-center justify-center gap-2 mt-1">
+                                <span>Verify OTP</span>
+                                <i class="fas fa-check-circle text-xs"></i>
+                            </button>
+                        </form>
+
+                        <!-- Resend OTP Section -->
+                        <div class="text-center pt-1">
+                            <span class="text-xs text-slate-500 font-medium">Didn't receive the code?</span>
+                            <button type="button" id="loginOtpResendBtn" onclick="handleLoginOtpResend()" disabled class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 border border-slate-300 text-slate-400 text-xs font-bold transition-all duration-200 ml-1 cursor-not-allowed">
+                                <span>Resend OTP</span>
+                                <span id="loginOtpTimer" class="font-mono text-xs">(30s)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Security & Trust Footer -->
+                    <div class="pt-3 border-t border-blue-100 text-center space-y-1">
+                        <p class="text-xs font-extrabold text-slate-700 flex items-center justify-center gap-1.5 mb-0">
+                            <i class="fas fa-lock text-emerald-600"></i>
+                            <span>2-Step Multi-Factor Authentication</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 2: REGISTRATION CHOICE SELECTION-->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewRegChoice" class="hidden flex flex-col justify-between h-full space-y-5">
+                    <div class="space-y-4 pt-1">
+                        <!-- Header -->
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2747] tracking-tight">Create Your Account</h2>
+                            <p class="text-slate-600 text-xs mt-1 font-medium">Choose how you want to join EduTrust.</p>
+                        </div>
+
+                        <!-- Two Options Card Stack -->
+                        <div class="space-y-3.5 pt-2">
+                            <!-- Option A: Student Registration -->
+                            <button type="button" onclick="switchAuthView('student-registration')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border border-blue-200/80 hover:border-blue-500 hover:bg-blue-50/50 hover:shadow-md transition-all duration-200 group text-left cursor-pointer">
+                                <div class="w-11 h-11 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                                    🎓
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-extrabold text-sm text-[#0f2747] group-hover:text-blue-600 transition-colors">Student Registration</h4>
+                                    <p class="text-[11px] text-slate-600 font-medium mt-0.5 leading-snug">Learn from expert teachers & access courses</p>
+                                </div>
+                                <span class="text-xs font-bold text-blue-600 flex items-center gap-1 shrink-0 group-hover:translate-x-1 transition-transform">
+                                    Continue <i class="fas fa-arrow-right text-[10px]"></i>
+                                </span>
+                            </button>
+
+                            <!-- Option B: Teacher Registration -->
+                            <button type="button" onclick="switchAuthView('teacher-registration')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border border-blue-200/80 hover:border-indigo-500 hover:bg-indigo-50/50 hover:shadow-md transition-all duration-200 group text-left cursor-pointer">
+                                <div class="w-11 h-11 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+                                    👨‍🏫
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-extrabold text-sm text-[#0f2747] group-hover:text-indigo-600 transition-colors">Teacher Registration</h4>
+                                    <p class="text-[11px] text-slate-600 font-medium mt-0.5 leading-snug">Share your knowledge & connect with students</p>
+                                </div>
+                                <span class="text-xs font-bold text-indigo-600 flex items-center gap-1 shrink-0 group-hover:translate-x-1 transition-transform">
+                                    Continue <i class="fas fa-arrow-right text-[10px]"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Back to Login Footer -->
+                    <div class="pt-3 border-t border-blue-100 text-center">
+                        <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-extrabold text-xs transition-all duration-200 cursor-pointer shadow-xs">
+                            <i class="fas fa-arrow-left text-xs"></i>
+                            <span>Back to Login</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 3: STUDENT REGISTRATION FORM     -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewStudentReg" class="hidden flex flex-col justify-between h-full max-h-[82vh] overflow-y-auto custom-auth-modal-scroll pr-1">
+                    <div class="space-y-3.5">
+                        <!-- Header with Top Back Button -->
+                        <div>
+                            <button type="button" onclick="switchAuthView('registration-choice')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs mb-2.5">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                                <span>Back</span>
+                            </button>
+                            <h2 class="text-xl font-extrabold text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>🎓 Student Registration</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-0.5 font-medium">Create your student account and start your learning journey.</p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="studentModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- Student Form -->
+                        <form id="studentModalForm" onsubmit="handleStudentModalSubmit(event)" class="space-y-3">
+                            {% csrf_token %}
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <!-- Name -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Full Name <span class="text-rose-500">*</span></label>
+                                    <input type="text" name="name" id="studentModalName" placeholder="e.g. Rahul Kumar" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+                                    <input type="email" name="email" id="studentModalEmail" placeholder="rahul@example.com" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                </div>
+
+                                <!-- Mobile -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Mobile Number <span class="text-rose-500">*</span></label>
+                                    <input type="tel" name="mobile" id="studentModalMobile" placeholder="9876543210" maxlength="10" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                </div>
+
+                                <!-- Class -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Class / Grade <span class="text-rose-500">*</span></label>
+                                    <select name="student_class" id="studentModalClass" onchange="toggleStudentModalBoardField()" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800" required>
+                                        <option value="" disabled selected class="bg-white text-slate-400">Select Class</option>
+                                        <option value="Class 1" class="bg-white text-slate-800">Class 1</option>
+                                        <option value="Class 2" class="bg-white text-slate-800">Class 2</option>
+                                        <option value="Class 3" class="bg-white text-slate-800">Class 3</option>
+                                        <option value="Class 4" class="bg-white text-slate-800">Class 4</option>
+                                        <option value="Class 5" class="bg-white text-slate-800">Class 5</option>
+                                        <option value="Class 6" class="bg-white text-slate-800">Class 6</option>
+                                        <option value="Class 7" class="bg-white text-slate-800">Class 7</option>
+                                        <option value="Class 8" class="bg-white text-slate-800">Class 8</option>
+                                        <option value="Class 9" class="bg-white text-slate-800">Class 9</option>
+                                        <option value="Class 10" class="bg-white text-slate-800">Class 10</option>
+                                        <option value="Class 11" class="bg-white text-slate-800">Class 11</option>
+                                        <option value="Class 12" class="bg-white text-slate-800">Class 12</option>
+                                    </select>
+                                </div>
+
+                                <!-- Board (Show for Senior Classes 9-12) -->
+                                <div id="studentModalBoardWrap" class="hidden">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Education Board <span class="text-rose-500">*</span></label>
+                                    <select name="board" id="studentModalBoard" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800">
+                                        <option value="" disabled selected class="bg-white text-slate-400">Select Board</option>
+                                        <option value="CBSE" class="bg-white text-slate-800">CBSE Board</option>
+                                        <option value="ICSE" class="bg-white text-slate-800">ICSE Board</option>
+                                        <option value="UP Board" class="bg-white text-slate-800">UP Board</option>
+                                        <option value="Other" class="bg-white text-slate-800">Other State Board</option>
+                                    </select>
+                                </div>
+
+                                <!-- Stream (Show for Classes 11 & 12) -->
+                                <div id="studentModalStreamWrap" class="hidden">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Select Stream <span class="text-rose-500">*</span></label>
+                                    <select name="stream" id="studentModalStream" onchange="toggleStudentModalBoardField()" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800">
+                                        <option value="" disabled selected class="bg-white text-slate-400">Select Stream</option>
+                                        <option value="Science (PCM)" class="bg-white text-slate-800">Science (PCM)</option>
+                                        <option value="Science (PCB)" class="bg-white text-slate-800">Science (PCB)</option>
+                                        <option value="Commerce" class="bg-white text-slate-800">Commerce</option>
+                                        <option value="Arts / Humanities" class="bg-white text-slate-800">Arts / Humanities</option>
+                                    </select>
+                                </div>
+
+                                <!-- Subject (Single text field with dynamic dropdown suggestions via datalist) -->
+                                <div id="studentModalSubjectWrap" class="hidden sm:col-span-2">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">
+                                        Subject / Subjects <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" name="subject" id="studentModalSubject" list="studentModalSubjectList" placeholder="Select from dropdown or type custom subject..." class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs font-medium">
+                                    <datalist id="studentModalSubjectList"></datalist>
+                                </div>
+
+                                <!-- City -->
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">City</label>
+                                    <input type="text" name="city" id="studentModalCity" placeholder="e.g. Lucknow" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs">
+                                </div>
+
+                                 <!-- Password -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Password <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <input type="password" name="password" id="studentModalPassword" placeholder="••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-3.5 pr-9 py-2.5 rounded-xl text-xs" required>
+                                        <button type="button" onclick="toggleAuthPasswordVis('studentModalPassword', 'studentModalEye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 border-0 bg-transparent cursor-pointer">
+                                            <i id="studentModalEye" class="fas fa-eye text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Confirm Password <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <input type="password" name="confirm_password" id="studentModalConfirmPassword" placeholder="••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-3.5 pr-9 py-2.5 rounded-xl text-xs" required>
+                                        <button type="button" onclick="toggleAuthPasswordVis('studentModalConfirmPassword', 'studentModalConfirmEye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 border-0 bg-transparent cursor-pointer">
+                                            <i id="studentModalConfirmEye" class="fas fa-eye text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <p id="studentModalPasswordError" class="hidden text-[11px] font-bold text-rose-600 mt-1 flex items-center gap-1">
+                                        <i class="fas fa-exclamation-circle text-rose-500"></i>
+                                        <span>Passwords do not match. Please try again.</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="studentModalSubmitBtn" class="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold py-3 rounded-xl text-xs transition-all duration-300 shadow-md shadow-blue-500/20 border-0 cursor-pointer flex items-center justify-center gap-2 mt-3">
+                                <span>Register Student Account</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Footer Back to Login -->
+                    <div class="pt-3 border-t border-blue-100 text-center mt-3 flex items-center justify-center gap-2">
+                        <span class="text-xs text-slate-600 font-medium">Already have an account?</span>
+                        <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-extrabold transition-all duration-200 cursor-pointer shadow-xs">
+                            <span>Login Here</span>
+                            <i class="fas fa-sign-in-alt text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 4: TEACHER REGISTRATION FORM     -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewTeacherReg" class="hidden flex flex-col justify-between h-full max-h-[82vh] overflow-y-auto custom-auth-modal-scroll pr-1">
+                    <div class="space-y-4">
+                        <!-- Header with Top Back Button -->
+                        <div>
+                            <button type="button" onclick="closeAuthModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 hover:text-blue-800 text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs mb-2.5">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                                <span>Back</span>
+                            </button>
+                            <h2 class="text-xl font-extrabold text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>👨‍🏫 Teacher Registration</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-0.5 font-medium">Create your teacher account and share your knowledge.</p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="teacherModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- Teacher Form -->
+                        <form id="teacherModalForm" onsubmit="handleTeacherModalSubmit(event)" enctype="multipart/form-data" class="space-y-4">
+                            {% csrf_token %}
+
+                            <!-- SECTION 1: Personal Information -->
+                            <div class="space-y-2.5">
+                                <h3 class="text-xs font-extrabold text-blue-700 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-blue-100">
+                                    <i class="fas fa-user text-blue-600"></i> 1. Teacher Personal Information
+                                </h3>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <!-- Full Name -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Full Name <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="full_name" id="teacherModalName" placeholder="Dr. Ankit Verma" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                        <p id="errTeacherFullName" class="text-[10px] text-rose-600 font-bold mt-1 hidden"></p>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+                                        <input type="email" name="email" id="teacherModalEmail" placeholder="ankit@example.com" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                        <p id="errTeacherEmail" class="text-[10px] text-rose-600 font-bold mt-1 hidden"></p>
+                                    </div>
+
+                                    <!-- Mobile -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Mobile Number (10 Digits) <span class="text-rose-500">*</span></label>
+                                        <input type="tel" name="mobile" id="teacherModalMobile" placeholder="9876543210" maxlength="10" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                        <p id="errTeacherMobile" class="text-[10px] text-rose-600 font-bold mt-1 hidden"></p>
+                                    </div>
+
+                                    <!-- Gender -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Gender <span class="text-rose-500">*</span></label>
+                                        <select name="gender" id="teacherModalGender" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800" required>
+                                            <option value="" disabled selected class="bg-white text-slate-400">Select Gender</option>
+                                            <option value="Male" class="bg-white text-slate-800">Male</option>
+                                            <option value="Female" class="bg-white text-slate-800">Female</option>
+                                            <option value="Other" class="bg-white text-slate-800">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Experience (Single text field with dropdown suggestions via datalist) -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Experience <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="experience" id="teacherModalExperience" list="teacherModalExperienceList" placeholder="Select or type experience..." class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs font-medium" required>
+                                        <datalist id="teacherModalExperienceList">
+                                            <option value="Fresher"></option>
+                                            <option value="1 Year"></option>
+                                            <option value="2 Years"></option>
+                                            <option value="3 Years"></option>
+                                            <option value="5+ Years"></option>
+                                            <option value="10+ Years"></option>
+                                        </datalist>
+                                    </div>
+
+                                    <!-- Qualification (Single text field with dropdown suggestions via datalist) -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Qualification <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="qualification" id="teacherModalQualification" list="teacherModalQualificationList" placeholder="Select or type qualification..." class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs font-medium" required>
+                                        <datalist id="teacherModalQualificationList">
+                                            <option value="10th Pass"></option>
+                                            <option value="12th Pass"></option>
+                                            <option value="Diploma"></option>
+                                            <option value="Graduate (B.A.)"></option>
+                                            <option value="Graduate (B.Sc.)"></option>
+                                            <option value="Graduate (B.Com.)"></option>
+                                            <option value="Graduate (B.Tech/B.E.)"></option>
+                                            <option value="Graduate (BCA)"></option>
+                                            <option value="Graduate (BBA)"></option>
+                                            <option value="Graduate (B.Ed.)"></option>
+                                            <option value="Post Graduate (M.A.)"></option>
+                                            <option value="Post Graduate (M.Sc.)"></option>
+                                            <option value="Post Graduate (M.Com.)"></option>
+                                            <option value="Post Graduate (M.Tech/M.E.)"></option>
+                                            <option value="Post Graduate (MBA)"></option>
+                                            <option value="Post Graduate (MCA)"></option>
+                                            <option value="Post Graduate (M.Ed.)"></option>
+                                            <option value="PhD / Doctorate"></option>
+                                            <option value="Other"></option>
+                                        </datalist>
+                                    </div>
+
+                                     <!-- Password -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Create Password <span class="text-rose-500">*</span></label>
+                                        <div class="relative">
+                                            <input type="password" name="password" id="teacherModalPassword" placeholder="••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-3.5 pr-9 py-2.5 rounded-xl text-xs" required>
+                                            <button type="button" onclick="toggleAuthPasswordVis('teacherModalPassword', 'teacherModalEye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 border-0 bg-transparent cursor-pointer">
+                                                <i id="teacherModalEye" class="fas fa-eye text-xs"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Confirm Password -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Confirm Password <span class="text-rose-500">*</span></label>
+                                        <div class="relative">
+                                            <input type="password" name="confirm_password" id="teacherModalConfirmPassword" placeholder="••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-3.5 pr-9 py-2.5 rounded-xl text-xs" required>
+                                            <button type="button" onclick="toggleAuthPasswordVis('teacherModalConfirmPassword', 'teacherModalTeacherConfirmEye')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 border-0 bg-transparent cursor-pointer">
+                                                <i id="teacherModalTeacherConfirmEye" class="fas fa-eye text-xs"></i>
+                                            </button>
+                                        </div>
+                                        <p id="teacherModalPasswordError" class="hidden text-[10px] font-bold text-rose-600 mt-1 flex items-center gap-1">
+                                            <i class="fas fa-exclamation-circle text-rose-500"></i>
+                                            <span>Passwords do not match. Please try again.</span>
+                                        </p>
+                                    </div>
+
+                                    <!-- City -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">City <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="city" id="teacherModalCity" placeholder="e.g. Kanpur" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                    </div>
+
+                                    <!-- State -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">State <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="state" id="teacherModalState" placeholder="e.g. Uttar Pradesh" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                    </div>
+
+                                    <!-- Pincode -->
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Pincode <span class="text-rose-500">*</span></label>
+                                        <input type="text" name="pincode" id="teacherModalPincode" placeholder="e.g. 226010" maxlength="6" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SECTION 2: Teaching Details & Multi-Select Classes/Subjects -->
+                            <div class="space-y-2.5 pt-2 border-t border-blue-100">
+                                <h3 class="text-xs font-extrabold text-blue-700 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-blue-100">
+                                    <i class="fas fa-book-open text-blue-600"></i> 2. Teaching Details & Preferences
+                                </h3>
+
+                                <div class="space-y-2.5">
+                                    <!-- Teaching Class Dropdown -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Select Classes You Teach <span class="text-rose-500">*</span></label>
+                                        <select id="teacherModalClassDropdown" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800 cursor-pointer">
+                                            <option value="" disabled selected class="bg-white text-slate-400">-- Choose a Class --</option>
+                                        </select>
+                                        <div id="teacherModalSelectedClassesTags" class="flex flex-wrap gap-1.5 mt-1.5 min-h-[22px]"></div>
+                                        <input type="hidden" id="teacherModalSelectedClassesInput" name="teaching_classes">
+                                        <p id="errTeacherClasses" class="text-[10px] text-rose-600 font-bold mt-1 hidden">Please select at least one class!</p>
+                                    </div>
+
+                                    <!-- Subjects Dropdown (Class-Dependent) -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Select Subjects <span class="text-rose-500">*</span> <span class="text-[10px] text-blue-600 font-normal lowercase">(based on selected classes)</span></label>
+                                        <select id="teacherModalSubjectDropdown" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800 cursor-pointer" disabled>
+                                            <option value="" disabled selected class="bg-white text-slate-400">-- Select class first --</option>
+                                        </select>
+                                        <div id="teacherModalSelectedSubjectsTags" class="flex flex-wrap gap-1.5 mt-1.5 min-h-[22px]"></div>
+                                        <input type="hidden" id="teacherModalSelectedSubjectsInput" name="subjects">
+                                        <p id="errTeacherSubjects" class="text-[10px] text-rose-600 font-bold mt-1 hidden">Please select at least one subject!</p>
+                                    </div>
+
+                                    <!-- Tuition Mode Dropdown -->
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Tuition Mode <span class="text-rose-500">*</span></label>
+                                        <select name="tuition_mode" id="teacherModalTuitionMode" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs text-slate-800" required>
+                                            {% if is_home_tuition_mode %}
+                                            <option value="Home Tuition" selected class="bg-white text-slate-800">Home Tuition</option>
+                                            {% elif is_online_tuition_mode %}
+                                            <option value="Online Tuition" selected class="bg-white text-slate-800">Online Tuition</option>
+                                            {% else %}
+                                            <option value="" disabled selected class="bg-white text-slate-400">Select Preferred Mode</option>
+                                            <option value="Home Tuition" class="bg-white text-slate-800">Home Tuition</option>
+                                            <option value="Online Tuition" class="bg-white text-slate-800">Online Tuition</option>
+                                            <option value="Hybrid" class="bg-white text-slate-800">Hybrid</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SECTION 3: Expected Monthly Fee -->
+                            <div class="space-y-2 pt-2 border-t border-blue-100">
+                                <h3 class="text-xs font-extrabold text-blue-700 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-blue-100">
+                                    <i class="fas fa-tag text-blue-600"></i> 3. Expected Monthly Fee
+                                </h3>
+
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                    <div class="fee-card">
+                                        <input type="radio" id="teacherModalFee1" name="teacher_modal_fee_option" value="₹1,000 – ₹2,000" class="hidden">
+                                        <label for="teacherModalFee1" class="block p-2 rounded-xl bg-white border border-blue-200 text-center text-[11px] font-extrabold cursor-pointer hover:border-blue-500 text-slate-800 transition-all">₹1,000 – ₹2,000</label>
+                                    </div>
+                                    <div class="fee-card">
+                                        <input type="radio" id="teacherModalFee2" name="teacher_modal_fee_option" value="₹2,000 – ₹4,000" class="hidden">
+                                        <label for="teacherModalFee2" class="block p-2 rounded-xl bg-white border border-blue-200 text-center text-[11px] font-extrabold cursor-pointer hover:border-blue-500 text-slate-800 transition-all">₹2,000 – ₹4,000</label>
+                                    </div>
+                                    <div class="fee-card">
+                                        <input type="radio" id="teacherModalFee3" name="teacher_modal_fee_option" value="₹4,000 – ₹6,000" class="hidden">
+                                        <label for="teacherModalFee3" class="block p-2 rounded-xl bg-white border border-blue-200 text-center text-[11px] font-extrabold cursor-pointer hover:border-blue-500 text-slate-800 transition-all">₹4,000 – ₹6,000</label>
+                                    </div>
+                                    <div class="fee-card">
+                                        <input type="radio" id="teacherModalFee4" name="teacher_modal_fee_option" value="₹6,000 – ₹8,000" class="hidden">
+                                        <label for="teacherModalFee4" class="block p-2 rounded-xl bg-white border border-blue-200 text-center text-[11px] font-extrabold cursor-pointer hover:border-blue-500 text-slate-800 transition-all">₹6,000 – ₹8,000</label>
+                                    </div>
+                                    <div class="fee-card">
+                                        <input type="radio" id="teacherModalFee5" name="teacher_modal_fee_option" value="₹8,000 – ₹10,000" class="hidden">
+                                        <label for="teacherModalFee5" class="block p-2 rounded-xl bg-white border border-blue-200 text-center text-[11px] font-extrabold cursor-pointer hover:border-blue-500 text-slate-800 transition-all">₹8,000 – ₹10,000</label>
+                                    </div>
+                                    <div class="fee-card">
+                                        <input type="radio" id="teacherModalFeeCustom" name="teacher_modal_fee_option" value="Custom" class="hidden">
+                                        <label for="teacherModalFeeCustom" class="block p-2 rounded-xl bg-white border border-blue-200 text-center text-[11px] font-extrabold cursor-pointer hover:border-blue-500 text-slate-800 transition-all">Custom Fee</label>
+                                    </div>
+                                </div>
+
+                                <!-- Custom Fee Input Field -->
+                                <div id="teacherModalCustomFeeWrapper" class="hidden pt-1">
+                                    <input type="number" id="teacherModalCustomFeeVal" placeholder="Enter amount in ₹ (e.g. 12000)" class="w-full auth-glass-input px-3.5 py-2.5 rounded-xl text-xs font-medium">
+                                </div>
+                                <input type="hidden" id="teacherModalFinalFeeInput" name="expected_fee" value="">
+                                <p id="errTeacherFee" class="text-[10px] text-rose-600 font-bold mt-1 hidden">Please select or enter an expected monthly fee!</p>
+                            </div>
+
+                            <!-- SECTION 4: Short Bio -->
+                            <div class="space-y-1.5 pt-2 border-t border-blue-100">
+                                <div class="flex items-center justify-between">
+                                    <label for="teacherModalBio" class="text-xs font-extrabold text-blue-700 uppercase tracking-wider flex items-center gap-1.5 cursor-pointer">
+                                        <i class="fas fa-pen text-blue-600"></i> 4. Short Bio & Methodology
+                                    </label>
+                                    <span class="text-[10px] font-semibold text-slate-500"><span id="teacherModalBioCharCount">0</span> / 500</span>
+                                </div>
+                                <textarea id="teacherModalBio" name="bio" rows="2.5" maxlength="500" placeholder="Write a short summary about your qualifications, teaching methodology..." class="w-full auth-glass-input p-3 rounded-xl text-xs font-medium resize-none"></textarea>
+                            </div>
+
+                            <!-- SECTION 5: Profile Photo Upload Dropzone -->
+                            <div class="space-y-1.5 pt-2 border-t border-blue-100">
+                                <h3 class="text-xs font-extrabold text-blue-700 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-blue-100">
+                                    <i class="fas fa-camera text-blue-600"></i> 5. Profile Photo Upload
+                                </h3>
+
+                                <div id="teacherModalDropzone" class="p-4 border-2 border-dashed border-blue-200 hover:border-blue-500 rounded-2xl bg-white text-center space-y-2 cursor-pointer transition-all">
+                                    <div id="teacherModalDropzoneEmpty">
+                                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto text-lg">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        </div>
+                                        <p class="text-xs font-bold text-slate-700 mt-1">Drag & Drop photo or <span class="text-blue-600 underline">Browse</span></p>
+                                        <p class="text-[10px] text-slate-400">Supports JPG, PNG, WEBP (Max 5 MB)</p>
+                                    </div>
+
+                                    <!-- Image Preview -->
+                                    <div id="teacherModalDropzonePreview" class="hidden flex flex-col items-center gap-2">
+                                        <img id="teacherModalImgPreviewSrc" src="" alt="Profile Photo Preview" class="w-20 h-20 rounded-xl object-cover border-2 border-blue-500 shadow-xs">
+                                        <button type="button" id="teacherModalRemovePhotoBtn" class="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-[10px] font-bold border-0 cursor-pointer">
+                                            Remove Photo
+                                        </button>
+                                    </div>
+                                    <input type="file" id="teacherModalProfilePhoto" name="profile_photo" accept="image/jpeg,image/png,image/webp" class="hidden">
+                                </div>
+                            </div>
+
+                            <!-- Bottom Feedback Alert Box -->
+                            <div id="teacherModalBottomAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2 bg-rose-50 text-rose-700 border border-rose-200 mt-2"></div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="teacherModalSubmitBtn" class="w-full bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 hover:from-indigo-700 hover:to-blue-700 text-white font-extrabold py-3 rounded-xl text-xs transition-all duration-300 shadow-md shadow-indigo-500/20 border-0 cursor-pointer flex items-center justify-center gap-2 mt-3">
+                                <span>Submit Teacher Registration</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Footer Back to Login -->
+                    <div class="pt-3 border-t border-blue-100 text-center mt-3 flex items-center justify-center gap-2">
+                        <span class="text-xs text-slate-600 font-medium">Already have an account?</span>
+                        <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-extrabold transition-all duration-200 cursor-pointer shadow-xs">
+                            <span>Login Here</span>
+                            <i class="fas fa-sign-in-alt text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 5: FORGOT PASSWORD FORM          -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewForgot" class="hidden flex flex-col justify-between h-full space-y-5">
+                    <div class="space-y-4">
+                        <!-- Badge -->
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 text-xs font-bold">
+                                <i class="fas fa-shield-alt"></i> Secure Account Recovery
+                            </span>
+                        </div>
+
+                        <!-- Header -->
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>🔐 Forgot Password?</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-1 font-medium leading-relaxed">Enter your registered email address to receive a password reset link.</p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="forgotModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- Forgot Password Form -->
+                        <form id="forgotModalForm" onsubmit="handleForgotModalSubmit(event)" class="space-y-4">
+                            {% csrf_token %}
+                            
+                            <!-- Email Field -->
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">EMAIL ADDRESS</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <input type="email" id="forgotModalEmail" placeholder="Enter your registered email" class="w-full auth-glass-input pl-10 pr-4 h-[50px] rounded-xl text-xs sm:text-sm shadow-xs" required>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="forgotModalSubmitBtn" class="w-full bg-gradient-to-r from-amber-600 via-blue-600 to-indigo-600 hover:from-amber-700 hover:to-blue-700 text-white font-extrabold h-[50px] rounded-xl text-xs sm:text-sm transition-all duration-300 shadow-md shadow-amber-500/20 border-0 cursor-pointer flex items-center justify-center gap-2 mt-2">
+                                <span>Send OTP</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Footer Back to Login -->
+                    <div class="pt-3 border-t border-blue-100 text-center">
+                        <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-extrabold text-xs transition-all duration-200 cursor-pointer shadow-xs">
+                            <i class="fas fa-arrow-left text-xs"></i>
+                            <span>Back to Login</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 5B: FORGOT PASSWORD OTP VIEW    -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewForgotOtp" class="hidden flex flex-col justify-between h-full space-y-4">
+                    <div class="space-y-4">
+                        <!-- Heading -->
+                        <div>
+                            <button type="button" onclick="switchAuthView('forgot-password')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold transition-all duration-200 cursor-pointer shadow-xs mb-2">
+                                <i class="fas fa-arrow-left text-[10px]"></i>
+                                <span>Back</span>
+                            </button>
+                            <h2 class="text-xl sm:text-2xl font-black text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>🔑 Verify Reset OTP</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-1 font-medium leading-relaxed">
+                                Enter the 6-digit reset code sent to <strong id="forgotOtpMaskedEmail" class="text-blue-700">your email</strong>.
+                            </p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="forgotOtpModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- OTP Form -->
+                        <form id="forgotOtpModalForm" onsubmit="handleForgotOtpModalSubmit(event)" class="space-y-3.5">
+                            {% csrf_token %}
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">6-DIGIT OTP CODE</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <input type="text" id="forgotOtpCode" maxlength="6" pattern="[0-9]{6}" placeholder="123456" class="w-full auth-glass-input pl-10 pr-4 h-[50px] rounded-xl text-center font-mono text-lg font-bold tracking-widest shadow-xs" required autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="forgotOtpModalBtn" class="w-full bg-gradient-to-r from-amber-600 via-blue-600 to-indigo-600 hover:from-amber-700 hover:to-indigo-700 text-white font-extrabold h-[50px] rounded-xl text-xs sm:text-sm transition-all duration-300 shadow-md shadow-amber-500/20 border-0 cursor-pointer flex items-center justify-center gap-2 mt-1">
+                                <span>Verify OTP</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </form>
+
+                        <!-- Resend OTP Section -->
+                        <div class="text-center pt-1">
+                            <span class="text-xs text-slate-500 font-medium">Didn't receive the code?</span>
+                            <button type="button" id="forgotOtpResendBtn" onclick="handleForgotOtpResend()" disabled class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 border border-slate-300 text-slate-400 text-xs font-bold transition-all duration-200 ml-1 cursor-not-allowed">
+                                <span>Resend OTP</span>
+                                <span id="forgotOtpTimer" class="font-mono text-xs">(30s)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer Back to Login -->
+                    <div class="pt-3 border-t border-blue-100 text-center">
+                        <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-extrabold text-xs transition-all duration-200 cursor-pointer shadow-xs">
+                            <i class="fas fa-arrow-left text-xs"></i>
+                            <span>Back to Login</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ------------------------------------------- -->
+                <!-- RIGHT VIEW 5C: CREATE NEW PASSWORD VIEW    -->
+                <!-- ------------------------------------------- -->
+                <div id="authRightViewResetPassword" class="hidden flex flex-col justify-between h-full space-y-4">
+                    <div class="space-y-4">
+                        <!-- Heading -->
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-black text-[#0f2747] tracking-tight flex items-center gap-2">
+                                <span>✨ Create New Password</span>
+                            </h2>
+                            <p class="text-slate-600 text-xs mt-1 font-medium">Set a strong password. Any format allowed, but <strong>no spaces</strong> anywhere.</p>
+                        </div>
+
+                        <!-- Feedback Alert Box -->
+                        <div id="resetPasswordModalAlert" class="hidden p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2"></div>
+
+                        <!-- Reset Form -->
+                        <form id="resetPasswordModalForm" onsubmit="handleResetPasswordModalSubmit(event)" class="space-y-3.5">
+                            {% csrf_token %}
+
+                            <!-- New Password -->
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">CREATE NEW PASSWORD <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <input type="password" id="resetModalPassword" placeholder="•••••••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-10 pr-10 h-[48px] rounded-xl text-xs sm:text-sm shadow-xs" required>
+                                    <button type="button" onclick="toggleAuthPasswordVis('resetModalPassword', 'resetModalEye')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 border-0 bg-transparent cursor-pointer">
+                                        <i id="resetModalEye" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Confirm New Password -->
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">CONFIRM NEW PASSWORD <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs sm:text-sm">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <input type="password" id="resetModalConfirmPassword" placeholder="•••••••••••••" onkeydown="preventSpaceInPassword(event)" class="w-full auth-glass-input pl-10 pr-10 h-[48px] rounded-xl text-xs sm:text-sm shadow-xs" required>
+                                    <button type="button" onclick="toggleAuthPasswordVis('resetModalConfirmPassword', 'resetModalConfirmEye')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 border-0 bg-transparent cursor-pointer">
+                                        <i id="resetModalConfirmEye" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <p id="resetModalPasswordError" class="hidden text-[11px] font-bold text-rose-600 mt-1 flex items-center gap-1">
+                                    <i class="fas fa-exclamation-circle text-rose-500"></i>
+                                    <span>Passwords do not match. Please try again.</span>
+                                </p>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" id="resetPasswordModalBtn" class="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold h-[50px] rounded-xl text-xs sm:text-sm transition-all duration-300 shadow-md shadow-emerald-500/20 border-0 cursor-pointer flex items-center justify-center gap-2 mt-2">
+                                <span>Reset Password</span>
+                                <i class="fas fa-check-circle text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Footer Back to Login -->
+                    <div class="pt-3 border-t border-blue-100 text-center">
+                        <button type="button" onclick="switchAuthView('login')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 font-extrabold text-xs transition-all duration-200 cursor-pointer shadow-xs">
+                            <i class="fas fa-arrow-left text-xs"></i>
+                            <span>Back to Login</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- CUSTOM STYLED OTP DISPLAY POPUP MODAL (REPLACES BROWSER ALERT) -->
+<!-- ========================================================= -->
+<div id="otpDisplayModal" onclick="closeOtpPopup()" class="hidden fixed inset-0 z-[9999999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+    <div onclick="event.stopPropagation()" class="bg-white rounded-3xl p-6 sm:p-7 max-w-xs sm:max-w-sm w-full shadow-2xl border border-blue-200 text-center transform scale-100 transition-all space-y-4 relative">
+        <button type="button" onclick="closeOtpPopup()" aria-label="Close OTP Popup" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-500 hover:text-white text-slate-500 flex items-center justify-center text-sm transition-colors border border-slate-200 cursor-pointer">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center text-2xl mx-auto shadow-md shadow-blue-500/20">
+            🔑
+        </div>
+        <div>
+            <h3 id="otpPopupTitle" class="text-lg font-black text-[#0f2747]">Your Verification OTP</h3>
+            <p class="text-xs text-slate-500 mt-1 font-medium">Use this 6-digit code for testing verification:</p>
+        </div>
+        <div class="bg-blue-50/80 border-2 border-dashed border-blue-300 rounded-2xl p-3 flex items-center justify-center">
+            <span id="otpPopupDigits" class="font-mono text-3xl font-black text-blue-700 tracking-widest">123456</span>
+        </div>
+        <button type="button" onclick="closeOtpPopup()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-md shadow-blue-500/20 transition-all cursor-pointer border-0">
+            OK, Got it!
+        </button>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- LOGOUT CONFIRMATION POPUP MODAL (COMPACT NORMAL SIZE)     -->
+<!-- ========================================================= -->
+<div id="logoutConfirmModal" onclick="closeLogoutConfirmModal()" class="hidden fixed inset-0 z-[99999999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-md transition-all duration-300 select-none">
+    <div onclick="event.stopPropagation()" class="bg-white rounded-[24px] sm:rounded-[28px] p-5 sm:p-6 max-w-[460px] sm:max-w-[490px] w-full shadow-[0_20px_50px_-12px_rgba(15,23,42,0.25)] border border-slate-100 relative text-center transform scale-100 transition-all overflow-hidden my-auto">
+        
+        <!-- Close Button (Circular X in Top Right) -->
+        <button type="button" onclick="closeLogoutConfirmModal()" aria-label="Close Confirmation Modal" class="absolute top-3.5 right-3.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center text-[11px] transition-all border border-slate-200/80 cursor-pointer shadow-2xs z-20">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- TOP ILLUSTRATION & BADGES AREA -->
+        <div class="relative w-full max-w-[360px] mx-auto h-20 sm:h-22 flex items-center justify-center mb-1">
+            
+            <!-- Left Floating Badge: "Your data stays safe" -->
+            <div class="absolute left-0 top-3 bg-white/95 backdrop-blur-xs border border-blue-100 shadow-2xs px-2.5 py-1 rounded-full flex items-center gap-1.5 z-10 transition-transform hover:scale-105">
+                <div class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[8.5px] shadow-2xs">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <span class="text-[10px] font-bold text-slate-700 whitespace-nowrap">Your data stays safe</span>
+            </div>
+
+            <!-- Left Tiny Decorative Sparkle -->
+            <div class="absolute left-7 bottom-0 text-blue-400 opacity-60 text-[10px]">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14 9L23 12L14 15L12 24L10 15L1 12L10 9Z"/></svg>
+            </div>
+
+            <!-- Center Logout Icon with Soft Glow -->
+            <div class="relative flex items-center justify-center z-10">
+                <!-- Soft Circular Pink Glow -->
+                <div class="absolute w-16 h-16 rounded-full bg-rose-100/60 blur-xs pointer-events-none"></div>
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-rose-50/90 flex items-center justify-center shadow-inner">
+                    
+                    <!-- Rounded-Square Pastel Container -->
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-[14px] bg-gradient-to-br from-rose-50 via-pink-100/80 to-rose-100 border border-rose-200/80 flex items-center justify-center shadow-2xs relative">
+                        <!-- Custom Exit / Logout Icon -->
+                        <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Tiny Decorative Pink Bursts -->
+                <span class="absolute -top-0.5 left-1 w-1.5 h-0.5 bg-rose-400 rounded-full rotate-45"></span>
+                <span class="absolute top-1.5 -left-1.5 w-2 h-0.5 bg-rose-400 rounded-full -rotate-12"></span>
+                <span class="absolute bottom-1.5 -right-1.5 w-2 h-0.5 bg-rose-400 rounded-full -rotate-45"></span>
+                <span class="absolute -bottom-0.5 right-1 w-1.5 h-0.5 bg-rose-400 rounded-full 45"></span>
+            </div>
+
+            <!-- Right Floating Badge: "See you again soon!" -->
+            <div class="absolute right-0 top-0.5 bg-white/95 backdrop-blur-xs border border-blue-100 shadow-2xs px-2.5 py-1 rounded-full flex items-center gap-1.5 z-10 transition-transform hover:scale-105">
+                <div class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[8.5px] shadow-2xs">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="text-[10px] font-bold text-slate-700 whitespace-nowrap">See you again soon!</span>
+            </div>
+
+            <!-- Right Paper Plane & Dotted Loop Path -->
+            <div class="absolute right-3 bottom-0 flex items-center gap-1 pointer-events-none">
+                <svg class="w-12 h-6 text-blue-400/80" viewBox="0 0 80 40" fill="none">
+                    <path d="M5 30 C25 38, 40 10, 55 25 C60 30, 68 28, 75 12" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3.5 3.5" stroke-linecap="round"/>
+                </svg>
+                <i class="fas fa-paper-plane text-blue-500 text-xs -rotate-12 -translate-y-1"></i>
+            </div>
+        </div>
+
+        <!-- MAIN HEADING & SUBTITLE -->
+        <div class="space-y-0.5 sm:space-y-1">
+            <h3 class="text-lg sm:text-xl font-black text-[#0f2747] tracking-tight leading-tight m-0">
+                Do you want to logout?
+            </h3>
+            <p class="text-[11px] sm:text-xs text-slate-500 font-medium m-0">
+                You will need to log in again to access your account.
+            </p>
+        </div>
+
+        <!-- INFORMATION / SECURITY MESSAGE PANEL -->
+        <div class="mt-3.5 p-2.5 sm:p-3 rounded-xl bg-blue-50/70 border border-blue-100/90 flex items-start gap-2.5 text-left">
+            <div class="w-6 h-6 rounded-full bg-[#2563EB] text-white flex items-center justify-center shrink-0 text-[10px] font-black shadow-2xs mt-0.5">
+                <i class="fas fa-info"></i>
+            </div>
+            <p class="text-[10.5px] sm:text-[11px] text-slate-600 font-medium leading-relaxed m-0">
+                Your progress, saved preferences and personalized settings will be securely kept. You can log in anytime to continue your learning journey with <strong class="text-[#2563EB] font-extrabold">EduTrust</strong>.
+            </p>
+        </div>
+
+        <!-- ACTION BUTTONS (Cancel & Yes, Logout) -->
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3 mt-4">
+            <button type="button" onclick="closeLogoutConfirmModal()" class="w-full bg-white hover:bg-slate-50 text-[#0f2747] font-black text-xs sm:text-sm h-[42px] sm:h-[46px] rounded-xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-2xs flex items-center justify-center">
+                Cancel
+            </button>
+            <button type="button" id="confirmLogoutBtn" onclick="executeRealLogout()" class="w-full bg-gradient-to-r from-rose-600 via-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-black text-xs sm:text-sm h-[42px] sm:h-[46px] rounded-xl shadow-sm shadow-rose-500/25 hover:shadow-md hover:shadow-rose-500/35 hover:-translate-y-0.5 transition-all cursor-pointer border-0 flex items-center justify-center gap-1.5">
+                <span>Yes, Logout</span>
+                <i class="fas fa-arrow-right text-[11px]"></i>
+            </button>
+        </div>
+
+        <!-- BOTTOM SECURITY NOTE DIVIDER -->
+        <div class="mt-3.5 pt-0.5 flex items-center justify-center gap-2.5 text-slate-400 text-[10px] sm:text-[10.5px] font-semibold select-none">
+            <span class="h-px bg-slate-200/80 flex-1"></span>
+            <span class="inline-flex items-center gap-1.5 text-slate-400">
+                <i class="fas fa-shield-alt text-[10px]"></i>
+                <span>Your data is safe with us</span>
+            </span>
+            <span class="h-px bg-slate-200/80 flex-1"></span>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- CENTRALIZED AUTHENTICATION MODAL CONTROLLER SCRIPT         -->
+<!-- ========================================================= -->
+<script>
+(function() {
+    let currentActiveAuthView = 'login';
+
+    // Helper: Logout Confirmation System
+    window.confirmLogout = function(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const modal = document.getElementById('logoutConfirmModal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        window.addEventListener('keydown', handleLogoutConfirmEscKey);
+    };
+
+    function handleLogoutConfirmEscKey(e) {
+        if (e.key === 'Escape' || e.code === 'Escape') {
+            closeLogoutConfirmModal();
+        }
+    }
+
+    window.closeLogoutConfirmModal = function() {
+        const modal = document.getElementById('logoutConfirmModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        const btn = document.getElementById('confirmLogoutBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>Yes, Logout</span> <i class="fas fa-arrow-right text-xs sm:text-sm"></i>';
+        }
+        window.removeEventListener('keydown', handleLogoutConfirmEscKey);
+    };
+
+    window.executeRealLogout = function() {
+        const btn = document.getElementById('confirmLogoutBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Logging out...';
+        }
+
+        const userAuthKeys = ['isLoggedIn', 'student_name', 'user_name', 'teacher_name', 'user', 'student_profile', 'teacher_profile', 'pending_login', 'pendingJobId', 'selectedTutor'];
+        userAuthKeys.forEach(k => {
+            try { localStorage.removeItem(k); } catch(err){}
+            try { sessionStorage.removeItem(k); } catch(err){}
+        });
+
+        window.location.href = '/logout/';
+    };
+
+    // Helper: Custom OTP Display Modal Popup (Replaces browser alert)
+    window.showOtpPopup = function(otpCode, purpose = '') {
+        const modal = document.getElementById('otpDisplayModal');
+        const digitsEl = document.getElementById('otpPopupDigits');
+        const titleEl = document.getElementById('otpPopupTitle');
+        if (!modal || !digitsEl) return;
+
+        if (titleEl) {
+            if (purpose === 'LOGIN') {
+                titleEl.textContent = '🔑 Login OTP Code';
+            } else if (purpose === 'FORGOT') {
+                titleEl.textContent = '🔑 Reset Password OTP Code';
+            } else {
+                titleEl.textContent = '🔑 Your Verification OTP';
+            }
+        }
+        digitsEl.textContent = otpCode;
+        modal.classList.remove('hidden');
+    };
+
+    window.closeOtpPopup = function() {
+        const modal = document.getElementById('otpDisplayModal');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    // Helper: Toggle password visibility
+    window.toggleAuthPasswordVis = function(inputId, eyeId) {
+        const input = document.getElementById(inputId);
+        const eye = document.getElementById(eyeId);
+        if (!input || !eye) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            eye.classList.remove('fa-eye');
+            eye.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            eye.classList.remove('fa-eye-slash');
+            eye.classList.add('fa-eye');
+        }
+    };
+
+    // Helper: Dynamic subject options based on Class and Stream into single input datalist
+    window.populateStudentSubjectOptions = function(clsVal, streamVal) {
+        const list = document.getElementById('studentModalSubjectList');
+        if (!list) return;
+
+        let options = [];
+        if (!clsVal) {
+            options = [];
+        } else if (['Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5'].includes(clsVal)) {
+            options = ['All Subjects', 'Mathematics', 'Science / EVS', 'English', 'Hindi', 'Social Studies', 'Computer Science'];
+        } else if (['Class 6', 'Class 7', 'Class 8'].includes(clsVal)) {
+            options = ['All Subjects', 'Mathematics', 'Science', 'Social Science', 'English', 'Hindi', 'Computer Science', 'Sanskrit'];
+        } else if (['Class 9', 'Class 10'].includes(clsVal)) {
+            options = ['All Subjects', 'Mathematics', 'Science (Physics, Chem, Bio)', 'Social Science', 'English', 'Hindi', 'Computer Applications'];
+        } else if (['Class 11', 'Class 12'].includes(clsVal)) {
+            if (streamVal === 'Science (PCM)') {
+                options = ['All Subjects', 'Mathematics', 'Physics', 'Chemistry', 'English', 'Computer Science / IP'];
+            } else if (streamVal === 'Science (PCB)') {
+                options = ['All Subjects', 'Biology', 'Physics', 'Chemistry', 'English', 'Computer Science / IP'];
+            } else if (streamVal === 'Commerce') {
+                options = ['All Subjects', 'Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'English', 'Informatics Practices'];
+            } else if (streamVal === 'Arts / Humanities') {
+                options = ['All Subjects', 'History', 'Political Science', 'Geography', 'Economics', 'English', 'Sociology', 'Psychology'];
+            } else {
+                options = ['All Subjects', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'Accountancy', 'Economics', 'History', 'English'];
+            }
+        } else {
+            options = ['All Subjects', 'Mathematics', 'Science', 'English', 'Hindi', 'Social Science'];
+        }
+
+        list.innerHTML = '';
+        options.forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt;
+            list.appendChild(o);
+        });
+    };
+
+    // Helper: Show/Hide Class 9-12 Board, Stream & Subject selection fields in Student modal
+    window.toggleStudentModalBoardField = function() {
+        const clsVal = (document.getElementById('studentModalClass')?.value || '').trim();
+        const boardWrap = document.getElementById('studentModalBoardWrap');
+        const boardSel = document.getElementById('studentModalBoard');
+        const streamWrap = document.getElementById('studentModalStreamWrap');
+        const streamSel = document.getElementById('studentModalStream');
+        const subjectWrap = document.getElementById('studentModalSubjectWrap');
+
+        const seniorClasses = ['Class 9', 'Class 10', 'Class 11', 'Class 12'];
+        const streamClasses = ['Class 11', 'Class 12'];
+
+        if (boardWrap) {
+            if (seniorClasses.includes(clsVal)) {
+                if (streamClasses.includes(clsVal)) {
+                    boardWrap.className = 'sm:col-span-1';
+                } else {
+                    boardWrap.className = 'sm:col-span-2';
+                }
+                if (boardSel) boardSel.required = true;
+            } else {
+                boardWrap.className = 'hidden';
+                if (boardSel) {
+                    boardSel.required = false;
+                    boardSel.value = '';
+                }
+            }
+        }
+
+        if (streamWrap) {
+            if (streamClasses.includes(clsVal)) {
+                streamWrap.className = 'sm:col-span-1';
+                if (streamSel) streamSel.required = true;
+            } else {
+                streamWrap.className = 'hidden';
+                if (streamSel) {
+                    streamSel.required = false;
+                    streamSel.value = '';
+                }
+            }
+        }
+
+        if (subjectWrap) {
+            if (clsVal) {
+                subjectWrap.classList.remove('hidden');
+            } else {
+                subjectWrap.classList.add('hidden');
+            }
+        }
+
+        const streamVal = (document.getElementById('studentModalStream')?.value || '').trim();
+        populateStudentSubjectOptions(clsVal, streamVal);
+    };
+
+    let isPushedTeacherUrl = false;
+
+    window.resetAuthModalState = function() {
+        ['loginModalAlert', 'loginOtpModalAlert', 'studentModalAlert', 'teacherModalAlert', 'forgotModalAlert', 'forgotOtpModalAlert', 'resetPasswordModalAlert'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                el.innerHTML = '';
+            }
+        });
+
+        ['loginModalEmail', 'loginModalPassword', 'loginOtpCode', 'forgotModalEmail', 'forgotOtpCode', 'resetModalPassword', 'resetModalConfirmPassword'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+
+        if (window.loginOtpResendBtn_interval) clearInterval(window.loginOtpResendBtn_interval);
+        if (window.forgotOtpResendBtn_interval) clearInterval(window.forgotOtpResendBtn_interval);
+
+        if (typeof closeOtpPopup === 'function') closeOtpPopup();
+    };
+
+    const viewUrlMap = {
+        'login': '/login/',
+        'student-registration': '/student-registration/',
+        'teacher-registration': '/teacher-registration/',
+        'forgot-password': '/forget.html'
+    };
+
+    function detectInitialAuthViewFromPath() {
+        const path = window.location.pathname.toLowerCase();
+        if (path.includes('/hire')) return null;
+        if (path.includes('/book-demo')) return null;
+        if (path.includes('/login')) return 'login';
+        if (path.includes('/student-registration') || path.includes('/registration') || path.includes('/register')) return 'student-registration';
+        if (path.includes('/teacher-registration')) return 'teacher-registration';
+        if (path.includes('/forget') || path.includes('/forgot-password')) return 'forgot-password';
+        return null;
+    }
+
+    // Open Auth Modal with target initial view
+    window.openAuthModal = function(targetView = 'login', skipPushState = false) {
+        const modal = document.getElementById('authModal');
+        if (!modal) return;
+        
+        resetAuthModalState();
+        switchAuthView(targetView, skipPushState);
+        
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        
+        // Trigger smooth opacity & scale animation
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            const card = document.getElementById('authModalCard');
+            if (card) {
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }
+            // Auto focus email input on login view
+            if (targetView === 'login') {
+                const emailInp = document.getElementById('loginModalEmail');
+                if (emailInp) emailInp.focus();
+            }
+        }, 15);
+
+        document.body.style.overflow = 'hidden';
+    };
+
+    // Close Auth Modal
+    window.closeAuthModal = function(skipPushState = false) {
+        const modal = document.getElementById('authModal');
+        const card = document.getElementById('authModalCard');
+        if (!modal) return;
+
+        if (document.activeElement && modal.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
+        if (card) {
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+        modal.classList.add('opacity-0');
+
+        if (!skipPushState) {
+            const currentPath = window.location.pathname.toLowerCase();
+            const isAuthPath = currentPath.includes('/login') ||
+                               currentPath.includes('/registration') ||
+                               currentPath.includes('/register') ||
+                               currentPath.includes('/teacher-registration') ||
+                               currentPath.includes('/student-registration') ||
+                               currentPath.includes('/forget') ||
+                               currentPath.includes('/forgot-password');
+            if (isAuthPath) {
+                history.pushState({ modalClosed: true }, '', '/');
+            }
+        }
+
+        setTimeout(() => {
+            if (document.activeElement && modal.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }, 250);
+    };
+
+    // Switch ONLY THE RIGHT-SIDE VIEW (Left panel remains completely fixed)
+    window.switchAuthView = function(viewName, skipPushState = false) {
+        currentActiveAuthView = viewName;
+
+        const views = {
+            'login': document.getElementById('authRightViewLogin'),
+            'login-otp': document.getElementById('authRightViewLoginOtp'),
+            'registration-choice': document.getElementById('authRightViewRegChoice'),
+            'student-registration': document.getElementById('authRightViewStudentReg'),
+            'teacher-registration': document.getElementById('authRightViewTeacherReg'),
+            'forgot-password': document.getElementById('authRightViewForgot'),
+            'forgot-otp': document.getElementById('authRightViewForgotOtp'),
+            'reset-password': document.getElementById('authRightViewResetPassword')
+        };
+
+        // Hide all right-side views
+        Object.keys(views).forEach(k => {
+            if (views[k]) views[k].classList.add('hidden');
+        });
+
+        // Show selected right-side view
+        if (views[viewName]) {
+            views[viewName].classList.remove('hidden');
+        }
+
+        if (!skipPushState && viewUrlMap[viewName]) {
+            const targetUrl = viewUrlMap[viewName];
+            if (window.location.pathname !== targetUrl && window.location.pathname !== targetUrl.replace(/\/$/, '')) {
+                history.pushState({ authModalView: viewName }, '', targetUrl);
+            }
+        }
+    };
+
+    // Close on ESC key or backdrop click
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('authModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeAuthModal();
+            }
+        }
+    });
+
+    // Handle browser Back button popstate
+    window.addEventListener('popstate', function(e) {
+        const pathView = detectInitialAuthViewFromPath();
+        const modal = document.getElementById('authModal');
+        
+        if (pathView) {
+            openAuthModal(pathView, true);
+        } else {
+            if (modal && !modal.classList.contains('hidden')) {
+                closeAuthModal(true);
+            }
+        }
+    });
+
+    // ===== TEACHER MODAL: CLASS & SUBJECT DROPDOWN SYSTEM =====
+    const teacherModalClassesList = ['Play Group', 'Nursery', 'LKG', 'UKG', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12'];
+    let teacherModalSelectedClasses = [];
+    let teacherModalSelectedSubjects = [];
+
+    const teacherModalClassSubjectMap = {
+        'Play Group': ['English', 'Hindi', 'Drawing', 'Music', 'General Knowledge'],
+        'Nursery': ['English', 'Hindi', 'Mathematics', 'EVS', 'Drawing'],
+        'LKG': ['English', 'Hindi', 'Mathematics', 'EVS', 'Drawing'],
+        'UKG': ['English', 'Hindi', 'Mathematics', 'EVS', 'Drawing'],
+        'Class 1': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+        'Class 2': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+        'Class 3': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+        'Class 4': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+        'Class 5': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'Drawing', 'Music'],
+        'Class 6': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Sanskrit', 'Computer', 'Drawing', 'Music'],
+        'Class 7': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Sanskrit', 'Computer', 'Drawing', 'Music'],
+        'Class 8': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Sanskrit', 'Computer', 'Drawing', 'Music'],
+        'Class 9': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer', 'Sanskrit'],
+        'Class 10': ['Mathematics', 'Science', 'English', 'Hindi', 'Social Science', 'Computer', 'Sanskrit'],
+        'Class 11': ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'Computer Science', 'Accountancy', 'Economics', 'Business Studies', 'History', 'Political Science', 'Geography', 'Hindi'],
+        'Class 12': ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English', 'Computer Science', 'Accountancy', 'Economics', 'Business Studies', 'History', 'Political Science', 'Geography', 'Hindi']
+    };
+
+    function initTeacherModalClassSubjectSystem() {
+        const classDropdown = document.getElementById('teacherModalClassDropdown');
+        const subjectDropdown = document.getElementById('teacherModalSubjectDropdown');
+
+        if (!classDropdown) return;
+        classDropdown.innerHTML = '<option value="" disabled selected class="bg-white text-slate-400">-- Choose a Class --</option>';
+        teacherModalClassesList.forEach(cls => {
+            const opt = document.createElement('option');
+            opt.value = cls;
+            opt.textContent = cls;
+            opt.className = 'bg-white text-slate-800';
+            classDropdown.appendChild(opt);
+        });
+
+        classDropdown.onchange = function() {
+            const val = classDropdown.value;
+            if (val && !teacherModalSelectedClasses.includes(val)) {
+                teacherModalSelectedClasses.push(val);
+                updateTeacherModalClassTags();
+                updateTeacherModalSubjectDropdown();
+            }
+            classDropdown.value = '';
+        };
+
+        if (subjectDropdown) {
+            subjectDropdown.onchange = function() {
+                const val = subjectDropdown.value;
+                if (val && !teacherModalSelectedSubjects.includes(val)) {
+                    teacherModalSelectedSubjects.push(val);
+                    updateTeacherModalSubjectTags();
+                    updateTeacherModalSubjectDropdown();
+                }
+                subjectDropdown.value = '';
+            };
+        }
+    }
+
+    function updateTeacherModalClassTags() {
+        const classTags = document.getElementById('teacherModalSelectedClassesTags');
+        if (!classTags) return;
+        classTags.innerHTML = teacherModalSelectedClasses.map(cls => `
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-blue-100 border border-blue-300 text-blue-800 text-[11px] font-bold">
+                <i class="fas fa-graduation-cap text-[9px] text-blue-600"></i> ${cls}
+                <button type="button" onclick="removeTeacherModalClass('${cls}')" class="ml-0.5 text-blue-600 hover:text-rose-600 transition-colors bg-transparent border-0 cursor-pointer text-xs font-bold p-0 leading-none">&times;</button>
+            </span>
+        `).join('');
+        const inp = document.getElementById('teacherModalSelectedClassesInput');
+        if (inp) inp.value = teacherModalSelectedClasses.join(', ');
+    }
+
+    window.removeTeacherModalClass = function(cls) {
+        teacherModalSelectedClasses = teacherModalSelectedClasses.filter(c => c !== cls);
+        const available = getTeacherModalAvailableSubjects();
+        teacherModalSelectedSubjects = teacherModalSelectedSubjects.filter(s => available.includes(s));
+        updateTeacherModalClassTags();
+        updateTeacherModalSubjectDropdown();
+        updateTeacherModalSubjectTags();
+    };
+
+    function getTeacherModalAvailableSubjects() {
+        if (teacherModalSelectedClasses.length === 0) return [];
+        const subjectSet = new Set();
+        teacherModalSelectedClasses.forEach(cls => {
+            (teacherModalClassSubjectMap[cls] || []).forEach(s => subjectSet.add(s));
+        });
+        return Array.from(subjectSet);
+    }
+
+    function updateTeacherModalSubjectDropdown() {
+        const subjectDropdown = document.getElementById('teacherModalSubjectDropdown');
+        if (!subjectDropdown) return;
+        const available = getTeacherModalAvailableSubjects();
+        subjectDropdown.innerHTML = '';
+
+        if (available.length === 0) {
+            subjectDropdown.disabled = true;
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.disabled = true;
+            opt.selected = true;
+            opt.className = 'bg-white text-slate-400';
+            opt.textContent = '-- Select class first --';
+            subjectDropdown.appendChild(opt);
+            return;
+        }
+
+        subjectDropdown.disabled = false;
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.disabled = true;
+        defaultOpt.selected = true;
+        defaultOpt.className = 'bg-white text-slate-400';
+        defaultOpt.textContent = '-- Choose a Subject --';
+        subjectDropdown.appendChild(defaultOpt);
+
+        available.forEach(subj => {
+            if (!teacherModalSelectedSubjects.includes(subj)) {
+                const opt = document.createElement('option');
+                opt.value = subj;
+                opt.textContent = subj;
+                opt.className = 'bg-white text-slate-800';
+                subjectDropdown.appendChild(opt);
+            }
+        });
+    }
+
+    function updateTeacherModalSubjectTags() {
+        const subjectTags = document.getElementById('teacherModalSelectedSubjectsTags');
+        if (!subjectTags) return;
+        subjectTags.innerHTML = teacherModalSelectedSubjects.map(subj => `
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-indigo-100 border border-indigo-300 text-indigo-800 text-[11px] font-bold">
+                <i class="fas fa-book text-[9px] text-indigo-600"></i> ${subj}
+                <button type="button" onclick="removeTeacherModalSubject('${subj}')" class="ml-0.5 text-indigo-600 hover:text-rose-600 transition-colors bg-transparent border-0 cursor-pointer text-xs font-bold p-0 leading-none">&times;</button>
+            </span>
+        `).join('');
+        const inp = document.getElementById('teacherModalSelectedSubjectsInput');
+        if (inp) inp.value = teacherModalSelectedSubjects.join(', ');
+    }
+
+    window.removeTeacherModalSubject = function(subj) {
+        teacherModalSelectedSubjects = teacherModalSelectedSubjects.filter(s => s !== subj);
+        updateTeacherModalSubjectTags();
+        updateTeacherModalSubjectDropdown();
+    };
+
+    function initTeacherModalFeeSystem() {
+        const feeOptions = document.querySelectorAll('input[name="teacher_modal_fee_option"]');
+        const customFeeWrapper = document.getElementById('teacherModalCustomFeeWrapper');
+        const customFeeVal = document.getElementById('teacherModalCustomFeeVal');
+        const finalFeeInput = document.getElementById('teacherModalFinalFeeInput');
+
+        function updateCardStyles() {
+            feeOptions.forEach(opt => {
+                const label = document.querySelector(`label[for="${opt.id}"]`);
+                if (label) {
+                    if (opt.checked) {
+                        label.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-sm');
+                        label.classList.remove('bg-white', 'text-slate-800', 'border-blue-200');
+                    } else {
+                        label.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-sm');
+                        label.classList.add('bg-white', 'text-slate-800', 'border-blue-200');
+                    }
+                }
+            });
+        }
+
+        feeOptions.forEach(opt => {
+            opt.addEventListener('change', () => {
+                updateCardStyles();
+                const errFee = document.getElementById('errTeacherFee');
+                if (errFee) errFee.classList.add('hidden');
+                if (opt.value === 'Custom') {
+                    if (customFeeWrapper) {
+                        customFeeWrapper.classList.remove('hidden');
+                        if (customFeeVal) customFeeVal.focus();
+                    }
+                    if (finalFeeInput) {
+                        finalFeeInput.value = customFeeVal && customFeeVal.value.trim() ? `₹${customFeeVal.value.trim()}/mo` : 'Custom Fee';
+                    }
+                } else {
+                    if (customFeeWrapper) customFeeWrapper.classList.add('hidden');
+                    if (finalFeeInput) finalFeeInput.value = opt.value;
+                }
+            });
+        });
+
+        if (customFeeVal) {
+            customFeeVal.addEventListener('input', () => {
+                const customRadio = document.getElementById('teacherModalFeeCustom');
+                if (customRadio) {
+                    customRadio.checked = true;
+                    updateCardStyles();
+                }
+                const errFee = document.getElementById('errTeacherFee');
+                if (errFee) errFee.classList.add('hidden');
+                if (finalFeeInput) {
+                    const val = customFeeVal.value.trim();
+                    finalFeeInput.value = val ? `₹${val}/mo` : 'Custom Fee';
+                }
+            });
+        }
+
+        updateCardStyles();
+    }
+    window.initTeacherModalFeeSystem = initTeacherModalFeeSystem;
+
+    function initTeacherModalBioSystem() {
+        const bioArea = document.getElementById('teacherModalBio');
+        const bioCharCount = document.getElementById('teacherModalBioCharCount');
+        if (bioArea && bioCharCount) {
+            bioArea.addEventListener('input', () => {
+                bioCharCount.textContent = bioArea.value.length;
+            });
+        }
+    }
+
+    function initTeacherModalDropzoneSystem() {
+        const dropzone = document.getElementById('teacherModalDropzone');
+        const fileInput = document.getElementById('teacherModalProfilePhoto');
+        const dropzoneEmpty = document.getElementById('teacherModalDropzoneEmpty');
+        const dropzonePreview = document.getElementById('teacherModalDropzonePreview');
+        const imgPreviewSrc = document.getElementById('teacherModalImgPreviewSrc');
+        const removePhotoBtn = document.getElementById('teacherModalRemovePhotoBtn');
+
+        if (!dropzone || !fileInput) return;
+
+        dropzone.addEventListener('click', (e) => {
+            if (e.target !== removePhotoBtn && !removePhotoBtn?.contains(e.target)) {
+                fileInput.click();
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size exceeds 5 MB limit!');
+                    fileInput.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (imgPreviewSrc) imgPreviewSrc.src = e.target.result;
+                    if (dropzoneEmpty) dropzoneEmpty.classList.add('hidden');
+                    if (dropzonePreview) dropzonePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        if (removePhotoBtn) {
+            removePhotoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.value = '';
+                if (imgPreviewSrc) imgPreviewSrc.src = '';
+                if (dropzonePreview) dropzonePreview.classList.add('hidden');
+                if (dropzoneEmpty) dropzoneEmpty.classList.remove('hidden');
+            });
+        }
+    }
+
+    function initTeacherModalDuplicateCheckSystem() {
+        const emailInput = document.getElementById('teacherModalEmail');
+        const mobileInput = document.getElementById('teacherModalMobile');
+        const errEmail = document.getElementById('errTeacherEmail');
+        const errMobile = document.getElementById('errTeacherMobile');
+
+        if (emailInput) {
+            emailInput.addEventListener('blur', () => {
+                const emailVal = emailInput.value.trim();
+                if (emailVal) {
+                    fetch(`/api/check-duplicate/?email=${encodeURIComponent(emailVal)}`)
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.email_exists) {
+                                if (errEmail) {
+                                    errEmail.textContent = 'This email address is already registered!';
+                                    errEmail.classList.remove('hidden');
+                                }
+                            } else {
+                                if (errEmail) errEmail.classList.add('hidden');
+                            }
+                        }).catch(e => {});
+                }
+            });
+        }
+
+        if (mobileInput) {
+            mobileInput.addEventListener('blur', () => {
+                const mobileVal = mobileInput.value.trim();
+                if (mobileVal) {
+                    fetch(`/api/check-duplicate/?mobile=${encodeURIComponent(mobileVal)}`)
+                        .then(r => r.json())
+                        .then(d => {
+                            if (d.mobile_exists) {
+                                if (errMobile) {
+                                    errMobile.textContent = 'This contact number is already registered!';
+                                    errMobile.classList.remove('hidden');
+                                }
+                            } else {
+                                if (errMobile) errMobile.classList.add('hidden');
+                            }
+                        }).catch(e => {});
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('authModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeAuthModal();
+                }
+            });
+        }
+
+        // Global logout click handler to intercept logout and open confirmation popup
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a[href*="/logout/"], a[href*="logout"], button[onclick*="logout"], button[onclick*="Logout"]');
+            if (link) {
+                const href = link.getAttribute('href') || '';
+                const onclickAttr = link.getAttribute('onclick') || '';
+                
+                // Exclude Admin Logout (/admin/logout/)
+                if (href.includes('/admin/logout/') || onclickAttr.includes('admin')) {
+                    return;
+                }
+
+                // Exclude if inside the confirm modal itself
+                if (link.id === 'confirmLogoutBtn' || link.closest('#logoutConfirmModal')) {
+                    return;
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+                confirmLogout();
+            }
+        }, true);
+
+        initTeacherModalClassSubjectSystem();
+        initTeacherModalFeeSystem();
+        initTeacherModalBioSystem();
+        initTeacherModalDropzoneSystem();
+        initTeacherModalDuplicateCheckSystem();
+
+        const serverInitialView = "{{ auth_initial_view|default:'' }}";
+        const initialView = serverInitialView || detectInitialAuthViewFromPath();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const openAuthParam = urlParams.get('open_auth');
+        if (openAuthParam) {
+            const userAuthKeys = ['isLoggedIn', 'student_name', 'user_name', 'teacher_name', 'user', 'student_profile', 'teacher_profile', 'pending_login', 'pendingJobId', 'selectedTutor'];
+            userAuthKeys.forEach(k => {
+                try { localStorage.removeItem(k); } catch(err){}
+                try { sessionStorage.removeItem(k); } catch(err){}
+            });
+            openAuthModal(openAuthParam, true);
+        } else if (initialView) {
+            openAuthModal(initialView, true);
+        }
+    });
+
+    // ===================================================
+    // FORM SUBMISSION HANDLERS USING EXISTING BACKEND ENDPOINTS
+    // ===================================================
+
+    // Helper: Global Password Space Key Prevention
+    window.preventSpaceInPassword = function(e) {
+        if (e.key === ' ' || e.keyCode === 32 || e.code === 'Space') {
+            e.preventDefault();
+            return false;
+        }
+    };
+
+    // Helper: Resend OTP Cooldown Timer (30s)
+    function startOtpResendTimer(btnId, timerId) {
+        const btn = document.getElementById(btnId);
+        const timerSpan = document.getElementById(timerId);
+        if (!btn || !timerSpan) return;
+
+        let secondsLeft = 30;
+        btn.disabled = true;
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+        if (window[btnId + '_interval']) clearInterval(window[btnId + '_interval']);
+
+        window[btnId + '_interval'] = setInterval(() => {
+            secondsLeft--;
+            timerSpan.textContent = `(${secondsLeft}s)`;
+            if (secondsLeft <= 0) {
+                clearInterval(window[btnId + '_interval']);
+                timerSpan.textContent = '';
+                btn.disabled = false;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                btn.classList.add('hover:bg-blue-100', 'text-blue-700', 'cursor-pointer');
+            }
+        }, 1000);
+    }
+
+    // 1. Handle Login Form Submit (Step 1: Validate Credentials -> Trigger OTP)
+    window.handleLoginModalSubmit = function(e) {
+        e.preventDefault();
+        const email = (document.getElementById('loginModalEmail')?.value || '').trim();
+        const password = document.getElementById('loginModalPassword')?.value || '';
+        const alertBox = document.getElementById('loginModalAlert');
+        const btn = document.getElementById('loginModalBtn');
+        const csrfToken = document.querySelector('#loginModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (!email || !password) {
+            showModalAlert(alertBox, 'error', 'Please enter both Email Address and Password.');
+            return;
+        }
+
+        if (password.includes(' ')) {
+            showModalAlert(alertBox, 'error', 'Password cannot contain spaces.');
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Validating Credentials...';
+        }
+        if (alertBox) alertBox.classList.add('hidden');
+
+        fetch('/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ email: email, password: password })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            if (data.status === 'otp_required') {
+                const maskedEl = document.getElementById('loginOtpMaskedEmail');
+                if (maskedEl) maskedEl.textContent = data.email || email;
+                switchAuthView('login-otp');
+                startOtpResendTimer('loginOtpResendBtn', 'loginOtpTimer');
+                const otpInp = document.getElementById('loginOtpCode');
+                if (otpInp) { otpInp.value = ''; otpInp.focus(); }
+            } else if (data.status === 'success') {
+                showModalAlert(alertBox, 'success', data.message || 'Login successful! Redirecting...');
+                setTimeout(() => {
+                    closeAuthModal();
+                    window.location.href = data.redirect_url || '/';
+                }, 800);
+            } else {
+                showModalAlert(alertBox, 'error', data.message || 'Login failed. Please check your credentials.');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Log In</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            showModalAlert(alertBox, 'error', 'Authentication error. Please try again.');
+        });
+    };
+
+    // 1B. Handle Login OTP Submit (Step 2: Verify OTP -> Authenticate Session)
+    window.handleLoginOtpModalSubmit = function(e) {
+        e.preventDefault();
+        const otp = (document.getElementById('loginOtpCode')?.value || '').trim();
+        const alertBox = document.getElementById('loginOtpModalAlert');
+        const btn = document.getElementById('loginOtpModalBtn');
+        const csrfToken = document.querySelector('#loginOtpModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (!otp || otp.length !== 6) {
+            showModalAlert(alertBox, 'error', 'Please enter a valid 6-digit OTP code.');
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying OTP...';
+        }
+        if (alertBox) alertBox.classList.add('hidden');
+
+        fetch('/api/login-verify-otp/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ otp: otp })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showModalAlert(alertBox, 'success', data.message || 'OTP Verified! Redirecting to dashboard...');
+                setTimeout(() => {
+                    closeAuthModal();
+                    window.location.href = data.redirect_url || '/';
+                }, 800);
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Verify & Log In</span><i class="fas fa-check-circle text-xs"></i>';
+                }
+                showModalAlert(alertBox, 'error', data.message || 'Invalid OTP code.');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Verify & Log In</span><i class="fas fa-check-circle text-xs"></i>';
+            }
+            showModalAlert(alertBox, 'error', 'Verification error. Please try again.');
+        });
+    };
+
+    // 1C. Handle Login OTP Resend
+    window.handleLoginOtpResend = function() {
+        const alertBox = document.getElementById('loginOtpModalAlert');
+        const resendBtn = document.getElementById('loginOtpResendBtn');
+        const csrfToken = document.querySelector('#loginOtpModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (resendBtn) resendBtn.disabled = true;
+
+        fetch('/api/login-resend-otp/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showModalAlert(alertBox, 'success', data.message || 'Fresh OTP code sent to your email.');
+                startOtpResendTimer('loginOtpResendBtn', 'loginOtpTimer');
+            } else {
+                showModalAlert(alertBox, 'error', data.message || 'Could not resend OTP.');
+                if (resendBtn) resendBtn.disabled = false;
+            }
+        })
+        .catch(err => {
+            showModalAlert(alertBox, 'error', 'Resend error. Please try again.');
+            if (resendBtn) resendBtn.disabled = false;
+        });
+    };
+
+    // 2. Handle Student Registration Form Submit
+    window.handleStudentModalSubmit = function(e) {
+        e.preventDefault();
+        const form = document.getElementById('studentModalForm');
+        const alertBox = document.getElementById('studentModalAlert');
+        const btn = document.getElementById('studentModalSubmitBtn');
+
+        if (!form) return;
+
+        const pass = document.getElementById('studentModalPassword')?.value || '';
+        const confPass = document.getElementById('studentModalConfirmPassword')?.value || '';
+        const passErr = document.getElementById('studentModalPasswordError');
+        const confInp = document.getElementById('studentModalConfirmPassword');
+
+        if (passErr) passErr.classList.add('hidden');
+        if (confInp) confInp.classList.remove('border-rose-500');
+
+        if (pass.includes(' ') || confPass.includes(' ')) {
+            showModalAlert(alertBox, 'error', 'Password cannot contain spaces.');
+            return;
+        }
+
+        if (pass && confPass && pass !== confPass) {
+            if (passErr) passErr.classList.remove('hidden');
+            if (confInp) {
+                confInp.classList.add('border-rose-500');
+                confInp.focus();
+            }
+            return;
+        }
+
+        const formData = new FormData(form);
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting Registration...';
+        }
+        if (alertBox) alertBox.classList.add('hidden');
+
+        fetch('/student-registration/', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(async res => {
+            let data;
+            try {
+                data = await res.json();
+            } catch (err) {
+                data = { status: 'error', message: 'Server returned an invalid response. Please try again.' };
+            }
+            return { ok: res.ok, data: data };
+        })
+        .then(({ ok, data }) => {
+            if (ok && (data.status === 'success' || data.status === 'pending_approval')) {
+                showModalAlert(alertBox, 'success', data.message || 'Student registration submitted successfully! Pending admin approval.');
+                form.reset();
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Registered Successfully!</span><i class="fas fa-check text-xs"></i>';
+                }
+                setTimeout(() => {
+                    switchAuthView('login');
+                }, 2200);
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Register Student Account</span><i class="fas fa-arrow-right text-xs"></i>';
+                }
+                showModalAlert(alertBox, 'error', data.message || 'Registration failed. Please review your entries.');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Register Student Account</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            showModalAlert(alertBox, 'error', 'Error submitting registration. Please check your connection and try again.');
+        });
+    };
+
+    // 3. Handle Teacher Registration Form Submit
+    function scrollToTeacherField(el, errorMsg) {
+        const bottomAlert = document.getElementById('teacherModalBottomAlert');
+        const topAlert = document.getElementById('teacherModalAlert');
+        if (bottomAlert && errorMsg) {
+            bottomAlert.innerHTML = `<i class="fas fa-exclamation-circle text-rose-500"></i> <span>${errorMsg}</span>`;
+            bottomAlert.classList.remove('hidden');
+        }
+        if (topAlert && errorMsg) {
+            showModalAlert(topAlert, 'error', errorMsg);
+        }
+        if (el) {
+            const scrollContainer = document.getElementById('authRightViewTeacherReg');
+            if (scrollContainer) {
+                const elTop = el.offsetTop || el.getBoundingClientRect().top;
+                scrollContainer.scrollTo({
+                    top: Math.max(0, el.offsetTop - 80),
+                    behavior: 'smooth'
+                });
+            }
+            try { el.focus(); } catch(e){}
+        }
+    }
+
+    window.handleTeacherModalSubmit = function(e) {
+        e.preventDefault();
+        const form = document.getElementById('teacherModalForm');
+        const alertBox = document.getElementById('teacherModalAlert');
+        const bottomAlert = document.getElementById('teacherModalBottomAlert');
+        const btn = document.getElementById('teacherModalSubmitBtn');
+
+        if (!form) return;
+
+        if (bottomAlert) bottomAlert.classList.add('hidden');
+        if (alertBox) alertBox.classList.add('hidden');
+
+        const fullName = (document.getElementById('teacherModalName')?.value || '').trim();
+        const email = (document.getElementById('teacherModalEmail')?.value || '').trim();
+        const mobile = (document.getElementById('teacherModalMobile')?.value || '').trim();
+        const pass = document.getElementById('teacherModalPassword')?.value || '';
+        const confPass = document.getElementById('teacherModalConfirmPassword')?.value || '';
+        const passErr = document.getElementById('teacherModalPasswordError');
+        const confInp = document.getElementById('teacherModalConfirmPassword');
+        const errName = document.getElementById('errTeacherFullName');
+        const errMobile = document.getElementById('errTeacherMobile');
+        const errClasses = document.getElementById('errTeacherClasses');
+        const errSubjects = document.getElementById('errTeacherSubjects');
+        const errFee = document.getElementById('errTeacherFee');
+
+        if (errName) errName.classList.add('hidden');
+        if (errMobile) errMobile.classList.add('hidden');
+        if (errClasses) errClasses.classList.add('hidden');
+        if (errSubjects) errSubjects.classList.add('hidden');
+        if (errFee) errFee.classList.add('hidden');
+        if (passErr) passErr.classList.add('hidden');
+        if (confInp) confInp.classList.remove('border-rose-500');
+
+        if (!fullName || !/^[a-zA-Z\s\.]+$/.test(fullName)) {
+            if (errName) {
+                errName.textContent = 'Full name must contain only alphabets and spaces!';
+                errName.classList.remove('hidden');
+            }
+            scrollToTeacherField(document.getElementById('teacherModalName'), 'Full name must contain only alphabets and spaces!');
+            return;
+        }
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            scrollToTeacherField(document.getElementById('teacherModalEmail'), 'Please enter a valid email address!');
+            return;
+        }
+
+        if (!/^[0-9]{10}$/.test(mobile)) {
+            if (errMobile) {
+                errMobile.textContent = 'Mobile number must be exactly 10 digits!';
+                errMobile.classList.remove('hidden');
+            }
+            scrollToTeacherField(document.getElementById('teacherModalMobile'), 'Mobile number must be exactly 10 digits!');
+            return;
+        }
+
+        if (!pass) {
+            scrollToTeacherField(document.getElementById('teacherModalPassword'), 'Please enter a password!');
+            return;
+        }
+
+        if (pass.includes(' ') || confPass.includes(' ')) {
+            scrollToTeacherField(document.getElementById('teacherModalPassword'), 'Password cannot contain spaces.');
+            return;
+        }
+
+        if (pass !== confPass) {
+            if (passErr) passErr.classList.remove('hidden');
+            if (confInp) confInp.classList.add('border-rose-500');
+            scrollToTeacherField(document.getElementById('teacherModalConfirmPassword'), 'Passwords do not match. Please try again.');
+            return;
+        }
+
+        // Auto-resolve selected class if user selected in dropdown
+        const classDropdown = document.getElementById('teacherModalClassDropdown');
+        if (teacherModalSelectedClasses.length === 0 && classDropdown && classDropdown.value) {
+            teacherModalSelectedClasses.push(classDropdown.value);
+            updateTeacherModalClassTags();
+            updateTeacherModalSubjectDropdown();
+        }
+
+        if (teacherModalSelectedClasses.length === 0) {
+            if (errClasses) errClasses.classList.remove('hidden');
+            scrollToTeacherField(classDropdown, 'Please select at least one class you teach!');
+            return;
+        }
+
+        // Auto-resolve selected subject if user selected in dropdown
+        const subjectDropdown = document.getElementById('teacherModalSubjectDropdown');
+        if (teacherModalSelectedSubjects.length === 0 && subjectDropdown && subjectDropdown.value) {
+            teacherModalSelectedSubjects.push(subjectDropdown.value);
+            updateTeacherModalSubjectTags();
+        }
+
+        if (teacherModalSelectedSubjects.length === 0) {
+            if (errSubjects) errSubjects.classList.remove('hidden');
+            scrollToTeacherField(subjectDropdown, 'Please select at least one subject!');
+            return;
+        }
+
+        // Auto-resolve expected fee
+        let finalFee = (document.getElementById('teacherModalFinalFeeInput')?.value || '').trim();
+        const customFeeVal = document.getElementById('teacherModalCustomFeeVal')?.value?.trim();
+        const checkedFeeRadio = document.querySelector('input[name="teacher_modal_fee_option"]:checked');
+
+        if (!finalFee || finalFee === 'Custom Fee') {
+            if (customFeeVal) {
+                finalFee = `₹${customFeeVal}/mo`;
+                if (document.getElementById('teacherModalFinalFeeInput')) {
+                    document.getElementById('teacherModalFinalFeeInput').value = finalFee;
+                }
+            } else if (checkedFeeRadio && checkedFeeRadio.value && checkedFeeRadio.value !== 'Custom') {
+                finalFee = checkedFeeRadio.value;
+                if (document.getElementById('teacherModalFinalFeeInput')) {
+                    document.getElementById('teacherModalFinalFeeInput').value = finalFee;
+                }
+            }
+        }
+
+        if (!finalFee || finalFee === 'Custom Fee') {
+            if (errFee) errFee.classList.remove('hidden');
+            scrollToTeacherField(document.getElementById('teacherModalCustomFeeVal') || document.getElementById('teacherModalFeeCustom'), 'Please select or enter an expected monthly fee!');
+            return;
+        }
+
+        const formData = new FormData(form);
+        const pendingJobId = sessionStorage.getItem('pendingJobId');
+        if (pendingJobId) {
+            formData.append('pending_job_id', pendingJobId);
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting Application...';
+        }
+
+        fetch('/teacher-registration/', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success' || data.status === 'pending_approval') {
+                const teacherIdMsg = data.teacher_id ? ` (Teacher ID: ${data.teacher_id})` : '';
+                const successMsg = (data.message || 'Teacher registration submitted successfully! Pending admin review.') + teacherIdMsg;
+                showModalAlert(alertBox, 'success', successMsg);
+                if (bottomAlert) {
+                    bottomAlert.className = 'p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 border border-emerald-200 mt-2';
+                    bottomAlert.innerHTML = `<i class="fas fa-check-circle text-emerald-600"></i> <span>${successMsg}</span>`;
+                    bottomAlert.classList.remove('hidden');
+                }
+                form.reset();
+                teacherModalSelectedClasses = [];
+                teacherModalSelectedSubjects = [];
+                updateTeacherModalClassTags();
+                updateTeacherModalSubjectTags();
+                updateTeacherModalSubjectDropdown();
+                if (window.initTeacherModalFeeSystem) window.initTeacherModalFeeSystem();
+                setTimeout(() => {
+                    switchAuthView('login');
+                }, 3000);
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Submit Teacher Registration</span><i class="fas fa-arrow-right text-xs"></i>';
+                }
+                const errMsg = data.message || 'Registration failed. Please review your entries.';
+                showModalAlert(alertBox, 'error', errMsg);
+                if (bottomAlert) {
+                    bottomAlert.className = 'p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2 bg-rose-50 text-rose-700 border border-rose-200 mt-2';
+                    bottomAlert.innerHTML = `<i class="fas fa-exclamation-circle text-rose-500"></i> <span>${errMsg}</span>`;
+                    bottomAlert.classList.remove('hidden');
+                }
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Submit Teacher Registration</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            const errNetwork = 'Error submitting teacher registration. Please try again.';
+            showModalAlert(alertBox, 'error', errNetwork);
+            if (bottomAlert) {
+                bottomAlert.className = 'p-3 rounded-2xl text-xs font-semibold text-center flex items-center justify-center gap-2 bg-rose-50 text-rose-700 border border-rose-200 mt-2';
+                bottomAlert.innerHTML = `<i class="fas fa-exclamation-circle text-rose-500"></i> <span>${errNetwork}</span>`;
+                bottomAlert.classList.remove('hidden');
+            }
+        });
+    };
+
+    // 4. Handle Forgot Password Email Request Submit
+    window.handleForgotModalSubmit = function(e) {
+        e.preventDefault();
+        const email = (document.getElementById('forgotModalEmail')?.value || '').trim();
+        const alertBox = document.getElementById('forgotModalAlert');
+        const btn = document.getElementById('forgotModalSubmitBtn');
+        const csrfToken = document.querySelector('#forgotModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (!email) {
+            showModalAlert(alertBox, 'error', 'Please enter your registered email address.');
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending OTP...';
+        }
+        if (alertBox) alertBox.classList.add('hidden');
+
+        fetch('/api/forgot-password-request/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Send OTP</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            if (data.status === 'success') {
+                const maskedEl = document.getElementById('forgotOtpMaskedEmail');
+                if (maskedEl) maskedEl.textContent = data.email || email;
+                switchAuthView('forgot-otp');
+                startOtpResendTimer('forgotOtpResendBtn', 'forgotOtpTimer');
+                const otpInp = document.getElementById('forgotOtpCode');
+                if (otpInp) { otpInp.value = ''; otpInp.focus(); }
+            } else {
+                showModalAlert(alertBox, 'error', data.message || 'No account found with this email address.');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Send OTP</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            showModalAlert(alertBox, 'error', 'Error processing request. Please try again.');
+        });
+    };
+
+    // 4B. Handle Forgot Password OTP Verification Submit
+    window.handleForgotOtpModalSubmit = function(e) {
+        e.preventDefault();
+        const otp = (document.getElementById('forgotOtpCode')?.value || '').trim();
+        const alertBox = document.getElementById('forgotOtpModalAlert');
+        const btn = document.getElementById('forgotOtpModalBtn');
+        const csrfToken = document.querySelector('#forgotOtpModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (!otp || otp.length !== 6) {
+            showModalAlert(alertBox, 'error', 'Please enter a valid 6-digit OTP code.');
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying OTP...';
+        }
+        if (alertBox) alertBox.classList.add('hidden');
+
+        fetch('/api/forgot-password-verify-otp/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ otp: otp })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Verify OTP</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            if (data.status === 'success') {
+                switchAuthView('reset-password');
+                const pInp = document.getElementById('resetModalPassword');
+                if (pInp) { pInp.value = ''; pInp.focus(); }
+            } else {
+                showModalAlert(alertBox, 'error', data.message || 'Invalid OTP code.');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Verify OTP</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            showModalAlert(alertBox, 'error', 'Verification error. Please try again.');
+        });
+    };
+
+    // 4C. Handle Forgot Password OTP Resend
+    window.handleForgotOtpResend = function() {
+        const alertBox = document.getElementById('forgotOtpModalAlert');
+        const resendBtn = document.getElementById('forgotOtpResendBtn');
+        const csrfToken = document.querySelector('#forgotOtpModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (resendBtn) resendBtn.disabled = true;
+
+        fetch('/api/forgot-password-resend-otp/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showModalAlert(alertBox, 'success', data.message || 'Fresh reset OTP sent to your email.');
+                startOtpResendTimer('forgotOtpResendBtn', 'forgotOtpTimer');
+            } else {
+                showModalAlert(alertBox, 'error', data.message || 'Could not resend OTP.');
+                if (resendBtn) resendBtn.disabled = false;
+            }
+        })
+        .catch(err => {
+            showModalAlert(alertBox, 'error', 'Resend error. Please try again.');
+            if (resendBtn) resendBtn.disabled = false;
+        });
+    };
+
+    // 4D. Handle Reset Password Submit
+    window.handleResetPasswordModalSubmit = function(e) {
+        e.preventDefault();
+        const password = document.getElementById('resetModalPassword')?.value || '';
+        const confirm_password = document.getElementById('resetModalConfirmPassword')?.value || '';
+        const alertBox = document.getElementById('resetPasswordModalAlert');
+        const btn = document.getElementById('resetPasswordModalBtn');
+        const passErr = document.getElementById('resetModalPasswordError');
+        const csrfToken = document.querySelector('#resetPasswordModalForm input[name="csrfmiddlewaretoken"]')?.value || '';
+
+        if (passErr) passErr.classList.add('hidden');
+
+        if (!password || !confirm_password) {
+            showModalAlert(alertBox, 'error', 'Both password fields are required.');
+            return;
+        }
+
+        if (password.includes(' ') || confirm_password.includes(' ')) {
+            showModalAlert(alertBox, 'error', 'Password cannot contain spaces.');
+            return;
+        }
+
+        if (password !== confirm_password) {
+            if (passErr) passErr.classList.remove('hidden');
+            showModalAlert(alertBox, 'error', 'Passwords do not match.');
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Resetting Password...';
+        }
+        if (alertBox) alertBox.classList.add('hidden');
+
+        fetch('/api/forgot-password-reset/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ password: password, confirm_password: confirm_password })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showModalAlert(alertBox, 'success', 'Password Changed Successfully! Please log in with your new password.');
+                setTimeout(() => {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<span>Reset Password</span><i class="fas fa-check-circle text-xs"></i>';
+                    }
+                    switchAuthView('login');
+                }, 1500);
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Reset Password</span><i class="fas fa-check-circle text-xs"></i>';
+                }
+                showModalAlert(alertBox, 'error', data.message || 'Failed to reset password.');
+            }
+        })
+        .catch(err => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span>Reset Password</span><i class="fas fa-check-circle text-xs"></i>';
+            }
+            showModalAlert(alertBox, 'error', 'Error resetting password. Please try again.');
+        });
+    };
+
+    // Helper: Render Alert Box inside Modal
+    function showModalAlert(box, type, message) {
+        if (!box) return;
+        box.classList.remove('hidden', 'bg-rose-500/15', 'border-rose-500/30', 'text-rose-300', 'bg-emerald-500/15', 'border-emerald-500/30', 'text-emerald-300');
+        if (type === 'error') {
+            box.className = "p-3 rounded-xl text-xs font-semibold text-center flex items-center justify-center gap-2 bg-rose-500/15 border border-rose-500/30 text-rose-700 mb-3";
+            box.innerHTML = `<i class="fas fa-exclamation-circle text-rose-500"></i> <span>${message}</span>`;
+        } else {
+            box.className = "p-3 rounded-xl text-xs font-semibold text-center flex items-center justify-center gap-2 bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 mb-3";
+            box.innerHTML = `<i class="fas fa-check-circle text-emerald-600"></i> <span>${message}</span>`;
+        }
+        box.classList.remove('hidden');
+    }
+
+})();
+</script>

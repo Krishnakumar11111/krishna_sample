@@ -1,0 +1,1091 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | EduTrust Learning Platform</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        handwritten: ['"Caveat"', 'cursive']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        navy: {
+                            800: '#11294d',
+                            900: '#0b1f4d',
+                            950: '#071a3d'
+                        }
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px -2px rgba(37, 99, 235, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+                        'card-hover': '0 10px 25px -3px rgba(37, 99, 235, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // Clean URL if visited with hash anchor
+        if (window.location.hash) {
+            window.history.replaceState(null, '', window.location.pathname);
+        }
+    </script>
+</head>
+
+<body class="bg-[#f3f9fe] text-slate-800 font-sans antialiased flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Global Public Header (Fixed 106px) -->
+    {% include "components/public_header.html" %}
+
+    <!-- Ambient Decorative Background Glows -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-b from-blue-200/50 via-cyan-100/35 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[500px] -left-40 w-[600px] h-[600px] bg-gradient-to-tr from-blue-100/40 via-sky-50/30 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[1300px] -right-40 w-[600px] h-[600px] bg-gradient-to-tl from-indigo-100/40 via-blue-50/30 to-transparent rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- MAIN CONTENT WITH TOP OFFSET FOR FIXED 106PX HEADER -->
+    <main class="flex-1 w-full pt-[120px] sm:pt-[130px] pb-16">
+
+        <!-- ========================================================= -->
+        <!-- 1. PRIVACY POLICY HERO SECTION -->
+        <!-- ========================================================= -->
+        <section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Left Hero Content -->
+                <div class="lg:col-span-8 space-y-4 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-brand-600 text-xs font-extrabold uppercase tracking-wider shadow-2xs">
+                        <i class="fas fa-shield-halved text-brand-500"></i>
+                        <span>PRIVACY & DATA TRANSPARENCY</span>
+                    </div>
+
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight m-0">
+                        Privacy Policy
+                    </h1>
+                    <p class="text-lg sm:text-xl font-bold text-brand-600 m-0">
+                        Your privacy matters to us.
+                    </p>
+
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
+                        At EduTrust, we are committed to protecting your personal information and maintaining transparency about how your data is collected, used, stored, and safeguarded.
+                    </p>
+
+                    <div class="pt-1 flex items-center justify-center lg:justify-start gap-2 text-xs text-slate-500 font-semibold">
+                        <i class="far fa-calendar-check text-brand-600"></i>
+                        <span>Last updated: 14 September 2026</span>
+                    </div>
+                </div>
+
+                <!-- Right Hero Decorative Visual -->
+                <div class="lg:col-span-4 flex justify-center">
+                    <div class="w-full max-w-xs bg-white rounded-3xl border border-blue-100/90 shadow-card p-6 relative overflow-hidden text-center">
+                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-100/60 rounded-full blur-xl pointer-events-none"></div>
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-sky-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-blue-500/25 mx-auto mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-base font-black text-slate-900 mb-1">Trust & Security</h3>
+                        <p class="text-xs text-slate-500 mb-4 leading-normal">Safeguarding students, parents & verified tutors.</p>
+                        
+                        <!-- Floating Pill Badges -->
+                        <div class="flex items-center justify-center gap-2 flex-wrap text-xs font-bold">
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1">
+                                <i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Secure
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-brand-700 border border-blue-100 flex items-center gap-1">
+                                <i class="fas fa-check-circle text-brand-500 text-[10px]"></i> Private
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 border border-purple-100 flex items-center gap-1">
+                                <i class="fas fa-check-circle text-purple-500 text-[10px]"></i> Trusted
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 2. PRIVACY TRUST BANNER -->
+        <!-- ========================================================= -->
+        <section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10">
+            <div class="bg-gradient-to-r from-blue-50/90 via-sky-50/80 to-blue-50/90 border border-blue-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="space-y-0.5 text-center md:text-left">
+                    <h2 class="text-base sm:text-lg font-black text-slate-900 m-0 flex items-center justify-center md:justify-start gap-2">
+                        <i class="fas fa-user-shield text-brand-600 text-base"></i>
+                        <span>Your Privacy Matters</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 m-0">
+                        We are committed to keeping your information safe, transparent, and handled responsibly.
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-4 shrink-0 font-bold text-xs sm:text-sm text-slate-700">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border border-blue-100 shadow-2xs">
+                        <span>🔒</span> Secure
+                    </span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border border-blue-100 shadow-2xs">
+                        <span>🛡</span> Protected
+                    </span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 border border-blue-100 shadow-2xs">
+                        <span>✓</span> Transparent
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 3. MAIN CONTENT CONTAINER -->
+        <!-- ========================================================= -->
+        <section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Main White Policy Container (Full Width) -->
+            <div class="w-full bg-white rounded-3xl border border-blue-100/90 shadow-card p-6 sm:p-10 lg:p-12 space-y-10 sm:space-y-12">
+                    
+                    <!-- ========================================================= -->
+                    <!-- SECTION 01: INTRODUCTION & OVERVIEW -->
+                    <!-- ========================================================= -->
+                    <section id="introduction" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">01</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-lock text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Introduction & Overview</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>EduTrust Tuition Platform ("EduTrust", "we", "our", or "us") is committed to protecting the privacy and security of information provided by students, parents, tutors, and visitors.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>This Privacy Policy explains what information we collect and why we collect it.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>It explains how we use, store, protect, and share personal information.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>It also explains the choices and rights available to users.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>This policy applies to users who access or use EduTrust websites, applications, and tutoring services.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>By accessing or using EduTrust services, users acknowledge that they have read and understood this Privacy Policy.</span>
+                            </li>
+                        </ul>
+
+                        <!-- Highlighted Box -->
+                        <div class="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-4 sm:p-5 flex items-start gap-3">
+                            <i class="fas fa-info-circle text-brand-600 text-lg mt-0.5 shrink-0"></i>
+                            <p class="text-xs sm:text-sm font-semibold text-slate-800 m-0 leading-relaxed">
+                                "Privacy at EduTrust is built around transparency, responsible data handling, and user trust."
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 02: INFORMATION WE COLLECT -->
+                    <!-- ========================================================= -->
+                    <section id="information-we-collect" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">02</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-database text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Information We Collect</h2>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-slate-600 leading-relaxed m-0 font-normal">
+                            We collect information that is reasonably necessary to provide, maintain, improve, and secure our tutoring services.
+                        </p>
+
+                        <!-- Information Collection 8-Card Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                            
+                            <!-- Card 1: Account -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-blue-100/80 text-brand-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-user-circle"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Account Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-brand-500">•</span> Full name</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-brand-500">•</span> Email address</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-brand-500">•</span> Mobile number</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-brand-500">•</span> User role (Student, Parent, Tutor)</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-brand-500">•</span> Login credentials</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-brand-500">•</span> Account-related information</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 2: Student / Parent -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-emerald-100/80 text-emerald-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Student / Parent Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-emerald-500">•</span> Class and grade</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-emerald-500">•</span> Subjects of interest</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-emerald-500">•</span> Learning requirements</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-emerald-500">•</span> Academic preferences</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-emerald-500">•</span> Study goals</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-emerald-500">•</span> Information provided for tutoring needs</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 3: Academic -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-100/80 text-purple-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-book-open"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Academic Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-purple-500">•</span> Class level</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-purple-500">•</span> School board where provided</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-purple-500">•</span> Subjects of interest</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-purple-500">•</span> Study goals</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-purple-500">•</span> Test results where provided</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-purple-500">•</span> Learning information where applicable</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 4: Tutor -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-amber-100/80 text-amber-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Tutor Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-amber-500">•</span> Educational qualifications</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-amber-500">•</span> Certifications</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-amber-500">•</span> Teaching experience</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-amber-500">•</span> Subjects taught</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-amber-500">•</span> Teaching preferences</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-amber-500">•</span> City/location & profile information</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 5: Booking -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-indigo-100/80 text-indigo-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Booking Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-indigo-500">•</span> Demo class requests</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-indigo-500">•</span> Preferred date and time</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-indigo-500">•</span> Learning mode (Home or Online)</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-indigo-500">•</span> Class requirements</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-indigo-500">•</span> Tutoring preferences</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-indigo-500">•</span> Address information where required</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 6: Location -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-red-100/80 text-red-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Location Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-red-500">•</span> City or area</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-red-500">•</span> Location for tutor matching</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-red-500">•</span> Locality / pin code</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-red-500">•</span> Address for in-person home tutoring</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 7: Payment -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-teal-100/80 text-teal-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-credit-card"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Payment Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-teal-500">•</span> Transaction records</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-teal-500">•</span> Payment method where applicable</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-teal-500">•</span> Billing info where applicable</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-teal-500">•</span> Payment status & reference IDs</li>
+                                </ul>
+                            </div>
+
+                            <!-- Card 8: Technical -->
+                            <div class="bg-slate-50/70 hover:bg-blue-50/40 border border-slate-200/80 hover:border-blue-200 rounded-2xl p-4 space-y-2.5 transition-all">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="w-7 h-7 rounded-lg bg-cyan-100/80 text-cyan-700 flex items-center justify-center text-xs shrink-0">
+                                        <i class="fas fa-laptop-code"></i>
+                                    </span>
+                                    <h3 class="text-sm font-bold text-slate-900 m-0">Technical & Usage Information</h3>
+                                </div>
+                                <ul class="space-y-1.5 text-xs text-slate-600 list-none p-0 m-0">
+                                    <li class="flex items-center gap-1.5"><span class="text-cyan-500">•</span> IP address</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-cyan-500">•</span> Browser type</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-cyan-500">•</span> Device information</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-cyan-500">•</span> Pages visited</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-cyan-500">•</span> Login/activity records</li>
+                                    <li class="flex items-center gap-1.5"><span class="text-cyan-500">•</span> Error & diagnostic information</li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 03: HOW WE USE YOUR INFORMATION -->
+                    <!-- ========================================================= -->
+                    <section id="how-we-use-data" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">03</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-tasks text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">How We Use Your Information</h2>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-slate-600 leading-relaxed m-0 font-normal">
+                            We may use collected information for the following purposes:
+                        </p>
+
+                        <!-- Checkmark Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs sm:text-sm text-slate-700">
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Create and manage user accounts</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Connect students and parents with suitable tutors</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Help tutors discover relevant tutoring opportunities</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Process demo class requests and bookings</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Schedule tutoring sessions</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Provide online and offline tutoring services</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Verify tutor profiles and qualifications</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Understand learning and tutoring requirements</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Communicate regarding classes and bookings</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Send important administrative notifications</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Send class reminders and service updates</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Improve website functionality and user experience</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Detect and prevent suspicious or fraudulent activity</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Maintain platform security and reliability</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Troubleshoot technical issues</span>
+                            </div>
+                            <div class="flex items-start gap-2 p-2 rounded-xl bg-blue-50/40">
+                                <i class="fas fa-check-circle text-brand-600 mt-0.5 shrink-0 text-xs"></i>
+                                <span>Comply with applicable legal and regulatory requirements</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 04: TUTOR VERIFICATION & PROFILE INFORMATION -->
+                    <!-- ========================================================= -->
+                    <section id="tutor-verification" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">04</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-user-check text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Tutor Verification & Profile Information</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>EduTrust may review information provided by tutors to help maintain a trusted learning environment.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Tutor verification may include educational qualifications, certifications, teaching experience, subjects, and other relevant profile information.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Tutors may be required to provide supporting information or documents where applicable.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Information submitted for verification may be reviewed by authorized personnel for verification purposes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Public tutor profiles should contain only information that is appropriate for helping students and parents make informed tutoring decisions.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Verification information should not be publicly displayed unless required or permitted for the relevant service.</span>
+                            </li>
+                        </ul>
+
+                        <!-- Subtle Shield Verification Card -->
+                        <div class="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 flex items-start gap-3">
+                            <i class="fas fa-shield-check text-emerald-600 text-lg mt-0.5 shrink-0"></i>
+                            <p class="text-xs sm:text-sm font-semibold text-slate-800 m-0 leading-relaxed">
+                                "Verified information helps build a safer and more trusted learning community."
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 05: DEMO CLASSES & BOOKING INFORMATION -->
+                    <!-- ========================================================= -->
+                    <section id="demo-bookings" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">05</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-chalkboard-user text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Demo Classes & Booking Information</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>We may collect information required to arrange demo classes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>This may include subject, class level, preferred date and time, learning mode, and relevant contact information.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Address information may be required for offline or in-person tutoring.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Booking information may be used to coordinate students, parents, and tutors.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Communication related to demo classes and bookings may be sent through available communication channels.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Booking information may be retained where necessary for service, support, accounting, or legal purposes.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 06: PAYMENTS & TRANSACTION INFORMATION -->
+                    <!-- ========================================================= -->
+                    <section id="payments" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">06</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-wallet text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Payments & Transaction Information</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Where paid services are available, payment transactions may be processed through applicable third-party payment providers.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Transaction records may be maintained for account management, customer support, accounting, dispute resolution, and legal purposes where applicable.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Payment information may be handled directly by the applicable payment service provider.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Users should review the privacy and security practices of the applicable payment provider.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 07: COOKIES & TRACKING TECHNOLOGIES -->
+                    <!-- ========================================================= -->
+                    <section id="cookies" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">07</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-cookie-bite text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Cookies & Tracking Technologies</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>EduTrust may use cookies and similar technologies to maintain user sessions.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Cookies may help remember user preferences.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Cookies may help improve website functionality.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Cookies may help us understand how users interact with the platform.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Some cookies may be necessary for essential website functions.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Users may be able to manage or disable cookies through their browser settings.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Disabling certain cookies may affect some website features or functionality.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 08: HOW WE SHARE INFORMATION -->
+                    <!-- ========================================================= -->
+                    <section id="data-sharing" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">08</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-share-nodes text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">How We Share Information</h2>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-slate-600 leading-relaxed m-0 font-normal">
+                            Information may be shared only where reasonably necessary to provide services, operate the platform, maintain security, or comply with legal obligations.
+                        </p>
+
+                        <!-- Sharing Cards Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                            
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                                    <i class="fas fa-users text-brand-600"></i>
+                                    <span>Tutor / Student Sharing</span>
+                                </div>
+                                <p class="text-xs text-slate-600 m-0 leading-relaxed">
+                                    Information may be shared between students, parents, and tutors when required to provide tutoring services.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                                    <i class="fas fa-wallet text-brand-600"></i>
+                                    <span>Payment Providers</span>
+                                </div>
+                                <p class="text-xs text-slate-600 m-0 leading-relaxed">
+                                    Transaction-related information may be shared with applicable payment service providers.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                                    <i class="fas fa-server text-brand-600"></i>
+                                    <span>Technology Providers</span>
+                                </div>
+                                <p class="text-xs text-slate-600 m-0 leading-relaxed">
+                                    Information may be processed by hosting, infrastructure, security, or technology providers where necessary.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                                    <i class="fas fa-envelope-open-text text-brand-600"></i>
+                                    <span>Communication Providers</span>
+                                </div>
+                                <p class="text-xs text-slate-600 m-0 leading-relaxed">
+                                    Information may be shared with communication or notification providers where applicable.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                                    <i class="fas fa-balance-scale text-brand-600"></i>
+                                    <span>Professional Advisors</span>
+                                </div>
+                                <p class="text-xs text-slate-600 m-0 leading-relaxed">
+                                    Information may be shared with professional or legal advisors where necessary.
+                                </p>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                                <div class="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                                    <i class="fas fa-landmark text-brand-600"></i>
+                                    <span>Legal / Government Authorities</span>
+                                </div>
+                                <p class="text-xs text-slate-600 m-0 leading-relaxed">
+                                    Information may be disclosed when required by applicable law, regulation, court order, or lawful government request.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- No-Sale Statement -->
+                        <div class="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-4 flex items-center gap-3 text-xs sm:text-sm font-bold text-brand-900">
+                            <i class="fas fa-hand-holding-dollar text-brand-600 text-base"></i>
+                            <span>"We do not sell personal information to third-party advertisers."</span>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 09: DATA RETENTION -->
+                    <!-- ========================================================= -->
+                    <section id="data-retention" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">09</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-clock-rotate-left text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Data Retention</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Personal information is retained only for as long as reasonably necessary for legitimate business and service purposes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Information may be retained while an account remains active.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Information may be retained to provide tutoring and support services.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Information may be retained to maintain transaction, accounting, or business records.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Information may be retained to resolve disputes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Information may be retained to comply with legal obligations.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>When information is no longer required, it may be securely deleted, anonymized, or otherwise disposed of according to applicable practices.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 10: DATA SECURITY (SPECIAL SECURITY PANEL) -->
+                    <!-- ========================================================= -->
+                    <section id="data-security" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">10</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-shield-virus text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Data Security</h2>
+                            </div>
+                        </div>
+
+                        <!-- Special Highlighted Security Card -->
+                        <div class="bg-gradient-to-br from-blue-50/90 via-indigo-50/50 to-slate-50 border border-blue-200/90 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xs">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center text-lg shadow-xs">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900 m-0">Your Information Matters</h3>
+                                    <p class="text-xs text-slate-500 m-0">We implement robust technical and organizational measures.</p>
+                                </div>
+                            </div>
+
+                            <ul class="space-y-2 text-xs sm:text-sm text-slate-700 list-none p-0 m-0">
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fas fa-check text-brand-600 text-xs mt-1 shrink-0"></i>
+                                    <span>We use reasonable technical and organizational measures designed to protect personal information.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fas fa-check text-brand-600 text-xs mt-1 shrink-0"></i>
+                                    <span>Access to personal information should be restricted to authorized users and systems.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fas fa-check text-brand-600 text-xs mt-1 shrink-0"></i>
+                                    <span>Account and session security measures may be used.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fas fa-check text-brand-600 text-xs mt-1 shrink-0"></i>
+                                    <span>Security monitoring may be used to identify suspicious or unauthorized activity where applicable.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fas fa-check text-brand-600 text-xs mt-1 shrink-0"></i>
+                                    <span>We work to protect information against unauthorized access, alteration, disclosure, misuse, or destruction.</span>
+                                </li>
+                                <li class="flex items-start gap-2.5">
+                                    <i class="fas fa-check text-brand-600 text-xs mt-1 shrink-0"></i>
+                                    <span>Users should also take reasonable steps to protect their account credentials and login information.</span>
+                                </li>
+                            </ul>
+
+                            <div class="p-3 bg-white/90 border border-amber-200/80 rounded-xl flex items-start gap-2.5 text-xs text-slate-600">
+                                <i class="fas fa-exclamation-circle text-amber-500 mt-0.5 shrink-0"></i>
+                                <span>"No method of transmission or storage over the internet can be guaranteed to be completely secure."</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 11: CHILDREN'S PRIVACY -->
+                    <!-- ========================================================= -->
+                    <section id="childrens-privacy" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">11</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-child text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Children's Privacy</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>EduTrust provides educational services that may be used by students who are minors.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Parents or legal guardians may be involved in account creation, consent, bookings, or other activities where appropriate.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Parents and guardians are encouraged to supervise children's use of online educational services.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Users should avoid providing unnecessary personal information.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Privacy concerns relating to a child's information can be reported to EduTrust.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 12: YOUR PRIVACY RIGHTS (2-COLUMN RIGHTS GRID) -->
+                    <!-- ========================================================= -->
+                    <section id="privacy-rights" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">12</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-scale-balanced text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Your Privacy Rights</h2>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-slate-600 leading-relaxed m-0 font-normal">
+                            Users may have the following rights regarding their personal information:
+                        </p>
+
+                        <!-- 2-Column Rights Cards Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Review personal information</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Update account information</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Correct inaccurate information</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Request deletion where applicable</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Withdraw consent where applicable</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Ask questions about data processing</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Raise privacy-related concerns</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 flex items-center gap-2.5 font-bold text-xs sm:text-sm text-slate-800">
+                                <i class="fas fa-check-circle text-brand-600 text-sm"></i>
+                                <span>Submit a privacy request or complaint</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <p class="text-xs text-slate-500 m-0">
+                                "Available rights may depend on applicable law and the nature of the information and service involved."
+                            </p>
+                            <a href="{% url 'contact' %}" class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 hover:text-brand-700 no-underline shrink-0 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200/70">
+                                <span>Request Privacy Support</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 13: THIRD-PARTY SERVICES & EXTERNAL LINKS -->
+                    <!-- ========================================================= -->
+                    <section id="third-party" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">13</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-arrow-up-right-from-square text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Third-Party Services & External Links</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>EduTrust may use third-party services where necessary to operate or support the platform.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Third-party service providers may process information according to their own privacy policies.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>External websites linked from EduTrust may operate independently.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>EduTrust is not responsible for the privacy practices of independent external websites.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Users should review the privacy policies of external services before providing personal information.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 14: CHANGES TO THIS PRIVACY POLICY -->
+                    <!-- ========================================================= -->
+                    <section id="policy-changes" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">14</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-pen text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Changes to This Privacy Policy</h2>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-sm sm:text-[15px] text-slate-600 leading-relaxed list-none p-0 m-0">
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>This Privacy Policy may be updated periodically.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Changes may reflect updates to our services, technology, legal requirements, or privacy practices.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>The "Last Updated" date at the top of this page should be updated whenever the policy changes.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Users are encouraged to review this page periodically.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-2 shrink-0"></span>
+                                <span>Continued use of applicable services after changes may be subject to the updated policy where permitted by applicable law.</span>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- SECTION 15: CONTACT US -->
+                    <!-- ========================================================= -->
+                    <section id="contact" class="policy-section scroll-mt-32 space-y-4">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <span class="w-8 h-8 rounded-xl bg-blue-50 text-brand-600 font-black text-xs flex items-center justify-center border border-blue-100 shrink-0">15</span>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-headset text-brand-500 text-sm"></i>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 tracking-tight">Have a Privacy Question?</h2>
+                            </div>
+                        </div>
+
+                        <!-- Premium Blue Contact Card -->
+                        <div class="bg-gradient-to-br from-brand-600 via-brand-700 to-indigo-800 text-white rounded-2xl p-6 sm:p-8 space-y-5 shadow-card">
+                            <div class="space-y-1">
+                                <h3 class="text-lg sm:text-xl font-black text-white m-0">Have a Privacy Question?</h3>
+                                <p class="text-blue-100 text-xs sm:text-sm m-0">
+                                    We're here to help with privacy-related questions, requests, and concerns.
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1 text-xs">
+                                <a href="mailto:privacy@edutrust.in" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-3 text-white no-underline transition-colors flex items-center gap-2.5">
+                                    <i class="far fa-envelope text-blue-200 text-base"></i>
+                                    <div>
+                                        <span class="block text-[10px] text-blue-200 uppercase font-bold">Privacy Email</span>
+                                        <span class="font-bold">privacy@edutrust.in</span>
+                                    </div>
+                                </a>
+
+                                <a href="mailto:support@edutrust.com" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-3 text-white no-underline transition-colors flex items-center gap-2.5">
+                                    <i class="fas fa-headset text-blue-200 text-base"></i>
+                                    <div>
+                                        <span class="block text-[10px] text-blue-200 uppercase font-bold">General Support</span>
+                                        <span class="font-bold">support@edutrust.com</span>
+                                    </div>
+                                </a>
+
+                                <a href="tel:+919876543210" class="bg-white/10 hover:bg-white/20 border border-white/15 rounded-xl p-3 text-white no-underline transition-colors flex items-center gap-2.5">
+                                    <i class="fas fa-phone-alt text-blue-200 text-base"></i>
+                                    <div>
+                                        <span class="block text-[10px] text-blue-200 uppercase font-bold">Phone Support</span>
+                                        <span class="font-bold">+91 9876543210</span>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="pt-2">
+                                <a href="{% url 'contact' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-brand-700 hover:bg-blue-50 font-black text-xs sm:text-sm shadow-md transition-all no-underline">
+                                    <span>Contact Us</span>
+                                    <i class="fas fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ========================================================= -->
+                    <!-- 4. FINAL PRIVACY TRUST FOOTER HIGHLIGHTS -->
+                    <!-- ========================================================= -->
+                    <div class="pt-6 border-t border-slate-100">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                            <div class="p-3 bg-slate-50/80 rounded-2xl border border-slate-100">
+                                <span class="block font-black text-slate-900 text-xs sm:text-sm">Privacy First</span>
+                                <span class="text-[11px] text-slate-500">We respect your privacy.</span>
+                            </div>
+                            <div class="p-3 bg-slate-50/80 rounded-2xl border border-slate-100">
+                                <span class="block font-black text-slate-900 text-xs sm:text-sm">Safe Platform</span>
+                                <span class="text-[11px] text-slate-500">We work to protect data.</span>
+                            </div>
+                            <div class="p-3 bg-slate-50/80 rounded-2xl border border-slate-100">
+                                <span class="block font-black text-slate-900 text-xs sm:text-sm">Trusted Community</span>
+                                <span class="text-[11px] text-slate-500">Students, Parents & Tutors.</span>
+                            </div>
+                            <div class="p-3 bg-slate-50/80 rounded-2xl border border-slate-100">
+                                <span class="block font-black text-slate-900 text-xs sm:text-sm">Better Learning</span>
+                                <span class="text-[11px] text-slate-500">Safer learning experience.</span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-6 text-xs text-slate-400 font-medium">
+                            Last updated: 14 September 2026 • EduTrust Tuition Platform
+                        </div>
+                    </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Public Footer -->
+    {% include "components/public_footer.html" %}
+
+</body>
+
+</html>

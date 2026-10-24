@@ -1,0 +1,878 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: RECORDED LECTURES & VIDEO VAULT (NORMAL) -->
+<!-- ======================================================== -->
+<div id="teacherModule_recorded_lectures" class="teacher-module-view space-y-3.5 hidden">
+
+    <!-- MODULE HEADER (COMPACT) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-white dark:bg-slate-900 p-3 sm:p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs font-bold">
+                    <i class="fas fa-play-circle text-[11px]"></i>
+                </span>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Recorded Lectures & Video Vault</h2>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Manage on-demand video lessons, recorded live class archives, and revision lectures with class, subject, and course filters.</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openUploadLectureModal()" class="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs transition-colors border-0 cursor-pointer flex items-center gap-1.5 shadow-xs">
+                <i class="fas fa-cloud-upload-alt text-[11px]"></i> <span>+ Upload New Lecture</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- METRIC SUMMARY CARDS (COMPACT) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <!-- Total Recorded Lectures -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Total Lectures</span>
+                <i class="fas fa-video text-purple-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-purple-600 leading-tight">{{ lectures_uploaded_count|default:"6" }}</div>
+            <p class="text-[10px] text-slate-400">In video vault</p>
+        </div>
+
+        <!-- Total Watch Time -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Total Watch Hours</span>
+                <i class="fas fa-clock text-blue-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-blue-600 leading-tight">68.5 Hrs</div>
+            <p class="text-[10px] text-slate-400">Student watch time</p>
+        </div>
+
+        <!-- Total Views -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Total Views</span>
+                <i class="fas fa-eye text-emerald-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-emerald-600 leading-tight">1,240</div>
+            <p class="text-[10px] text-slate-400">Across all courses</p>
+        </div>
+
+        <!-- Storage Used -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Storage Used</span>
+                <i class="fas fa-hdd text-amber-500 text-[10px]"></i>
+            </div>
+            <div class="text-base font-bold text-amber-600 leading-tight">2.4 / 10 GB</div>
+            <p class="text-[10px] text-slate-400">Cloud video storage</p>
+        </div>
+    </div>
+
+    <!-- FILTER TOOLBAR (SEARCH + CUSTOM PROFESSIONAL DROPDOWNS) -->
+    <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 items-center">
+            
+            <!-- 1. Search Box -->
+            <div class="lg:col-span-4 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                <input type="text" id="lectureSearchInput" oninput="applyLectureFilters()" placeholder="Search title, chapter, topic..." class="w-full bg-slate-50/80 hover:bg-white focus:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 dark:focus:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-medium rounded-lg pl-8 pr-7 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-2xs">
+                <button type="button" onclick="document.getElementById('lectureSearchInput').value=''; applyLectureFilters();" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-[10px] border-0 bg-transparent cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- 2. Custom Class Grade Dropdown -->
+            <div class="lg:col-span-2 relative custom-dropdown-container">
+                <input type="hidden" id="lectureClassFilter" value="all">
+                <button type="button" onclick="toggleLectureCustomDropdown('lectureClassMenu', 'lectureClassChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-graduation-cap text-purple-600 dark:text-purple-400 text-[11px] shrink-0"></i>
+                        <span id="lectureClassLabel" class="truncate">All Classes</span>
+                    </div>
+                    <i id="lectureClassChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <!-- Floating Menu -->
+                <div id="lectureClassMenu" class="hidden absolute top-full mt-1.5 left-0 w-full min-w-[145px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'all', 'All Classes', this)" class="custom-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 cursor-pointer">
+                        <span>All Classes</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 6', 'Class 6', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 6</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 7', 'Class 7', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 7</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 8', 'Class 8', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 8</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 9', 'Class 9', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 9</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 10', 'Class 10', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 10</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 11', 'Class 11', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 11</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('class', 'Class 12', 'Class 12', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Class 12</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. Custom Subject Dropdown -->
+            <div class="lg:col-span-3 relative custom-dropdown-container">
+                <input type="hidden" id="lectureSubjectFilter" value="all">
+                <button type="button" onclick="toggleLectureCustomDropdown('lectureSubjectMenu', 'lectureSubjectChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-book-open text-blue-600 dark:text-blue-400 text-[11px] shrink-0"></i>
+                        <span id="lectureSubjectLabel" class="truncate">All Subjects</span>
+                    </div>
+                    <i id="lectureSubjectChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <!-- Floating Menu -->
+                <div id="lectureSubjectMenu" class="hidden absolute top-full mt-1.5 left-0 w-full min-w-[175px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'all', 'All Subjects', this)" class="custom-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 cursor-pointer">
+                        <span>All Subjects</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Mathematics', 'Mathematics', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Mathematics</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Physics', 'Physics', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Physics</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Chemistry', 'Chemistry', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Chemistry</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Biology', 'Biology', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Biology</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Science', 'Science (General)', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Science (General)</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'English', 'English', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>English</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Social Science', 'Social Science', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Social Science</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('subject', 'Computer Science', 'Computer Science / Coding', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Computer Science / Coding</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. Custom Course / Batch Dropdown -->
+            <div class="lg:col-span-3 relative custom-dropdown-container">
+                <input type="hidden" id="lectureCourseFilter" value="all">
+                <button type="button" onclick="toggleLectureCustomDropdown('lectureCourseMenu', 'lectureCourseChevron')" class="w-full flex items-center justify-between bg-slate-50/80 hover:bg-white dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 text-[11px] font-semibold rounded-lg px-2.5 py-2 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 cursor-pointer transition-all shadow-2xs">
+                    <div class="flex items-center gap-1.5 truncate">
+                        <i class="fas fa-layer-group text-emerald-600 dark:text-emerald-400 text-[11px] shrink-0"></i>
+                        <span id="lectureCourseLabel" class="truncate">All Courses / Batches</span>
+                    </div>
+                    <i id="lectureCourseChevron" class="fas fa-chevron-down text-slate-400 text-[9px] shrink-0 transition-transform duration-200"></i>
+                </button>
+                
+                <!-- Floating Menu -->
+                <div id="lectureCourseMenu" class="hidden absolute top-full mt-1.5 left-0 w-full min-w-[210px] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-1.5 z-50 max-h-56 overflow-y-auto space-y-0.5">
+                    <button type="button" onclick="selectLectureCustomFilter('course', 'all', 'All Courses / Batches', this)" class="custom-opt-btn active w-full text-left px-2.5 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-between border-0 bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-300 cursor-pointer">
+                        <span>All Courses / Batches</span> <i class="fas fa-check text-[10px]"></i>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('course', 'CBSE Board Masterclass', 'CBSE Board Masterclass', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>CBSE Board Masterclass</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('course', 'JEE Main & Advanced', 'JEE Main & Advanced', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>JEE Main & Advanced</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('course', 'NEET UG Medical Prep', 'NEET UG Medical Prep', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>NEET UG Medical Prep</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('course', 'ICSE Board Foundation', 'ICSE Board Foundation', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>ICSE Board Foundation</span>
+                    </button>
+                    <button type="button" onclick="selectLectureCustomFilter('course', 'Crash Course 2026', 'Crash Course 2026', this)" class="custom-opt-btn w-full text-left px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg flex items-center justify-between border-0 bg-transparent cursor-pointer">
+                        <span>Crash Course 2026</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Filter Stats & Clear Action -->
+        <div class="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800 text-[11px]">
+            <span class="text-slate-500 dark:text-slate-400 font-medium">
+                Showing: <strong id="lectureResultCount" class="text-purple-600 dark:text-purple-400 font-bold">6 lectures</strong>
+            </span>
+            <button type="button" onclick="resetLectureFilters()" class="text-slate-500 hover:text-purple-600 dark:hover:text-purple-400 text-[11px] font-semibold bg-transparent border-0 cursor-pointer flex items-center gap-1 transition-colors">
+                <i class="fas fa-redo-alt text-[9px]"></i> <span>Reset Filters</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- LECTURES DETAILED LIST (COMPACT DETAILS FORM) -->
+    <div id="lectureCardsGrid" class="space-y-2">
+        {% for lec in recent_lectures %}
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="{{ lec.class_name|default:'Class 10' }}" 
+             data-subject="{{ lec.subject|default:'Mathematics' }}" 
+             data-course="CBSE Board Masterclass"
+             data-search="{{ lec.title }} {{ lec.description }} {{ lec.class_name }} {{ lec.subject }} CBSE Board Masterclass">
+            
+            <!-- Left: Video Thumbnail with Play Overlay -->
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="{% if lec.thumbnail %}{{ lec.thumbnail.url }}{% else %}https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=400&q=80{% endif %}" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('{{ lec.title|escapejs }}', '{% if lec.file %}{{ lec.file.url }}{% else %}https://www.youtube.com/embed/dQw4w9WgXcQ{% endif %}')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">1080p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">45:20</span>
+                </div>
+
+                <!-- Middle: Detailed Content & Metadata -->
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            {{ lec.class_name|default:"Class 10" }}
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            {{ lec.subject|default:"Mathematics" }}
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            CBSE Board Masterclass
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: {{ lec.created_at|date:"d M Y, h:i A"|default:"05 Oct 2026, 11:30 AM" }}</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">{{ lec.title }}</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">{{ lec.description|default:"Comprehensive topic discussion with step-by-step mathematical derivations and solved problems." }}</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">{{ lec.views_count|default:"142" }} Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 38m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> PDF Attached</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Action Buttons -->
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('{{ lec.title|escapejs }}', '{% if lec.file %}{{ lec.file.url }}{% else %}https://www.youtube.com/embed/dQw4w9WgXcQ{% endif %}')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('{{ lec.title|escapejs }}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+        {% empty %}
+        <!-- Demo Item 1: Class 10 Maths (CBSE Board Masterclass) -->
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="Class 10" 
+             data-subject="Mathematics" 
+             data-course="CBSE Board Masterclass" 
+             data-search="Class 10 Quadratic Equations Masterclass Roots Formula Mathematics CBSE Board Masterclass">
+            
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=400&q=80" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('Quadratic Equations: Complete Masterclass', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">1080p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">48:15</span>
+                </div>
+
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            Class 10
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            Mathematics • Chapter 4
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            CBSE Board Masterclass
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: 06 Oct 2026, 10:30 AM</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">Quadratic Equations: Complete Masterclass (Nature of Roots & Derivations)</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">Factorization, completing square method, discriminant analysis and top 10 years board PYQ numerical problems.</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">248 Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 42m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> Notes & Formula PDF</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('Quadratic Equations: Complete Masterclass', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('Quadratic Equations: Complete Masterclass')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Demo Item 2: Class 12 Physics (JEE Main & Advanced) -->
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="Class 12" 
+             data-subject="Physics" 
+             data-course="JEE Main & Advanced" 
+             data-search="Class 12 Gauss Theorem Electric Flux Physics Derivations JEE Main & Advanced">
+            
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('Gauss Theorem & Electric Flux Applications', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">1080p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">52:40</span>
+                </div>
+
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            Class 12
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            Physics • Electrostatics
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            JEE Main & Advanced
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: 05 Oct 2026, 05:45 PM</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">Gauss Theorem & Electric Flux Applications (Infinite Sheet, Shell & Cylinder)</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">Detailed mathematical derivations for continuous charge distributions and field symmetry problems.</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">312 Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 46m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> Derivation Handbook PDF</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('Gauss Theorem & Electric Flux Applications', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('Gauss Theorem & Electric Flux Applications')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Demo Item 3: Class 10 Science (CBSE Board Masterclass) -->
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="Class 10" 
+             data-subject="Physics" 
+             data-course="CBSE Board Masterclass" 
+             data-search="Class 10 Light Reflection Refraction Optics Ray Diagrams CBSE Board Masterclass">
+            
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=400&q=80" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('Light: Reflection and Refraction Full Chapter', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">720p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">41:30</span>
+                </div>
+
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            Class 10
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            Physics • Chapter 10
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            CBSE Board Masterclass
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: 03 Oct 2026, 04:00 PM</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">Light: Reflection and Refraction Full Chapter Complete Lecture</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">Mirror formula, magnification, refraction through spherical lenses, lens power and ray tracing rules.</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">195 Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 35m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> Ray Diagrams PDF</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('Light: Reflection and Refraction Full Chapter', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('Light: Reflection and Refraction Full Chapter')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Demo Item 4: Class 11 Chemistry (NEET UG Medical Prep) -->
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="Class 11" 
+             data-subject="Chemistry" 
+             data-course="NEET UG Medical Prep" 
+             data-search="Class 11 Chemical Bonding VSEPR Hybridization Chemistry NEET UG Medical Prep">
+            
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=400&q=80" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('Chemical Bonding & Molecular Shapes', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">1080p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">55:10</span>
+                </div>
+
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            Class 11
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            Chemistry • Unit 4
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            NEET UG Medical Prep
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: 01 Oct 2026, 03:15 PM</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">Chemical Bonding & Molecular Shapes (VSEPR, Hybridization & Dipole Moment)</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">VSEPR Theory rules, sp/sp2/sp3 hybridization molecular geometries and orbital overlap concepts.</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">180 Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 48m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> Shapes Cheatsheet PDF</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('Chemical Bonding & Molecular Shapes', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('Chemical Bonding & Molecular Shapes')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Demo Item 5: Class 12 Wave Optics (JEE Main & Advanced) -->
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="Class 12" 
+             data-subject="Physics" 
+             data-course="JEE Main & Advanced" 
+             data-search="Class 12 Wave Optics Young Double Slit Experiment Interference JEE Main & Advanced">
+            
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=400&q=80" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('Wave Optics: Young\'s Double Slit Experiment', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">1080p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">49:00</span>
+                </div>
+
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            Class 12
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            Physics • Optics
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            JEE Main & Advanced
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: 28 Sep 2026, 06:15 PM</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">Wave Optics: Young's Double Slit Experiment (YDSE Derivation & Interference)</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">Fringe width derivation, condition for constructive/destructive interference, path difference and wave fronts.</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">265 Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 41m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> Formulas & Proof PDF</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('Wave Optics: Young\'s Double Slit Experiment', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('Wave Optics: Young\'s Double Slit Experiment')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Demo Item 6: Class 10 Trigonometry (ICSE Board Foundation) -->
+        <div class="lecture-card bg-white dark:bg-slate-900 p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-purple-300 dark:hover:border-purple-800 transition-all flex flex-col md:flex-row md:items-center justify-between gap-2.5"
+             data-class="Class 10" 
+             data-subject="Mathematics" 
+             data-course="ICSE Board Foundation" 
+             data-search="Class 10 Trigonometry Identities Proofs PYQ Mathematics ICSE Board Foundation">
+            
+            <div class="flex items-start gap-2.5">
+                <div class="w-full sm:w-28 h-16 sm:h-18 rounded-lg bg-slate-900 relative overflow-hidden shrink-0 group">
+                    <img src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=400&q=80" alt="Thumbnail" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <button onclick="playLecturePreview('Trigonometric Identities & Proof Questions', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="absolute inset-0 m-auto w-6 h-6 rounded-full bg-purple-600/90 text-white flex items-center justify-center text-[9px] hover:scale-110 transition-transform border-0 cursor-pointer shadow-md">
+                        <i class="fas fa-play pl-0.5 text-[8px]"></i>
+                    </button>
+                    <span class="absolute top-1 right-1 px-1 py-0.2 rounded text-[7.5px] font-bold bg-black/70 text-white backdrop-blur-xs">720p</span>
+                    <span class="absolute bottom-1 right-1 px-1 py-0.2 rounded text-[8px] font-mono font-bold bg-black/80 text-white">43:45</span>
+                </div>
+
+                <div class="space-y-0.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            Class 10
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                            Mathematics • Chapter 8
+                        </span>
+                        <span class="px-1.5 py-0.5 rounded text-[8.5px] font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                            ICSE Board Foundation
+                        </span>
+                        <span class="text-[9.5px] text-slate-400">Uploaded: 25 Sep 2026, 11:00 AM</span>
+                    </div>
+                    
+                    <h4 class="font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white leading-snug">Trigonometric Identities & Proof Questions (Past 10 Years Board Papers)</h4>
+                    <p class="text-[10.5px] text-slate-500 dark:text-slate-400 line-clamp-1 leading-normal">Proof-based problem strategies, sin²θ + cos²θ = 1 identities with past 10 years board questions.</p>
+                    
+                    <div class="flex items-center gap-2.5 pt-0.5 text-[9.5px] text-slate-500 dark:text-slate-400 flex-wrap">
+                        <span class="flex items-center gap-1"><i class="far fa-eye text-blue-500 text-[9px]"></i> <strong class="text-slate-700 dark:text-slate-300">240 Views</strong></span>
+                        <span class="flex items-center gap-1"><i class="far fa-clock text-amber-500 text-[9px]"></i> Avg: 36m</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-file-pdf text-rose-500 text-[9px]"></i> PYQ Bank PDF</span>
+                        <span class="flex items-center gap-1 text-emerald-600 font-semibold"><i class="fas fa-check-circle text-[8px]"></i> Published</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0 self-end md:self-center">
+                <button onclick="playLecturePreview('Trigonometric Identities & Proof Questions', 'https://www.youtube.com/embed/dQw4w9WgXcQ')" class="px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors shadow-xs">
+                    <i class="fas fa-play text-[8px]"></i> <span>Play Video</span>
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer flex items-center gap-1 transition-colors" title="View Attached Notes">
+                    <i class="fas fa-file-alt text-[9px] text-blue-500"></i> <span>Notes</span>
+                </button>
+                <button onclick="copyLectureLink('Trigonometric Identities & Proof Questions')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] border-0 cursor-pointer transition-colors" title="Copy Shareable Link">
+                    <i class="fas fa-link text-[9px]"></i>
+                </button>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="lectureEmptyState" class="bg-white dark:bg-slate-900 rounded-xl p-6 text-center border border-dashed border-slate-300 dark:border-slate-800 space-y-1.5 hidden">
+        <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto text-xs">
+            <i class="fas fa-video-slash"></i>
+        </div>
+        <div class="font-bold text-xs text-slate-800 dark:text-slate-200">No recorded lectures found matching filters</div>
+        <p class="text-[10px] text-slate-500 max-w-xs mx-auto">Try selecting "All Classes" / "All Subjects" / "All Courses" or clearing your search filter.</p>
+        <button type="button" onclick="resetLectureFilters()" class="px-2.5 py-1 rounded-lg bg-purple-600 text-white font-semibold text-[11px] hover:bg-purple-700 border-0 cursor-pointer">
+            Reset All Filters
+        </button>
+    </div>
+
+</div>
+
+<!-- ======================================================== -->
+<!-- MODAL: VIDEO PLAYER PREVIEW MODAL                        -->
+<!-- ======================================================== -->
+<div id="lecturePlayerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[1000] hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xl space-y-0">
+        <!-- Modal Top Bar -->
+        <div class="p-3 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-md bg-purple-100 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-xs">
+                    <i class="fas fa-play text-[10px]"></i>
+                </span>
+                <h3 id="lecturePlayerTitle" class="text-xs font-bold text-slate-900 dark:text-white truncate max-w-md">Lecture Video Player</h3>
+            </div>
+            <button onclick="closeLecturePlayerModal()" class="w-6 h-6 rounded-md bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 border-0 cursor-pointer flex items-center justify-center text-xs">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Video Box -->
+        <div class="relative bg-black aspect-video flex items-center justify-center">
+            <iframe id="lectureVideoIframe" class="w-full h-full border-0" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="p-3 bg-white dark:bg-slate-900 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 text-xs">
+            <span class="text-[11px] text-slate-500">EduTrust Video Vault • Full HD Playback</span>
+            <div class="flex items-center gap-2">
+                <button onclick="closeLecturePlayerModal()" class="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-semibold text-xs border-0 cursor-pointer">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- JAVASCRIPT FOR RECORDED LECTURES MODULE      -->
+<!-- ============================================ -->
+<script>
+    // Custom Dropdown Open / Close Handler
+    function toggleLectureCustomDropdown(menuId, chevronId) {
+        const menu = document.getElementById(menuId);
+        const chevron = document.getElementById(chevronId);
+        const isOpen = menu && !menu.classList.contains('hidden');
+
+        // Close all other dropdowns
+        closeAllLectureDropdowns();
+
+        if (menu && !isOpen) {
+            menu.classList.remove('hidden');
+            if (chevron) chevron.classList.add('rotate-180');
+        }
+    }
+
+    function closeAllLectureDropdowns() {
+        ['lectureClassMenu', 'lectureSubjectMenu', 'lectureCourseMenu'].forEach(id => {
+            const m = document.getElementById(id);
+            if (m) m.classList.add('hidden');
+        });
+        ['lectureClassChevron', 'lectureSubjectChevron', 'lectureCourseChevron'].forEach(id => {
+            const c = document.getElementById(id);
+            if (c) c.classList.remove('rotate-180');
+        });
+    }
+
+    // Custom Option Select Handler
+    function selectLectureCustomFilter(type, value, label, btnElem) {
+        if (type === 'class') {
+            const input = document.getElementById('lectureClassFilter');
+            const labelElem = document.getElementById('lectureClassLabel');
+            if (input) input.value = value;
+            if (labelElem) labelElem.innerText = label;
+
+            // Highlight active option
+            const menu = document.getElementById('lectureClassMenu');
+            if (menu) {
+                menu.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('bg-purple-50', 'dark:bg-purple-950/60', 'text-purple-600', 'dark:text-purple-300');
+                    b.classList.add('text-slate-700', 'dark:text-slate-200');
+                    const check = b.querySelector('.fa-check');
+                    if (check) check.remove();
+                });
+                if (btnElem) {
+                    btnElem.classList.add('bg-purple-50', 'dark:bg-purple-950/60', 'text-purple-600', 'dark:text-purple-300');
+                    btnElem.classList.remove('text-slate-700', 'dark:text-slate-200');
+                    if (!btnElem.querySelector('.fa-check')) {
+                        btnElem.insertAdjacentHTML('beforeend', ' <i class="fas fa-check text-[10px]"></i>');
+                    }
+                }
+            }
+        } else if (type === 'subject') {
+            const input = document.getElementById('lectureSubjectFilter');
+            const labelElem = document.getElementById('lectureSubjectLabel');
+            if (input) input.value = value;
+            if (labelElem) labelElem.innerText = label;
+
+            const menu = document.getElementById('lectureSubjectMenu');
+            if (menu) {
+                menu.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('bg-purple-50', 'dark:bg-purple-950/60', 'text-purple-600', 'dark:text-purple-300');
+                    b.classList.add('text-slate-700', 'dark:text-slate-200');
+                    const check = b.querySelector('.fa-check');
+                    if (check) check.remove();
+                });
+                if (btnElem) {
+                    btnElem.classList.add('bg-purple-50', 'dark:bg-purple-950/60', 'text-purple-600', 'dark:text-purple-300');
+                    btnElem.classList.remove('text-slate-700', 'dark:text-slate-200');
+                    if (!btnElem.querySelector('.fa-check')) {
+                        btnElem.insertAdjacentHTML('beforeend', ' <i class="fas fa-check text-[10px]"></i>');
+                    }
+                }
+            }
+        } else if (type === 'course') {
+            const input = document.getElementById('lectureCourseFilter');
+            const labelElem = document.getElementById('lectureCourseLabel');
+            if (input) input.value = value;
+            if (labelElem) labelElem.innerText = label;
+
+            const menu = document.getElementById('lectureCourseMenu');
+            if (menu) {
+                menu.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('bg-purple-50', 'dark:bg-purple-950/60', 'text-purple-600', 'dark:text-purple-300');
+                    b.classList.add('text-slate-700', 'dark:text-slate-200');
+                    const check = b.querySelector('.fa-check');
+                    if (check) check.remove();
+                });
+                if (btnElem) {
+                    btnElem.classList.add('bg-purple-50', 'dark:bg-purple-950/60', 'text-purple-600', 'dark:text-purple-300');
+                    btnElem.classList.remove('text-slate-700', 'dark:text-slate-200');
+                    if (!btnElem.querySelector('.fa-check')) {
+                        btnElem.insertAdjacentHTML('beforeend', ' <i class="fas fa-check text-[10px]"></i>');
+                    }
+                }
+            }
+        }
+
+        closeAllLectureDropdowns();
+        applyLectureFilters();
+    }
+
+    // Close on outside click
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-dropdown-container')) {
+            closeAllLectureDropdowns();
+        }
+    });
+
+    function applyLectureFilters() {
+        const query = (document.getElementById('lectureSearchInput')?.value || '').toLowerCase().trim();
+        const selectedClass = document.getElementById('lectureClassFilter')?.value || 'all';
+        const selectedSubject = document.getElementById('lectureSubjectFilter')?.value || 'all';
+        const selectedCourse = document.getElementById('lectureCourseFilter')?.value || 'all';
+        
+        const cards = Array.from(document.querySelectorAll('.lecture-card'));
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardClass = card.getAttribute('data-class') || '';
+            const cardSubject = card.getAttribute('data-subject') || '';
+            const cardCourse = card.getAttribute('data-course') || '';
+            const cardSearch = (card.getAttribute('data-search') || '') + ' ' + card.innerText;
+
+            const matchClass = (selectedClass === 'all') || (cardClass.toLowerCase() === selectedClass.toLowerCase());
+            const matchSubject = (selectedSubject === 'all') || (cardSubject.toLowerCase() === selectedSubject.toLowerCase());
+            const matchCourse = (selectedCourse === 'all') || (cardCourse.toLowerCase().includes(selectedCourse.toLowerCase()));
+            const matchSearch = !query || cardSearch.toLowerCase().includes(query);
+
+            if (matchClass && matchSubject && matchCourse && matchSearch) {
+                card.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        const countElem = document.getElementById('lectureResultCount');
+        if (countElem) {
+            countElem.innerText = `${visibleCount} lecture${visibleCount === 1 ? '' : 's'}`;
+        }
+
+        const emptyState = document.getElementById('lectureEmptyState');
+        if (emptyState) {
+            if (visibleCount === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+    }
+
+    function resetLectureFilters() {
+        const sInput = document.getElementById('lectureSearchInput');
+        const cFilter = document.getElementById('lectureClassFilter');
+        const subFilter = document.getElementById('lectureSubjectFilter');
+        const courseFilter = document.getElementById('lectureCourseFilter');
+
+        if (sInput) sInput.value = '';
+        if (cFilter) cFilter.value = 'all';
+        if (subFilter) subFilter.value = 'all';
+        if (courseFilter) courseFilter.value = 'all';
+
+        const cLabel = document.getElementById('lectureClassLabel');
+        const subLabel = document.getElementById('lectureSubjectLabel');
+        const courseLabel = document.getElementById('lectureCourseLabel');
+
+        if (cLabel) cLabel.innerText = 'All Classes';
+        if (subLabel) subLabel.innerText = 'All Subjects';
+        if (courseLabel) courseLabel.innerText = 'All Courses / Batches';
+
+        closeAllLectureDropdowns();
+        applyLectureFilters();
+    }
+
+    function playLecturePreview(title, videoUrl) {
+        const modal = document.getElementById('lecturePlayerModal');
+        const titleElem = document.getElementById('lecturePlayerTitle');
+        const iframe = document.getElementById('lectureVideoIframe');
+
+        if (titleElem) titleElem.innerText = title;
+        if (iframe) iframe.src = videoUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeLecturePlayerModal() {
+        const modal = document.getElementById('lecturePlayerModal');
+        const iframe = document.getElementById('lectureVideoIframe');
+        if (iframe) iframe.src = '';
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function copyLectureLink(title) {
+        navigator.clipboard.writeText(window.location.origin + '/student-lectures/?title=' + encodeURIComponent(title)).then(() => {
+            alert('🔗 Direct video lecture link copied to clipboard:\n' + title);
+        }).catch(() => {
+            alert('Video Link: ' + window.location.origin + '/student-lectures/');
+        });
+    }
+</script>

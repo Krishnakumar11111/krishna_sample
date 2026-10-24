@@ -1,0 +1,968 @@
+{% load static %}
+<!-- ========================================================= -->
+<!-- UNIFIED HOMEPAGE HIRE TUTOR MODAL (EDUTRUST LMS)          -->
+<!-- FIXED LEFT PANEL + SCROLLABLE RIGHT FORM ARCHITECTURE     -->
+<!-- ========================================================= -->
+
+<style>
+    /* Custom scrollbar for right form panel inside Hire Tutor Modal */
+    .hire-modal-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .hire-modal-scroll::-webkit-scrollbar-track {
+        background: rgba(241, 245, 249, 0.8);
+        border-radius: 9999px;
+    }
+    .hire-modal-scroll::-webkit-scrollbar-thumb {
+        background: rgba(59, 130, 246, 0.4);
+        border-radius: 9999px;
+    }
+    .hire-modal-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(59, 130, 246, 0.7);
+    }
+    .hire-modal-input-field {
+        background-color: rgba(248, 250, 252, 0.9);
+        border: 1px solid rgba(203, 213, 225, 0.8);
+        color: #0f172a;
+        transition: all 0.25s ease;
+    }
+    .hire-modal-input-field:focus {
+        background-color: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+        outline: none;
+    }
+    .hire-modal-input-field::placeholder {
+        color: #94a3b8;
+    }
+</style>
+
+<!-- MODAL OVERLAY WRAPPER WITH BACKDROP BLUR -->
+<div id="hireTutorModal" style="background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" class="hidden fixed inset-0 z-[999999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden transition-all duration-300 opacity-0" aria-hidden="true" role="dialog" aria-labelledby="hireTutorModalTitle">
+    
+    <!-- MAIN TWO-PANEL MODAL CARD (1150px max-width, compact 86vw width, 88vh max-height) -->
+    <div id="hireTutorModalCard" onclick="event.stopPropagation()" class="w-full max-w-[1150px] w-[86vw] h-[88vh] max-h-[90vh] bg-white rounded-[2rem] text-slate-900 relative transition-all duration-300 my-auto transform scale-95 overflow-hidden shadow-2xl border border-slate-200/90 flex flex-col lg:flex-row mx-auto">
+        
+        <!-- SINGLE CLOSE BUTTON (×) TOP-RIGHT -->
+        <button type="button" onclick="closeHireTutorModal()" aria-label="Close Hire Tutor Modal" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-500 hover:text-white text-slate-500 flex items-center justify-center text-lg transition-colors border border-slate-200 cursor-pointer z-50 shadow-md">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- ======================================================== -->
+        <!-- 1. LEFT PANEL: FIXED/STICKY PROMOTIONAL AREA (40% LG)   -->
+        <!-- ======================================================== -->
+        <div class="w-full lg:w-[40%] h-full bg-gradient-to-br from-[#eaf7ff] via-[#d8f1ff] to-[#bfe8ff] p-4 sm:p-5 lg:p-6 text-slate-800 flex flex-col justify-between relative overflow-hidden border-b lg:border-b-0 lg:border-r border-blue-200/80 shrink-0">
+            
+            <!-- Background Ambient Glow Blobs -->
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-sky-300/30 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 space-y-3">
+                <!-- Brand Header -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white font-bold text-base shadow-md shadow-blue-500/20">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <span class="text-base font-extrabold tracking-tight text-slate-900 block leading-none">
+                                Edu<span class="text-blue-600">Trust</span>
+                            </span>
+                            <span class="text-[8.5px] font-extrabold text-slate-500 tracking-widest uppercase block mt-0.5">
+                                LEARN • TEACH • GROW
+                            </span>
+                        </div>
+                    </div>
+
+                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 text-[10px] font-extrabold">
+                        <i class="fas fa-check-circle text-[9px]"></i>
+                        <span>Verified Platform</span>
+                    </span>
+                </div>
+
+                <!-- Hero Header -->
+                <div class="pt-0.5 space-y-1">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-600/10 border border-blue-600/20 text-blue-800 text-[11px] font-bold">
+                        <i class="fas fa-users-crown text-amber-500 text-[11px]"></i>
+                        <span>Trusted by Thousands of Learners</span>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight leading-snug">
+                        Find the Right Tutor<br>
+                        <span class="bg-gradient-to-r from-blue-700 via-indigo-600 to-sky-600 bg-clip-text text-transparent">
+                            for a Brighter Future
+                        </span>
+                    </h2>
+                    <p class="text-slate-600 text-[11.5px] font-medium leading-relaxed">
+                        Get connected with verified and experienced tutors who match your learning goals. Personalised support for every learner, at every step.
+                    </p>
+                </div>
+
+                <!-- 4 KPI / Feature Cards (COMPACT 2 × 2 GRID LAYOUT) -->
+                <div class="grid grid-cols-2 gap-2 pt-0.5">
+                    <div class="flex items-start gap-1.5 p-2 rounded-lg bg-white/90 border border-blue-100/90 shadow-2xs">
+                        <div class="w-6 h-6 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] shrink-0 border border-blue-100 mt-0.5">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-[11px] text-slate-900 leading-tight">Verified Tutors</h4>
+                            <p class="text-[9.5px] text-slate-500 font-medium leading-tight mt-0.5">Learn from qualified & experienced educators</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-1.5 p-2 rounded-lg bg-white/90 border border-blue-100/90 shadow-2xs">
+                        <div class="w-6 h-6 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[10px] shrink-0 border border-purple-100 mt-0.5">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-[11px] text-slate-900 leading-tight">Personalized Learning</h4>
+                            <p class="text-[9.5px] text-slate-500 font-medium leading-tight mt-0.5">Get the right tutor for your unique needs</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-1.5 p-2 rounded-lg bg-white/90 border border-blue-100/90 shadow-2xs">
+                        <div class="w-6 h-6 rounded-md bg-sky-50 text-sky-600 flex items-center justify-center text-[10px] shrink-0 border border-sky-100 mt-0.5">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-[11px] text-slate-900 leading-tight">Flexible Learning</h4>
+                            <p class="text-[9.5px] text-slate-500 font-medium leading-tight mt-0.5">Choose your mode, time and location</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-1.5 p-2 rounded-lg bg-white/90 border border-blue-100/90 shadow-2xs">
+                        <div class="w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0 border border-emerald-100 mt-0.5">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-[11px] text-slate-900 leading-tight">Student Success</h4>
+                            <p class="text-[9.5px] text-slate-500 font-medium leading-tight mt-0.5">We support your complete learning journey</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote & Trust Footer -->
+            <div class="relative z-10 space-y-2.5 pt-2.5 mt-2 border-t border-blue-200/80">
+                <div class="p-2.5 rounded-lg bg-white/80 border border-blue-100 shadow-2xs">
+                    <div class="flex items-start gap-1.5">
+                        <i class="fas fa-quote-left text-blue-600 text-[10px] shrink-0 mt-0.5"></i>
+                        <p class="text-[10.5px] text-slate-700 italic font-medium leading-relaxed">
+                            “Education is the most powerful weapon which you can use to change the world.”
+                        </p>
+                    </div>
+                    <span class="text-[9.5px] font-extrabold text-blue-700 block text-right mt-0.5">— Nelson Mandela</span>
+                </div>
+
+                <div class="flex items-center justify-between text-[9.5px] font-bold text-slate-600 pt-0.5">
+                    <span>✓ Safe & Secure</span>
+                    <span>✓ Quality Tutors</span>
+                    <span>✓ Personal Support</span>
+                    <span>✓ Better Results</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- 2. RIGHT PANEL: SCROLLABLE FORM AREA ONLY (60% LG)       -->
+        <!-- ======================================================== -->
+        <div class="w-full lg:w-[60%] h-full overflow-y-auto hire-modal-scroll p-5 sm:p-6 lg:p-7 flex flex-col justify-between space-y-5">
+            
+            <div class="space-y-5">
+                <!-- Header -->
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold">
+                            <i class="fas fa-search text-[10px]"></i>
+                            <span>Tutor Request</span>
+                        </span>
+                    </div>
+                    <h2 id="hireTutorModalTitle" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2">
+                        Hire a <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Tutor</span>
+                    </h2>
+                    <p class="text-slate-500 text-xs sm:text-sm font-medium mt-0.5">
+                        Fill out the details below to find and hire the best verified tutor for your academic needs.
+                    </p>
+                </div>
+
+                <!-- 5-Step Visual Progress Indicator -->
+                <div class="grid grid-cols-5 gap-1.5 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 text-[10.5px] font-extrabold text-center">
+                    <div class="py-1.5 rounded-xl bg-white text-blue-600 shadow-sm border border-slate-200 flex items-center justify-center gap-1">
+                        <span class="w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center">1</span>
+                        <span class="hidden sm:inline">Personal</span>
+                    </div>
+                    <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                        <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">2</span>
+                        <span class="hidden sm:inline">Academic</span>
+                    </div>
+                    <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                        <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">3</span>
+                        <span class="hidden sm:inline">Contact</span>
+                    </div>
+                    <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                        <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">4</span>
+                        <span class="hidden sm:inline">Location</span>
+                    </div>
+                    <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                        <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">5</span>
+                        <span class="hidden sm:inline">Other</span>
+                    </div>
+                </div>
+
+                <!-- FORM START -->
+                <form id="tutorForm" onsubmit="handleFormSubmit(event)" class="space-y-4" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- 1. PERSONAL DETAILS SECTION -->
+                    <div class="p-4 rounded-2xl bg-blue-50/40 border border-blue-100 space-y-3">
+                        <h3 class="text-xs font-extrabold uppercase text-blue-700 tracking-wider flex items-center gap-2 border-b border-blue-100 pb-2">
+                            <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px]">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span>Personal Details</span>
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Your Name <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <input type="text" id="fullName" name="student_name" placeholder="e.g. Rahul Kumar" required
+                                        class="w-full hire-modal-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                </div>
+                                <p id="error-fullName" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Phone Number <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                        <i class="fas fa-phone-alt"></i>
+                                    </div>
+                                    <input type="tel" id="phoneNumber" name="mobile" placeholder="10-digit mobile number" required maxlength="10"
+                                        class="w-full hire-modal-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                </div>
+                                <p id="error-phoneNumber" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. ACADEMIC REQUIREMENTS SECTION -->
+                    <div class="p-4 rounded-2xl bg-purple-50/40 border border-purple-100 space-y-3">
+                        <h3 class="text-xs font-extrabold uppercase text-purple-700 tracking-wider flex items-center gap-2 border-b border-purple-100 pb-2">
+                            <span class="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-[10px]">
+                                <i class="fas fa-graduation-cap"></i>
+                            </span>
+                            <span>Academic Requirements</span>
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="academicGrid">
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Class / Grade <span class="text-rose-500">*</span></label>
+                                <select id="classSelect" name="student_class" required
+                                    class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium cursor-pointer">
+                                    <option value="" disabled selected class="bg-white text-slate-400">Select Class Level</option>
+                                    <option value="Class 1" class="bg-white text-slate-900">Class 1</option>
+                                    <option value="Class 2" class="bg-white text-slate-900">Class 2</option>
+                                    <option value="Class 3" class="bg-white text-slate-900">Class 3</option>
+                                    <option value="Class 4" class="bg-white text-slate-900">Class 4</option>
+                                    <option value="Class 5" class="bg-white text-slate-900">Class 5</option>
+                                    <option value="Class 6" class="bg-white text-slate-900">Class 6</option>
+                                    <option value="Class 7" class="bg-white text-slate-900">Class 7</option>
+                                    <option value="Class 8" class="bg-white text-slate-900">Class 8</option>
+                                    <option value="Class 9" class="bg-white text-slate-900">Class 9</option>
+                                    <option value="Class 10" class="bg-white text-slate-900">Class 10</option>
+                                    <option value="Class 11" class="bg-white text-slate-900">Class 11</option>
+                                    <option value="Class 12" class="bg-white text-slate-900">Class 12</option>
+                                </select>
+                                <p id="error-classSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+
+                            <div id="boardContainer" class="hidden">
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Board <span class="text-rose-500">*</span></label>
+                                <input type="text" id="boardSelect" name="board" list="boardOptions" placeholder="Select or type board..."
+                                    class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                <datalist id="boardOptions">
+                                    <option value="CBSE">
+                                    <option value="ICSE">
+                                    <option value="State Board">
+                                    <option value="UP Board">
+                                    <option value="MP Board">
+                                    <option value="Bihar Board">
+                                    <option value="IB">
+                                    <option value="IGCSE">
+                                    <option value="Other Board">
+                                </datalist>
+                                <p id="error-boardSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+
+                            <div id="streamContainer" class="hidden">
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Stream <span class="text-rose-500">*</span></label>
+                                <select id="streamSelect" name="stream"
+                                    class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium cursor-pointer">
+                                    <option value="" disabled selected class="bg-white text-slate-400">Select Stream</option>
+                                    <option value="Science" class="bg-white text-slate-900">Science</option>
+                                    <option value="Commerce" class="bg-white text-slate-900">Commerce</option>
+                                    <option value="Arts / Humanities" class="bg-white text-slate-900">Arts / Humanities</option>
+                                </select>
+                                <p id="error-streamSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+
+                            <div id="subjectWrapper" class="md:col-span-1">
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Subject <span class="text-rose-500">*</span></label>
+                                <input type="text" id="subjectSelect" name="subject" list="subjectOptions" placeholder="Select or type subject..." required
+                                    class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <datalist id="subjectOptions"></datalist>
+                                <p id="error-subjectSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. CONTACT DETAILS SECTION -->
+                    <div class="p-4 rounded-2xl bg-teal-50/40 border border-teal-100 space-y-3">
+                        <h3 class="text-xs font-extrabold uppercase text-teal-700 tracking-wider flex items-center gap-2 border-b border-teal-100 pb-2">
+                            <span class="w-6 h-6 rounded-lg bg-teal-600 text-white flex items-center justify-center text-[10px]">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <span>Contact Details</span>
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Pincode <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                        <i class="fas fa-map-pin"></i>
+                                    </div>
+                                    <input type="text" id="pincodeInput" name="pincode" placeholder="6-digit pincode" required maxlength="6"
+                                        class="w-full hire-modal-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                </div>
+                                <p id="error-pincodeInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <input type="email" id="emailAddress" name="email" placeholder="name@example.com" required
+                                        class="w-full hire-modal-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                </div>
+                                <p id="error-emailAddress" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. ADDRESS DETAILS SECTION -->
+                    <div class="p-4 rounded-2xl bg-blue-50/40 border border-blue-100 space-y-3">
+                        <div class="flex items-center justify-between border-b border-blue-100 pb-2">
+                            <h3 class="text-xs font-extrabold uppercase text-blue-700 tracking-wider flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </span>
+                                <span>Address Details</span>
+                            </h3>
+                            <button type="button" id="hireDetectLocationBtn" title="Auto-detect current location" class="text-blue-700 hover:text-blue-800 text-[11px] font-extrabold px-3 py-1 bg-white hover:bg-blue-50 rounded-lg border border-blue-200 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs">
+                                <i class="fas fa-crosshairs text-blue-600"></i> Auto Detect Location
+                            </button>
+                        </div>
+
+                        <div class="space-y-3.5 relative">
+                            <!-- Row 1: State | City -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">State <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="stateInput" name="state" list="stateOptions" placeholder="Select or type state" required
+                                        class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    <datalist id="stateOptions"></datalist>
+                                    <p id="error-stateInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">City <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="cityInput" name="city" list="cityOptions" placeholder="Select or type city" required
+                                        class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    <datalist id="cityOptions"></datalist>
+                                    <p id="error-cityInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Area / Locality | Landmark -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Area / Locality <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="areaInput" name="area" placeholder="e.g. Gomti Nagar" required
+                                        class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    <p id="error-areaInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Landmark <span class="text-xs text-slate-400 font-normal lowercase">(optional)</span></label>
+                                    <input type="text" id="landmarkInput" name="landmark" placeholder="e.g. Near City Mall"
+                                        class="w-full hire-modal-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Your Complete Address -->
+                            <div>
+                                <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Your Complete Address <span class="text-rose-500">*</span></label>
+                                <textarea id="completeAddress" name="complete_address" rows="2" required placeholder="House/Flat No., Street, Colony, Building name..."
+                                    class="w-full hire-modal-input-field p-3 rounded-xl text-xs sm:text-sm font-medium resize-none"></textarea>
+                                <p id="error-completeAddress" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                            </div>
+                            
+                            <!-- Location suggestions dropdown -->
+                            <div id="hireLocationSuggestions" class="hidden absolute left-0 right-0 top-12 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 max-h-56 overflow-y-auto text-xs"></div>
+                        </div>
+                    </div>
+
+                    <!-- 5. OTHER REQUIREMENTS SECTION -->
+                    <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100 space-y-2">
+                        <h3 class="text-xs font-extrabold uppercase text-indigo-700 tracking-wider flex items-center gap-2 border-b border-indigo-100 pb-2">
+                            <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-[10px]">
+                                <i class="fas fa-comment-alt"></i>
+                            </span>
+                            <span>Additional Requirements <span class="text-xs text-slate-400 font-normal lowercase">(optional)</span></span>
+                        </h3>
+                        <textarea id="additionalRequirements" name="additional_requirements" rows="2" placeholder="Mention preferred timing, online/home tuition, tutor gender preference, or specific needs..."
+                            class="w-full hire-modal-input-field p-3 rounded-xl text-xs sm:text-sm font-medium resize-none"></textarea>
+                    </div>
+
+                    <!-- Global Form Error Banner -->
+                    <div id="formErrorBanner" class="hidden p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-600 rounded-2xl text-xs font-semibold flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle text-rose-500 text-base shrink-0"></i>
+                        <span id="formErrorMessage">Please correct the highlighted errors before submitting.</span>
+                    </div>
+
+                    <!-- SUBMIT BUTTON & SECURITY -->
+                    <div class="space-y-3 pt-2">
+                        <button type="submit" id="submitBtn"
+                            class="w-full h-[54px] bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl text-xs sm:text-sm transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 border-0 cursor-pointer flex items-center justify-center gap-2">
+                            <span id="btnText">Find My Tutor</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Security & Privacy Footer -->
+                    <div class="text-center pt-1 border-t border-slate-100">
+                        <p class="text-[11px] text-slate-500 font-medium flex items-center justify-center gap-1.5 mb-0">
+                            <i class="fas fa-shield-alt text-emerald-600"></i>
+                            <span>Your information is safe with us. We connect you with verified and trusted tutors only.</span>
+                        </p>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- CENTRALIZED HIRE TUTOR MODAL CONTROLLER & FORM SCRIPT     -->
+<!-- ========================================================= -->
+<script>
+(function() {
+
+    // 1. DATA MAPPINGS
+    const classSubjectMapping = {
+        "Class 1": ["Mathematics", "English", "Hindi", "EVS", "General Knowledge", "Art & Craft"],
+        "Class 2": ["Mathematics", "English", "Hindi", "EVS", "General Knowledge", "Computer Basics"],
+        "Class 3": ["Mathematics", "Science", "Social Studies", "English", "Hindi", "Computer Science"],
+        "Class 4": ["Mathematics", "Science", "Social Studies", "English", "Hindi", "Computer Science"],
+        "Class 5": ["Mathematics", "Science", "Social Studies", "English", "Hindi", "Computer Science"],
+        "Class 6": ["Mathematics", "Science", "Social Studies", "English", "Hindi", "Computer Science", "Sanskrit"],
+        "Class 7": ["Mathematics", "Science", "Social Studies", "English", "Hindi", "Computer Science", "Sanskrit"],
+        "Class 8": ["Mathematics", "Science", "Social Studies", "English", "Hindi", "Computer Science", "Sanskrit"],
+        "Class 9": ["Mathematics", "Science", "Physics", "Chemistry", "Biology", "Social Science", "History", "Geography", "Civics", "Economics", "English", "Hindi", "Computer Applications", "Information Technology"],
+        "Class 10": ["Mathematics", "Science", "Physics", "Chemistry", "Biology", "Social Science", "History", "Geography", "Civics", "Economics", "English", "Hindi", "Computer Applications", "Information Technology"],
+        "Class 11": {
+            "Science": ["Physics", "Chemistry", "Mathematics", "Biology", "Computer Science", "Informatics Practices", "English Core", "Hindi Core", "Physical Education"],
+            "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices", "English Core", "Hindi Core", "Entrepreneurship"],
+            "Arts / Humanities": ["History", "Political Science", "Geography", "Economics", "Psychology", "Sociology", "English Core", "Hindi Core", "Philosophy"]
+        },
+        "Class 12": {
+            "Science": ["Physics", "Chemistry", "Mathematics", "Biology", "Computer Science", "Informatics Practices", "English Core", "Hindi Core", "Physical Education"],
+            "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices", "English Core", "Hindi Core", "Entrepreneurship"],
+            "Arts / Humanities": ["History", "Political Science", "Geography", "Economics", "Psychology", "Sociology", "English Core", "Hindi Core", "Philosophy"]
+        }
+    };
+
+    const indianStatesAndCities = {
+        "Uttar Pradesh": ["Lucknow", "Noida", "Greater Noida", "Ghaziabad", "Kanpur", "Varanasi", "Agra", "Prayagraj", "Meerut", "Gorakhpur", "Bareilly", "Aligarh", "Jhansi", "Mathura", "Ayodhya"],
+        "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi", "Central Delhi"],
+        "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Navi Mumbai", "Aurangabad", "Solapur"],
+        "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi", "Davangere"],
+        "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar"],
+        "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem"],
+        "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Siliguri", "Asansol"],
+        "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+        "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner", "Ajmer"],
+        "Bihar": ["Patna", "Gaya", "Muzaffarpur", "Bhagalpur", "Darbhanga"],
+        "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain"],
+        "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Karnal", "Hisar"],
+        "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Mohali"],
+        "Chandigarh": ["Chandigarh"]
+    };
+
+    // 2. OPEN / CLOSE MODAL CONTROLLER
+    window.openHireTutorModal = function(skipPushState = false) {
+        const modal = document.getElementById('hireTutorModal');
+        if (!modal) return;
+        
+        if (typeof closeAuthModal === 'function') {
+            closeAuthModal(true);
+        }
+
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            const card = document.getElementById('hireTutorModalCard');
+            if (card) {
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }
+            const nameInp = document.getElementById('fullName');
+            if (nameInp) nameInp.focus();
+        }, 15);
+
+        document.body.style.overflow = 'hidden';
+
+        if (!skipPushState) {
+            const currentPath = window.location.pathname.toLowerCase();
+            if (currentPath !== '/hire/' && currentPath !== '/hire.html' && currentPath !== '/hire') {
+                history.pushState({ popup: 'hire-tutor' }, '', '/hire/');
+            }
+        }
+    };
+
+    window.closeHireTutorModal = function(skipPushState = false) {
+        const modal = document.getElementById('hireTutorModal');
+        const card = document.getElementById('hireTutorModalCard');
+        if (!modal) return;
+
+        if (document.activeElement && modal.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
+        if (card) {
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+        }
+        modal.classList.add('opacity-0');
+
+        if (!skipPushState) {
+            const currentPath = window.location.pathname.toLowerCase();
+            if (currentPath.includes('/hire')) {
+                history.pushState({ modalClosed: true }, '', '/');
+            }
+        }
+
+        setTimeout(() => {
+            if (document.activeElement && modal.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }, 250);
+    };
+
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('hireTutorModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeHireTutorModal();
+            }
+        }
+    });
+
+    // Handle browser Back/Forward popstate
+    window.addEventListener('popstate', function(e) {
+        const path = window.location.pathname.toLowerCase();
+        const isHirePath = path === '/hire/' || path === '/hire' || path === '/hire.html';
+        const modal = document.getElementById('hireTutorModal');
+        
+        if (isHirePath) {
+            openHireTutorModal(true);
+        } else {
+            if (modal && !modal.classList.contains('hidden')) {
+                closeHireTutorModal(true);
+            }
+        }
+    });
+
+    function detectHirePopupState() {
+        const serverPopup = "{{ initial_popup|default:'' }}";
+        const path = window.location.pathname.toLowerCase();
+        if (serverPopup === 'hire-tutor' || path === '/hire/' || path === '/hire' || path === '/hire.html') {
+            return true;
+        }
+        return false;
+    }
+
+    // 3. ACADEMIC DYNAMIC TOGGLES & DATALIST
+    function updateAcademicUI() {
+        const classSelect = document.getElementById('classSelect');
+        if (!classSelect) return;
+        const classVal = classSelect.value;
+        const boardContainer = document.getElementById('boardContainer');
+        const boardSelect = document.getElementById('boardSelect');
+        const streamContainer = document.getElementById('streamContainer');
+        const streamSelect = document.getElementById('streamSelect');
+        const subjectSelect = document.getElementById('subjectSelect');
+        const subjectOptions = document.getElementById('subjectOptions');
+
+        // Board Toggle (Class 9-12)
+        if (['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(classVal)) {
+            boardContainer?.classList.remove('hidden');
+            if (boardSelect) boardSelect.required = true;
+        } else {
+            boardContainer?.classList.add('hidden');
+            if (boardSelect) {
+                boardSelect.required = false;
+                boardSelect.value = '';
+            }
+        }
+
+        // Stream Toggle (Class 11-12)
+        if (['Class 11', 'Class 12'].includes(classVal)) {
+            streamContainer?.classList.remove('hidden');
+            if (streamSelect) streamSelect.required = true;
+        } else {
+            streamContainer?.classList.add('hidden');
+            if (streamSelect) {
+                streamSelect.required = false;
+                streamSelect.value = '';
+            }
+        }
+
+        // Subject options populate & enable
+        if (subjectOptions) subjectOptions.innerHTML = '';
+        if (!classVal) {
+            if (subjectSelect) {
+                subjectSelect.disabled = true;
+                subjectSelect.placeholder = "Select class first...";
+            }
+            return;
+        }
+
+        if (subjectSelect) {
+            subjectSelect.disabled = false;
+            subjectSelect.placeholder = "Select or type subject...";
+        }
+
+        let subjects = [];
+        if (['Class 11', 'Class 12'].includes(classVal)) {
+            const streamVal = streamSelect ? streamSelect.value : '';
+            if (streamVal && classSubjectMapping[classVal] && classSubjectMapping[classVal][streamVal]) {
+                subjects = classSubjectMapping[classVal][streamVal];
+            } else if (classSubjectMapping[classVal]) {
+                const allStreams = Object.values(classSubjectMapping[classVal]);
+                subjects = [...new Set(allStreams.flat())];
+            }
+        } else if (classSubjectMapping[classVal]) {
+            subjects = classSubjectMapping[classVal];
+        }
+
+        if (subjectOptions) {
+            subjects.forEach(subj => {
+                const opt = document.createElement('option');
+                opt.value = subj;
+                subjectOptions.appendChild(opt);
+            });
+        }
+    }
+
+    // 4. STATE & CITY DATALIST
+    function initStateCitySystem() {
+        const stateInput = document.getElementById('stateInput');
+        const stateOptions = document.getElementById('stateOptions');
+        const cityInput = document.getElementById('cityInput');
+        const cityOptions = document.getElementById('cityOptions');
+
+        if (stateOptions) {
+            stateOptions.innerHTML = '';
+            Object.keys(indianStatesAndCities).forEach(st => {
+                const opt = document.createElement('option');
+                opt.value = st;
+                stateOptions.appendChild(opt);
+            });
+        }
+
+        if (stateInput) {
+            stateInput.addEventListener('input', function() {
+                const val = this.value.trim();
+                if (cityOptions) {
+                    cityOptions.innerHTML = '';
+                    if (indianStatesAndCities[val]) {
+                        indianStatesAndCities[val].forEach(ct => {
+                            const opt = document.createElement('option');
+                            opt.value = ct;
+                            cityOptions.appendChild(opt);
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    // 5. FORM SUBMISSION HANDLER
+    window.handleFormSubmit = async function(event) {
+        event.preventDefault();
+        const form = document.getElementById('tutorForm');
+        if (!form) return;
+
+        // Reset error UI
+        document.querySelectorAll('[id^="error-"]').forEach(el => {
+            el.classList.add('hidden');
+            el.innerText = '';
+        });
+        const errorBanner = document.getElementById('formErrorBanner');
+        if (errorBanner) errorBanner.classList.add('hidden');
+
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((val, key) => { data[key] = val; });
+
+        // Client-side validation
+        let hasError = false;
+
+        function showError(fieldId, msg) {
+            hasError = true;
+            const errEl = document.getElementById('error-' + fieldId);
+            if (errEl) {
+                errEl.innerText = msg;
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        if (!data.student_name || data.student_name.trim().length < 2) {
+            showError('fullName', 'Full name is required (minimum 2 characters).');
+        }
+
+        if (!data.mobile || !/^[6-9]\d{9}$/.test(data.mobile.trim())) {
+            showError('phoneNumber', 'Please enter a valid 10-digit Indian mobile number.');
+        }
+
+        if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+            showError('emailAddress', 'Please enter a valid email address.');
+        }
+
+        if (!data.student_class) {
+            showError('classSelect', 'Please select your class grade.');
+        }
+
+        if (['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(data.student_class)) {
+            if (!data.board) {
+                showError('boardSelect', 'Board is required for Class 9 to 12.');
+            }
+        }
+
+        if (['Class 11', 'Class 12'].includes(data.student_class)) {
+            if (!data.stream) {
+                showError('streamSelect', 'Stream is required for Class 11 & 12.');
+            }
+        }
+
+        if (!data.subject || !data.subject.trim()) {
+            showError('subjectSelect', 'Please select or enter a subject.');
+        }
+
+        if (!data.pincode || !/^\d{6}$/.test(data.pincode.trim())) {
+            showError('pincodeInput', 'Pincode must be exactly 6 digits.');
+        }
+
+        if (!data.state || !data.state.trim()) {
+            showError('stateInput', 'State is required.');
+        }
+
+        if (!data.city || !data.city.trim()) {
+            showError('cityInput', 'City is required.');
+        }
+
+        if (!data.area || !data.area.trim()) {
+            showError('areaInput', 'Area / Locality is required.');
+        }
+
+        if (!data.complete_address || !data.complete_address.trim()) {
+            showError('completeAddress', 'Complete address is required.');
+        }
+
+        if (hasError) {
+            if (errorBanner) errorBanner.classList.remove('hidden');
+            return;
+        }
+
+        // Submit via fetch
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const originalText = btnText ? btnText.innerText : 'Find My Tutor';
+
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnText) btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+
+        try {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+            const response = await fetch('/hire/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.status === 'success') {
+                alert(result.message || 'Your tutor request has been submitted successfully!');
+                form.reset();
+                updateAcademicUI();
+                closeHireTutorModal();
+            } else {
+                if (result.errors) {
+                    const fieldMap = {
+                        'student_name': 'fullName',
+                        'mobile': 'phoneNumber',
+                        'email': 'emailAddress',
+                        'student_class': 'classSelect',
+                        'board': 'boardSelect',
+                        'stream': 'streamSelect',
+                        'subject': 'subjectSelect',
+                        'pincode': 'pincodeInput',
+                        'state': 'stateInput',
+                        'city': 'cityInput',
+                        'area': 'areaInput',
+                        'complete_address': 'completeAddress'
+                    };
+                    Object.keys(result.errors).forEach(key => {
+                        showError(fieldMap[key] || key, result.errors[key]);
+                    });
+                }
+                if (errorBanner) {
+                    const msgEl = document.getElementById('formErrorMessage');
+                    if (msgEl) msgEl.innerText = result.message || 'Please fix the highlighted errors before submitting.';
+                    errorBanner.classList.remove('hidden');
+                }
+            }
+        } catch (err) {
+            console.error('Submission error:', err);
+            alert('An unexpected error occurred. Please try again.');
+        } finally {
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnText) btnText.innerText = originalText;
+        }
+    };
+
+    // DOM CONTENT LOADED INITIALIZATIONS
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('hireTutorModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeHireTutorModal();
+                }
+            });
+        }
+
+        const classSelect = document.getElementById('classSelect');
+        const streamSelect = document.getElementById('streamSelect');
+        if (classSelect) classSelect.addEventListener('change', updateAcademicUI);
+        if (streamSelect) streamSelect.addEventListener('change', updateAcademicUI);
+
+        initStateCitySystem();
+        updateAcademicUI();
+
+        // Location Auto-Detect Button
+        const hireDetectBtn = document.getElementById('hireDetectLocationBtn');
+        if (hireDetectBtn) {
+            hireDetectBtn.addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    alert('Location detection is not supported by this browser.');
+                    return;
+                }
+                const originalHtml = hireDetectBtn.innerHTML;
+                hireDetectBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-600"></i> Detecting Location...';
+                hireDetectBtn.disabled = true;
+
+                navigator.geolocation.getCurrentPosition(
+                    async (pos) => {
+                        try {
+                            const lat = pos.coords.latitude;
+                            const lon = pos.coords.longitude;
+                            const response = await fetch(`/api/location/reverse-geocode/?lat=${lat}&lon=${lon}`);
+                            const resData = await response.json();
+
+                            if (response.ok && resData.status === 200 && resData.location) {
+                                const loc = resData.location;
+
+                                const pincodeInp = document.getElementById('pincodeInput');
+                                const stateInp = document.getElementById('stateInput');
+                                const cityInp = document.getElementById('cityInput');
+                                const areaInp = document.getElementById('areaInput');
+                                const landmarkInp = document.getElementById('landmarkInput');
+                                const completeAddrInp = document.getElementById('completeAddress');
+
+                                if (loc.pincode && pincodeInp) pincodeInp.value = loc.pincode;
+                                if (loc.state && stateInp) {
+                                    stateInp.value = loc.state;
+                                    stateInp.dispatchEvent(new Event('input'));
+                                }
+                                if (loc.city && cityInp) cityInp.value = loc.city;
+                                if (loc.area && areaInp) areaInp.value = loc.area;
+                                if (loc.landmark && landmarkInp) landmarkInp.value = loc.landmark;
+                                if (loc.complete_address && completeAddrInp) completeAddrInp.value = loc.complete_address;
+
+                                hireDetectBtn.innerHTML = '<i class="fas fa-check text-emerald-600"></i> Location Detected ✓';
+                            } else {
+                                alert(resData.message || 'Unable to convert your location into an address. Please try again.');
+                                hireDetectBtn.innerHTML = originalHtml;
+                            }
+                        } catch (e) {
+                            console.error('Reverse Geocode Fetch Error:', e);
+                            alert('Unable to retrieve address information. Please check your internet connection and try again.');
+                            hireDetectBtn.innerHTML = originalHtml;
+                        } finally {
+                            setTimeout(() => {
+                                hireDetectBtn.innerHTML = originalHtml;
+                                hireDetectBtn.disabled = false;
+                            }, 2000);
+                        }
+                    },
+                    (err) => {
+                        let msg = 'Unable to detect location. Please try again.';
+                        if (err.code === err.PERMISSION_DENIED) {
+                            msg = 'Location access was denied. Please allow location access to use Auto Detect Location.';
+                        } else if (err.code === err.POSITION_UNAVAILABLE) {
+                            msg = 'Unable to determine your current location. Please try again.';
+                        } else if (err.code === err.TIMEOUT) {
+                            msg = 'Location detection timed out. Please try again.';
+                        }
+                        alert(msg);
+                        hireDetectBtn.innerHTML = originalHtml;
+                        hireDetectBtn.disabled = false;
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            });
+        }
+
+        if (detectHirePopupState()) {
+            openHireTutorModal(true);
+        }
+    });
+
+})();
+</script>

@@ -1,0 +1,77 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: SETTINGS                                 -->
+<!-- ======================================================== -->
+<div id="teacherModule_settings" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-sliders-h"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Account & Portal Settings</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Configure your teaching notifications, security passwords, live classroom preferences and account details.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="alert('Settings saved successfully!')" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-save text-xs"></i> <span>Save Preferences</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- SETTINGS TABS & CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- CARD 1: NOTIFICATION PREFERENCES -->
+        <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Notification Preferences</h3>
+            <div class="space-y-3 text-xs">
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60">
+                    <div>
+                        <strong class="text-slate-900 dark:text-white block font-bold">Live Class Reminders</strong>
+                        <span class="text-[11px] text-slate-400">Receive alerts 15 minutes before scheduled class</span>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                </div>
+
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60">
+                    <div>
+                        <strong class="text-slate-900 dark:text-white block font-bold">New Homework Submissions</strong>
+                        <span class="text-[11px] text-slate-400">Notify when a student submits an assignment</span>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                </div>
+
+                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60">
+                    <div>
+                        <strong class="text-slate-900 dark:text-white block font-bold">Student Doubt Queries</strong>
+                        <span class="text-[11px] text-slate-400">Email alerts on new discussion questions</span>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: PASSWORD & SECURITY -->
+        <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Password & Security</h3>
+            <div class="space-y-3 text-xs font-semibold">
+                <div class="space-y-1">
+                    <label class="text-slate-500 dark:text-slate-400 text-[11px] block">Current Password</label>
+                    <input type="password" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-slate-500 dark:text-slate-400 text-[11px] block">New Password</label>
+                    <input type="password" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white">
+                </div>
+                <button onclick="alert('Password updated successfully!')" class="px-4 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-extrabold text-xs border-0 cursor-pointer">
+                    Update Password
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>

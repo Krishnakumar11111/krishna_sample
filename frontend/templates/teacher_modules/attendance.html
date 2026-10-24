@@ -1,0 +1,108 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: ATTENDANCE REGISTER                      -->
+<!-- ======================================================== -->
+<div id="teacherModule_attendance" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-calendar-check"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Attendance Register</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Mark daily class attendance, track absent alerts and export monthly attendance spreadsheets.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="markAllPresent()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer hover:bg-slate-200">
+                <i class="fas fa-check-double text-emerald-500 mr-1"></i> Mark All Present
+            </button>
+            <button onclick="saveAttendanceRecord()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md shadow-emerald-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-save text-xs"></i> <span>Save Attendance</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- DATE & BATCH SELECTOR -->
+    <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+            <div class="space-y-1">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Select Class / Batch</label>
+                <select class="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <option>Class 10 CBSE - Target 100 Batch A</option>
+                    <option>Class 12 CBSE - Board Achievers Batch B</option>
+                    <option>Class 9 Foundation - Science & Maths</option>
+                </select>
+            </div>
+            <div class="space-y-1">
+                <label class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Attendance Date</label>
+                <input type="date" value="2026-10-07" class="px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300">
+            </div>
+        </div>
+        <div class="flex items-center gap-4 text-xs font-bold">
+            <span class="text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block mr-1"></span> Present: <strong id="attPresentCount">26</strong></span>
+            <span class="text-rose-600"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block mr-1"></span> Absent: <strong id="attAbsentCount">2</strong></span>
+            <span class="text-amber-600"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block mr-1"></span> Late: <strong id="attLateCount">0</strong></span>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE TABLE -->
+    <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="text-[10px] font-extrabold uppercase text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <th class="py-2.5 px-3">Roll #</th>
+                        <th class="py-2.5 px-3">Student Name</th>
+                        <th class="py-2.5 px-3">Monthly Avg</th>
+                        <th class="py-2.5 px-3 text-center">Status</th>
+                        <th class="py-2.5 px-3">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold text-slate-700 dark:text-slate-300">
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3 px-3 font-mono text-slate-400">#101</td>
+                        <td class="py-3 px-3"><strong class="text-slate-900 dark:text-white block">Aman Verma</strong></td>
+                        <td class="py-3 px-3 font-bold text-emerald-600">96%</td>
+                        <td class="py-3 px-3 text-center">
+                            <div class="inline-flex rounded-xl p-1 bg-slate-100 dark:bg-slate-800 text-[11px] font-bold">
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white border-0 cursor-pointer">Present</button>
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-transparent text-slate-400 hover:text-rose-500 border-0 cursor-pointer">Absent</button>
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-transparent text-slate-400 hover:text-amber-500 border-0 cursor-pointer">Late</button>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><input type="text" placeholder="Add note..." class="px-2 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs w-40"></td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3 px-3 font-mono text-slate-400">#102</td>
+                        <td class="py-3 px-3"><strong class="text-slate-900 dark:text-white block">Priya Sharma</strong></td>
+                        <td class="py-3 px-3 font-bold text-emerald-600">94%</td>
+                        <td class="py-3 px-3 text-center">
+                            <div class="inline-flex rounded-xl p-1 bg-slate-100 dark:bg-slate-800 text-[11px] font-bold">
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white border-0 cursor-pointer">Present</button>
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-transparent text-slate-400 hover:text-rose-500 border-0 cursor-pointer">Absent</button>
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-transparent text-slate-400 hover:text-amber-500 border-0 cursor-pointer">Late</button>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><input type="text" placeholder="Add note..." class="px-2 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs w-40"></td>
+                    </tr>
+                    <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-3 px-3 font-mono text-slate-400">#103</td>
+                        <td class="py-3 px-3"><strong class="text-slate-900 dark:text-white block">Rahul Gupta</strong></td>
+                        <td class="py-3 px-3 font-bold text-amber-600">76%</td>
+                        <td class="py-3 px-3 text-center">
+                            <div class="inline-flex rounded-xl p-1 bg-slate-100 dark:bg-slate-800 text-[11px] font-bold">
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-transparent text-slate-400 hover:text-emerald-500 border-0 cursor-pointer">Present</button>
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white border-0 cursor-pointer">Absent</button>
+                                <button type="button" class="px-2.5 py-1 rounded-lg bg-transparent text-slate-400 hover:text-amber-500 border-0 cursor-pointer">Late</button>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3"><input type="text" value="Medical Leave" class="px-2 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs w-40"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

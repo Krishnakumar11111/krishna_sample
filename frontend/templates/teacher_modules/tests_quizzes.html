@@ -1,0 +1,92 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: TESTS & QUIZZES                          -->
+<!-- ======================================================== -->
+<div id="teacherModule_tests_quizzes" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-file-signature"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Tests & Quizzes</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Create online MCQ mock tests, timed chapter quizzes, evaluate test results and auto-rank students.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openCreateTestModal()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md shadow-emerald-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-plus-circle text-xs"></i> <span>Create New Test</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Tests Created</span>
+            <strong class="text-xl font-black text-slate-900 dark:text-white block">{{ tests_created_count|default:"8" }}</strong>
+            <span class="text-[10px] text-emerald-600 font-bold">Total assessments</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Total Attempts</span>
+            <strong class="text-xl font-black text-blue-600 block">164</strong>
+            <span class="text-[10px] text-blue-600 font-bold">Student submissions</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Avg Batch Score</span>
+            <strong class="text-xl font-black text-purple-600 block">{{ best_class_score|default:"82%" }}</strong>
+            <span class="text-[10px] text-purple-600 font-bold">Class average</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Pass Percentage</span>
+            <strong class="text-xl font-black text-emerald-600 block">94.5%</strong>
+            <span class="text-[10px] text-emerald-600 font-bold">Students passed</span>
+        </div>
+    </div>
+
+    <!-- TESTS LIST -->
+    <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Active Online Tests</h3>
+            <button onclick="openCreateTestModal()" class="text-xs font-bold text-emerald-600 hover:underline bg-transparent border-0 cursor-pointer">+ New MCQ Test</button>
+        </div>
+
+        <div class="space-y-3">
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Class 10 CBSE</span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Active</span>
+                        <span class="text-[11px] text-slate-400 font-semibold">• 25 MCQs • 45 Mins • 50 Marks</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">Weekly Test 3: Quadratic Equations & Arithmetic Progressions</h4>
+                    <p class="text-[11px] text-slate-400 font-medium m-0">Negative marking enabled (-0.25). Instant auto-grading & rank leaderboard.</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="alert('Viewing results and student leaderboard')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs border-0 cursor-pointer shadow-xs">
+                        Results (26/28)
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:shadow-md transition-all">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300">Class 12 CBSE</span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Active</span>
+                        <span class="text-[11px] text-slate-400 font-semibold">• 30 Questions • 60 Mins • 70 Marks</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">Physics Unit Test 1: Electrostatic Potential & Capacitance</h4>
+                    <p class="text-[11px] text-slate-400 font-medium m-0">Dielectric polarization, energy stored in capacitors and equipotential surfaces.</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="alert('Viewing results and student leaderboard')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs border-0 cursor-pointer shadow-xs">
+                        Results (30/32)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

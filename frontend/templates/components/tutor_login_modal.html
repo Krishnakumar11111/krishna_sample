@@ -1,0 +1,1086 @@
+{% load static %}
+<!-- ========================================================= -->
+<!-- PREMIUM REUSABLE TEACHER / TUTOR LOGIN MODAL (EDUTRUST)   -->
+<!-- LEFT: Selected Tuition Requirement (Dynamic)              -->
+<!-- RIGHT: Teacher / Tutor Login Form & Benefits              -->
+<!-- ========================================================= -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+.edutrust-handwriting {
+    font-family: 'Caveat', cursive, sans-serif;
+}
+.custom-tutor-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-tutor-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-tutor-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+</style>
+
+<div id="tutorLoginModal" style="background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" class="fixed inset-0 z-[999999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto hidden transition-all duration-300 opacity-0" aria-hidden="true" role="dialog" aria-labelledby="tlmModalTitle">
+    
+    <!-- MAIN TWO-COLUMN MODAL CARD (880px Width, Compact & Premium) -->
+    <div id="tutorLoginModalCard" onclick="event.stopPropagation()" class="w-full max-w-[880px] bg-white rounded-[24px] sm:rounded-[26px] text-slate-900 relative transition-all duration-300 my-auto transform scale-95 overflow-hidden shadow-2xl border border-[#D9E3F0] flex flex-col lg:flex-row mx-auto max-h-[94vh]">
+        
+        <!-- ========================================================= -->
+        <!-- LEFT PANEL: SELECTED TUITION REQUIREMENT (~43% Width)     -->
+        <!-- ========================================================= -->
+        <div id="tutorLoginLeftPanel" class="w-full lg:w-[43%] bg-gradient-to-b from-[#f0f7ff] via-[#eaf4fe] to-[#e1f0fd] p-5 sm:p-6 flex flex-col justify-between overflow-y-auto custom-tutor-scroll relative border-b lg:border-b-0 lg:border-r border-[#d3e4f8] shrink-0">
+            
+            <!-- Bottom-Left Botanical Leaves Background Accent -->
+            <div class="absolute bottom-0 left-0 w-32 h-40 pointer-events-none select-none opacity-35 z-0">
+                <svg viewBox="0 0 140 180" fill="none" class="w-full h-full text-blue-400/60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-10 190C10 140 40 100 80 80C60 110 50 150 40 190Z" fill="currentColor"/>
+                    <path d="M10 130C30 90 70 70 110 65C80 85 70 120 60 150Z" fill="currentColor" fill-opacity="0.7"/>
+                    <path d="M40 85C60 50 100 35 135 30C110 50 95 80 85 110Z" fill="currentColor" fill-opacity="0.5"/>
+                    <path d="M10 180Q50 110 110 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="space-y-3.5 relative z-10">
+                
+                <!-- EduTrust Brand Header + Handwritten Callout Aligned Bar -->
+                <div class="flex items-center justify-between gap-2 pb-1 border-b border-blue-200/50">
+                    <!-- Brand -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-xl bg-[#2563eb] flex items-center justify-center text-white text-xs shadow-xs shrink-0">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
+                            <span class="font-black text-slate-900 text-base tracking-tight leading-tight">Edu<span class="text-[#2563eb]">Trust</span></span>
+                            <span class="text-[9px] text-slate-400 font-semibold leading-tight sm:border-l sm:border-slate-300 sm:pl-1.5 hidden xs:inline-block">
+                                Learn Today • Grow Tomorrow
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Handwritten Callout Badge: Login to Apply for This Job -->
+                    <div class="select-none shrink-0">
+                        <div class="inline-flex items-center gap-1.5 edutrust-handwriting text-[#2563eb] font-bold text-xs sm:text-[13px] bg-white/90 border border-blue-200/90 px-2.5 py-1 rounded-full shadow-2xs">
+                            <span class="text-[10px] leading-none text-amber-500">✨</span>
+                            <span class="tracking-tight whitespace-nowrap">Login to Apply for This Job</span>
+                            <span class="text-[10px] leading-none text-amber-500">✨</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requirement Header Badge Strip -->
+                <div class="flex items-center justify-between gap-2 pt-0.5">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-blue-100 text-[#2563eb] flex items-center justify-center text-xs shadow-2xs">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black text-slate-900 leading-tight m-0">Selected Tuition Requirement</h4>
+                            <span class="text-[9.5px] text-slate-500 font-medium block">Here’s the opportunity you want to apply for</span>
+                        </div>
+                    </div>
+                    <span id="tlmVerifiedBadge" class="bg-emerald-50 text-emerald-700 border border-emerald-200/90 font-bold px-2 py-0.5 rounded-full text-[9.5px] inline-flex items-center gap-1 shrink-0">
+                        <i class="fas fa-check-circle text-[8px] text-emerald-600"></i> Verified Opportunity
+                    </span>
+                </div>
+
+                <!-- Selected Job Title & Tuition Mode Badge -->
+                <div class="bg-white/95 rounded-2xl p-3.5 border border-blue-100 shadow-2xs space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0 flex-1">
+                            <h3 id="tlmJobTitle" class="text-sm sm:text-base font-black text-slate-900 leading-snug mb-0.5 break-words">Chemistry (Class 11)</h3>
+                            <div id="tlmClassBoard" class="text-xs font-bold text-slate-600">Class 11</div>
+                        </div>
+                        <span id="tlmTuitionModeBadge" class="bg-blue-50 text-[#2563eb] border border-blue-200/80 font-bold px-2 py-0.5 rounded-md text-[10px] inline-flex items-center gap-1 shrink-0 shadow-2xs whitespace-nowrap">
+                            <i class="fas fa-home text-[9px]"></i> <span id="tlmTuitionModeText">Home Tuition</span>
+                        </span>
+                    </div>
+
+                    <!-- Job Requirement Summary (Hover to open complete message) -->
+                    <div id="tlmJobDescContainer" class="relative group cursor-pointer bg-blue-50/50 hover:bg-blue-50/90 p-2.5 rounded-xl border border-blue-100/80 hover:border-blue-300 transition-all duration-200" title="Move cursor here to view complete message">
+                        <p id="tlmJobDesc" class="text-[11px] text-slate-700 font-medium leading-relaxed m-0 line-clamp-2 group-hover:line-clamp-none transition-all duration-300 select-text">
+                            Looking for an experienced tutor for Class 11 Chemistry. Need concept clarity and regular practice.
+                        </p>
+                        <div class="flex items-center justify-between text-[9.5px] text-[#2563eb] font-bold mt-1.5 pt-1 border-t border-blue-200/60">
+                            <span class="inline-flex items-center gap-1">
+                                <i class="fas fa-comment-dots text-[9px]"></i>
+                                <span class="group-hover:hidden text-slate-600 font-medium">Hover cursor to view full message</span>
+                                <span class="hidden group-hover:inline font-bold text-[#2563eb]">Complete Requirement Message</span>
+                            </span>
+                            <i class="fas fa-chevron-down text-[8px] transition-transform duration-200 group-hover:rotate-180 text-blue-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Job Details Grid (Icon, Label, Exact Value) -->
+                <div class="bg-white/95 rounded-2xl p-3 border border-blue-100 shadow-2xs space-y-1.5 text-[11px]">
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-book-open text-[#2563eb] text-[10px] w-3.5"></i> Subject
+                        </span>
+                        <strong id="tlmSubject" class="text-slate-900 font-bold">Chemistry</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-graduation-cap text-indigo-500 text-[10px] w-3.5"></i> Class
+                        </span>
+                        <strong id="tlmClass" class="text-slate-900 font-bold">Class 11</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-map-marker-alt text-rose-500 text-[10px] w-3.5"></i> Location
+                        </span>
+                        <strong id="tlmLocation" class="text-slate-900 font-bold truncate max-w-[170px]">Lucknow</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-chalkboard text-cyan-500 text-[10px] w-3.5"></i> Tuition Mode
+                        </span>
+                        <strong id="tlmMode" class="text-slate-900 font-bold">Home Tuition</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-wallet text-emerald-500 text-[10px] w-3.5"></i> Budget
+                        </span>
+                        <strong id="tlmBudget" class="text-[#2563eb] font-black">6000</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="far fa-clock text-amber-500 text-[10px] w-3.5"></i> Preferred Schedule
+                        </span>
+                        <strong id="tlmSchedule" class="text-slate-800 font-bold">3–4 days a week (Flexible)</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="far fa-calendar-alt text-slate-400 text-[10px] w-3.5"></i> Posted On
+                        </span>
+                        <strong id="tlmPostedDate" class="text-slate-800 font-bold">Flexible Timing</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-1 border-b border-slate-100">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-user text-purple-500 text-[10px] w-3.5"></i> Posted By
+                        </span>
+                        <strong id="tlmPostedBy" class="text-slate-800 font-bold">Parent / Student</strong>
+                    </div>
+                    <div class="flex items-center justify-between py-0.5">
+                        <span class="text-slate-500 font-semibold flex items-center gap-1.5">
+                            <i class="fas fa-file-invoice text-blue-500 text-[10px] w-3.5"></i> Requirement Type
+                        </span>
+                        <strong id="tlmReqType" class="text-slate-800 font-bold">Regular Classes</strong>
+                    </div>
+                </div>
+
+                <!-- Application Visual Callout Card (Lightbulb + Apply Info) -->
+                <div class="bg-white rounded-2xl border border-blue-200/90 p-3 flex items-center justify-between gap-2.5 shadow-2xs relative z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-sm shrink-0 shadow-2xs">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-xs font-extrabold text-[#2563eb] leading-tight m-0 edutrust-handwriting text-sm sm:text-base">Apply for this tuition opportunity</h5>
+                            <p class="text-[10px] text-slate-500 font-medium m-0">Login to continue and connect with the student.</p>
+                        </div>
+                    </div>
+                    <span class="text-[#2563eb] text-sm font-bold shrink-0 mr-1">→</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- RIGHT PANEL: TEACHER / TUTOR LOGIN FORM (~57% Width)      -->
+        <!-- ========================================================= -->
+        <div class="w-full lg:w-[57%] p-6 sm:p-7 md:p-8 flex flex-col justify-between overflow-y-auto custom-tutor-scroll bg-white relative">
+            
+            <!-- SINGLE CLOSE BUTTON (×) TOP-RIGHT -->
+            <button type="button" onclick="closeTutorLoginModal()" aria-label="Close Login Modal" class="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100/90 hover:bg-rose-500 hover:text-white text-slate-500 flex items-center justify-center text-sm sm:text-base transition-all border border-slate-200 cursor-pointer z-50 shadow-2xs">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- Top Right Handwritten Educational Doodle (Teach Inspire Grow) -->
+            <div class="absolute top-4 right-16 sm:top-5 sm:right-16 select-none pointer-events-none rotate-[6deg]">
+                <div class="edutrust-handwriting text-center text-[#2563eb] font-extrabold text-base sm:text-xl leading-tight">
+                    <span class="text-amber-400 text-xs mr-0.5">✨</span>Teach<br>
+                    Inspire<span class="text-amber-400 text-xs ml-0.5">✨</span><br>
+                    <span>Grow</span>
+                    <!-- Curved Warm Yellow Underline below Grow -->
+                    <svg class="w-16 h-2 text-amber-500 mx-auto -mt-0.5" viewBox="0 0 60 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 5.5C18 1.5 42 1.5 58 5.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div>
+                <!-- Job Application Header -->
+                <div class="text-center mb-4 sm:mb-5 pt-1">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-[#2563eb] to-[#3b82f6] text-white flex items-center justify-center text-lg sm:text-xl mx-auto mb-2 shadow-md shadow-blue-500/20">
+                        <i id="tlmHeaderIcon" class="fas fa-paper-plane"></i>
+                    </div>
+                    <h3 id="tlmModalTitle" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-0.5">Apply for This Tuition Job</h3>
+                    <p id="tlmModalSubtitle" class="text-xs sm:text-sm text-slate-500 font-medium m-0">Enter your details to receive a verification OTP & apply</p>
+                </div>
+
+                <!-- Quotation Banner -->
+                <div id="tlmQuoteBanner" class="relative bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-blue-50/80 rounded-2xl p-3 sm:p-3.5 mb-4 border border-blue-100/90 text-center">
+                    <span class="absolute -top-3 left-4 text-2xl font-serif text-blue-300 pointer-events-none select-none leading-none">“</span>
+                    <span class="absolute -bottom-5 right-4 text-2xl font-serif text-blue-300 pointer-events-none select-none leading-none">”</span>
+                    <p class="text-xs sm:text-[13px] text-slate-700 italic font-semibold leading-snug m-0">
+                        Teach with purpose. Inspire with knowledge.
+                    </p>
+                    <div class="edutrust-handwriting text-xs sm:text-sm font-black text-[#2563eb] mt-0.5 relative inline-block">
+                        Create a difference.
+                        <svg class="w-full h-1.5 text-amber-400 mx-auto -mt-0.5" viewBox="0 0 50 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 4C15 1.5 35 1.5 48 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Notification / Alert Banner (Supports Info/Success in Blue/Green & Error in Red) -->
+                <div id="tutorLoginAlert" class="hidden mb-4 p-3 rounded-xl border text-xs flex items-center gap-2">
+                    <i id="tutorLoginAlertIcon" class="fas fa-info-circle text-sm shrink-0"></i>
+                    <span id="tutorLoginAlertText" class="font-semibold leading-tight"></span>
+                </div>
+
+                <!-- Legacy Error Div placeholder for backwards compatibility -->
+                <div id="tutorLoginError" class="hidden"></div>
+
+                <!-- ============================================== -->
+                <!-- STEP 1: DIRECT DETAILS INPUT FORM (NAME, MOBILE, EMAIL) -->
+                <!-- ============================================== -->
+                <form id="tutorLoginForm" onsubmit="submitTutorLogin(event)" class="space-y-3">
+                    <!-- FULL NAME FIELD -->
+                    <div>
+                        <label for="tutorLoginName" class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                                <i class="far fa-user"></i>
+                            </div>
+                            <input type="text" id="tutorLoginName" name="name" required placeholder="Enter your full name" class="w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50/70 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-[#2563eb] transition-all placeholder:text-slate-400 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- MOBILE NUMBER FIELD -->
+                    <div>
+                        <label for="tutorLoginMobile" class="block text-xs font-bold text-slate-700 mb-1">Mobile Number</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <input type="tel" id="tutorLoginMobile" name="mobile" required placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" maxlength="10" inputmode="numeric" class="w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50/70 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-[#2563eb] transition-all placeholder:text-slate-400 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- EMAIL ADDRESS FIELD -->
+                    <div>
+                        <label for="tutorLoginEmail" class="block text-xs font-bold text-slate-700 mb-1">Your Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                                <i class="far fa-envelope"></i>
+                            </div>
+                            <input type="email" id="tutorLoginEmail" name="email" required autocomplete="email" placeholder="Enter your email (e.g. name@gmail.com)" class="w-full pl-9 pr-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-slate-50/70 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-[#2563eb] transition-all placeholder:text-slate-400 font-medium">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1 pl-1">A 6-digit OTP will be sent directly to this email to verify and submit your application.</p>
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <button type="submit" id="tutorLoginSubmitBtn" class="w-full py-2.5 sm:py-3 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] text-white font-black text-xs sm:text-sm tracking-wider uppercase rounded-xl shadow-md shadow-blue-500/25 transition-all duration-200 flex items-center justify-center gap-2 border-0 cursor-pointer mt-3">
+                        <span>GET OTP & APPLY</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+
+                <!-- ============================================== -->
+                <!-- STEP 2: 6-DIGIT OTP VERIFICATION FORM (HIDDEN) -->
+                <!-- ============================================== -->
+                <form id="tutorLoginOtpForm" onsubmit="submitTutorLoginOtp(event)" class="hidden space-y-3.5">
+                    <!-- Sent OTP Notification Box -->
+                    <div class="bg-blue-50/90 border border-blue-200/90 rounded-xl p-3 text-center">
+                        <span class="text-[11px] text-slate-600 font-medium block mb-0.5">We sent a 6-digit verification code to:</span>
+                        <strong id="tutorOtpMaskedEmail" class="text-xs sm:text-sm font-black text-[#2563eb] block tracking-wide"></strong>
+                    </div>
+
+                    <div>
+                        <label for="tutorLoginOtpCode" class="block text-xs font-bold text-slate-700 mb-1 text-center">Enter 6-Digit OTP</label>
+                        <div class="relative max-w-[260px] mx-auto">
+                            <input type="text" id="tutorLoginOtpCode" name="otp" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" placeholder="• • • • • •" class="w-full text-center tracking-[0.5em] font-mono text-xl font-black py-2.5 bg-slate-50 border-2 border-blue-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500/30 focus:border-[#2563eb] transition-all text-slate-900 placeholder:text-slate-300">
+                        </div>
+                    </div>
+
+                    <!-- Resend OTP strip -->
+                    <div class="flex items-center justify-between text-xs px-1">
+                        <span class="text-slate-500 font-medium">Didn't receive code?</span>
+                        <button type="button" id="tutorLoginOtpResendBtn" onclick="resendTutorLoginOtp()" disabled class="font-bold text-[#2563eb] hover:underline disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed border-0 bg-transparent cursor-pointer p-0">
+                            Resend OTP (<span id="tutorLoginOtpTimer">30s</span>)
+                        </button>
+                    </div>
+
+                    <!-- SUBMIT OTP BUTTON -->
+                    <button type="submit" id="tutorLoginOtpSubmitBtn" class="w-full py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-black text-xs sm:text-sm tracking-wider uppercase rounded-xl shadow-md shadow-emerald-600/25 transition-all duration-200 flex items-center justify-center gap-2 border-0 cursor-pointer mt-3">
+                        <span>VERIFY & SUBMIT APPLICATION</span>
+                        <i class="fas fa-check-circle text-xs"></i>
+                    </button>
+
+                    <!-- Change Email / Back link -->
+                    <div class="text-center pt-1">
+                        <button type="button" onclick="switchTutorLoginView('password')" class="text-xs text-slate-500 font-semibold hover:text-[#2563eb] hover:underline border-0 bg-transparent cursor-pointer">
+                            ← Change Email Address
+                        </button>
+                    </div>
+                </form>
+
+                <!-- TRUST STRIP -->
+                <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+                    <p class="text-[11px] text-slate-400 font-medium m-0 flex items-center justify-center gap-1.5">
+                        <i class="fas fa-lock text-[#2563eb]"></i> Direct OTP Verification & Instant Application
+                    </p>
+                </div>
+            </div>
+
+            <!-- TRUST & BENEFIT STRIP -->
+            <div class="mt-5 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center select-none">
+                <div class="flex items-center justify-center gap-1.5">
+                    <div class="w-6 h-6 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center text-[10px] shrink-0">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="text-left">
+                        <strong class="text-[10px] text-slate-800 font-bold block leading-tight">Secure OTP</strong>
+                        <span class="text-[9px] text-slate-400 block leading-tight">Instant verification</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center gap-1.5 border-x border-slate-100 px-1">
+                    <div class="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-[10px] shrink-0">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <div class="text-left">
+                        <strong class="text-[10px] text-slate-800 font-bold block leading-tight">Email Details</strong>
+                        <span class="text-[9px] text-slate-400 block leading-tight">Sent to your inbox</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center gap-1.5">
+                    <div class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="text-left">
+                        <strong class="text-[10px] text-slate-800 font-bold block leading-tight">Direct Apply</strong>
+                        <span class="text-[9px] text-slate-400 block leading-tight">Fast tutor matching</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- GLOBAL APPLICATION SUCCESSFUL POPUP MODAL (COMPACT PREMIUM EDUTRUST DESIGN) -->
+<!-- ========================================================= -->
+<div id="tutorJobSuccessModal" class="hidden fixed inset-0 z-[9999999] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-md transition-all duration-300 opacity-0" aria-hidden="true" role="dialog" aria-modal="true">
+    <div id="tutorJobSuccessCard" onclick="event.stopPropagation()" class="relative w-full max-w-[390px] bg-gradient-to-b from-[#fbfdff] via-white to-[#f4f8fe] rounded-[22px] sm:rounded-[24px] p-4 sm:p-5 shadow-2xl shadow-blue-900/15 border border-[#D9E3F0] text-center overflow-hidden transform scale-95 transition-all duration-300">
+        
+        <!-- Top Right Close Button -->
+        <button type="button" onclick="closeTutorJobSuccessModal()" aria-label="Close" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-100/80 hover:bg-rose-500 hover:text-white text-slate-400 flex items-center justify-center text-xs transition-all border border-slate-200/60 cursor-pointer z-50 shadow-2xs">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Subtle Background Decorative Graphic Shapes -->
+        <div class="absolute -top-10 -left-10 w-28 h-28 rounded-full bg-blue-100/30 blur-xl pointer-events-none select-none"></div>
+        <div class="absolute -bottom-10 -right-10 w-28 h-28 rounded-full bg-emerald-100/30 blur-xl pointer-events-none select-none"></div>
+        
+        <!-- Bottom Left Botanical Leaves Background Accent -->
+        <div class="absolute bottom-0 left-0 w-20 h-24 pointer-events-none select-none opacity-20 z-0">
+            <svg viewBox="0 0 100 120" fill="none" class="w-full h-full text-teal-400" xmlns="http://www.w3.org/2000/svg">
+                <path d="M-10 130C5 90 25 60 55 50C40 70 35 100 25 130Z" fill="currentColor"/>
+                <path d="M10 90C25 60 55 50 80 45C60 60 50 85 40 110Z" fill="currentColor" fill-opacity="0.7"/>
+                <path d="M30 60C45 35 75 25 100 20C80 35 70 60 60 80Z" fill="currentColor" fill-opacity="0.5"/>
+            </svg>
+        </div>
+
+        <!-- Bottom Right Decorative Leaves Accent -->
+        <div class="absolute bottom-0 right-0 w-20 h-24 pointer-events-none select-none opacity-20 z-0">
+            <svg viewBox="0 0 100 120" fill="none" class="w-full h-full text-blue-400" xmlns="http://www.w3.org/2000/svg">
+                <path d="M110 130C95 90 75 60 45 50C60 70 65 100 75 130Z" fill="currentColor"/>
+                <path d="M90 90C75 60 45 50 20 45C40 60 50 85 60 110Z" fill="currentColor" fill-opacity="0.7"/>
+            </svg>
+        </div>
+
+        <!-- Right Side Watermark Document Outline Graphic -->
+        <div class="absolute top-1/2 right-1 -translate-y-1/2 w-20 h-24 pointer-events-none select-none opacity-10 z-0">
+            <svg viewBox="0 0 100 120" fill="none" class="w-full h-full text-blue-500" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="10" width="70" height="95" rx="10" stroke="currentColor" stroke-width="3" stroke-dasharray="4 4" fill="#f0f7ff"/>
+                <circle cx="80" cy="90" r="14" fill="#3b82f6"/>
+                <path d="M74 90L78 94L87 85" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <!-- Top Left Decorative Handwritten Text -->
+        <div class="absolute top-4 left-3 text-left select-none pointer-events-none edutrust-handwriting text-[#2563eb] text-[10.5px] sm:text-[11px] font-bold leading-tight rotate-[-8deg] opacity-90 hidden xs:block z-10">
+            Keep<br>Learning<br><span class="text-indigo-600">Keep Growing</span>
+        </div>
+
+        <!-- Top Right Decorative Handwritten Text -->
+        <div class="absolute top-4 right-10 text-right select-none pointer-events-none edutrust-handwriting text-[#2563eb] text-[10.5px] sm:text-[11px] font-bold leading-tight rotate-[8deg] opacity-90 hidden xs:block z-10">
+            Great<br>Opportunities<br><span class="text-indigo-600">Ahead!</span>
+        </div>
+
+        <div class="relative z-10">
+            <!-- TOP SUCCESS AREA: Green Circular Check Icon + Glowing Ring + Celebratory Particles -->
+            <div class="relative mx-auto mb-2 w-20 h-20 flex items-center justify-center">
+                <!-- Celebratory Confetti Particles -->
+                <div class="absolute top-1 left-4 w-1.5 h-3 rounded-full bg-teal-400 rotate-[-30deg] shadow-xs"></div>
+                <div class="absolute top-1 right-4 w-1.5 h-3 rounded-full bg-blue-500 rotate-[30deg] shadow-xs"></div>
+                <div class="absolute top-9 left-1 w-2 h-2 rounded-full bg-amber-400"></div>
+                <div class="absolute top-9 right-1 w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                <span class="absolute -top-1 right-7 text-blue-400 text-[9px] font-bold select-none">✦</span>
+                <span class="absolute bottom-1 left-5 text-blue-400 text-[9px] font-bold select-none">✦</span>
+                <span class="absolute top-4 right-2 text-amber-400 text-xs font-bold select-none">✨</span>
+                <div class="absolute bottom-0 right-5 w-1.5 h-3 rounded-full bg-blue-400 rotate-[-45deg]"></div>
+                <div class="absolute bottom-1 left-3 w-2.5 h-1 rounded-full bg-teal-400 rotate-[20deg]"></div>
+
+                <!-- Outer Glowing Soft Ring -->
+                <div class="w-18 h-18 rounded-full bg-[#10b981]/15 flex items-center justify-center shadow-inner">
+                    <!-- Inner Glowing Soft Ring -->
+                    <div class="w-14 h-14 rounded-full bg-[#10b981]/25 flex items-center justify-center shadow-xs">
+                        <!-- Main Green Check Circle -->
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#059669] to-[#10b981] text-white flex items-center justify-center text-base sm:text-lg shadow-md shadow-emerald-500/35 transform hover:scale-105 transition-transform duration-300">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN HEADING -->
+            <h3 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight mb-0.5">
+                Application <span class="text-[#2563eb]">Submitted!</span>
+            </h3>
+
+            <!-- SUBTITLE -->
+            <p class="text-[11px] sm:text-[11.5px] text-slate-600 font-medium leading-relaxed max-w-[290px] mx-auto mb-2.5">
+                Your application has been submitted successfully.<br>
+                <span class="text-slate-500 text-[10.5px]">We’ll keep you updated via email and dashboard.</span>
+            </p>
+
+            <!-- APPLICATION ID SECTION -->
+            <div class="bg-white rounded-xl border border-blue-200/90 p-2 sm:p-2.5 mb-2 shadow-2xs flex items-center justify-between gap-2.5 text-left">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#2563eb] flex items-center justify-center text-sm border border-blue-100/80 shadow-2xs shrink-0">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <span class="text-[9px] font-bold text-slate-400 block leading-tight uppercase tracking-wider">Application ID</span>
+                        <strong id="tutorJobSuccessAppId" class="text-sm sm:text-base font-black text-[#2563eb] font-mono tracking-tight truncate block leading-tight">APP-1001</strong>
+                        <span id="tutorJobSuccessTitle" class="hidden"></span>
+                    </div>
+                </div>
+
+                <button type="button" onclick="copySuccessApplicationId(event)" class="flex flex-col items-center justify-center px-2.5 py-1 rounded-lg bg-blue-50/80 hover:bg-blue-100 text-[#2563eb] border border-blue-200/80 transition-all cursor-pointer group shrink-0 shadow-2xs" title="Copy Application ID">
+                    <i id="copyAppIdIcon" class="far fa-copy text-xs group-hover:scale-110 transition-transform"></i>
+                    <span id="copyAppIdBtnText" class="text-[9px] font-extrabold mt-0.5">Copy</span>
+                </button>
+            </div>
+
+            <!-- ONE CLEAN INFORMATION / UPDATE PANEL -->
+            <div class="bg-blue-50/70 border border-blue-100/90 rounded-xl p-2 sm:p-2.5 mb-2.5 text-left flex items-start gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#2563eb] text-white flex items-center justify-center text-[8.5px] shrink-0 mt-0.5 shadow-2xs">
+                    <i class="fas fa-info"></i>
+                </div>
+                <p class="text-[10px] sm:text-[10.5px] text-slate-700 font-medium leading-snug m-0">
+                    You will receive an email notification once updated. Check status anytime in dashboard.
+                </p>
+            </div>
+
+            <!-- BOTTOM ACTION: "Got It!" Button -->
+            <button type="button" onclick="closeTutorJobSuccessModal()" class="w-full py-2.5 px-4 bg-gradient-to-r from-[#2563eb] to-[#1d4ed8] hover:from-[#1d4ed8] hover:to-[#1e40af] text-white font-black text-xs tracking-wider uppercase rounded-xl shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 transition-all duration-200 flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                <i class="fas fa-check text-[11px]"></i>
+                <span>Got It!</span>
+                <i class="fas fa-arrow-right text-[11px] ml-0.5"></i>
+            </button>
+
+            <!-- FOOTER -->
+            <div class="flex items-center justify-center gap-2 mt-2.5 pt-2 border-t border-slate-100 select-none">
+                <div class="h-[1px] w-6 sm:w-10 bg-slate-200"></div>
+                <span class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 tracking-[0.16em] uppercase">THANK YOU FOR CHOOSING EDUTRUST</span>
+                <div class="h-[1px] w-6 sm:w-10 bg-slate-200"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================================= -->
+<!-- TUTOR LOGIN POPUP DYNAMIC DATA POPULATION & CONTROLLER    -->
+<!-- ========================================================= -->
+<script>
+(function() {
+    let tutorOtpTimerInterval = null;
+    let currentActiveJobId = '';
+    let currentActiveJobTitle = '';
+
+    // Copy Application ID to Clipboard with Visual Feedback
+    window.copySuccessApplicationId = function(event) {
+        if (event) event.stopPropagation();
+        const appIdEl = document.getElementById('tutorJobSuccessAppId') || document.getElementById('successAppIdDisplay') || document.getElementById('successAppId');
+        const btnText = document.getElementById('copyAppIdBtnText');
+        const icon = document.getElementById('copyAppIdIcon');
+        const textToCopy = appIdEl ? appIdEl.textContent.trim() : '';
+
+        if (!textToCopy) return;
+
+        const setCopiedState = () => {
+            if (btnText) btnText.textContent = 'Copied!';
+            if (icon) icon.className = 'fas fa-check text-emerald-600 text-sm';
+            setTimeout(() => {
+                if (btnText) btnText.textContent = 'Copy';
+                if (icon) icon.className = 'far fa-copy text-sm group-hover:scale-110 transition-transform';
+            }, 2000);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy).then(setCopiedState).catch(() => fallbackCopy(textToCopy));
+        } else {
+            fallbackCopy(textToCopy);
+        }
+
+        function fallbackCopy(text) {
+            const temp = document.createElement('input');
+            temp.value = text;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            setCopiedState();
+        }
+    };
+
+    // Show Global Success Popup
+    window.showTutorJobSuccessModal = function(appId, jobTitle) {
+        const modal = document.getElementById('tutorJobSuccessModal') || document.getElementById('jobAppSuccessPopup');
+        const card = document.getElementById('tutorJobSuccessCard') || document.getElementById('successPopupContent');
+        const appIdEl = document.getElementById('tutorJobSuccessAppId');
+        const displayAppIdEl = document.getElementById('successAppIdDisplay');
+        const fallbackAppIdEl = document.getElementById('successAppId');
+        const titleEl = document.getElementById('tutorJobSuccessTitle');
+        if (!modal || !card) return;
+
+        const cleanAppId = appId ? (String(appId).startsWith('EDU-APP-') || String(appId).startsWith('APP-') ? String(appId) : `EDU-APP-${appId}`) : 'EDU-APP-000001';
+        if (appIdEl) appIdEl.textContent = cleanAppId;
+        if (displayAppIdEl) displayAppIdEl.textContent = cleanAppId;
+        if (fallbackAppIdEl) fallbackAppIdEl.textContent = cleanAppId;
+        if (titleEl) titleEl.textContent = jobTitle || currentActiveJobTitle || 'Tuition Requirement';
+
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.classList.remove('opacity-0');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        });
+    };
+
+    window.closeTutorJobSuccessModal = function() {
+        const modal = document.getElementById('tutorJobSuccessModal') || document.getElementById('jobAppSuccessPopup');
+        const card = document.getElementById('tutorJobSuccessCard') || document.getElementById('successPopupContent');
+        if (!modal || !card) return;
+
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
+        modal.classList.add('opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }, 200);
+    };
+
+    // Global alias
+    window.showSuccessPopup = window.showTutorJobSuccessModal;
+    window.closeSuccessPopup = window.closeTutorJobSuccessModal;
+
+    // Helper to show modal alert with proper styling (Info/Success in Blue/Green, Error in Red)
+    function showTutorLoginAlert(type, message) {
+        const alertBox = document.getElementById('tutorLoginAlert');
+        const alertIcon = document.getElementById('tutorLoginAlertIcon');
+        const alertText = document.getElementById('tutorLoginAlertText');
+        if (!alertBox || !alertText) return;
+
+        if (!message) {
+            alertBox.classList.add('hidden');
+            return;
+        }
+
+        alertText.textContent = message;
+
+        if (type === 'info') {
+            alertBox.className = 'mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center gap-2';
+            if (alertIcon) alertIcon.className = 'fas fa-info-circle text-blue-600 text-sm shrink-0';
+        } else if (type === 'success') {
+            alertBox.className = 'mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2';
+            if (alertIcon) alertIcon.className = 'fas fa-check-circle text-emerald-600 text-sm shrink-0';
+        } else {
+            alertBox.className = 'mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2';
+            if (alertIcon) alertIcon.className = 'fas fa-exclamation-circle text-red-500 text-sm shrink-0';
+        }
+
+        alertBox.classList.remove('hidden');
+    }
+    window.showTutorLoginAlert = showTutorLoginAlert;
+
+    // Switch between Email Form and OTP Verification Form
+    function switchTutorLoginView(view) {
+        const pwdForm = document.getElementById('tutorLoginForm');
+        const otpForm = document.getElementById('tutorLoginOtpForm');
+        const title = document.getElementById('tlmModalTitle');
+        const subtitle = document.getElementById('tlmModalSubtitle');
+        const headerIcon = document.getElementById('tlmHeaderIcon');
+
+        if (view === 'otp') {
+            if (pwdForm) pwdForm.classList.add('hidden');
+            if (otpForm) otpForm.classList.remove('hidden');
+            if (title) title.textContent = 'Verify 6-Digit OTP';
+            if (subtitle) subtitle.textContent = 'Enter the code sent to your email to apply';
+            if (headerIcon) headerIcon.className = 'fas fa-shield-alt';
+            showTutorLoginAlert(null, '');
+            const otpInp = document.getElementById('tutorLoginOtpCode');
+            if (otpInp) {
+                otpInp.value = '';
+                setTimeout(() => otpInp.focus(), 100);
+            }
+        } else {
+            if (pwdForm) pwdForm.classList.remove('hidden');
+            if (otpForm) otpForm.classList.add('hidden');
+            if (title) title.textContent = 'Apply for This Tuition Job';
+            if (subtitle) subtitle.textContent = 'Enter your details to receive a verification OTP & apply';
+            if (headerIcon) headerIcon.className = 'fas fa-paper-plane';
+            showTutorLoginAlert(null, '');
+            if (tutorOtpTimerInterval) clearInterval(tutorOtpTimerInterval);
+        }
+    }
+    window.switchTutorLoginView = switchTutorLoginView;
+
+    // Resend OTP countdown timer
+    function startTutorOtpTimer(duration = 30) {
+        if (tutorOtpTimerInterval) clearInterval(tutorOtpTimerInterval);
+        let rem = duration;
+        const btn = document.getElementById('tutorLoginOtpResendBtn');
+        const timerSpan = document.getElementById('tutorLoginOtpTimer');
+        if (!btn || !timerSpan) return;
+
+        btn.disabled = true;
+        timerSpan.textContent = `${rem}s`;
+
+        tutorOtpTimerInterval = setInterval(() => {
+            rem--;
+            if (rem <= 0) {
+                clearInterval(tutorOtpTimerInterval);
+                btn.disabled = false;
+                btn.innerHTML = 'Resend OTP';
+            } else {
+                timerSpan.textContent = `${rem}s`;
+            }
+        }, 1000);
+    }
+
+    // Helper to extract specific class (e.g., "Class 10") from text/title
+    function extractExactClassFromSource(rawClass, title, desc) {
+        if (rawClass && typeof rawClass === 'string') {
+            const clean = rawClass.trim();
+            const specificMatch = clean.match(/\b(Class\s*[0-9]+(?:st|nd|rd|th)?|Class\s*(?:Nursery|KG|LKG|UKG|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)|Grade\s*[0-9]+)\b/i);
+            if (specificMatch) {
+                return specificMatch[0].trim();
+            }
+            if (clean && !clean.toLowerCase().includes('class 1-12') && !clean.toLowerCase().includes('class 1–12') && !clean.toLowerCase().includes('all classes')) {
+                return clean.replace(/\(.*?\)/g, '').trim();
+            }
+        }
+
+        if (title && typeof title === 'string') {
+            const titleMatch = title.match(/\b(Class\s*[0-9]+(?:st|nd|rd|th)?|Class\s*(?:Nursery|KG|LKG|UKG|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)|Grade\s*[0-9]+)\b/i);
+            if (titleMatch) {
+                return titleMatch[0].trim();
+            }
+        }
+
+        if (desc && typeof desc === 'string') {
+            const descMatch = desc.match(/\b(Class\s*[0-9]+(?:st|nd|rd|th)?|Class\s*(?:Nursery|KG|LKG|UKG|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)|Grade\s*[0-9]+)\b/i);
+            if (descMatch) {
+                return descMatch[0].trim();
+            }
+        }
+
+        return (rawClass && !rawClass.toLowerCase().includes('all') ? rawClass : 'Class 10');
+    }
+
+    // Helper to extract subject cleanly from title/subject
+    function extractSubjectFromSource(rawSubject, title) {
+        if (rawSubject && typeof rawSubject === 'string' && rawSubject.trim() && !rawSubject.toLowerCase().includes('general')) {
+            return rawSubject.trim();
+        }
+        if (title && typeof title === 'string') {
+            let clean = title.replace(/\(.*?\)/g, '').replace(/^Tuition:\s*/i, '').replace(/\s*for\s+Class\s*[\w\d\-]+/i, '').trim();
+            if (clean) return clean;
+        }
+        return rawSubject || 'Subject';
+    }
+
+    // Populate Left Panel with Selected Job Data
+    function populateTutorLoginSelectedJob(jobDataOrId, fallbackTitle) {
+        let job = null;
+
+        if (typeof jobDataOrId === 'object' && jobDataOrId !== null) {
+            job = jobDataOrId;
+        } else if (jobDataOrId) {
+            const rawId = String(jobDataOrId).trim();
+            const cleanId = rawId.replace('REQ-', '').trim();
+
+            if (window.liveTuitionJobs && Array.isArray(window.liveTuitionJobs)) {
+                job = window.liveTuitionJobs.find(j => String(j.id) === cleanId || String(j.id) === rawId || String(j.job_id) === rawId);
+            }
+
+            if (!job) {
+                const card = document.querySelector(`[data-job-id="${rawId}"], [data-job-id="REQ-${cleanId}"], [data-job-id="${cleanId}"]`);
+                if (card) {
+                    const titleEl = card.querySelector('h3');
+                    const nameEl = card.querySelector('.fa-user')?.parentElement;
+                    const descEl = card.querySelector('p');
+                    const locEl = card.querySelector('.fa-map-marker-alt')?.parentElement;
+                    const subEl = card.querySelector('.fa-book-open')?.parentElement;
+                    const clsEl = card.querySelector('.fa-graduation-cap')?.parentElement;
+                    const budEl = card.querySelector('.fa-wallet')?.parentElement;
+                    const modeEl = card.querySelector('.fa-chalkboard, .fa-home')?.parentElement;
+                    const dateEl = card.querySelector('.fa-clock, .fa-calendar-alt')?.parentElement;
+
+                    job = {
+                        id: rawId,
+                        title: titleEl ? titleEl.textContent.trim() : fallbackTitle,
+                        name: nameEl ? nameEl.textContent.replace(/.*user/i, '').trim() : 'Parent / Student',
+                        requirement: descEl ? descEl.textContent.trim() : '',
+                        location: locEl ? locEl.textContent.trim() : 'India',
+                        subject: subEl ? subEl.textContent.trim() : '',
+                        tutorClass: clsEl ? clsEl.textContent.trim() : '',
+                        budget: budEl ? budEl.textContent.trim() : '',
+                        mode: modeEl ? modeEl.textContent.trim() : 'Home Tuition',
+                        date: dateEl ? dateEl.textContent.trim() : ''
+                    };
+                }
+            }
+        }
+
+        const titleEl = document.getElementById('tlmJobTitle');
+        const classBoardEl = document.getElementById('tlmClassBoard');
+        const modeBadgeEl = document.getElementById('tlmTuitionModeBadge');
+        const modeTextEl = document.getElementById('tlmTuitionModeText');
+        const descEl = document.getElementById('tlmJobDesc');
+        const descContainerEl = document.getElementById('tlmJobDescContainer');
+        const subjectEl = document.getElementById('tlmSubject');
+        const classEl = document.getElementById('tlmClass');
+        const locationEl = document.getElementById('tlmLocation');
+        const modeEl = document.getElementById('tlmMode');
+        const budgetEl = document.getElementById('tlmBudget');
+        const scheduleEl = document.getElementById('tlmSchedule');
+        const postedDateEl = document.getElementById('tlmPostedDate');
+        const postedByEl = document.getElementById('tlmPostedBy');
+        const reqTypeEl = document.getElementById('tlmReqType');
+
+        if (job) {
+            const title = job.title || fallbackTitle || 'Tuition Requirement';
+            currentActiveJobId = job.id || job.job_id || 'REQ-1';
+            currentActiveJobTitle = title;
+            const rawCls = job.tutorClass || job.class || job.student_class || '';
+            const cls = extractExactClassFromSource(rawCls, title, job.requirement || job.description);
+            const subj = extractSubjectFromSource(job.subject, title);
+            const board = job.board || (rawCls.toLowerCase().includes('cbse') ? 'CBSE' : (rawCls.toLowerCase().includes('icse') ? 'ICSE' : ''));
+            const loc = job.location || (job.city ? (job.locality ? `${job.locality}, ${job.city}` : job.city) : 'Lucknow, Uttar Pradesh');
+            const mode = job.mode || job.tuition_mode || 'Home Tuition';
+            const bud = job.budget || (job.fee ? `₹${job.fee}` : '₹5,000 - ₹7,000 / month');
+            const sched = job.schedule || job.preferred_schedule || '3–4 days a week (Flexible)';
+            const date = job.date || job.posted_date || job.created_at || 'Recently Posted';
+            const by = job.name || job.posted_by || 'Parent';
+            
+            let desc = job.requirement || job.description || `Looking for an experienced tutor for ${cls} ${subj}. Need concept clarity and regular practice.`;
+            if (cls && !cls.toLowerCase().includes('1-12') && !cls.toLowerCase().includes('1–12')) {
+                desc = desc.replace(/Class\s*1\s*[-–]\s*12/gi, cls);
+            }
+
+            if (titleEl) titleEl.textContent = title;
+            if (classBoardEl) classBoardEl.innerHTML = `${cls} ${board ? `<span class="text-slate-300 mx-1">|</span> ${board}` : ''}`;
+            if (modeTextEl) modeTextEl.textContent = mode;
+            if (descEl) {
+                descEl.textContent = desc;
+                descEl.setAttribute('title', desc);
+            }
+            if (descContainerEl) {
+                descContainerEl.setAttribute('title', desc);
+            }
+            if (subjectEl) subjectEl.textContent = subj;
+            if (classEl) classEl.textContent = board && !cls.includes(board) ? `${cls} (${board})` : cls;
+            if (locationEl) locationEl.textContent = loc;
+            if (modeEl) modeEl.textContent = mode;
+            if (budgetEl) budgetEl.textContent = bud;
+            if (scheduleEl) scheduleEl.textContent = sched;
+            if (postedDateEl) postedDateEl.textContent = date;
+            if (postedByEl) postedByEl.textContent = by;
+            if (reqTypeEl) reqTypeEl.textContent = job.requirement_type || 'Regular Classes';
+        } else {
+            const title = fallbackTitle || 'Home & Online Tuition Opportunity';
+            currentActiveJobId = 'REQ-1';
+            currentActiveJobTitle = title;
+            const cls = extractExactClassFromSource('', title, '');
+            const subj = extractSubjectFromSource('', title);
+            const desc = `Looking for an experienced tutor for ${cls} ${subj}. Connect with verified students and parents seeking expert tutors.`;
+
+            if (titleEl) titleEl.textContent = title;
+            if (classBoardEl) classBoardEl.innerHTML = `${cls} <span class="text-slate-300 mx-1">|</span> All Boards`;
+            if (modeTextEl) modeTextEl.textContent = 'Home / Online';
+            if (descEl) {
+                descEl.textContent = desc;
+                descEl.setAttribute('title', desc);
+            }
+            if (descContainerEl) {
+                descContainerEl.setAttribute('title', desc);
+            }
+            if (subjectEl) subjectEl.textContent = subj;
+            if (classEl) classEl.textContent = cls;
+            if (locationEl) locationEl.textContent = 'Pan India (Home & Online)';
+            if (modeEl) modeEl.textContent = 'Home / Online';
+            if (budgetEl) budgetEl.textContent = 'Standard Verified Rates';
+            if (scheduleEl) scheduleEl.textContent = 'Flexible Timing';
+            if (postedDateEl) postedDateEl.textContent = 'Active Requirement';
+            if (postedByEl) postedByEl.textContent = 'Verified Parent / Student';
+            if (reqTypeEl) reqTypeEl.textContent = 'Regular Classes';
+        }
+    }
+    window.populateTutorLoginSelectedJob = populateTutorLoginSelectedJob;
+
+    // Open Modal
+    window.openTutorLoginModal = function(jobDataOrId, jobTitle) {
+        const modal = document.getElementById('tutorLoginModal');
+        const card = document.getElementById('tutorLoginModalCard');
+        if (!modal) return;
+
+        // Reset to Step 1
+        switchTutorLoginView('password');
+
+        // Populate Left Side Data
+        populateTutorLoginSelectedJob(jobDataOrId, jobTitle);
+
+        showTutorLoginAlert(null, '');
+        document.body.style.overflow = 'hidden';
+        modal.classList.remove('hidden', 'opacity-0');
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+
+        if (card) {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+            card.style.opacity = '1';
+        }
+    };
+
+    // Close Modal
+    window.closeTutorLoginModal = function() {
+        const modal = document.getElementById('tutorLoginModal');
+        const card = document.getElementById('tutorLoginModalCard');
+        if (card) {
+            card.classList.remove('scale-100', 'opacity-100');
+            card.classList.add('scale-95', 'opacity-0');
+            card.style.opacity = '0';
+        }
+        if (modal) {
+            modal.classList.add('opacity-0');
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 200);
+        }
+        if (tutorOtpTimerInterval) clearInterval(tutorOtpTimerInterval);
+    };
+
+    // 1. Submit Details -> Send 6-Digit OTP Directly to this email (no registration check required)
+    window.submitTutorLogin = function(event) {
+        if (event) event.preventDefault();
+        const nameInput = document.getElementById('tutorLoginName');
+        const mobileInput = document.getElementById('tutorLoginMobile');
+        const emailInput = document.getElementById('tutorLoginEmail');
+        const submitBtn = document.getElementById('tutorLoginSubmitBtn');
+
+        const name = nameInput ? nameInput.value.trim() : '';
+        const mobile = mobileInput ? mobileInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+
+        if (!name) {
+            showTutorLoginAlert('error', 'Please enter your full name.');
+            if (nameInput) nameInput.focus();
+            return;
+        }
+        if (!mobile || mobile.replace(/\D/g, '').length < 10) {
+            showTutorLoginAlert('error', 'Please enter a valid 10-digit mobile number.');
+            if (mobileInput) mobileInput.focus();
+            return;
+        }
+        if (!email || !email.includes('@') || !email.includes('.')) {
+            showTutorLoginAlert('error', 'Please enter a valid email address.');
+            if (emailInput) emailInput.focus();
+            return;
+        }
+
+        showTutorLoginAlert(null, '');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-xs"></i> <span>SENDING OTP...</span>';
+        }
+
+        const targetJobId = currentActiveJobId || sessionStorage.getItem('pendingJobId') || 'REQ-1';
+        const targetJobTitle = currentActiveJobTitle || sessionStorage.getItem('pendingJobTitle') || 'Tuition Job';
+
+        fetch('/api/jobs/apply/send-otp/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                mobile: mobile,
+                email: email,
+                job_id: targetJobId,
+                job_title: targetJobTitle
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>GET OTP & APPLY</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+
+            if (data.status === 'otp_sent' || data.status === 'success') {
+                const maskedEmailEl = document.getElementById('tutorOtpMaskedEmail');
+                if (maskedEmailEl) maskedEmailEl.textContent = data.raw_email || data.email || email;
+                switchTutorLoginView('otp');
+                startTutorOtpTimer(30);
+                showTutorLoginAlert('info', data.message || `A 6-digit OTP code has been sent to ${data.raw_email || data.email || email}.`);
+            } else {
+                showTutorLoginAlert('error', data.message || 'Failed to send OTP. Please try again.');
+            }
+        })
+        .catch(err => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>GET OTP & APPLY</span><i class="fas fa-arrow-right text-xs"></i>';
+            }
+            showTutorLoginAlert('error', 'Connection error. Please try again.');
+        });
+    };
+
+    // 2. Submit OTP -> Verify OTP, Create Application in Database, and Send Confirmation Email!
+    window.submitTutorLoginOtp = function(event) {
+        if (event) event.preventDefault();
+        const otpInput = document.getElementById('tutorLoginOtpCode');
+        const submitBtn = document.getElementById('tutorLoginOtpSubmitBtn');
+        const emailInput = document.getElementById('tutorLoginEmail');
+        const otp = otpInput ? otpInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+
+        if (!otp || otp.length !== 6) {
+            showTutorLoginAlert('error', 'Please enter a valid 6-digit OTP code.');
+            return;
+        }
+
+        showTutorLoginAlert(null, '');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-xs"></i> <span>VERIFYING & APPLYING...</span>';
+        }
+
+        const targetJobId = currentActiveJobId || sessionStorage.getItem('pendingJobId') || 'REQ-1';
+        const targetJobTitle = currentActiveJobTitle || sessionStorage.getItem('pendingJobTitle') || 'Tuition Job';
+
+        fetch('/api/jobs/apply/verify-otp/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                otp: otp,
+                email: email,
+                job_id: targetJobId,
+                job_title: targetJobTitle
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>VERIFY & SUBMIT APPLICATION</span><i class="fas fa-check-circle text-xs"></i>';
+            }
+
+            if (data.status === 'success') {
+                showTutorLoginAlert('success', data.message || 'Application Submitted! Confirmation email sent.');
+                setTimeout(() => {
+                    closeTutorLoginModal();
+
+                    // 1. Trigger Global Application Successful Popup!
+                    if (typeof window.showSuccessPopup === 'function') {
+                        window.showSuccessPopup(data.application_id, data.job_title);
+                    } else if (typeof window.showTutorJobSuccessModal === 'function') {
+                        window.showTutorJobSuccessModal(data.application_id, data.job_title);
+                    }
+
+                    // 2. Update button on card to Applied state
+                    if (typeof window.updateApplyButtonState === 'function') {
+                        window.updateApplyButtonState(data.job_id || targetJobId);
+                    }
+                }, 400);
+            } else {
+                showTutorLoginAlert('error', data.message || 'Invalid OTP code. Please try again.');
+            }
+        })
+        .catch(err => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>VERIFY & SUBMIT APPLICATION</span><i class="fas fa-check-circle text-xs"></i>';
+            }
+            showTutorLoginAlert('error', 'Failed to verify OTP. Please try again.');
+        });
+    };
+
+    // 3. Resend OTP
+    window.resendTutorLoginOtp = function() {
+        const btn = document.getElementById('tutorLoginOtpResendBtn');
+        if (btn) btn.disabled = true;
+
+        fetch('/api/jobs/apply/resend-otp/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showTutorLoginAlert('success', data.message || 'A fresh 6-digit OTP code has been sent.');
+                startTutorOtpTimer(30);
+            } else {
+                showTutorLoginAlert('error', data.message || 'Failed to resend OTP.');
+            }
+        })
+        .catch(err => {
+            showTutorLoginAlert('error', 'Error resending OTP. Please try again.');
+        });
+    };
+
+    // Global click listener to close modal on backdrop click
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('tutorLoginModal');
+        if (modal && !modal.classList.contains('hidden') && e.target === modal) {
+            closeTutorLoginModal();
+        }
+    });
+
+    // ESC key listener
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('tutorLoginModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeTutorLoginModal();
+            }
+        }
+    });
+})();
+</script>
