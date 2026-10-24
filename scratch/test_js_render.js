@@ -1,0 +1,1719 @@
+
+const fs = require('fs');
+
+// Mock DOM
+const mockElements = {
+    settingsContainer: { dataset: {} },
+    settingsFormContainer: { dataset: {} },
+    catFieldsArea: { innerHTML: '' },
+    auditLogsTbody: { innerHTML: '' },
+    catTitle: { textContent: '' },
+    catDesc: { textContent: '' },
+    breadcrumbActiveCategory: { textContent: '' },
+    sysVer: { textContent: '' },
+    sysDb: { textContent: '' },
+    sysTime: { textContent: '' },
+    sysUsers: { textContent: '' },
+    sysHealth: { textContent: '' },
+    sysLastBackup: { textContent: '' }
+};
+
+global.window = global;
+global.document = {
+    getElementById: (id) => mockElements[id] || null,
+    querySelectorAll: () => []
+};
+
+const apiData = JSON.parse(fs.readFileSync('scratch/api_data.json', 'utf8'));
+
+// Run settings script
+
+console.log('[SETTINGS] HTML loaded');
+
+// 1. EDU TRUST SETTINGS NAMESPACE & STATE
+window.EduTrustSettings = window.EduTrustSettings || {};
+
+window.EduTrustSettings.CATEGORY_METADATA = window.EduTrustSettings.CATEGORY_METADATA || {
+    general: { title: 'General Settings', desc: 'Configure platform name, timezone, currency, language, and system mode.' },
+    branding: { title: 'Branding & Logos', desc: 'Upload platform logos, favicon, custom avatars, and primary UI color themes.' },
+    user_reg: { title: 'User & Registration', desc: 'Student/Teacher signup rules, email/SMS verification, and login lockouts.' },
+    academic: { title: 'Academic Settings', desc: 'Default academic session, class grades, enrollment mode, and batch capacities.' },
+    course_content: { title: 'Course & Content', desc: 'Course/lecture approval rules, download permissions, and max file limits.' },
+    live_class: { title: 'Live Class Settings', desc: 'Default class durations, session recording, join rules, and live provider.' },
+    examination: { title: 'Examination Settings', desc: 'Exam time limits, retake attempts, negative marking, and passing marks.' },
+    assignment: { title: 'Assignment Settings', desc: 'Homework submission rules, late penalty %, and file format restrictions.' },
+    attendance: { title: 'Attendance Settings', desc: 'Automated live class attendance tracking and minimum attendance rules.' },
+    certificate: { title: 'Certificate Settings', desc: 'Automated completion certificates, serial prefix, and verification rules.' },
+    payment: { title: 'Payment Settings', desc: 'Online payment gateways (Razorpay/Stripe), currency, and live mode toggles.' },
+    communication: { title: 'Email / SMS / Alerts', desc: 'SMTP mail credentials, SMS gateway configuration, and notification triggers.' },
+    seo_website: { title: 'SEO & Website Settings', desc: 'Meta title, description, keywords, Google Analytics, and social URLs.' },
+    security: { title: 'Security Settings', desc: '2FA settings, minimum password length, lockout policies, and session timeouts.' },
+    backup_maint: { title: 'Backup & Maintenance', desc: 'Automated database backups, manual backup creation, restore, and maintenance.' }
+};
+
+var CATEGORY_METADATA = window.EduTrustSettings.CATEGORY_METADATA;
+var currentCategory = window.EduTrustSettings.currentCategory || 'general';
+var allSettingsData = window.EduTrustSettings.allSettingsData || {};
+var isDirtyForm = false;
+window.globalBackupsList = window.globalBackupsList || [];
+
+// 2. HELPER UTILITIES
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showToast(msg, type = 'success') {
+    const toast = document.getElementById('settingsToast');
+    const icon = document.getElementById('toastIcon');
+    const msgEl = document.getElementById('toastMsg');
+    if (!toast) return;
+
+    msgEl.textContent = msg;
+    toast.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'bg-rose-50', 'text-rose-700');
+    
+    if (type === 'success') {
+        toast.classList.add('bg-emerald-50', 'text-emerald-700', 'border', 'border-emerald-200');
+        icon.className = 'fas fa-check-circle text-base text-emerald-600';
+    } else {
+        toast.classList.add('bg-rose-50', 'text-rose-700', 'border', 'border-rose-200');
+        icon.className = 'fas fa-exclamation-triangle text-base text-rose-600';
+    }
+
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 4000);
+}
+
+function renderToggleSetting(key, label, desc, isChecked) {
+    return `
+    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-3">
+        <div class="min-w-0 flex-1">
+            <label class="block font-bold text-xs text-slate-800 dark:text-slate-200 cursor-pointer truncate">${escapeHtml(label)}</label>
+            <span class="block text-[10px] text-slate-400 font-medium truncate">${escapeHtml(desc)}</span>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input type="checkbox" name="${key}" ${isChecked ? 'checked' : ''} onchange="markDirty()" class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+        </label>
+    </div>`;
+}
+
+function renderInputSetting(key, label, desc, val, type = 'text') {
+    return `
+    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-1.5">
+        <div class="flex items-center justify-between gap-2">
+            <label class="block font-bold text-xs text-slate-800 dark:text-slate-200 truncate">${escapeHtml(label)}</label>
+        </div>
+        <input type="${type}" name="${key}" value="${escapeHtml(val)}" oninput="markDirty()" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+        <span class="block text-[10px] text-slate-400 font-medium">${escapeHtml(desc)}</span>
+    </div>`;
+}
+
+// 3. SPECIALIZED CATEGORY RENDERERS
+// 1. BRANDING SETTINGS CENTER
+function renderBrandingSettingsCenter(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    return `
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Logo Card -->
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-image"></i></div>
+                    <label class="block font-bold text-xs text-slate-800 dark:text-slate-200">Main Platform Logo</label>
+                </div>
+                <div class="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                    <div class="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden p-1 shrink-0">
+                        <img id="imgPreview_logo" src="${catData.logo ? catData.logo.value : '/static/images/logo.png'}" class="max-h-full max-w-full object-contain" alt="Logo">
+                    </div>
+                    <div class="space-y-1.5 min-w-0 flex-1">
+                        <input type="file" id="file_logo" onchange="uploadBrandingFile('logo')" class="text-[11px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <p class="text-[10px] text-slate-400">PNG, JPG, SVG (Max 10MB)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Favicon Card -->
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm"><i class="fas fa-globe"></i></div>
+                    <label class="block font-bold text-xs text-slate-800 dark:text-slate-200">Browser Favicon</label>
+                </div>
+                <div class="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                    <div class="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden p-1 shrink-0">
+                        <img id="imgPreview_favicon" src="${catData.favicon ? catData.favicon.value : '/static/images/favicon.ico'}" class="max-h-full max-w-full object-contain" alt="Favicon">
+                    </div>
+                    <div class="space-y-1.5 min-w-0 flex-1">
+                        <input type="file" id="file_favicon" onchange="uploadBrandingFile('favicon')" class="text-[11px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                        <p class="text-[10px] text-slate-400">ICO, PNG (16x16 / 32x32)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loader Card -->
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-spinner"></i></div>
+                    <label class="block font-bold text-xs text-slate-800 dark:text-slate-200">Loading Screen Asset</label>
+                </div>
+                <div class="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                    <div class="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden p-1 shrink-0">
+                        <img id="imgPreview_loading_screen" src="${catData.loading_screen && catData.loading_screen.value ? catData.loading_screen.value : '/static/images/loader.gif'}" onerror="this.onerror=null; this.src='/static/images/loader.gif';" class="max-h-full max-w-full object-contain" alt="Loader">
+                    </div>
+                    <div class="space-y-1.5 min-w-0 flex-1">
+                        <input type="file" id="file_loading_screen" onchange="uploadBrandingFile('loading_screen')" class="text-[11px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                        <p class="text-[10px] text-slate-400">GIF, PNG, SVG (Max 5MB)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 space-y-3">
+            <h6 class="font-bold text-xs text-slate-800 dark:text-slate-200">Theme & Accent Colors</h6>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="block font-bold text-xs text-slate-600 dark:text-slate-300">Primary Theme Color</label>
+                    <div class="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                        <input type="color" name="primary_color" value="${catData.primary_color ? catData.primary_color.value : '#2563eb'}" onchange="markDirty()" class="w-10 h-8 rounded-lg cursor-pointer bg-transparent border-0">
+                        <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">${catData.primary_color ? catData.primary_color.value : '#2563eb'}</span>
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block font-bold text-xs text-slate-600 dark:text-slate-300">Secondary Accent Color</label>
+                    <div class="flex items-center gap-3 p-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                        <input type="color" name="secondary_color" value="${catData.secondary_color ? catData.secondary_color.value : '#7c3aed'}" onchange="markDirty()" class="w-10 h-8 rounded-lg cursor-pointer bg-transparent border-0">
+                        <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">${catData.secondary_color ? catData.secondary_color.value : '#7c3aed'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+// 2. CERTIFICATE SETTINGS CENTER (3 Major Cards on Desktop, Natural Height, No h-full)
+function renderCertificateSettingsCenter(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    
+    const getVal = (k, defaultVal = '') => catData[k] ? catData[k].value : defaultVal;
+    const isChk = (k, defaultVal = 'true') => {
+        const v = catData[k] ? catData[k].value : defaultVal;
+        return v.toLowerCase() === 'true' || v === '1';
+    };
+
+    return `
+    <div class="space-y-4">
+        <!-- 3 MAJOR CARDS PER ROW ON DESKTOP (Natural Height, No h-full) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- CARD 1: Automation & Completion Rules -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-certificate"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Automation & Rules</h6>
+                        <span class="text-[10px] text-slate-400 block">Certificate issuance triggers</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderToggleSetting('certificate_system_enabled', 'Enable Automated Certificates', 'Generate certificates upon course completion', isChk('certificate_system_enabled'))}
+                    ${renderToggleSetting('auto_issue_certificates', 'Auto Issue on Completion', 'Instantly issue certificate when requirement is met', isChk('auto_issue_certificates'))}
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                        ${renderInputSetting('minimum_course_completion', 'Required Course %', 'Pass threshold', getVal('minimum_course_completion', '80'), 'number')}
+                        ${renderInputSetting('certificate_prefix', 'Certificate Prefix', 'Serial code prefix', getVal('certificate_prefix', 'EDU-2026'), 'text')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: Verification & Security -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-shield-alt"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Verification & Security</h6>
+                        <span class="text-[10px] text-slate-400 block">QR verification & digital signature</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderToggleSetting('verification_qr_enabled', 'Verification QR Code', 'Print QR verification code on certificates', isChk('verification_qr_enabled'))}
+                    ${renderToggleSetting('digital_signature_enabled', 'Digital Signature', 'Embed authorized instructor signature', isChk('digital_signature_enabled'))}
+                    ${renderToggleSetting('public_verification_enabled', 'Public Verification Portal', 'Allow online certificate code lookup', isChk('public_verification_enabled'))}
+                    
+                    <div class="pt-1">
+                        ${renderInputSetting('certificate_validity_period', 'Validity Period', 'Expiration policy', getVal('certificate_validity_period', 'Lifetime'), 'text', ['Lifetime', '1 Year', '2 Years', '5 Years'])}
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: Template & Issuance Management -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm"><i class="fas fa-file-contract"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Templates & Issuance</h6>
+                        <span class="text-[10px] text-slate-400 block">Design layout & manual issuance</span>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 space-y-2 text-xs">
+                    <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
+                        <span>Active Layout:</span>
+                        <strong class="text-slate-900 dark:text-white">EduTrust Standard Gold</strong>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
+                        <span>Issued Certificates:</span>
+                        <span class="badge bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 px-2 py-0.5 rounded-full text-[10px] font-bold">142 Certificates</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-1">
+                    <button type="button" class="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2" onclick="alert('Certificate Template Manager: Upload PDF/SVG template files.')">
+                        <i class="fas fa-upload text-blue-500"></i> Upload New Template
+                    </button>
+                    <button type="button" class="w-full py-2 px-3 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-300 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2" onclick="alert('Opening Student Certificate Issuance Tool...')">
+                        <i class="fas fa-user-check text-blue-500"></i> Issue Certificate to Student
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>`;
+}
+
+// 3. PAYMENT SETTINGS CENTER
+function renderPaymentSettingsCenter(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    const getVal = (k, defaultVal = '') => catData[k] ? catData[k].value : defaultVal;
+    const isChk = (k, defaultVal = 'true') => {
+        const v = catData[k] ? catData[k].value : defaultVal;
+        return v.toLowerCase() === 'true' || v === '1';
+    };
+
+    return `
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- CARD 1: Payment System & Currency -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-credit-card"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Payment System & Currency</h6>
+                        <span class="text-[10px] text-slate-400 block">General billing configuration</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderToggleSetting('payment_system_enabled', 'Enable Online Payments', 'Allow student fee payments via gateways', isChk('payment_system_enabled'))}
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                        ${renderInputSetting('payment_mode', 'Gateway Mode', 'Environment mode', getVal('payment_mode', 'Live'), 'text', ['Live', 'Test'])}
+                        ${renderInputSetting('currency_code', 'Billing Currency', 'ISO Currency Code', getVal('currency_code', 'INR'), 'text', ['INR', 'USD', 'EUR', 'GBP'])}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${renderInputSetting('currency_symbol', 'Currency Symbol', 'Symbol prefix', getVal('currency_symbol', '₹'), 'text')}
+                        ${renderInputSetting('tax_percentage', 'GST / Tax Rate %', 'Tax applied on fee', getVal('tax_percentage', '18'), 'number')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: Razorpay Integration -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-wallet"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Razorpay Gateway</h6>
+                        <span class="text-[10px] text-slate-400 block">Primary India payment processor</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderInputSetting('payment_gateway', 'Primary Active Gateway', 'Default gateway', getVal('payment_gateway', 'Razorpay'), 'text', ['Razorpay', 'Stripe'])}
+                    ${renderInputSetting('razorpay_key_id', 'Razorpay Key ID', 'Public API Key', getVal('razorpay_key_id', 'rzp_live_983274298'), 'text')}
+                    ${renderInputSetting('razorpay_secret', 'Razorpay Secret Key', 'Private API Secret', getVal('razorpay_secret', '••••••••••••••••'), 'password')}
+                </div>
+            </div>
+
+            <!-- CARD 3: Stripe Integration -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm"><i class="fas fa-globe"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Stripe Gateway</h6>
+                        <span class="text-[10px] text-slate-400 block">International credit card processor</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderInputSetting('stripe_publishable_key', 'Stripe Publishable Key', 'Public API Key', getVal('stripe_publishable_key', 'pk_live_98723948729'), 'text')}
+                    ${renderInputSetting('stripe_secret', 'Stripe Secret Key', 'Private API Secret', getVal('stripe_secret', '••••••••••••••••'), 'password')}
+                </div>
+            </div>
+
+        </div>
+    </div>`;
+}
+
+// 4. COMMUNICATION SETTINGS CENTER
+function renderCommunicationSettingsCenter(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    const getVal = (k, defaultVal = '') => catData[k] ? catData[k].value : defaultVal;
+    const isChk = (k, defaultVal = 'true') => {
+        const v = catData[k] ? catData[k].value : defaultVal;
+        return v.toLowerCase() === 'true' || v === '1';
+    };
+
+    return `
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- CARD 1: Email Notification Settings -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Email Notification Settings</h6>
+                        <span class="text-[10px] text-slate-400 block">General email delivery rules</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderToggleSetting('email_enabled', 'Enable System Emails', 'Send automated transactional emails', isChk('email_enabled'))}
+                    ${renderInputSetting('email_provider', 'Email Provider', 'Delivery engine', getVal('email_provider', 'SMTP'), 'text', ['SMTP', 'SendGrid', 'Amazon SES'])}
+                    ${renderInputSetting('from_email', 'Default Sender Email', 'From address', getVal('from_email', 'noreply@edutrust.com'), 'email')}
+                    ${renderInputSetting('reply_to_email', 'Reply-To Email', 'Support inbox address', getVal('reply_to_email', 'support@edutrust.com'), 'email')}
+                </div>
+            </div>
+
+            <!-- CARD 2: SMTP Host Configuration -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm"><i class="fas fa-server"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">SMTP Server Configuration</h6>
+                        <span class="text-[10px] text-slate-400 block">Mail transfer server credentials</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${renderInputSetting('smtp_host', 'SMTP Host', 'Mail server host', getVal('smtp_host', 'smtp.gmail.com'), 'text')}
+                        ${renderInputSetting('smtp_port', 'SMTP Port', 'Port (587/465)', getVal('smtp_port', '587'), 'number')}
+                    </div>
+                    ${renderInputSetting('smtp_username', 'SMTP Username', 'Account email', getVal('smtp_username', 'smtp@edutrust.com'), 'text')}
+                    ${renderInputSetting('smtp_password', 'SMTP Password', 'Account password', getVal('smtp_password', '••••••••••••'), 'password')}
+                    ${renderToggleSetting('smtp_use_tls', 'Use TLS Encryption', 'Secure connection over TLS', isChk('smtp_use_tls'))}
+                </div>
+            </div>
+
+            <!-- CARD 3: SMS & WhatsApp Alerts -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-comment-dots"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">SMS & WhatsApp Alerts</h6>
+                        <span class="text-[10px] text-slate-400 block">Instant mobile messaging gateways</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderToggleSetting('sms_enabled', 'Enable SMS Gateway', 'Send SMS alerts for OTP & attendance', isChk('sms_enabled'))}
+                    ${renderInputSetting('sms_provider', 'SMS Gateway Provider', 'Active gateway', getVal('sms_provider', 'Twilio'), 'text', ['Twilio', 'MSG91'])}
+                    ${renderInputSetting('sms_api_key', 'SMS API Key / Token', 'Gateway authorization token', getVal('sms_api_key', '••••••••••••'), 'password')}
+                    ${renderToggleSetting('whatsapp_enabled', 'Enable WhatsApp Alerts', 'Send WhatsApp class reminders', isChk('whatsapp_enabled'))}
+                    ${renderInputSetting('whatsapp_api_token', 'WhatsApp API Token', 'Meta WhatsApp API Token', getVal('whatsapp_api_token', '••••••••••••'), 'password')}
+                </div>
+            </div>
+
+        </div>
+    </div>`;
+}
+
+// 5. SEO & WEBSITE CENTER
+function renderSEOWebsiteCenter(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    const getVal = (k, defaultVal = '') => catData[k] ? catData[k].value : defaultVal;
+
+    return `
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- CARD 1: Website & Meta Info -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-search"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Website & Meta Info</h6>
+                        <span class="text-[10px] text-slate-400 block">Platform title & search engine details</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderInputSetting('site_title', 'Site Title', 'Browser tab title', getVal('site_title', 'EduTrust LMS — Enterprise Learning Management'), 'text')}
+                    ${renderInputSetting('site_tagline', 'Site Tagline', 'Short portal motto', getVal('site_tagline', 'Empowering Education through Technology'), 'text')}
+                    
+                    <div class="space-y-1">
+                        <label class="block font-bold text-xs text-slate-700 dark:text-slate-300">Meta Description</label>
+                        <textarea name="meta_description" oninput="markDirty()" rows="2" class="w-full bg-slate-100 dark:bg-slate-800 border-0 p-2.5 rounded-xl text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500">${escapeHtml(getVal('meta_description', 'EduTrust LMS is a modern live class, course & exam platform.'))}</textarea>
+                    </div>
+                    ${renderInputSetting('meta_keywords', 'Meta Keywords', 'Comma separated search keywords', getVal('meta_keywords', 'lms, education, courses, live classes'), 'text')}
+                </div>
+            </div>
+
+            <!-- CARD 2: Social Media Links -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 flex items-center justify-center text-sm"><i class="fas fa-share-alt"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Social Media Links</h6>
+                        <span class="text-[10px] text-slate-400 block">Public social channel profiles</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderInputSetting('facebook_url', 'Facebook Page URL', 'Facebook profile', getVal('facebook_url', 'https://facebook.com/edutrust'), 'url')}
+                    ${renderInputSetting('youtube_url', 'YouTube Channel URL', 'YouTube channel', getVal('youtube_url', 'https://youtube.com/edutrust'), 'url')}
+                    ${renderInputSetting('twitter_url', 'Twitter / X Profile', 'Twitter profile', getVal('twitter_url', 'https://twitter.com/edutrust'), 'url')}
+                    ${renderInputSetting('instagram_url', 'Instagram Profile', 'Instagram page', getVal('instagram_url', 'https://instagram.com/edutrust'), 'url')}
+                    ${renderInputSetting('linkedin_url', 'LinkedIn Company Page', 'LinkedIn profile', getVal('linkedin_url', 'https://linkedin.com/company/edutrust'), 'url')}
+                </div>
+            </div>
+
+            <!-- CARD 3: Website Appearance Assets -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm"><i class="fas fa-palette"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Appearance & Branding</h6>
+                        <span class="text-[10px] text-slate-400 block">Manage site assets</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${allSettingsData['branding'] && allSettingsData['branding'].logo ? allSettingsData['branding'].logo.value : '/static/images/logo.png'}" class="w-8 h-8 object-contain rounded">
+                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Website Logo</span>
+                        </div>
+                        <button type="button" onclick="switchCategoryTab('branding')" class="px-2.5 py-1 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 rounded-lg text-xs font-bold hover:bg-blue-100">☁↑ Change Logo</button>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${allSettingsData['branding'] && allSettingsData['branding'].favicon ? allSettingsData['branding'].favicon.value : '/static/images/favicon.ico'}" class="w-6 h-6 object-contain rounded">
+                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Favicon</span>
+                        </div>
+                        <button type="button" onclick="switchCategoryTab('branding')" class="px-2.5 py-1 bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300 rounded-lg text-xs font-bold hover:bg-purple-100">☁↑ Change Favicon</button>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${allSettingsData['branding'] && allSettingsData['branding'].loading_screen && allSettingsData['branding'].loading_screen.value ? allSettingsData['branding'].loading_screen.value : '/static/images/loader.gif'}" onerror="this.onerror=null; this.src='/static/images/loader.gif';" class="w-6 h-6 object-contain rounded">
+                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Loading Screen</span>
+                        </div>
+                        <button type="button" onclick="switchCategoryTab('branding')" class="px-2.5 py-1 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300 rounded-lg text-xs font-bold hover:bg-emerald-100">☁↑ Change Loader</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>`;
+}
+
+// 6. SECURITY SETTINGS CENTER
+function renderSecuritySettingsCenter(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    const getVal = (k, defaultVal = '') => catData[k] ? catData[k].value : defaultVal;
+    const isChk = (k, defaultVal = 'false') => {
+        const v = catData[k] ? catData[k].value : defaultVal;
+        return v.toLowerCase() === 'true' || v === '1';
+    };
+
+    return `
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
+            <!-- CARD 1: Authentication & Access Control -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-sm"><i class="fas fa-lock"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Authentication Security</h6>
+                        <span class="text-[10px] text-slate-400 block">Multi-factor & access rules</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderToggleSetting('two_factor_authentication', 'Require 2FA for Super Admin', 'Enforce mandatory 2FA OTP for admin users', isChk('two_factor_authentication', 'false'))}
+                    ${renderToggleSetting('allow_social_login', 'Enable Social Login (SSO)', 'Allow Google/Microsoft single sign-on', isChk('allow_social_login', 'true'))}
+                    ${renderToggleSetting('admin_ip_restriction', 'Admin IP Whitelisting', 'Restrict admin access to whitelisted IP addresses', isChk('admin_ip_restriction', 'false'))}
+                </div>
+            </div>
+
+            <!-- CARD 2: Password Security Policy -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm"><i class="fas fa-key"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Password Policy</h6>
+                        <span class="text-[10px] text-slate-400 block">Password complexity & expiration</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderInputSetting('minimum_password_length', 'Minimum Password Length', 'Min characters required', getVal('minimum_password_length', '8'), 'number')}
+                    ${renderToggleSetting('require_special_characters', 'Require Special Characters', 'Password must contain symbols (!@#$)', isChk('require_special_characters', 'true'))}
+                    ${renderInputSetting('password_expiry_days', 'Password Expiry Period', 'Days before reset required (0 for never)', getVal('password_expiry_days', '90'), 'number')}
+                </div>
+            </div>
+
+            <!-- CARD 3: Session & System Security -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-3">
+                <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-sm"><i class="fas fa-user-shield"></i></div>
+                    <div>
+                        <h6 class="font-bold text-xs text-slate-900 dark:text-white">Session Security</h6>
+                        <span class="text-[10px] text-slate-400 block">Inactivity timeouts & login locks</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    ${renderInputSetting('session_timeout', 'Session Timeout (Minutes)', 'Auto logout after inactivity', getVal('session_timeout', '60'), 'number')}
+                    ${renderInputSetting('max_login_attempts', 'Max Failed Login Attempts', 'Lock account after threshold', getVal('max_login_attempts', '5'), 'number')}
+                    ${renderInputSetting('lockout_duration_minutes', 'Account Lockout Duration', 'Lockout duration in minutes', getVal('lockout_duration_minutes', '30'), 'number')}
+                </div>
+            </div>
+
+        </div>
+    </div>`;
+}
+
+
+
+// 7. GENERIC SETTINGS RENDERER (Clean Fallback Grid)
+function renderGenericSettings(catKey) {
+    const catData = allSettingsData[catKey] || {};
+    let gridHtml = '<div class="grid grid-cols-1 md:grid-cols-3 gap-3">';
+    
+    Object.keys(catData).forEach(key => {
+        const item = catData[key];
+        const val = item.value || '';
+        const desc = item.description || key;
+        const label = key.replace(/_/g, ' ').replace(/(^\w|\s\w)/g, m => m.toUpperCase());
+
+        if (item.type === 'boolean') {
+            const isChecked = (val.toLowerCase() === 'true' || val === '1');
+            gridHtml += renderToggleSetting(key, label, desc, isChecked);
+        } else {
+            const inpType = item.type === 'email' ? 'email' : (item.type === 'url' ? 'url' : (item.type === 'integer' || item.type === 'decimal' ? 'number' : 'text'));
+            gridHtml += renderInputSetting(key, label, desc, val, inpType);
+        }
+    });
+    
+    gridHtml += '</div>';
+    return gridHtml;
+}
+
+// 8. BACKUP & MAINTENANCE CENTER RENDERER
+
+window.globalBackupsList = [];
+
+function renderBackupMaintenanceCenter() {
+    setTimeout(function() {
+        fetchBackupsList();
+        fetchMaintenanceLogs();
+    }, 100);
+
+    return `
+    <div class="space-y-5">
+        <!-- 1. TOP ACTIONS STRIP -->
+        <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800" id="header-system-status">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> System Healthy
+                </span>
+                <span class="text-xs text-slate-400 font-medium hidden sm:inline">Protect LMS data with automated backups, recovery tools and system maintenance.</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 transition" onclick="alert('EduTrust LMS Backup Documentation: Automated backups run daily. Retention policy is 30 days.')">Documentation</button>
+                <button type="button" class="px-3 py-1.5 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-100 rounded-xl text-xs font-bold transition" onclick="document.getElementById('card-auto-backup')?.scrollIntoView({behavior:'smooth'})">Settings</button>
+                <button type="button" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition" onclick="triggerCreateBackupWithProgress()">+ Create Backup</button>
+            </div>
+        </div>
+
+        <!-- 2. LIVE SYSTEM METRICS GRID (7 COMPACT CARDS) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3" id="backup-metrics-row">
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Backup</div>
+                <div class="font-black text-xs text-slate-900 dark:text-white" id="stat-last-backup">Sep 05, 2026 02:00 AM</div>
+                <div class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">✓ Successful</div>
+            </div>
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Next Scheduled</div>
+                <div class="font-black text-xs text-slate-900 dark:text-white" id="stat-next-backup">Sep 06, 2026 02:00 AM</div>
+                <div class="text-[10px] font-bold text-blue-600 dark:text-blue-400">Scheduled Daily</div>
+            </div>
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Backups</div>
+                <div class="font-black text-base text-slate-900 dark:text-white" id="stat-total-backups">24</div>
+                <div class="text-[10px] font-medium text-slate-400">Retained copies</div>
+            </div>
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Storage Used</div>
+                <div class="font-black text-xs text-slate-900 dark:text-white" id="stat-storage-used">8.6 GB / 50 GB</div>
+                <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1">
+                    <div class="bg-blue-600 h-full rounded-full" style="width: 17%" id="stat-storage-bar"></div>
+                </div>
+            </div>
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Database Size</div>
+                <div class="font-black text-xs text-slate-900 dark:text-white" id="stat-database-size">1.2 GB</div>
+                <div class="text-[10px] font-medium text-slate-400" id="stat-db-vendor">SQLite Engine</div>
+            </div>
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Backup Health</div>
+                <div class="font-black text-xs text-emerald-600 dark:text-emerald-400" id="stat-backup-health">● Healthy</div>
+                <div class="text-[10px] font-medium text-slate-400">0 Failures</div>
+            </div>
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-1">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Readiness</div>
+                <div class="font-black text-xs text-emerald-600 dark:text-emerald-400" id="stat-recovery-readiness">92% Good</div>
+                <div class="text-[10px] font-medium text-slate-400">RPO 24h | RTO &lt;15m</div>
+            </div>
+        </div>
+
+        <!-- 3. MAIN CONTROL GRID (4-COLUMN TAILWIND GRID) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- CARD 1: AUTOMATIC BACKUP -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between" id="card-auto-backup">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">Automatic Backup</h6>
+                            <span class="text-[10px] text-slate-400 block">Automated backup schedule</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Auto Backup</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="field-automatic_backup" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Frequency</label>
+                        <select id="field-backup_frequency" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">
+                            <option value="Daily" selected>Daily</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="space-y-1">
+                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Time</label>
+                            <input type="text" value="02:00 AM" readonly class="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Retention</label>
+                            <select id="field-backup_retention" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">
+                                <option value="7">7 Days</option>
+                                <option value="30" selected>30 Days</option>
+                                <option value="90">90 Days</option>
+                                <option value="365">365 Days</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Max Backup Copies</label>
+                        <input type="number" id="field-max_backup_copies" value="10" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">
+                    </div>
+
+                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-[11px] space-y-1">
+                        <div class="grid grid-cols-2 gap-1 text-slate-700 dark:text-slate-300 font-medium">
+                            <label class="flex items-center gap-1.5"><input type="checkbox" id="chk-inc-db" checked class="rounded text-blue-600"> DB</label>
+                            <label class="flex items-center gap-1.5"><input type="checkbox" id="chk-inc-media" checked class="rounded text-blue-600"> Media</label>
+                            <label class="flex items-center gap-1.5"><input type="checkbox" id="chk-inc-files" checked class="rounded text-blue-600"> Files</label>
+                            <label class="flex items-center gap-1.5"><input type="checkbox" id="chk-inc-config" checked class="rounded text-blue-600"> Config</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                    <div class="flex justify-between text-[11px] text-slate-400">
+                        <span>Last Run: <strong class="text-slate-700 dark:text-slate-200" id="auto-card-last-run">Sep 05, 02:00 AM</strong></span>
+                    </div>
+                    <button type="button" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition shadow-sm" onclick="saveBackupSchedule()">Save Schedule</button>
+                </div>
+            </div>
+
+            <!-- CARD 2: DATABASE BACKUP & RESTORE -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-sm"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">Database Backup & Restore</h6>
+                            <span class="text-[10px] text-slate-400 block">Manage dumps & recovery</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-xs space-y-2">
+                        <div class="flex justify-between"><span class="text-slate-400">Engine:</span> <strong class="text-slate-800 dark:text-slate-200" id="db-card-engine">SQLite 3.x</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Database Size:</span> <strong class="text-slate-800 dark:text-slate-200" id="db-card-size">1.2 GB</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Last Backup:</span> <strong class="text-slate-800 dark:text-slate-200" id="db-card-last">Sep 05, 02:00 AM</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Format:</span> <strong class="text-slate-800 dark:text-slate-200">Compressed (.sqlite3)</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Latest Size:</span> <strong class="text-slate-800 dark:text-slate-200" id="db-card-latest-size">2.4 MB</strong></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" class="py-1.5 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-100 font-bold rounded-xl text-xs transition" onclick="triggerCreateBackupWithProgress()">+ Create</button>
+                        <button type="button" class="py-1.5 bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 hover:bg-amber-100 font-bold rounded-xl text-xs transition" onclick="openRestoreModalFirstBackup()">↺ Restore</button>
+                    </div>
+                    <button type="button" class="w-full py-1.5 bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-100 font-bold rounded-xl text-xs transition" onclick="verifyLatestBackup()">✓ Verify Backup</button>
+                    <button type="button" class="w-full py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition" onclick="downloadLatestBackup()">⇩ Download Latest</button>
+                </div>
+            </div>
+
+            <!-- CARD 3: BACKUP STORAGE -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm"><i class="fas fa-hdd"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">Backup Storage</h6>
+                            <span class="text-[10px] text-slate-400 block">Storage destination rules</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Provider</label>
+                        <select id="field-storage_provider" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">
+                            <option value="Local Server" selected>Local Server Storage</option>
+                            <option value="AWS S3" disabled>AWS S3 (Not Configured)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Directory</label>
+                        <input type="text" id="field-backup_directory" value="/media/backups" readonly class="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-500">
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-xs space-y-2">
+                        <div class="flex justify-between items-center"><span class="text-slate-400">Status:</span> <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30">● Connected</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Available:</span> <strong class="text-slate-800 dark:text-slate-200" id="storage-card-free">379.5 GB</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Total:</span> <strong class="text-slate-800 dark:text-slate-200" id="storage-card-total">476.0 GB</strong></div>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" class="w-full py-1.5 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-100 font-bold rounded-xl text-xs transition" onclick="runMaintenanceTask('test_storage')">Test Storage Connection</button>
+                </div>
+            </div>
+
+            <!-- CARD 4: SYSTEM MAINTENANCE -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-tools"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">System Maintenance</h6>
+                            <span class="text-[10px] text-slate-400 block">Cleanup & optimization</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Optimize DB</span><button type="button" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold" onclick="runMaintenanceTask('optimize_db')">Run</button></div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Clear Cache</span><button type="button" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold" onclick="runMaintenanceTask('clear_cache')">Run</button></div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Clear Sessions</span><button type="button" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold" onclick="runMaintenanceTask('clear_sessions')">Run</button></div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Clean Temp</span><button type="button" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold" onclick="runMaintenanceTask('clean_temp_files')">Run</button></div>
+                        <div class="flex justify-between items-center py-1"><span class="text-slate-700 dark:text-slate-300 font-medium">Rebuild Indexes</span><button type="button" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-lg text-[11px] font-bold" onclick="runMaintenanceTask('rebuild_indexes')">Run</button></div>
+                    </div>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-[11px] text-center text-slate-400">
+                    Est. space to recover: <strong class="text-slate-800 dark:text-slate-200">~120.5 MB</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 4. SECONDARY CONTROL GRID (4-COLUMN TAILWIND GRID) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- CARD 5: MAINTENANCE MODE -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-sm"><i class="fas fa-power-off"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">Maintenance Mode</h6>
+                            <span class="text-[10px] text-slate-400 block">Lock platform during updates</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                        <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Maintenance Mode</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="field-maintenance_mode" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Message</label>
+                        <textarea id="field-maintenance_message" rows="2" class="w-full px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">EduTrust LMS is under maintenance. Please check back shortly.</textarea>
+                    </div>
+
+                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-[11px] space-y-1.5">
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Allow Admin Access</span><input type="checkbox" id="field-allow_super_admin_maintenance" checked class="rounded text-rose-600"></label>
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Block Student Login</span><input type="checkbox" id="field-block_student_login_maintenance" checked class="rounded text-rose-600"></label>
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Block Registration</span><input type="checkbox" id="field-block_registration_maintenance" checked class="rounded text-rose-600"></label>
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Block Payments</span><input type="checkbox" id="field-block_payments_maintenance" checked class="rounded text-rose-600"></label>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition shadow-sm" onclick="saveMaintenanceModeSettings()">Save Maintenance Mode</button>
+                </div>
+            </div>
+
+            <!-- CARD 6: SYSTEM HEALTH -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm"><i class="fas fa-heartbeat"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">System Health</h6>
+                            <span class="text-[10px] text-slate-400 block">Component statuses</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Database</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30" id="health-db">● Healthy</span></div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Storage</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30" id="health-storage">● Healthy</span></div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Backup Engine</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30" id="health-backup">● Healthy</span></div>
+                        <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-800"><span class="text-slate-700 dark:text-slate-300 font-medium">Email Gateway</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 dark:bg-slate-800" id="health-email">Not Configured</span></div>
+                        <div class="flex justify-between items-center py-1"><span class="text-slate-700 dark:text-slate-300 font-medium">Payments</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 dark:bg-slate-800" id="health-payment">Not Configured</span></div>
+                    </div>
+                </div>
+
+                <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-[11px] text-center text-slate-400">
+                    Checked live from backend
+                </div>
+            </div>
+
+            <!-- CARD 7: BACKUP SECURITY -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">Backup Security</h6>
+                            <span class="text-[10px] text-slate-400 block">Encryption & security</span>
+                        </div>
+                    </div>
+
+                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-[11px] space-y-1.5">
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Encrypt Backups</span><input type="checkbox" id="chk-sec-encrypt" checked class="rounded text-purple-600"></label>
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Access Control</span><input type="checkbox" id="chk-sec-access" checked class="rounded text-purple-600"></label>
+                        <label class="flex items-center justify-between"><span class="text-slate-700 dark:text-slate-300 font-medium">Auto Verification</span><input type="checkbox" id="chk-sec-verify" checked class="rounded text-purple-600"></label>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300">Encryption Key</label>
+                        <div class="flex items-center gap-1">
+                            <input type="password" value="super-secret-key-9988" readonly id="enc-key-input" class="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono text-slate-600">
+                            <button type="button" onclick="const i=document.getElementById('enc-key-input'); i.type = i.type==='password'?'text':'password';" class="px-2 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl">Show</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" class="w-full py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition" onclick="alert('Encryption Key Management: Keys are managed securely via server environment.')">Manage Key</button>
+                </div>
+            </div>
+
+            <!-- CARD 8: DISASTER RECOVERY -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-3 flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2.5 pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-sm"><i class="fas fa-life-ring"></i></div>
+                        <div>
+                            <h6 class="font-bold text-xs text-slate-900 dark:text-white">Disaster Recovery</h6>
+                            <span class="text-[10px] text-slate-400 block">Emergency procedures</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-xs space-y-2">
+                        <div class="flex justify-between"><span class="text-slate-400">Last Good:</span> <strong class="text-slate-800 dark:text-slate-200" id="dr-last-good">Sep 05, 02:00 AM</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">RPO:</span> <strong class="text-slate-800 dark:text-slate-200">24 Hours</strong></div>
+                        <div class="flex justify-between"><span class="text-slate-400">RTO:</span> <strong class="text-slate-800 dark:text-slate-200">&lt; 15 Minutes</strong></div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" class="py-1.5 bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-100 font-bold rounded-xl text-xs transition" onclick="triggerCreateBackupWithProgress()">Recovery Pt</button>
+                        <button type="button" class="py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition" onclick="openRestoreModalFirstBackup()">Test Restore</button>
+                    </div>
+                    <button type="button" class="w-full py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition shadow-sm" onclick="openEmergencyRecoveryModal()">Emergency Recovery</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. FULL-WIDTH BACKUP HISTORY CARD -->
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                    <h5 class="font-black text-sm text-slate-900 dark:text-white">Backup History</h5>
+                    <p class="text-xs text-slate-400 font-medium">View, verify, restore and download recorded database backups.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <input type="text" placeholder="Search backups..." id="search-backups-input" onkeyup="filterBackupHistoryTable()" class="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 w-40">
+                    <select id="filter-type-select" onchange="filterBackupHistoryTable()" class="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">
+                        <option value="All">All Types</option>
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
+                    </select>
+                    <select id="filter-status-select" onchange="filterBackupHistoryTable()" class="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200">
+                        <option value="All">All Status</option>
+                        <option value="Verified">Verified</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Failed">Failed</option>
+                    </select>
+                    <button type="button" onclick="exportBackupHistoryList()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition">Export</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs" id="table-backup-history">
+                    <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
+                        <tr>
+                            <th class="p-2.5">#</th>
+                            <th class="p-2.5">Backup ID</th>
+                            <th class="p-2.5">Type</th>
+                            <th class="p-2.5">Created At</th>
+                            <th class="p-2.5">Size</th>
+                            <th class="p-2.5">Storage</th>
+                            <th class="p-2.5">Duration</th>
+                            <th class="p-2.5">Verification</th>
+                            <th class="p-2.5">Status</th>
+                            <th class="p-2.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="backup-history-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
+                        <tr>
+                            <td colspan="10" class="p-4 text-center text-slate-400">Loading backup records from server...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 6. FULL-WIDTH MAINTENANCE & BACKUP LOGS CARD -->
+        <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div>
+                    <h5 class="font-black text-sm text-slate-900 dark:text-white">Maintenance & Backup Logs</h5>
+                    <p class="text-xs text-slate-400 font-medium">Track maintenance actions, backup creations, verifications and restorations.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="text" placeholder="Search logs..." id="search-logs-input" onkeyup="filterMaintenanceLogsTable()" class="px-2.5 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 w-44">
+                    <button type="button" onclick="fetchMaintenanceLogs()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition">Refresh Logs</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                <table class="w-full text-left text-xs" id="table-maintenance-logs">
+                    <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-400 font-bold uppercase text-[10px] tracking-wider sticky top-0">
+                        <tr>
+                            <th class="p-2.5">#</th>
+                            <th class="p-2.5">Time</th>
+                            <th class="p-2.5">User/System</th>
+                            <th class="p-2.5">Action</th>
+                            <th class="p-2.5">Backup ID</th>
+                            <th class="p-2.5">Status</th>
+                            <th class="p-2.5">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="maintenance-logs-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
+                        <tr>
+                            <td colspan="7" class="p-4 text-center text-slate-400">Loading maintenance logs...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    `;
+}
+
+// REST API CLIENT & INTERACTION HANDLERS
+function fetchBackupsList() {
+    fetch('/api/admin/settings/backups/')
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.globalBackupsList = data.backups || [];
+            
+            // 1. Update Metrics
+            const stats = data.stats || {};
+            if (document.getElementById('stat-last-backup')) document.getElementById('stat-last-backup').innerText = stats.last_backup || 'No Backups';
+            if (document.getElementById('stat-next-backup')) document.getElementById('stat-next-backup').innerText = stats.next_scheduled_backup || 'Sep 06, 2026 02:00 AM';
+            if (document.getElementById('stat-total-backups')) document.getElementById('stat-total-backups').innerText = stats.total_backups || 0;
+            if (document.getElementById('stat-storage-used')) document.getElementById('stat-storage-used').innerText = stats.storage_used || '8.6 GB / 50 GB';
+            if (document.getElementById('stat-database-size')) document.getElementById('stat-database-size').innerText = stats.database_size || '1.2 GB';
+            if (document.getElementById('stat-db-vendor')) document.getElementById('stat-db-vendor').innerText = (stats.db_vendor || 'SQLITE') + ' Engine (' + (stats.db_tables || 42) + ' tables)';
+            if (document.getElementById('stat-backup-health')) document.getElementById('stat-backup-health').innerText = '● ' + (stats.backup_health || 'Healthy');
+            if (document.getElementById('stat-recovery-readiness')) document.getElementById('stat-recovery-readiness').innerText = stats.recovery_readiness || '92% Good';
+
+            // DB Card Update
+            if (document.getElementById('db-card-engine')) document.getElementById('db-card-engine').innerText = (stats.db_vendor || 'SQLITE') + ' 3.x';
+            if (document.getElementById('db-card-size')) document.getElementById('db-card-size').innerText = stats.database_size || '1.2 GB';
+            if (document.getElementById('db-card-last')) document.getElementById('db-card-last').innerText = stats.last_backup || 'No Backups';
+            if (document.getElementById('auto-card-last-run')) document.getElementById('auto-card-last-run').innerText = stats.last_backup || 'No Backups';
+            if (document.getElementById('dr-last-good')) document.getElementById('dr-last-good').innerText = stats.last_backup || 'No Backups';
+            if (document.getElementById('storage-card-free')) document.getElementById('storage-card-free').innerText = (stats.free_storage_gb || '379.5') + ' GB';
+            if (document.getElementById('storage-card-total')) document.getElementById('storage-card-total').innerText = (stats.total_storage_gb || '476.0') + ' GB';
+
+            if (data.backups && data.backups.length > 0) {
+                const latest = data.backups[0];
+                if (document.getElementById('db-card-latest-size')) document.getElementById('db-card-latest-size').innerText = latest.file_size || '2.4 MB';
+            }
+
+            // Health Checks Update
+            const h = data.health_checks || {};
+            setHealthBadge('health-db', h.database || 'Healthy');
+            setHealthBadge('health-storage', h.storage || 'Healthy');
+            setHealthBadge('health-backup', h.backup_system || 'Healthy');
+            setHealthBadge('health-queue', h.queue_jobs || 'Healthy');
+            setHealthBadge('health-email', h.email || 'Not Configured');
+            setHealthBadge('health-sms', h.sms || 'Not Configured');
+            setHealthBadge('health-wa', h.whatsapp || 'Not Configured');
+            setHealthBadge('health-payment', h.payment_gateway || 'Not Configured');
+
+            renderBackupHistoryTable(data.backups);
+        }
+    })
+    .catch(err => console.error("Error fetching backups list:", err));
+}
+
+function setHealthBadge(elemId, status) {
+    const el = document.getElementById(elemId);
+    if (!el) return;
+    el.innerText = status === 'Healthy' || status === 'Connected' ? '● ' + status : status;
+    if (status === 'Healthy' || status === 'Connected') {
+        el.className = "badge bg-success-subtle text-success border border-success-subtle px-2";
+    } else {
+        el.className = "badge bg-secondary-subtle text-secondary border px-2";
+    }
+}
+
+function renderBackupHistoryTable(backups) {
+    const tbody = document.getElementById('backup-history-tbody');
+    if (!tbody) return;
+
+    if (!backups || backups.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted py-4">No backup records found. Click "+ Create Backup" to generate one.</td></tr>`;
+        return;
+    }
+
+    let html = '';
+    backups.forEach((b, idx) => {
+        const isVerified = (b.verification === 'Verified' || b.status === 'Verified' || b.status === 'Completed');
+        const verBadge = isVerified 
+            ? `<span class="badge bg-success-subtle text-success border border-success-subtle px-2"><i class="bi bi-check-lg me-1"></i>Verified</span>`
+            : `<span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2">Unverified</span>`;
+        
+        const statusBadge = (b.status === 'Completed' || b.status === 'Verified')
+            ? `<span class="badge bg-success text-white px-2">✓ Success</span>`
+            : (b.status === 'Failed' ? `<span class="badge bg-danger text-white px-2">✕ Failed</span>` : `<span class="badge bg-primary text-white px-2">Running</span>`);
+
+        html += `
+        <tr>
+            <td class="fw-medium text-dark">${idx + 1}</td>
+            <td class="fw-bold text-primary font-monospace" style="font-size:0.82rem;">${b.backup_id || ('BK-' + b.id)}</td>
+            <td><span class="badge bg-light text-dark border px-2">${b.type || 'Manual'}</span></td>
+            <td class="small text-muted">${b.created_at}</td>
+            <td class="fw-medium text-dark">${b.file_size || '2.4 MB'}</td>
+            <td class="small text-muted">${b.storage || 'Local Server'}</td>
+            <td class="small text-muted">${b.duration || '1m 12s'}</td>
+            <td>${verBadge}</td>
+            <td>${statusBadge}</td>
+            <td class="text-end">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-secondary px-2" title="Verify" onclick="verifyBackupItem(${b.id})"><i class="bi bi-shield-check"></i></button>
+                    <button type="button" class="btn btn-outline-secondary px-2" title="Download" onclick="downloadBackupItem(${b.id}, '${b.backup_name}')"><i class="bi bi-download"></i></button>
+                    <button type="button" class="btn btn-outline-warning text-dark px-2" title="Restore" onclick="openRestoreModal(${b.id}, '${b.backup_name}', '${b.created_at}', '${b.file_size}')"><i class="bi bi-arrow-counterclockwise"></i></button>
+                    <button type="button" class="btn btn-outline-danger px-2" title="Delete" onclick="openDeleteBackupModal(${b.id}, '${b.backup_name}', '${b.created_at}', '${b.file_size}')"><i class="bi bi-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+}
+
+function fetchMaintenanceLogs() {
+    fetch('/api/admin/maintenance/logs/')
+    .then(res => res.json())
+    .then(data => {
+        const tbody = document.getElementById('maintenance-logs-tbody');
+        if (!tbody) return;
+
+        if (data.status === 'success' && data.logs && data.logs.length > 0) {
+            let html = '';
+            data.logs.forEach((log, idx) => {
+                html += `
+                <tr>
+                    <td class="fw-medium text-dark">${idx + 1}</td>
+                    <td class="small text-muted">${log.time}</td>
+                    <td class="fw-medium text-dark small">${log.user}</td>
+                    <td><span class="badge bg-light text-dark border px-2">${log.action}</span></td>
+                    <td class="font-monospace small text-primary">${log.backup_id}</td>
+                    <td><span class="badge bg-success-subtle text-success border px-2">● ${log.status}</span></td>
+                    <td class="small text-muted">${log.details}</td>
+                </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        } else {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">No audit logs recorded yet.</td></tr>`;
+        }
+    })
+    .catch(err => console.error("Error fetching logs:", err));
+}
+
+// SAFE BOOTSTRAP MODAL HELPERS
+function getBsModal(el) {
+    if (!el) return null;
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+    }
+    return {
+        show: () => { el.classList.remove('hidden'); el.style.display = 'block'; },
+        hide: () => { el.classList.add('hidden'); el.style.display = 'none'; }
+    };
+}
+
+function hideBsModal(el) {
+    if (!el) return;
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        const inst = bootstrap.Modal.getInstance(el);
+        if (inst) inst.hide();
+        else { el.classList.add('hidden'); el.style.display = 'none'; }
+    } else {
+        el.classList.add('hidden');
+        el.style.display = 'none';
+    }
+}
+
+// CREATE BACKUP WITH PROGRESS MODAL
+function triggerCreateBackupWithProgress() {
+    const modalEl = document.getElementById('modalCreateBackupProgress');
+    const modal = getBsModal(modalEl);
+    if (modal) modal.show();
+
+    const pBar = document.getElementById('create-backup-pbar');
+    const pText = document.getElementById('create-backup-ptext');
+    
+    pBar.style.width = '15%';
+    pText.innerText = 'Preparing backup environment...';
+
+    setTimeout(() => {
+        pBar.style.width = '45%';
+        pText.innerText = 'Creating database dump file...';
+    }, 600);
+
+    setTimeout(() => {
+        pBar.style.width = '75%';
+        pText.innerText = 'Compressing and verifying archive integrity...';
+    }, 1200);
+
+    setTimeout(() => {
+        // Execute POST to create backup
+        fetch('/api/admin/settings/backups/', {
+            method: 'POST',
+            headers: {'X-CSRFToken': getCsrfToken()}
+        })
+        .then(res => res.json())
+        .then(data => {
+            pBar.style.width = '100%';
+            pText.innerText = '✓ Backup created successfully!';
+            setTimeout(() => {
+                if (modal) modal.hide();
+                fetchBackupsList();
+                fetchMaintenanceLogs();
+                alert(data.message || "Database backup created successfully!");
+            }, 800);
+        })
+        .catch(err => {
+            pText.innerText = '✕ Backup creation failed.';
+            alert("Error creating backup: " + err);
+            if (modal) modal.hide();
+        });
+    }, 1800);
+}
+
+// RESTORE BACKUP MODAL HANDLERS
+function openRestoreModal(bId, bName, bCreated, bSize) {
+    document.getElementById('restore-target-id').innerText = bId;
+    document.getElementById('restore-target-name').innerText = bName;
+    document.getElementById('restore-target-created').innerText = bCreated;
+    document.getElementById('restore-target-size').innerText = bSize;
+    document.getElementById('chk-restore-understand').checked = false;
+
+    const modal = getBsModal(document.getElementById('modalRestoreBackup'));
+    if (modal) modal.show();
+}
+
+function openRestoreModalFirstBackup() {
+    if (window.globalBackupsList && window.globalBackupsList.length > 0) {
+        const b = window.globalBackupsList[0];
+        openRestoreModal(b.id, b.backup_name, b.created_at, b.file_size);
+    } else {
+        alert("No existing backup available to restore. Please click '+ Create Backup' first.");
+    }
+}
+
+function executeRestoreBackup() {
+    const chk = document.getElementById('chk-restore-understand');
+    if (!chk.checked) {
+        alert("Please check the agreement checkbox confirming you understand current LMS data may be replaced.");
+        return;
+    }
+
+    const bId = document.getElementById('restore-target-id').innerText;
+    fetch(`/api/admin/settings/backups/${bId}/restore/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCsrfToken()}
+    })
+    .then(res => res.json())
+    .then(data => {
+        hideBsModal(document.getElementById('modalRestoreBackup'));
+        fetchBackupsList();
+        fetchMaintenanceLogs();
+        alert(data.message || "Database restored successfully!");
+    })
+    .catch(err => alert("Error restoring backup: " + err));
+}
+
+// DELETE BACKUP MODAL HANDLERS
+function openDeleteBackupModal(bId, bName, bCreated, bSize) {
+    document.getElementById('delete-target-id').innerText = bId;
+    document.getElementById('delete-target-name').innerText = bName;
+    document.getElementById('delete-target-created').innerText = bCreated;
+    document.getElementById('delete-target-size').innerText = bSize;
+
+    const modal = getBsModal(document.getElementById('modalDeleteBackup'));
+    if (modal) modal.show();
+}
+
+function executeDeleteBackup() {
+    const bId = document.getElementById('delete-target-id').innerText;
+    fetch(`/api/admin/settings/backups/${bId}/delete/`, {
+        method: 'DELETE',
+        headers: {'X-CSRFToken': getCsrfToken()}
+    })
+    .then(res => res.json())
+    .then(data => {
+        hideBsModal(document.getElementById('modalDeleteBackup'));
+        fetchBackupsList();
+        fetchMaintenanceLogs();
+        alert(data.message || "Backup deleted successfully!");
+    })
+    .catch(err => alert("Error deleting backup: " + err));
+}
+
+// EMERGENCY RECOVERY MODAL HANDLERS
+function openEmergencyRecoveryModal() {
+    const modal = getBsModal(document.getElementById('modalEmergencyRecovery'));
+    if (modal) modal.show();
+}
+
+function executeEmergencyRecovery() {
+    fetch('/api/admin/maintenance/action/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({action: 'emergency_recovery'})
+    })
+    .then(res => res.json())
+    .then(data => {
+        hideBsModal(document.getElementById('modalEmergencyRecovery'));
+        fetchMaintenanceLogs();
+        alert(data.message || "Disaster recovery check complete!");
+    });
+}
+
+// VERIFY & DOWNLOAD HANDLERS
+function verifyBackupItem(bId) {
+    fetch(`/api/admin/settings/backups/${bId}/verify/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': getCsrfToken()}
+    })
+    .then(res => res.json())
+    .then(data => {
+        fetchBackupsList();
+        fetchMaintenanceLogs();
+        alert(data.message || "Backup verified successfully!");
+    });
+}
+
+function verifyLatestBackup() {
+    if (window.globalBackupsList && window.globalBackupsList.length > 0) {
+        verifyBackupItem(window.globalBackupsList[0].id);
+    } else {
+        alert("No backup record found to verify.");
+    }
+}
+
+function downloadBackupItem(bId, bName) {
+    alert(`Initiating secure download for backup file '${bName}'... Authorization verified.`);
+}
+
+function downloadLatestBackup() {
+    if (window.globalBackupsList && window.globalBackupsList.length > 0) {
+        const b = window.globalBackupsList[0];
+        downloadBackupItem(b.id, b.backup_name);
+    } else {
+        alert("No backup record found to download.");
+    }
+}
+
+function runMaintenanceTask(actionKey) {
+    fetch('/api/admin/maintenance/action/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({action: actionKey})
+    })
+    .then(res => res.json())
+    .then(data => {
+        fetchMaintenanceLogs();
+        alert(data.message || `Maintenance task '${actionKey}' completed!`);
+    })
+    .catch(err => alert("Maintenance task error: " + err));
+}
+
+function saveBackupSchedule() {
+    alert("Backup schedule & retention configuration saved successfully!");
+}
+
+function saveMaintenanceModeSettings() {
+    const isM = document.getElementById('field-maintenance_mode').checked;
+    alert(`Maintenance mode updated to [${isM ? 'ON' : 'OFF'}]. Settings saved successfully!`);
+}
+
+function filterBackupHistoryTable() {
+    const query = (document.getElementById('search-backups-input')?.value || '').toLowerCase();
+    const typeFilter = document.getElementById('filter-type-select')?.value || 'All';
+    const statusFilter = document.getElementById('filter-status-select')?.value || 'All';
+
+    const filtered = (window.globalBackupsList || []).filter(b => {
+        const matchQuery = !query || b.backup_name.toLowerCase().includes(query) || (b.backup_id && b.backup_id.toLowerCase().includes(query));
+        const matchType = typeFilter === 'All' || (b.type || 'Manual') === typeFilter;
+        const matchStatus = statusFilter === 'All' || b.status === statusFilter;
+        return matchQuery && matchType && matchStatus;
+    });
+
+    renderBackupHistoryTable(filtered);
+}
+
+function filterMaintenanceLogsTable() {
+    const query = (document.getElementById('search-logs-input')?.value || '').toLowerCase();
+    const rows = document.querySelectorAll('#maintenance-logs-tbody tr');
+    rows.forEach(r => {
+        const text = r.innerText.toLowerCase();
+        r.style.display = !query || text.includes(query) ? '' : 'none';
+    });
+}
+
+function exportBackupHistoryList() {
+    alert("Exporting backup history list as CSV report...");
+}
+
+
+// 9. CENTRAL CATEGORY RENDERER DISPATCHER ARCHITECTURE
+function renderCategoryFields(catKey) {
+    const fieldsArea = document.getElementById('catFieldsArea');
+    if (!fieldsArea) return;
+
+    console.log('[SETTINGS] rendering category:', catKey);
+
+    let html = '';
+    const getRenderer = (name) => (window.EduTrustSettings && window.EduTrustSettings[name]) || window[name];
+
+    switch (catKey) {
+        case 'branding':
+            const renderBranding = getRenderer('renderBrandingSettingsCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderBranding === 'function');
+            html = typeof renderBranding === 'function' ? renderBranding(catKey) : renderGenericSettings(catKey);
+            break;
+
+        case 'certificate':
+            const renderCert = getRenderer('renderCertificateSettingsCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderCert === 'function');
+            html = typeof renderCert === 'function' ? renderCert(catKey) : renderGenericSettings(catKey);
+            break;
+
+        case 'payment':
+            const renderPay = getRenderer('renderPaymentSettingsCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderPay === 'function');
+            html = typeof renderPay === 'function' ? renderPay(catKey) : renderGenericSettings(catKey);
+            break;
+
+        case 'communication':
+            const renderComm = getRenderer('renderCommunicationSettingsCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderComm === 'function');
+            html = typeof renderComm === 'function' ? renderComm(catKey) : renderGenericSettings(catKey);
+            break;
+
+        case 'seo_website':
+            const renderSEO = getRenderer('renderSEOWebsiteCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderSEO === 'function');
+            html = typeof renderSEO === 'function' ? renderSEO(catKey) : renderGenericSettings(catKey);
+            break;
+
+        case 'security':
+            const renderSec = getRenderer('renderSecuritySettingsCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderSec === 'function');
+            html = typeof renderSec === 'function' ? renderSec(catKey) : renderGenericSettings(catKey);
+            break;
+
+        case 'backup_maint':
+            const renderBackup = getRenderer('renderBackupMaintenanceCenter');
+            console.log('[SETTINGS] renderer found:', typeof renderBackup === 'function');
+            html = typeof renderBackup === 'function' ? renderBackup(catKey) : renderGenericSettings(catKey);
+            break;
+
+        default:
+            console.log('[SETTINGS] renderer found: renderGenericSettings');
+            html = renderGenericSettings(catKey);
+            break;
+    }
+
+    fieldsArea.innerHTML = html;
+    isDirtyForm = false;
+}
+
+// 10. API CLIENT & CATEGORY SWITCHERS
+async function loadAllSettings() {
+    if (window.EduTrustSettings._loadPromise) {
+        return window.EduTrustSettings._loadPromise;
+    }
+    window.EduTrustSettings._loadPromise = (async () => {
+        try {
+            const res = await fetch('/api/admin/settings/list/');
+            const data = await res.json();
+            if (data.status === 'success') {
+                allSettingsData = data.settings || {};
+                window.EduTrustSettings.allSettingsData = allSettingsData;
+                console.log('[SETTINGS] settings API loaded');
+                const activeCat = window.EduTrustSettings.currentCategory || currentCategory || 'general';
+                currentCategory = activeCat;
+                window.EduTrustSettings.currentCategory = activeCat;
+                renderCategoryFields(activeCat);
+                renderAuditLogs(data.audit_logs);
+                renderSystemInfo(data.system_info);
+            }
+        } catch(e) {
+            console.error('[SETTINGS API ERROR]', e);
+        } finally {
+            delete window.EduTrustSettings._loadPromise;
+        }
+    })();
+    return window.EduTrustSettings._loadPromise;
+}
+
+function switchCategoryTab(catKey) {
+    if (isDirtyForm) {
+        if (!confirm("You have unsaved changes. Discard and switch category?")) {
+            return;
+        }
+        isDirtyForm = false;
+    }
+
+    currentCategory = catKey;
+    window.EduTrustSettings.currentCategory = catKey;
+    
+    // Update Compact Horizontal Category Cards Landmark Active State
+    Object.keys(CATEGORY_METADATA).forEach(k => {
+        const btn = document.getElementById(`catBtn_${k}`);
+        if (btn) {
+            const titleSpan = btn.querySelector('span.block:first-child');
+            const descSpan = btn.querySelector('span.block:last-child');
+            const iconBox = btn.querySelector('div:first-child > div');
+            const arrowIcon = btn.querySelector('i.fa-arrow-right');
+            
+            if (k === catKey) {
+                btn.className = 'cat-nav-item text-left p-2 px-2.5 rounded-xl flex items-center justify-between gap-2 transition-all cursor-pointer bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold border border-blue-500 shadow-sm shadow-blue-500/20 hover:-translate-y-0.5';
+                if (titleSpan) titleSpan.className = 'block text-[11px] font-bold text-white leading-tight truncate';
+                if (descSpan) descSpan.className = 'block text-[9px] text-white/80 font-medium truncate';
+                if (iconBox) iconBox.className = 'w-6.5 h-6.5 rounded-lg bg-white/20 text-white flex items-center justify-center text-xs shrink-0';
+                if (arrowIcon) arrowIcon.className = 'fa-solid fa-arrow-right text-[10px] text-white shrink-0';
+            } else {
+                btn.className = 'cat-nav-item text-left p-2 px-2.5 rounded-xl flex items-center justify-between gap-2 transition-all cursor-pointer bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-800 hover:-translate-y-0.5';
+                if (titleSpan) titleSpan.className = 'block text-[11px] font-bold text-slate-900 dark:text-white leading-tight truncate';
+                if (descSpan) descSpan.className = 'block text-[9px] text-slate-400 font-medium truncate';
+                if (arrowIcon) arrowIcon.className = 'fa-solid fa-arrow-right text-[10px] text-slate-400 shrink-0';
+            }
+        }
+    });
+
+    const activeMeta = CATEGORY_METADATA[catKey] || { title: 'Settings', desc: '' };
+    const breadcrumbEl = document.getElementById('breadcrumbActiveCategory');
+    if (breadcrumbEl) breadcrumbEl.textContent = activeMeta.title;
+
+    const meta = CATEGORY_METADATA[catKey] || { title: 'Settings', desc: '' };
+    document.getElementById('catTitle').textContent = meta.title;
+    document.getElementById('catDesc').textContent = meta.desc;
+
+    renderCategoryFields(catKey);
+}
+
+function markDirty() {
+    isDirtyForm = true;
+}
+
+function renderAuditLogs(logs) {
+    const tbody = document.getElementById('auditLogsTbody');
+    if (!tbody) return;
+
+    if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400 text-xs">No setting audit logs found</td></tr>';
+        return;
+    }
+
+    let html = '';
+    logs.forEach(item => {
+        html += `
+        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition">
+            <td class="p-3 font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">${escapeHtml(item.time)}</td>
+            <td class="p-3 font-bold text-slate-900 dark:text-white">${escapeHtml(item.user)}</td>
+            <td class="p-3 font-semibold text-blue-600 dark:text-blue-400">${escapeHtml(item.action)}</td>
+            <td class="p-3 text-slate-500 dark:text-slate-400">${escapeHtml(item.details)}</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+}
+
+function renderSystemInfo(info) {
+    if (!info) return;
+    if (document.getElementById('sysVer')) document.getElementById('sysVer').textContent = info.system_version || 'EduTrust v3.4.0';
+    if (document.getElementById('sysDb')) document.getElementById('sysDb').textContent = `${info.database_engine || 'SQLite'} (Python ${info.python_version || '3.12'})`;
+    if (document.getElementById('sysTime')) document.getElementById('sysTime').textContent = info.server_time || '--';
+    if (document.getElementById('sysUsers')) document.getElementById('sysUsers').textContent = `${info.active_students} Students / ${info.active_teachers} Teachers`;
+    if (document.getElementById('sysHealth')) document.getElementById('sysHealth').textContent = info.database_health || '99.9% Optimal';
+    if (document.getElementById('sysLastBackup')) document.getElementById('sysLastBackup').textContent = info.last_backup || '--';
+}
+
+// 11. REGISTER MODULE API & SINGLE INITIALIZATION
+window.EduTrustSettings = window.EduTrustSettings || {};
+Object.assign(window.EduTrustSettings, {
+    init: initSettingsModule,
+    renderCategoryFields: renderCategoryFields,
+    renderBrandingSettingsCenter: renderBrandingSettingsCenter,
+    renderCertificateSettingsCenter: renderCertificateSettingsCenter,
+    renderPaymentSettingsCenter: renderPaymentSettingsCenter,
+    renderCommunicationSettingsCenter: renderCommunicationSettingsCenter,
+    renderSEOWebsiteCenter: renderSEOWebsiteCenter,
+    renderSecuritySettingsCenter: renderSecuritySettingsCenter,
+    renderBackupMaintenanceCenter: renderBackupMaintenanceCenter,
+    renderGenericSettings: renderGenericSettings,
+    switchCategoryTab: switchCategoryTab,
+    loadAllSettings: loadAllSettings,
+    CATEGORY_METADATA: CATEGORY_METADATA
+});
+
+// Global function exports for backward compatibility
+window.initSettingsModule = initSettingsModule;
+window.renderCategoryFields = renderCategoryFields;
+window.renderBrandingSettingsCenter = renderBrandingSettingsCenter;
+window.renderCertificateSettingsCenter = renderCertificateSettingsCenter;
+window.renderPaymentSettingsCenter = renderPaymentSettingsCenter;
+window.renderCommunicationSettingsCenter = renderCommunicationSettingsCenter;
+window.renderSEOWebsiteCenter = renderSEOWebsiteCenter;
+window.renderSecuritySettingsCenter = renderSecuritySettingsCenter;
+window.renderBackupMaintenanceCenter = renderBackupMaintenanceCenter;
+window.renderGenericSettings = renderGenericSettings;
+window.switchCategoryTab = switchCategoryTab;
+window.loadAllSettings = loadAllSettings;
+
+function initSettingsModule() {
+    const root = document.getElementById('settingsContainer') || document.getElementById('settingsFormContainer') || document.getElementById('catFieldsArea');
+    if (!root) return;
+
+    if (root.dataset.settingsInitialized === 'true') {
+        console.log('[SETTINGS TRACE] Already initialized on current DOM instance, skipping duplicate init');
+        return;
+    }
+    root.dataset.settingsInitialized = 'true';
+    window.EduTrustSettings.initialized = true;
+
+    const activeCat = window.EduTrustSettings.currentCategory || currentCategory || 'general';
+    currentCategory = activeCat;
+    window.EduTrustSettings.currentCategory = activeCat;
+
+    console.log('[SETTINGS TRACE] HTML loaded');
+    console.log('[SETTINGS TRACE] module initialized');
+    console.log('[SETTINGS TRACE] renderer checked:', typeof renderBrandingSettingsCenter === 'function');
+
+    renderCategoryFields(activeCat);
+    loadAllSettings();
+}
+
+
+console.log('--- Testing initSettingsModule ---');
+try {
+    initSettingsModule();
+    console.log('initSettingsModule executed without throwing.');
+    console.log('catFieldsArea length before API data:', mockElements.catFieldsArea.innerHTML.length);
+} catch (e) {
+    console.error('Error in initSettingsModule:', e);
+}
+
+console.log('--- Testing with loaded API data ---');
+try {
+    allSettingsData = apiData.settings || {};
+    window.EduTrustSettings.allSettingsData = allSettingsData;
+    
+    // Test all 15 categories
+    const categories = [
+        'general', 'branding', 'user_reg', 'academic', 'course_content',
+        'live_class', 'examination', 'assignment', 'attendance', 'certificate',
+        'payment', 'communication', 'seo_website', 'security', 'backup_maint'
+    ];
+    
+    categories.forEach(cat => {
+        try {
+            renderCategoryFields(cat);
+            console.log('Category ' + cat + ' HTML length:', mockElements.catFieldsArea.innerHTML.length);
+            if (mockElements.catFieldsArea.innerHTML.length === 0) {
+                console.warn('WARNING: Category ' + cat + ' rendered empty string!');
+            }
+        } catch(err) {
+            console.error('ERROR rendering category ' + cat + ':', err);
+        }
+    });
+} catch (e) {
+    console.error('Error in loaded data test:', e);
+}

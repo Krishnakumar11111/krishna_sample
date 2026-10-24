@@ -1,0 +1,26 @@
+{
+  "table": "students",
+  "count": 2,
+  "records": [
+    {
+      "student_id": "STU-817978",
+      "full_name": "Krishna Kumar",
+      "mobile": "1234567890",
+      "email": "kumae@gmail.com",
+      "gender": "",
+      "city": "",
+      "account_status": "Active",
+      "created_at": "2026-08-01T12:49:38.130262+00:00"
+    },
+    {
+      "student_id": "STU-262450",
+      "full_name": "ruchi singh",
+      "mobile": "9870654321",
+      "email": "sdgdfhg@gmail.com",
+      "gender": "",
+      "city": "",
+      "account_status": "Active",
+      "created_at": "2026-08-01T13:11:30.450969+00:00"
+    }
+  ]
+}
