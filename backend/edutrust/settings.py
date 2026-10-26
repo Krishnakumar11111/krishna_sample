@@ -7,6 +7,7 @@ Updated for EduTrust Frontend & Backend Reorganization and Render Deployment.
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project: BASE_DIR points to backend/
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -99,12 +100,25 @@ WSGI_APPLICATION = 'edutrust.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+# Database Configuration - PostgreSQL
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'edutrust_db',
+        'USER': 'postgres',
+        'PASSWORD': 'krishna@9151',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 
 # Password validation
