@@ -7,6 +7,7 @@ Updated for EduTrust Frontend & Backend Reorganization and Render Deployment.
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project: BASE_DIR points to backend/
 BASE_DIR = Path(__file__).resolve().parent.parent
