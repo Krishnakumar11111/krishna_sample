@@ -1,0 +1,95 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: E-LIBRARY & DIGITAL BOOKS                -->
+<!-- ======================================================== -->
+<div id="teacherModule_e_library" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-teal-100 dark:bg-teal-900/50 text-teal-600 dark:text-teal-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-book-reader"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Digital eLibrary & Reference Textbooks</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Access verified NCERT textbooks, reference solution manuals, competitive exam guides and student readers.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="alert('Digital eBook Reader opening...')" class="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs shadow-md shadow-teal-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-book-open text-xs"></i> <span>Open Online Reader</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- BOOK CATALOG GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-lg transition-all flex flex-col justify-between">
+            <div class="h-52 bg-slate-900 overflow-hidden relative group">
+                <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all">
+                <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-600 text-white">NCERT</span>
+                <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-mono bg-black/80 text-white">PDF Book</span>
+            </div>
+            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400">Class 10 • Mathematics</span>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white mt-0.5">NCERT Mathematics Standard 10th (Latest Edition)</h4>
+                </div>
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                    <button onclick="alert('Opening Textbook Reader...')" class="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs border-0 cursor-pointer">Read Online</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-lg transition-all flex flex-col justify-between">
+            <div class="h-52 bg-slate-900 overflow-hidden relative group">
+                <img src="https://images.unsplash.com/photo-1532012164546-f432f2e3777f?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all">
+                <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-purple-600 text-white">Reference</span>
+                <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-mono bg-black/80 text-white">Exemplar</span>
+            </div>
+            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400">Class 12 • Physics</span>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white mt-0.5">Concepts of Physics Part II by H.C. Verma</h4>
+                </div>
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                    <button onclick="alert('Opening Textbook Reader...')" class="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs border-0 cursor-pointer">Read Online</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-lg transition-all flex flex-col justify-between">
+            <div class="h-52 bg-slate-900 overflow-hidden relative group">
+                <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all">
+                <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-600 text-white">Foundation</span>
+                <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-mono bg-black/80 text-white">Guide</span>
+            </div>
+            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400">Class 9 • Science</span>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white mt-0.5">NCERT Science & Technology 9th Grade</h4>
+                </div>
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                    <button onclick="alert('Opening Textbook Reader...')" class="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs border-0 cursor-pointer">Read Online</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-lg transition-all flex flex-col justify-between">
+            <div class="h-52 bg-slate-900 overflow-hidden relative group">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all">
+                <span class="absolute top-3 left-3 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-600 text-white">CBSE PYQ</span>
+                <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md text-[10px] font-mono bg-black/80 text-white">10 Years</span>
+            </div>
+            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400">Class 10 • All Subjects</span>
+                    <h4 class="font-extrabold text-sm text-slate-900 dark:text-white mt-0.5">CBSE Previous 10 Years Chapterwise Solved Papers</h4>
+                </div>
+                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                    <button onclick="alert('Opening Textbook Reader...')" class="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs border-0 cursor-pointer">Read Online</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

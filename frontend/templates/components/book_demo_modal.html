@@ -1,0 +1,1823 @@
+{% load static %}
+<!-- ========================================================= -->
+<!-- FREE TRIAL / BOOK DEMO HOMEPAGE POPUP MODAL (EDUTRUST)    -->
+<!-- CANONICAL ROUTE: /book-demo/ (No tutor_id in URL)         -->
+<!-- LEFT: Selected Tutor (LOCKED) / Neutral | RIGHT: Form     -->
+<!-- ========================================================= -->
+
+<style>
+    .bookdemo-modal-scroll::-webkit-scrollbar { width: 6px; }
+    .bookdemo-modal-scroll::-webkit-scrollbar-track { background: rgba(241,245,249,0.8); border-radius: 9999px; }
+    .bookdemo-modal-scroll::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.35); border-radius: 9999px; }
+    .bookdemo-modal-scroll::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.65); }
+    .bookdemo-locked-field {
+        background-color: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        cursor: not-allowed;
+        font-weight: 600;
+    }
+    .bookdemo-editable-field {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+        transition: all 0.2s ease;
+    }
+    .bookdemo-editable-field:focus {
+        background-color: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3.5px rgba(59,130,246,0.12);
+        outline: none;
+    }
+    .bookdemo-editable-field::placeholder { color: #94a3b8; }
+</style>
+
+<!-- MODAL OVERLAY -->
+<div id="bookDemoModal" style="background-color: rgba(15,23,42,0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);" class="hidden fixed inset-0 z-[999999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden transition-all duration-300 opacity-0" aria-hidden="true" role="dialog" aria-labelledby="bookDemoModalTitle">
+
+    <!-- MAIN TWO-PANEL CARD -->
+    <div id="bookDemoModalCard" onclick="event.stopPropagation()" class="w-full max-w-[1150px] w-[88vw] h-[88vh] max-h-[90vh] bg-white rounded-[24px] sm:rounded-[30px] text-slate-900 relative transition-all duration-300 my-auto transform scale-95 overflow-hidden shadow-2xl border border-slate-200/90 flex flex-col lg:flex-row mx-auto">
+
+        <!-- CLOSE BUTTON -->
+        <button type="button" onclick="closeBookDemoModal()" aria-label="Close Free Trial Modal" class="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100/90 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-sm transition-all border border-slate-200/80 cursor-pointer z-50 shadow-2xs">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- ======================== LEFT PANEL ======================== -->
+        <div id="bookDemoLeftPanel" class="w-full lg:w-[40%] bg-gradient-to-b from-[#eef8ff] via-[#e4f3fd] to-[#d6ecfb] p-4 sm:p-5 lg:p-6 flex flex-col justify-between overflow-y-auto bookdemo-modal-scroll relative border-b lg:border-b-0 lg:border-r border-blue-100/90 shrink-0" style="min-height: 220px;">
+
+            <!-- Top-Right Handwritten Doodle -->
+            <div class="absolute top-4 right-4 hidden sm:block select-none pointer-events-none rotate-[4deg] text-right z-10">
+                <span class="block text-xs sm:text-[13px] font-bold text-blue-600 leading-tight" style="font-family: 'Caveat', 'Segoe Script', cursive, sans-serif;">
+                    ( Better<br>Learning<br>Brighter<br>Futures )
+                </span>
+            </div>
+
+            <!-- State A: Loading State -->
+            <div id="bookDemoTutorLoading" class="flex-1 flex flex-col items-center justify-center text-center">
+                <div class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center mb-2 shadow-sm">
+                    <i class="fas fa-spinner fa-spin text-blue-500 text-base"></i>
+                </div>
+                <p class="text-xs font-bold text-slate-600">Loading tutor details...</p>
+            </div>
+
+            <!-- State B: Error State -->
+            <div id="bookDemoTutorError" class="hidden flex-1 flex flex-col items-center justify-center text-center">
+                <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center mb-2">
+                    <i class="fas fa-exclamation-triangle text-rose-500 text-base"></i>
+                </div>
+                <p class="text-xs font-bold text-slate-700 mb-0.5">Unable to load tutor details.</p>
+                <p class="text-[10px] text-slate-500 mb-3">Please close or choose another educator.</p>
+                <button type="button" onclick="setNeutralBookDemoState()" class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-[11px] font-bold shadow-sm hover:bg-blue-700 transition-colors border-0 cursor-pointer">
+                    Book General Trial
+                </button>
+            </div>
+
+            <!-- State C: Neutral State (When opened directly at /book-demo/ with NO selected tutor) -->
+            <div id="bookDemoNeutralContent" class="hidden flex-1 flex flex-col justify-between overflow-hidden">
+                <div class="space-y-3">
+                    <!-- Brand Logo Header -->
+                    <div class="flex items-center gap-2 pb-2 border-b border-blue-200/60 shrink-0">
+                        {% if platform_logo_url %}
+                            <img src="{{ platform_logo_url }}" class="app-platform-logo-img h-6 sm:h-7 max-w-[125px] object-contain" alt="EduTrust Logo" onerror="this.onerror=null; this.src='/static/images/logo.png';">
+                        {% else %}
+                            <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-extrabold text-xs shadow-sm shadow-blue-500/20 shrink-0">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <span class="text-xs sm:text-sm font-black tracking-tight text-[#0f2747] block leading-tight">
+                                Edu<span class="text-blue-600">Trust</span>
+                            </span>
+                            <span class="text-[8.5px] font-bold text-blue-600 tracking-wide block leading-none mt-0.5">
+                                Learn Today, Grow Tomorrow
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Intro Heading Area -->
+                    <div>
+                        <div class="text-[11px] font-extrabold text-blue-600 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                            <span class="w-3.5 h-0.5 bg-blue-600 rounded-full"></span>
+                            <span id="bookDemoNeutralTitle">Free Trial Demo</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-[1.2] mb-2">
+                            Experience<br>Learning, <span class="text-blue-600">Risk-Free!</span>
+                        </h2>
+                        <p class="text-[10px] sm:text-[11px] text-slate-600 leading-relaxed mb-0">
+                            Book a 1-on-1 trial class. You can select a verified tutor from the homepage, or submit your trial request below and EduTrust will assign the top educator for you.
+                        </p>
+                    </div>
+
+                    <!-- 6 Feature Badges (Horizontal Cards with Left Circle Icons) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- 1. Session Type -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-0.5">Session Type</div>
+                                <div class="text-xs font-extrabold text-slate-900 truncate leading-tight">1-on-1 Trial</div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Educators -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-0.5">Educators</div>
+                                <div class="text-xs font-extrabold text-slate-900 truncate leading-tight">100% Verified</div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Classes -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-0.5">Classes</div>
+                                <div class="text-xs font-extrabold text-slate-900 truncate leading-tight">Classes 1 – 12</div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Modes -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-0.5">Modes</div>
+                                <div class="text-xs font-extrabold text-slate-900 truncate leading-tight">Online &amp; Home</div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Quality -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-0.5">Quality</div>
+                                <div class="text-xs font-extrabold text-slate-900 truncate leading-tight">5.0 ★ Standard</div>
+                            </div>
+                        </div>
+
+                        <!-- 6. Cost -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[7.5px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-0.5">Cost</div>
+                                <div class="text-xs font-black text-emerald-600 truncate leading-tight">Free Trial</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3D Vector Book Stack & Motivational Text -->
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <!-- Book Stack SVG -->
+                        <div class="w-28 shrink-0">
+                            <svg class="w-full h-auto drop-shadow-md" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Leaves -->
+                                <path d="M 120 100 C 130 75 125 55 115 50 C 110 60 110 78 115 100 Z" fill="#38bdf8" opacity="0.7"/>
+                                <path d="M 126 100 C 135 85 132 68 124 64 C 120 72 120 86 122 100 Z" fill="#0284c7" opacity="0.5"/>
+                                
+                                <!-- Book 3: Grow -->
+                                <g transform="translate(15, 80)">
+                                    <rect x="0" y="0" width="110" height="18" rx="4" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
+                                    <rect x="0" y="0" width="12" height="18" rx="4" fill="#0284c7"/>
+                                    <text x="60" y="12.5" fill="#ffffff" font-size="8.5" font-weight="900" font-family="sans-serif" text-anchor="middle">Grow</text>
+                                </g>
+
+                                <!-- Book 2: Practice -->
+                                <g transform="translate(20, 60)">
+                                    <rect x="0" y="0" width="100" height="18" rx="4" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1"/>
+                                    <rect x="0" y="0" width="12" height="18" rx="4" fill="#bae6fd"/>
+                                    <text x="56" y="12.5" fill="#0284c7" font-size="8.5" font-weight="900" font-family="sans-serif" text-anchor="middle">Practice</text>
+                                </g>
+
+                                <!-- Book 1: Learn -->
+                                <g transform="translate(25, 40)">
+                                    <rect x="0" y="0" width="90" height="18" rx="4" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+                                    <rect x="0" y="0" width="12" height="18" rx="4" fill="#1d4ed8"/>
+                                    <text x="50" y="12.5" fill="#ffffff" font-size="8.5" font-weight="900" font-family="sans-serif" text-anchor="middle">Learn</text>
+                                </g>
+
+                                <!-- Graduation Cap -->
+                                <g transform="translate(25, 6)">
+                                    <path d="M 22 24 Q 45 32 68 24 L 68 30 Q 45 38 22 30 Z" fill="#0f172a"/>
+                                    <polygon points="45,8 86,20 45,32 4,20" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+                                    <circle cx="45" cy="20" r="2.5" fill="#f59e0b"/>
+                                    <path d="M 45 20 Q 62 23 72 30 L 74 42" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+                                    <polygon points="71,42 77,42 75,48 73,48" fill="#f59e0b"/>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Doodle Text -->
+                        <div class="select-none pointer-events-none rotate-[-4deg] text-left">
+                            <span class="block text-xs sm:text-sm font-bold text-blue-600 leading-tight" style="font-family: 'Caveat', 'Segoe Script', cursive, sans-serif;">
+                                ( A Brighter<br>Tomorrow<br>Starts Here! )
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust Quote / Notice in Neutral View -->
+                <div class="space-y-2 pt-2">
+                    <div class="bg-white rounded-2xl p-2.5 px-3 border border-blue-100/80 shadow-2xs flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 text-[10px]">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[9.5px] font-medium text-slate-700 italic leading-snug mb-0.5">
+                                “Empowering students with personalized quality education.”
+                            </p>
+                            <p class="text-[8.5px] font-bold text-blue-700 leading-none mb-0">— EduTrust Team</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50/90 border border-blue-200/60 rounded-xl px-3 py-1.5 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-500 text-[10px] flex-shrink-0"></i>
+                        <p class="text-[9px] text-blue-800 font-semibold mb-0">Fill preferences on right to schedule your free trial session.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- State D: Tutor Content State (When opened for a specific tutor) -->
+            <div id="bookDemoTutorContent" class="hidden flex-1 flex flex-col justify-between h-full min-h-0 gap-2 sm:gap-2.5 overflow-hidden">
+                <!-- Top Section: Brand + Header + Profile Card -->
+                <div class="space-y-2 shrink-0">
+                    <!-- Brand Logo Header -->
+                    <div class="flex items-center gap-2 pb-2 border-b border-blue-200/60 shrink-0">
+                        {% if platform_logo_url %}
+                            <img src="{{ platform_logo_url }}" class="app-platform-logo-img h-6 sm:h-7 max-w-[125px] object-contain" alt="EduTrust Logo" onerror="this.onerror=null; this.src='/static/images/logo.png';">
+                        {% else %}
+                            <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-extrabold text-xs shadow-sm shadow-blue-500/20 shrink-0">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <span class="text-xs sm:text-sm font-black tracking-tight text-[#0f2747] block leading-tight">
+                                Edu<span class="text-blue-600">Trust</span>
+                            </span>
+                            <span class="text-[8.5px] font-bold text-blue-600 tracking-wide block leading-none mt-0.5">
+                                Learn Today, Grow Tomorrow
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Header -->
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <div class="w-5 h-5 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-600 text-[10px] font-bold">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 id="bookDemoModalTitle" class="text-xs font-black text-slate-800 tracking-tight mb-0">Selected Tutor</h3>
+                    </div>
+
+                    <!-- Tutor Profile Card -->
+                    <div class="bg-white rounded-2xl p-2.5 sm:p-3 border border-blue-100/90 shadow-2xs shrink-0">
+                        <div class="flex items-center gap-2.5">
+                            <div class="relative w-11 h-11 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-100 to-cyan-100 flex-shrink-0 border border-white shadow-2xs">
+                                <img id="bdmTutorPhoto" src="" alt="Tutor" class="w-full h-full object-cover">
+                                <div class="absolute top-0.5 right-0.5 bg-white/95 px-1 py-0.2 rounded text-[7.5px] font-extrabold text-slate-800 flex items-center gap-0.5 shadow-2xs">
+                                    <i class="fas fa-star text-amber-400 text-[6.5px]"></i>
+                                    <span id="bdmTutorRating">5.0</span>
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5 mb-0.5">
+                                    <h4 id="bdmTutorName" class="font-extrabold text-slate-900 text-xs sm:text-[13px] truncate mb-0 leading-tight">—</h4>
+                                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[7.5px] font-bold px-1.5 py-0.2 rounded-full flex items-center gap-0.5 flex-shrink-0">
+                                        <i class="fas fa-check-circle text-[6.5px]"></i> Verified
+                                    </span>
+                                </div>
+                                <p id="bdmTutorSubject" class="text-[11px] text-blue-600 font-bold truncate mb-0 leading-tight">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Cards Grid (4 Rows, 2 Columns) -->
+                <div class="flex-1 grid grid-cols-2 grid-rows-4 gap-2 min-h-0">
+                    <!-- Row 1: Experience | Qualification -->
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Experience</div>
+                        <div id="bdmTutorExp" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Qualification</div>
+                        <div id="bdmTutorQual" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+
+                    <!-- Row 2: Classes | Location -->
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Classes</div>
+                        <div id="bdmTutorClasses" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Location</div>
+                        <div id="bdmTutorLocation" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+
+                    <!-- Row 3: Teaching Mode | Fees -->
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Teaching Mode</div>
+                        <div id="bdmTutorMode" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Fees</div>
+                        <div id="bdmTutorFee" class="text-xs sm:text-[13px] font-black text-blue-700 truncate leading-snug">—</div>
+                    </div>
+
+                    <!-- Row 4: Subjects | About Teacher -->
+                    <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Subjects</div>
+                        <div id="bdmTutorSubjects" class="text-xs sm:text-[12.5px] font-bold text-slate-800 line-clamp-2 leading-snug" title="Subjects">—</div>
+                    </div>
+                    <div id="bdmAboutTeacherRow" class="bg-white rounded-2xl p-2 sm:p-2.5 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-0">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">About Teacher</div>
+                        <p id="bdmTutorBio" class="text-[9.5px] sm:text-[10px] text-slate-700 leading-snug mb-0 line-clamp-2" title="About Teacher">—</p>
+                    </div>
+                </div>
+
+                <!-- Board & Stream (shown only if available) -->
+                <div id="bdmBoardStreamRow" class="hidden grid grid-cols-2 gap-2 shrink-0">
+                    <div id="bdmBoardCard" class="hidden bg-white rounded-2xl p-2 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-[42px]">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Board</div>
+                        <div id="bdmTutorBoard" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+                    <div id="bdmStreamCard" class="hidden bg-white rounded-2xl p-2 px-3 border border-blue-100/80 shadow-2xs flex flex-col justify-center min-h-[42px]">
+                        <div class="text-[8px] sm:text-[8.5px] font-bold text-slate-400 uppercase tracking-wider mb-0.5 leading-none">Stream</div>
+                        <div id="bdmTutorStream" class="text-xs sm:text-[13px] font-extrabold text-slate-800 truncate leading-snug">—</div>
+                    </div>
+                </div>
+
+                <!-- Why Learn With [Tutor Name]? Benefit Cards -->
+                <div class="pt-2 border-t border-blue-200/60 shrink-0">
+                    <h4 class="text-[11px] sm:text-xs font-black text-[#0f2747] mb-1.5 flex items-center gap-1.5">
+                        <i class="fas fa-award text-blue-600 text-[10px]"></i>
+                        <span>Why Learn with <span id="bdmBenefitTutorName" class="text-blue-600">Your Tutor</span>?</span>
+                    </h4>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <!-- Card 1 -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-2.5 border border-blue-100/90 shadow-2xs flex flex-col justify-between min-h-[56px] sm:min-h-[62px]">
+                            <div class="w-5 h-5 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[9px] mb-1 shrink-0">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-extrabold text-[#0f2747] text-[8.5px] sm:text-[9.5px] leading-tight mb-0.5">Student Friendly</h5>
+                                <p class="text-[7.5px] sm:text-[8px] text-slate-500 leading-tight mb-0">Simple &amp; clear explanations.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-2.5 border border-blue-100/90 shadow-2xs flex flex-col justify-between min-h-[56px] sm:min-h-[62px]">
+                            <div class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[9px] mb-1 shrink-0">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-extrabold text-[#0f2747] text-[8.5px] sm:text-[9.5px] leading-tight mb-0.5">Concept Focused</h5>
+                                <p class="text-[7.5px] sm:text-[8px] text-slate-500 leading-tight mb-0">Strong conceptual learning.</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="bg-white rounded-2xl p-2 sm:p-2.5 px-2.5 border border-blue-100/90 shadow-2xs flex flex-col justify-between min-h-[56px] sm:min-h-[62px]">
+                            <div class="w-5 h-5 rounded-md bg-purple-50 text-purple-600 flex items-center justify-center text-[9px] mb-1 shrink-0">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div>
+                                <h5 class="font-extrabold text-[#0f2747] text-[8.5px] sm:text-[9.5px] leading-tight mb-0.5">Personalized Attention</h5>
+                                <p class="text-[7.5px] sm:text-[8px] text-slate-500 leading-tight mb-0">Tailored to student.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================== RIGHT PANEL — BOOKING FORM ======================== -->
+        <div class="w-full lg:w-[60%] flex flex-col overflow-hidden bg-white">
+            <div class="flex-1 overflow-y-auto bookdemo-modal-scroll p-5 sm:p-6 lg:p-8">
+
+                <!-- Form Header -->
+                <div class="flex items-center justify-between gap-3 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-blue-100/80 text-blue-600 flex items-center justify-center font-bold text-base shadow-2xs shrink-0">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight mb-0">Book Your <span class="text-blue-600">Free Trial</span></h3>
+                            <p class="text-xs text-slate-500 mt-0.5 mb-0">Fill your details to schedule a free trial class</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Header Doodle -->
+                    <div class="hidden sm:block select-none pointer-events-none rotate-[-6deg] mr-8">
+                        <span class="block text-xs sm:text-sm font-bold text-blue-600 leading-tight text-right" style="font-family: 'Caveat', 'Segoe Script', cursive, sans-serif;">
+                            ( Your Goals<br>Our Support )
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Hidden tutor_id -->
+                <input type="hidden" id="bdmTutorIdHidden" value="">
+
+                <!-- FORM -->
+                <form id="bookDemoModalForm" novalidate>
+
+                    <!-- ===== TUTOR DETAILS SECTION ===== -->
+                    <!-- Variant A: Locked Tutor Details (When tutor is selected) -->
+                    <div id="bdmLockedTutorSection" class="mb-5 bg-[#f8fbff] rounded-2xl p-4 sm:p-5 border border-blue-100/90 shadow-2xs">
+                        <div class="flex items-center gap-2 mb-3.5">
+                            <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider mb-0">TUTOR DETAILS</h4>
+                                <p class="text-[10px] text-slate-400 mb-0">Auto-filled and locked for selected educator.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- Tutor Name -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Tutor</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 text-xs"><i class="fas fa-lock"></i></span>
+                                    <input type="text" id="bdmLockedTutorName" readonly class="flex-1 bookdemo-locked-field rounded-xl px-3 py-2.5 text-xs" value="">
+                                </div>
+                            </div>
+                            <!-- Subject -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Subject</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 text-xs"><i class="fas fa-lock"></i></span>
+                                    <input type="text" id="bdmLockedSubject" readonly class="flex-1 bookdemo-locked-field rounded-xl px-3 py-2.5 text-xs" value="">
+                                </div>
+                            </div>
+                            <!-- Class -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Class / Grade</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 text-xs"><i class="fas fa-lock"></i></span>
+                                    <input type="text" id="bdmLockedClass" readonly class="flex-1 bookdemo-locked-field rounded-xl px-3 py-2.5 text-xs" value="">
+                                </div>
+                            </div>
+                            <!-- Teaching Mode -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Teaching Mode</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 text-xs"><i class="fas fa-lock"></i></span>
+                                    <input type="text" id="bdmLockedMode" readonly class="flex-1 bookdemo-locked-field rounded-xl px-3 py-2.5 text-xs" value="">
+                                </div>
+                            </div>
+                            <!-- Board (shown if available) -->
+                            <div id="bdmLockedBoardWrap" class="hidden">
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Board</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 text-xs"><i class="fas fa-lock"></i></span>
+                                    <input type="text" id="bdmLockedBoard" readonly class="flex-1 bookdemo-locked-field rounded-xl px-3 py-2.5 text-xs" value="">
+                                </div>
+                            </div>
+                            <!-- Stream (shown if available) -->
+                            <div id="bdmLockedStreamWrap" class="hidden">
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Stream</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-slate-400 text-xs"><i class="fas fa-lock"></i></span>
+                                    <input type="text" id="bdmLockedStream" readonly class="flex-1 bookdemo-locked-field rounded-xl px-3 py-2.5 text-xs" value="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Variant B: Neutral Academic Requirements (When opened with NO selected tutor) -->
+                    <div id="bdmNeutralAcademicSection" class="hidden mb-5 bg-[#f8fbff] rounded-2xl p-4 sm:p-5 border border-blue-100/90 shadow-2xs">
+                        <div class="flex items-center gap-2 mb-3.5">
+                            <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider mb-0">ACADEMIC REQUIREMENTS</h4>
+                                <p class="text-[10px] text-slate-400 mb-0">Tell us what you want to learn.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- Class Selection -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Class / Grade *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-graduation-cap text-xs"></i></span>
+                                    <select id="bdmNeutralClass" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs appearance-none cursor-pointer">
+                                        <option value="">Select class</option>
+                                        <option value="Class 1">Class 1</option>
+                                        <option value="Class 2">Class 2</option>
+                                        <option value="Class 3">Class 3</option>
+                                        <option value="Class 4">Class 4</option>
+                                        <option value="Class 5">Class 5</option>
+                                        <option value="Class 6">Class 6</option>
+                                        <option value="Class 7">Class 7</option>
+                                        <option value="Class 8">Class 8</option>
+                                        <option value="Class 9">Class 9</option>
+                                        <option value="Class 10">Class 10</option>
+                                        <option value="Class 11">Class 11</option>
+                                        <option value="Class 12">Class 12</option>
+                                    </select>
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-[10px]"></i></span>
+                                </div>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmNeutralClass"><i class="fas fa-exclamation-circle mr-0.5"></i>Class is required.</p>
+                            </div>
+                            <!-- Subject Input -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Subject *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-book text-xs"></i></span>
+                                    <input type="text" id="bdmNeutralSubject" placeholder="e.g. Mathematics, Physics..." class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs">
+                                </div>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmNeutralSubject"><i class="fas fa-exclamation-circle mr-0.5"></i>Subject is required.</p>
+                            </div>
+                            <!-- Tuition Mode Selection -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Tuition Mode</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-home text-xs"></i></span>
+                                    <select id="bdmNeutralMode" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs appearance-none cursor-pointer">
+                                        {% if is_home_tuition_mode %}
+                                        <option value="Home Tuition" selected>Home Tuition</option>
+                                        {% elif is_online_tuition_mode %}
+                                        <option value="Online" selected>Online</option>
+                                        {% else %}
+                                        <option value="Online">Online</option>
+                                        <option value="Home Tuition" selected>Home Tuition</option>
+                                        <option value="Online / Offline">Online / Offline</option>
+                                        {% endif %}
+                                    </select>
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-[10px]"></i></span>
+                                </div>
+                            </div>
+                            <!-- Assigned Tutor Info -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Tutor Assignment</label>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-blue-500 text-xs"><i class="fas fa-user-shield"></i></span>
+                                    <input type="text" readonly class="flex-1 bookdemo-locked-field rounded-2xl px-3.5 py-2.5 text-xs text-blue-700 font-bold" value="Assigned by EduTrust">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== STUDENT INFORMATION (Editable) ===== -->
+                    <div class="mb-5">
+                        <div class="flex items-center gap-2 pb-2 border-b border-slate-100 mb-3.5">
+                            <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xs shrink-0">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-slate-900 mb-0">Student Information</h4>
+                                <p class="text-[10px] text-slate-400 mb-0">Help us know you better.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Full Name *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-user text-xs"></i></span>
+                                    <input type="text" id="bdmStudentName" placeholder="Enter student's full name" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs">
+                                </div>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmStudentName"><i class="fas fa-exclamation-circle mr-0.5"></i>Full name is required (min 2 characters).</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Mobile Number *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-phone text-xs"></i></span>
+                                    <input type="tel" id="bdmStudentMobile" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs">
+                                </div>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmStudentMobile"><i class="fas fa-exclamation-circle mr-0.5"></i>Valid 10-digit mobile required.</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Email Address *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-envelope text-xs"></i></span>
+                                    <input type="email" id="bdmStudentEmail" placeholder="student@example.com" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs">
+                                </div>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmStudentEmail"><i class="fas fa-exclamation-circle mr-0.5"></i>Valid email required.</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Gender</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-venus-mars text-xs"></i></span>
+                                    <select id="bdmStudentGender" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs appearance-none cursor-pointer">
+                                        <option value="">Select gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-[10px]"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== TUITION PREFERENCES (Editable) ===== -->
+                    <div class="mb-5">
+                        <div class="flex items-center gap-2 pb-2 border-b border-slate-100 mb-3.5">
+                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-xs shrink-0">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">Scheduling &amp; Preferences</h4>
+                                <p class="text-[10px] text-slate-400 mb-0">Set your preferred timing.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <!-- Date (Custom Designed Calendar) -->
+                            <div class="relative" id="bdmDatePickerContainer">
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Preferred Date *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-blue-500 pointer-events-none z-10"><i class="fas fa-calendar-alt text-xs"></i></span>
+                                    <input type="text" id="bdmDemoDateDisplay" readonly placeholder="Select preferred date"
+                                        class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-8 py-2.5 text-xs cursor-pointer bg-white font-medium"
+                                        onclick="toggleBdmCalendar(event)">
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none z-10">
+                                        <i class="fas fa-chevron-down text-[10px] transition-transform duration-200" id="bdmCalendarChevron"></i>
+                                    </span>
+                                    <input type="hidden" id="bdmDemoDate" value="">
+                                </div>
+
+                                <!-- CUSTOM DESIGNED CALENDAR DROPDOWN -->
+                                <div id="bdmCalendarPopup" class="hidden absolute top-full left-0 mt-1.5 z-[100] w-[280px] sm:w-[300px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-3.5 transition-all text-slate-800">
+                                    <!-- Month Header & Controls -->
+                                    <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-slate-100">
+                                        <button type="button" onclick="prevBdmMonth(event)" class="w-7 h-7 rounded-lg hover:bg-blue-50 text-slate-600 hover:text-blue-600 flex items-center justify-center text-xs transition-colors cursor-pointer border-0 bg-transparent">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <div class="font-extrabold text-xs text-slate-900 tracking-tight" id="bdmCalendarMonthYear">
+                                            <!-- Dynamic Month Year -->
+                                        </div>
+                                        <button type="button" onclick="nextBdmMonth(event)" class="w-7 h-7 rounded-lg hover:bg-blue-50 text-slate-600 hover:text-blue-600 flex items-center justify-center text-xs transition-colors cursor-pointer border-0 bg-transparent">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Days of Week Header -->
+                                    <div class="grid grid-cols-7 gap-1 text-center mb-1.5">
+                                        <span class="text-[10px] font-bold text-rose-500 py-0.5">Su</span>
+                                        <span class="text-[10px] font-bold text-slate-400 py-0.5">Mo</span>
+                                        <span class="text-[10px] font-bold text-slate-400 py-0.5">Tu</span>
+                                        <span class="text-[10px] font-bold text-slate-400 py-0.5">We</span>
+                                        <span class="text-[10px] font-bold text-slate-400 py-0.5">Th</span>
+                                        <span class="text-[10px] font-bold text-slate-400 py-0.5">Fr</span>
+                                        <span class="text-[10px] font-bold text-slate-400 py-0.5">Sa</span>
+                                    </div>
+
+                                    <!-- Dynamic Date Cells Grid -->
+                                    <div id="bdmCalendarDaysGrid" class="grid grid-cols-7 gap-1 text-center text-xs">
+                                        <!-- Rendered by JS -->
+                                    </div>
+
+                                    <!-- Quick Action Footer -->
+                                    <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-100 text-[11px]">
+                                        <button type="button" onclick="clearBdmDate(event)" class="text-slate-400 hover:text-slate-600 font-bold border-0 bg-transparent cursor-pointer px-1 py-0.5 transition-colors">
+                                            Clear
+                                        </button>
+                                        <button type="button" onclick="selectBdmToday(event)" class="text-blue-600 hover:text-blue-700 font-bold border-0 bg-transparent cursor-pointer px-1 py-0.5 transition-colors">
+                                            Today
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmDemoDate"><i class="fas fa-exclamation-circle mr-0.5"></i>Please select a valid future date.</p>
+                            </div>
+                            <!-- Time Slot -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Preferred Time *</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-clock text-xs"></i></span>
+                                    <select id="bdmTimeSlot" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs appearance-none cursor-pointer">
+                                        <option value="">Select time slot</option>
+                                        <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM</option>
+                                        <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM</option>
+                                        <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+                                        <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+                                        <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM</option>
+                                        <option value="Weekend Morning">Weekend Morning</option>
+                                        <option value="Sunday Evening">Sunday Evening</option>
+                                        <option value="After School">After School</option>
+                                    </select>
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-[10px]"></i></span>
+                                </div>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmTimeSlot"><i class="fas fa-exclamation-circle mr-0.5"></i>Please select a time slot.</p>
+                            </div>
+                            <!-- Sessions -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Demo Sessions</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-layer-group text-xs"></i></span>
+                                    <input type="number" id="bdmSessionsCount" value="1" min="1" max="2" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs">
+                                </div>
+                            </div>
+                            <!-- Language -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Language</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-language text-xs"></i></span>
+                                    <select id="bdmLanguage" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs appearance-none cursor-pointer">
+                                        <option value="">Select language</option>
+                                        <option value="English">English</option>
+                                        <option value="Hindi">Hindi</option>
+                                        <option value="Bilingual (English &amp; Hindi)">Bilingual (English &amp; Hindi)</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-[10px]"></i></span>
+                                </div>
+                            </div>
+                            <!-- Learning Goal -->
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Learning Goal</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-bullseye text-xs"></i></span>
+                                    <select id="bdmLearningGoal" class="w-full bookdemo-editable-field rounded-2xl pl-9 pr-3 py-2.5 text-xs appearance-none cursor-pointer">
+                                        <option value="">Select goal</option>
+                                        <option value="Board Exam Preparation">Board Exam Preparation</option>
+                                        <option value="Concept Clarity">Concept Clarity</option>
+                                        <option value="Homework Help">Homework Help</option>
+                                        <option value="Revision">Revision</option>
+                                        <option value="Olympiad">Olympiad</option>
+                                        <option value="JEE">JEE</option>
+                                        <option value="NEET">NEET</option>
+                                        <option value="CUET">CUET</option>
+                                        <option value="Spoken English">Spoken English</option>
+                                        <option value="Assignment Help">Assignment Help</option>
+                                    </select>
+                                    <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-[10px]"></i></span>
+                                </div>
+                            </div>
+                            <!-- Notes -->
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Additional Notes</label>
+                                <textarea id="bdmNotes" rows="2" placeholder="Mention any specific requirements..." class="w-full bookdemo-editable-field rounded-2xl px-3.5 py-2.5 text-xs resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ADDRESS (Conditional for Home Tuition) ===== -->
+                    <div id="bdmAddressSection" class="hidden mb-5">
+                        <div class="flex items-center gap-2 pb-2 border-b border-slate-100 mb-3.5">
+                            <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-xs shrink-0">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-black text-slate-900 mb-0">Home Tuition Address</h4>
+                                <p class="text-[10px] text-slate-400 mb-0">Address where tutor will provide classes.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">State *</label>
+                                <input type="text" id="bdmAddrState" placeholder="Enter state" class="w-full bookdemo-editable-field rounded-2xl px-3.5 py-2.5 text-xs">
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmAddrState"><i class="fas fa-exclamation-circle mr-0.5"></i>State required for home tuition.</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">City *</label>
+                                <input type="text" id="bdmAddrCity" placeholder="Enter city" class="w-full bookdemo-editable-field rounded-2xl px-3.5 py-2.5 text-xs">
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmAddrCity"><i class="fas fa-exclamation-circle mr-0.5"></i>City required for home tuition.</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Area / Locality *</label>
+                                <input type="text" id="bdmAddrLocality" placeholder="Enter area" class="w-full bookdemo-editable-field rounded-2xl px-3.5 py-2.5 text-xs">
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmAddrLocality"><i class="fas fa-exclamation-circle mr-0.5"></i>Area required for home tuition.</p>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Landmark</label>
+                                <input type="text" id="bdmAddrLandmark" placeholder="e.g. Near City Mall" class="w-full bookdemo-editable-field rounded-2xl px-3.5 py-2.5 text-xs">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Complete Address *</label>
+                                <textarea id="bdmAddrComplete" rows="2" placeholder="House No, Building, Street Name..." class="w-full bookdemo-editable-field rounded-2xl px-3.5 py-2.5 text-xs resize-none"></textarea>
+                                <p class="bdm-error text-red-500 text-[10px] font-medium mt-0.5 hidden" data-for="bdmAddrComplete"><i class="fas fa-exclamation-circle mr-0.5"></i>Complete address required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ACTION BUTTONS & TRUST FOOTER ===== -->
+                    <div class="pt-2">
+                        <button type="submit" id="bdmSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 px-6 rounded-2xl sm:rounded-full font-black text-sm shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all active:scale-[0.98] flex items-center justify-center gap-2 border-0 cursor-pointer">
+                            <i class="fas fa-paper-plane text-xs"></i>
+                            <span id="bdmSubmitText">Book Free Trial Now</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </button>
+                        
+                        <!-- Trust message with lock and doodle -->
+                        <div class="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-slate-500 font-medium select-none">
+                            <i class="fas fa-lock text-blue-600 text-xs"></i>
+                            <span>Your information is safe and secure with EduTrust.</span>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS MODAL (PREMIUM EDUTRUST THANK YOU POPUP) -->
+<div id="bdmSuccessModal" class="hidden fixed inset-0 z-[9999999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-md transition-all duration-300">
+    <div class="bg-white p-6 sm:p-7 rounded-[26px] sm:rounded-[28px] shadow-2xl border border-blue-100/90 max-w-[490px] w-full text-center relative overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
+        
+        <!-- Top-Right Close Button -->
+        <button type="button" onclick="document.getElementById('bdmSuccessModal').classList.add('hidden'); document.body.style.overflow='';" class="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-blue-50/80 hover:bg-blue-100 text-slate-400 hover:text-slate-700 flex items-center justify-center text-xs transition-all border border-blue-100/80 cursor-pointer z-10" aria-label="Close Thank You Popup">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Hidden ID placeholders for dynamic JS safety -->
+        <span id="bdmSuccessBookingId" class="hidden"></span>
+        <span id="bdmSuccessTutorName" class="hidden"></span>
+        <span id="bdmSuccessDateTime" class="hidden"></span>
+
+        <!-- Top Success Icon with Festive Confetti Strokes -->
+        <div class="relative w-20 h-20 mx-auto mb-2.5 flex items-center justify-center">
+            <!-- Confetti Strokes -->
+            <span class="absolute -top-0.5 left-2.5 w-1.5 h-3.5 bg-[#2563eb] rounded-full rotate-[-35deg]"></span>
+            <span class="absolute top-2 -left-1 w-1.5 h-3 bg-[#eab308] rounded-full rotate-[45deg]"></span>
+            <span class="absolute bottom-3.5 -left-1 w-1.5 h-2.5 bg-[#22c55e] rounded-full rotate-[-15deg]"></span>
+            <span class="absolute -top-0.5 right-2.5 w-1.5 h-3.5 bg-[#2563eb] rounded-full rotate-[35deg]"></span>
+            <span class="absolute top-2 -right-1 w-1.5 h-3 bg-[#eab308] rounded-full rotate-[-45deg]"></span>
+            <span class="absolute bottom-3.5 -right-1 w-1.5 h-2.5 bg-[#22c55e] rounded-full rotate-[15deg]"></span>
+
+            <!-- Glowing Green Checkmark Circle -->
+            <div class="w-16 h-16 rounded-full bg-[#dcfce7] border-4 border-[#bbf7d0] flex items-center justify-center shadow-lg shadow-emerald-500/15">
+                <div class="w-11 h-11 rounded-full bg-[#22c55e] text-white flex items-center justify-center text-xl shadow-xs">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Title & Subtitles -->
+        <h3 class="text-2xl sm:text-[26px] font-black text-[#0f172a] tracking-tight mb-1">
+            Thank You!
+        </h3>
+        <p class="text-[13px] sm:text-[14.5px] font-bold text-[#2563eb] leading-snug mb-1.5">
+            Your demo class request has been submitted successfully.
+        </p>
+        <p class="text-[11.5px] sm:text-xs text-slate-500 font-normal leading-relaxed max-w-sm mx-auto mb-3.5">
+            We’ve received your information and our team will get in touch with you shortly to confirm your free demo class.
+        </p>
+
+        <!-- Request Received Confirmation Card -->
+        <div class="bg-[#eff6ff] rounded-2xl border border-[#dbeafe] p-3 sm:p-3.5 mb-3.5 text-left flex items-center gap-3 shadow-2xs">
+            <div class="w-11 h-11 rounded-full bg-white shadow-xs border border-blue-100 flex items-center justify-center relative shrink-0">
+                <i class="far fa-calendar-alt text-[#2563eb] text-lg"></i>
+                <span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#22c55e] text-white flex items-center justify-center text-[7.5px] ring-2 ring-white font-bold">
+                    <i class="fas fa-check"></i>
+                </span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <div class="text-xs sm:text-[13px] font-bold text-[#1e40af] flex items-center gap-1 mb-0.5">
+                    <span>Request Received</span>
+                    <i class="fas fa-check text-[#22c55e] text-[10px]"></i>
+                </div>
+                <p class="text-[11px] text-slate-500 font-normal leading-snug m-0">
+                    Your demo class request has been securely submitted to the EduTrust team.
+                </p>
+            </div>
+        </div>
+
+        <!-- EduTrust Brand Message with Subtle Underline -->
+        <div class="mb-3 text-center">
+            <span class="text-xs sm:text-sm font-bold text-[#2563eb] tracking-wide inline-block" style="font-family: 'Caveat', cursive, sans-serif;">
+                Learn Better • Grow Smarter • Achieve More
+            </span>
+            <div class="w-28 h-0.5 bg-gradient-to-r from-transparent via-[#2563eb]/60 to-transparent rounded-full mx-auto mt-0.5"></div>
+        </div>
+
+        <!-- Bottom Row: Educational Illustration (Left), Primary Button (Center), Doodle (Right) -->
+        <div class="relative flex items-center justify-between pt-1">
+            <!-- Educational Illustration (Lower Left) -->
+            <div class="w-18 h-14 relative select-none pointer-events-none shrink-0 flex items-end">
+                <svg viewBox="0 0 100 85" class="w-full h-full drop-shadow-xs" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Green Leaves Accent -->
+                    <path d="M15 65C10 50 20 40 30 45C30 55 25 65 15 65Z" fill="#22c55e" fill-opacity="0.85"/>
+                    <path d="M85 68C90 55 80 46 72 50C71 60 76 68 85 68Z" fill="#22c55e" fill-opacity="0.85"/>
+                    
+                    <!-- Bottom Book (Navy) -->
+                    <rect x="16" y="66" width="68" height="11" rx="3" fill="#0f172a"/>
+                    <rect x="22" y="68" width="58" height="7" rx="2" fill="#ffffff" fill-opacity="0.95"/>
+                    <path d="M16 66H22V77H16C14.3431 77 13 75.6569 13 74V69C13 67.3431 14.3431 66 16 66Z" fill="#1e3a8a"/>
+
+                    <!-- Middle Book (EduTrust Primary Blue) -->
+                    <rect x="20" y="54" width="60" height="10" rx="3" fill="#2563eb"/>
+                    <rect x="25" y="56" width="52" height="6" rx="2" fill="#ffffff" fill-opacity="0.95"/>
+                    <path d="M20 54H25V64H20C18.3431 64 17 62.6569 17 61V57C17 55.3431 18.3431 54 20 54Z" fill="#1d4ed8"/>
+
+                    <!-- Top Book (Sky Blue) -->
+                    <rect x="24" y="43" width="52" height="9" rx="3" fill="#38bdf8"/>
+                    <rect x="28" y="45" width="45" height="5" rx="1.5" fill="#ffffff" fill-opacity="0.95"/>
+                    <path d="M24 43H28V52H24C22.3431 52 21 50.6569 21 49V46C21 44.3431 22.3431 43 24 43Z" fill="#0284c7"/>
+
+                    <!-- Graduation Cap (Mortarboard) -->
+                    <path d="M38 31C38 31 38 38 50 38C62 38 62 31 62 31H38Z" fill="#0f172a"/>
+                    <polygon points="50,15 76,26 50,37 24,26" fill="#1e293b"/>
+                    <polygon points="50,16 74,26 50,36 26,26" fill="#0f172a"/>
+                    <circle cx="50" cy="26" r="2.5" fill="#eab308"/>
+                    <path d="M50 26C54 28 62 30 64 36L65 42" stroke="#eab308" stroke-width="1.8" stroke-linecap="round"/>
+                    <circle cx="65" cy="42" r="1.5" fill="#eab308"/>
+                </svg>
+            </div>
+
+            <!-- Primary "Great! →" Button (Centered) -->
+            <div class="flex-1 px-2 flex justify-center">
+                <button id="bdmSuccessCloseBtn" type="button" class="inline-flex items-center justify-center gap-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold px-7 sm:px-8 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm shadow-lg shadow-blue-600/30 hover:shadow-blue-600/40 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 cursor-pointer border-0">
+                    <span>Great!</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Lower Right Educational Doodle -->
+            <div class="text-right select-none pointer-events-none shrink-0 w-18 relative">
+                <span class="block text-[10px] sm:text-[11px] font-bold text-blue-500 leading-tight" style="font-family: 'Caveat', cursive;">
+                    A Brighter<br>Tomorrow<br>Starts Here!
+                </span>
+                <!-- Decorative accents -->
+                <span class="absolute -top-1 right-0 w-1 h-2 bg-blue-400/80 rounded-full rotate-[25deg]"></span>
+                <span class="absolute top-1.5 -right-1.5 w-1.5 h-1 bg-blue-400/80 rounded-full"></span>
+                <span class="absolute -bottom-1 right-1.5 w-1 h-2 bg-blue-400/80 rounded-full rotate-[-25deg]"></span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- BOOK DEMO MODAL CONTROLLER SCRIPT                         -->
+<!-- ========================================================= -->
+<script>
+(function() {
+
+    // =========================================================
+    // APPLICATION STATE (Internal state only — never in URL)
+    // =========================================================
+    let bdmCurrentTutor = null;
+    let bdmIsOpen = false;
+    window.activeBookDemoTutorId = null;
+
+    // =========================================================
+    // OPEN MODAL
+    // CANONICAL URL IS ALWAYS /book-demo/ WITHOUT QUERY PARAMS
+    // =========================================================
+    // =========================================================
+    // NORMALIZE TUTOR DATA
+    // =========================================================
+    function normalizeTutorData(t) {
+        if (!t) return null;
+        var name = t.full_name || t.name || 'Verified Tutor';
+        var photo = t.photo_url || t.photo || ('https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=2563eb&color=fff&size=300');
+        var subjects = t.subjects || t.subject || t.skill || 'Expert Tutor';
+        var exp = t.experience || t.exp || 'N/A';
+        var qual = t.qualification || 'Graduate';
+        var classes = t.teaching_classes || t.tutorClass || t.class || 'N/A';
+        var city = t.city || t.location || '';
+        var state = t.state || '';
+        var location = city + (state ? (city ? ', ' : '') + state : '') || (t.location || 'N/A');
+        var mode = t.tuition_mode || t.mode || 'Home & Online Tuition';
+        var rating = String(t.rating || '5.0');
+        var id = t.id || t.teacher_id || '';
+        var teacher_id = t.teacher_id || t.id || '';
+        var bio = t.bio || t.intro || 'Dedicated educator committed to student success and academic excellence.';
+        var expected_fee = t.expected_fee || t.fee || 'Fee on Request';
+        var board = t.board || '';
+        var stream = t.stream || t.specialization || '';
+
+        // Fee formatting
+        var fee = 'Fee on Request';
+        if (expected_fee) {
+            var rawFee = String(expected_fee).trim();
+            if (rawFee && !rawFee.toLowerCase().includes('request') && !rawFee.toLowerCase().includes('market')) {
+                if (/^\d+$/.test(rawFee)) {
+                    fee = '₹' + parseInt(rawFee, 10).toLocaleString('en-IN') + '/hr';
+                } else if (!rawFee.includes('₹') && !rawFee.toLowerCase().includes('rs')) {
+                    fee = '₹' + rawFee;
+                } else {
+                    fee = rawFee;
+                }
+            }
+        }
+
+        return {
+            id: id,
+            teacher_id: teacher_id,
+            full_name: name,
+            name: name,
+            photo_url: photo,
+            photo: photo,
+            subjects: subjects,
+            subject: subjects,
+            experience: exp,
+            exp: exp,
+            qualification: qual,
+            teaching_classes: classes,
+            tutorClass: classes,
+            class: classes,
+            city: city,
+            state: state,
+            location: location,
+            tuition_mode: mode,
+            mode: mode,
+            rating: rating,
+            bio: bio,
+            expected_fee: fee,
+            fee: fee,
+            board: board,
+            stream: stream
+        };
+    }
+
+    // =========================================================
+    // OPEN MODAL (Stay on current page / modal overlay)
+    // =========================================================
+    window.openBookDemoModal = function(tutorArg) {
+        const modal = document.getElementById('bookDemoModal');
+        if (!modal) return;
+
+        // Close other modals if open
+        if (typeof closeHireTutorModal === 'function') {
+            try { closeHireTutorModal(true); } catch(e) {}
+        }
+        if (typeof closeAuthModal === 'function') {
+            try { closeAuthModal(true); } catch(e) {}
+        }
+        if (typeof closeTopTeacherProfileModal === 'function') {
+            try { closeTopTeacherProfileModal(); } catch(e) {}
+        }
+
+        // Store internal active tutor ID and reset state
+        resetBookDemoModalForm();
+        bdmCurrentTutor = null;
+        window.activeBookDemoTutorId = null;
+
+        // Show modal on current page
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        bdmIsOpen = true;
+        document.body.style.overflow = 'hidden';
+
+        setTimeout(function() {
+            modal.classList.remove('opacity-0');
+            var card = document.getElementById('bookDemoModalCard');
+            if (card) { card.classList.remove('scale-95'); card.classList.add('scale-100'); }
+        }, 15);
+
+        // Fetch / populate tutor data or show neutral state
+        if (tutorArg) {
+            if (typeof tutorArg === 'object') {
+                var normalized = normalizeTutorData(tutorArg);
+                bdmCurrentTutor = normalized;
+                window.activeBookDemoTutorId = normalized.id || normalized.teacher_id || null;
+                document.getElementById('bdmTutorIdHidden').value = window.activeBookDemoTutorId || '';
+                populateBookDemoTutor(normalized);
+                showBookDemoState('content');
+
+                // If numerical ID exists, fetch full DB details in background to ensure maximum detail
+                if (normalized.id && !isNaN(parseInt(normalized.id, 10))) {
+                    fetch('/api/tutors/' + normalized.id + '/')
+                        .then(function(res) { return res.json(); })
+                        .then(function(data) {
+                            if (data.status === 'success' && data.tutor) {
+                                var fullNorm = normalizeTutorData(data.tutor);
+                                bdmCurrentTutor = fullNorm;
+                                populateBookDemoTutor(fullNorm);
+                            }
+                        })
+                        .catch(function() {});
+                }
+            } else if (typeof tutorArg === 'string' || typeof tutorArg === 'number') {
+                var tid = String(tutorArg).trim();
+                window.activeBookDemoTutorId = tid;
+                document.getElementById('bdmTutorIdHidden').value = tid;
+                showBookDemoState('loading');
+                fetch('/api/tutors/' + tid + '/')
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (data.status === 'success' && data.tutor) {
+                            var normalized = normalizeTutorData(data.tutor);
+                            bdmCurrentTutor = normalized;
+                            populateBookDemoTutor(normalized);
+                            showBookDemoState('content');
+                        } else {
+                            showBookDemoState('error');
+                        }
+                    })
+                    .catch(function() {
+                        showBookDemoState('error');
+                    });
+            } else {
+                setNeutralBookDemoState();
+            }
+        } else {
+            // Neutral state (no tutor ID, e.g. general CTA)
+            setNeutralBookDemoState();
+        }
+
+        // Set min date to today
+        var dateInput = document.getElementById('bdmDemoDate');
+        if (dateInput) {
+            var today = new Date();
+            var y = today.getFullYear();
+            var m = String(today.getMonth() + 1).padStart(2, '0');
+            var d = String(today.getDate()).padStart(2, '0');
+            dateInput.setAttribute('min', y + '-' + m + '-' + d);
+        }
+    };
+
+    // =========================================================
+    // CLOSE MODAL
+    // =========================================================
+    window.closeBookDemoModal = function() {
+        var modal = document.getElementById('bookDemoModal');
+        var card = document.getElementById('bookDemoModalCard');
+        if (!modal) return;
+
+        if (document.activeElement && modal.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
+        if (card) { card.classList.remove('scale-100'); card.classList.add('scale-95'); }
+        modal.classList.add('opacity-0');
+        bdmIsOpen = false;
+        window.activeBookDemoTutorId = null;
+        bdmCurrentTutor = null;
+
+        setTimeout(function() {
+            if (document.activeElement && modal.contains(document.activeElement)) {
+                document.activeElement.blur();
+            }
+            modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }, 250);
+    };
+
+    // =========================================================
+    // SHOW STATE (loading / content / neutral / error)
+    // =========================================================
+    function showBookDemoState(state) {
+        var loading = document.getElementById('bookDemoTutorLoading');
+        var content = document.getElementById('bookDemoTutorContent');
+        var neutral = document.getElementById('bookDemoNeutralContent');
+        var error = document.getElementById('bookDemoTutorError');
+
+        if (loading) loading.classList.toggle('hidden', state !== 'loading');
+        if (content) content.classList.toggle('hidden', state !== 'content');
+        if (neutral) neutral.classList.toggle('hidden', state !== 'neutral');
+        if (error) error.classList.toggle('hidden', state !== 'error');
+    }
+
+    // =========================================================
+    // SET NEUTRAL STATE (When no tutor is selected)
+    // =========================================================
+    window.setNeutralBookDemoState = function() {
+        document.getElementById('bdmTutorIdHidden').value = '';
+        bdmCurrentTutor = null;
+        window.activeBookDemoTutorId = null;
+
+        // Show neutral view on left
+        showBookDemoState('neutral');
+
+        // Toggle form sections: hide locked section, show neutral requirements section
+        var lockedSec = document.getElementById('bdmLockedTutorSection');
+        var neutralSec = document.getElementById('bdmNeutralAcademicSection');
+        if (lockedSec) lockedSec.classList.add('hidden');
+        if (neutralSec) neutralSec.classList.remove('hidden');
+
+        // Setup mode change listener for neutral mode
+        var neutralMode = document.getElementById('bdmNeutralMode');
+        if (neutralMode) {
+            checkBdmAddressVisibility(neutralMode.value);
+            neutralMode.onchange = function() {
+                checkBdmAddressVisibility(this.value);
+            };
+        }
+    };
+
+    // =========================================================
+    // POPULATE TUTOR DATA (When a specific tutor is selected)
+    // =========================================================
+    function populateBookDemoTutor(rawTutor) {
+        var tutor = normalizeTutorData(rawTutor);
+        if (!tutor) return;
+        bdmCurrentTutor = tutor;
+
+        // LEFT PANEL
+        var photoEl = document.getElementById('bdmTutorPhoto');
+        if (photoEl) photoEl.src = tutor.photo_url;
+        setText('bdmTutorName', tutor.full_name);
+        setText('bdmTutorRating', tutor.rating);
+        setText('bdmTutorSubject', tutor.subjects);
+        setText('bdmTutorExp', tutor.experience);
+        setText('bdmTutorQual', tutor.qualification);
+        setText('bdmTutorClasses', tutor.teaching_classes);
+        setText('bdmTutorLocation', tutor.location);
+        setText('bdmTutorMode', tutor.tuition_mode);
+        setText('bdmTutorFee', tutor.expected_fee);
+        setText('bdmTutorSubjects', tutor.subjects);
+        setText('bdmTutorBio', tutor.bio || 'Dedicated educator committed to student success and academic excellence.');
+        setText('bdmBenefitTutorName', tutor.full_name);
+        setText('bdmQuoteTutorName', tutor.full_name);
+
+        // Board & Stream cards
+        var boardStreamRow = document.getElementById('bdmBoardStreamRow');
+        var boardCard = document.getElementById('bdmBoardCard');
+        var streamCard = document.getElementById('bdmStreamCard');
+        var showBoardStream = false;
+
+        if (tutor.board) {
+            setText('bdmTutorBoard', tutor.board);
+            if (boardCard) boardCard.classList.remove('hidden');
+            showBoardStream = true;
+        } else {
+            if (boardCard) boardCard.classList.add('hidden');
+        }
+        if (tutor.stream) {
+            setText('bdmTutorStream', tutor.stream);
+            if (streamCard) streamCard.classList.remove('hidden');
+            showBoardStream = true;
+        } else {
+            if (streamCard) streamCard.classList.add('hidden');
+        }
+        if (boardStreamRow) boardStreamRow.classList.toggle('hidden', !showBoardStream);
+
+        // FORM SECTIONS: Show locked section, hide neutral section
+        var lockedSec = document.getElementById('bdmLockedTutorSection');
+        var neutralSec = document.getElementById('bdmNeutralAcademicSection');
+        if (lockedSec) lockedSec.classList.remove('hidden');
+        if (neutralSec) neutralSec.classList.add('hidden');
+
+        // LOCKED FORM FIELDS (readonly display)
+        setVal('bdmLockedTutorName', tutor.full_name);
+        setVal('bdmLockedSubject', tutor.subjects);
+        setVal('bdmLockedClass', tutor.teaching_classes);
+        setVal('bdmLockedMode', tutor.tuition_mode);
+
+        // Board locked field
+        var boardWrap = document.getElementById('bdmLockedBoardWrap');
+        if (tutor.board) {
+            setVal('bdmLockedBoard', tutor.board);
+            if (boardWrap) boardWrap.classList.remove('hidden');
+        } else {
+            if (boardWrap) boardWrap.classList.add('hidden');
+        }
+
+        // Stream locked field
+        var streamWrap = document.getElementById('bdmLockedStreamWrap');
+        if (tutor.stream) {
+            setVal('bdmLockedStream', tutor.stream);
+            if (streamWrap) streamWrap.classList.remove('hidden');
+        } else {
+            if (streamWrap) streamWrap.classList.add('hidden');
+        }
+
+        // Show/hide address section based on tuition mode
+        checkBdmAddressVisibility(tutor.tuition_mode);
+    }
+
+    function setText(id, val) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = val;
+    }
+    function setVal(id, val) {
+        var el = document.getElementById(id);
+        if (el) el.value = val;
+    }
+
+    // =========================================================
+    // ADDRESS SECTION TOGGLE
+    // =========================================================
+    function checkBdmAddressVisibility(mode) {
+        var section = document.getElementById('bdmAddressSection');
+        if (!section) return;
+        if (mode && mode.toLowerCase().indexOf('home') !== -1) {
+            section.classList.remove('hidden');
+        } else {
+            section.classList.add('hidden');
+        }
+    }
+
+    // =========================================================
+    // MOBILE INPUT FILTER
+    // =========================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        var mobileInp = document.getElementById('bdmStudentMobile');
+        if (mobileInp) {
+            mobileInp.addEventListener('input', function() {
+                var cleaned = this.value.replace(/\D/g, '');
+                if (cleaned.length > 10) cleaned = cleaned.slice(0, 10);
+                this.value = cleaned;
+            });
+        }
+    });
+
+    // =========================================================
+    // CUSTOM DESIGNED CALENDAR LOGIC
+    // =========================================================
+    var bdmCalCurrentDate = new Date();
+    var bdmCalViewYear = bdmCalCurrentDate.getFullYear();
+    var bdmCalViewMonth = bdmCalCurrentDate.getMonth();
+    var bdmCalSelectedDateStr = ''; // YYYY-MM-DD
+
+    var bdmMonthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    window.toggleBdmCalendar = function(e) {
+        if (e) e.stopPropagation();
+        var popup = document.getElementById('bdmCalendarPopup');
+        var chevron = document.getElementById('bdmCalendarChevron');
+        if (!popup) return;
+        var isHidden = popup.classList.contains('hidden');
+        if (isHidden) {
+            renderBdmCalendar();
+            popup.classList.remove('hidden');
+            if (chevron) chevron.classList.add('rotate-180');
+        } else {
+            popup.classList.add('hidden');
+            if (chevron) chevron.classList.remove('rotate-180');
+        }
+    };
+
+    window.prevBdmMonth = function(e) {
+        if (e) e.stopPropagation();
+        bdmCalViewMonth--;
+        if (bdmCalViewMonth < 0) {
+            bdmCalViewMonth = 11;
+            bdmCalViewYear--;
+        }
+        renderBdmCalendar();
+    };
+
+    window.nextBdmMonth = function(e) {
+        if (e) e.stopPropagation();
+        bdmCalViewMonth++;
+        if (bdmCalViewMonth > 11) {
+            bdmCalViewMonth = 0;
+            bdmCalViewYear++;
+        }
+        renderBdmCalendar();
+    };
+
+    window.clearBdmDate = function(e) {
+        if (e) e.stopPropagation();
+        bdmCalSelectedDateStr = '';
+        var inputHidden = document.getElementById('bdmDemoDate');
+        var inputDisplay = document.getElementById('bdmDemoDateDisplay');
+        if (inputHidden) inputHidden.value = '';
+        if (inputDisplay) inputDisplay.value = '';
+        var popup = document.getElementById('bdmCalendarPopup');
+        var chevron = document.getElementById('bdmCalendarChevron');
+        if (popup) popup.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+    };
+
+    window.selectBdmToday = function(e) {
+        if (e) e.stopPropagation();
+        var today = new Date();
+        setBdmSelectedDate(today.getFullYear(), today.getMonth(), today.getDate());
+    };
+
+    function setBdmSelectedDate(year, month, day) {
+        var mStr = String(month + 1).padStart(2, '0');
+        var dStr = String(day).padStart(2, '0');
+        bdmCalSelectedDateStr = year + '-' + mStr + '-' + dStr;
+
+        var inputHidden = document.getElementById('bdmDemoDate');
+        var inputDisplay = document.getElementById('bdmDemoDateDisplay');
+        if (inputHidden) inputHidden.value = bdmCalSelectedDateStr;
+        if (inputDisplay) {
+            var shortMonth = bdmMonthNames[month].substring(0, 3);
+            inputDisplay.value = dStr + ' ' + shortMonth + ' ' + year;
+        }
+
+        // Hide error
+        var err = document.querySelector('.bdm-error[data-for="bdmDemoDate"]');
+        if (err) err.classList.add('hidden');
+
+        var popup = document.getElementById('bdmCalendarPopup');
+        var chevron = document.getElementById('bdmCalendarChevron');
+        if (popup) popup.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+    }
+
+    function renderBdmCalendar() {
+        var titleEl = document.getElementById('bdmCalendarMonthYear');
+        var gridEl = document.getElementById('bdmCalendarDaysGrid');
+        if (!titleEl || !gridEl) return;
+
+        titleEl.textContent = bdmMonthNames[bdmCalViewMonth] + ' ' + bdmCalViewYear;
+        gridEl.innerHTML = '';
+
+        var firstDayIndex = new Date(bdmCalViewYear, bdmCalViewMonth, 1).getDay();
+        var daysInMonth = new Date(bdmCalViewYear, bdmCalViewMonth + 1, 0).getDate();
+        var daysInPrevMonth = new Date(bdmCalViewYear, bdmCalViewMonth, 0).getDate();
+
+        var today = new Date();
+        var todayYear = today.getFullYear();
+        var todayMonth = today.getMonth();
+        var todayDate = today.getDate();
+
+        // Previous month filler days
+        for (var i = firstDayIndex - 1; i >= 0; i--) {
+            var prevDay = daysInPrevMonth - i;
+            var cell = document.createElement('div');
+            cell.className = 'py-1.5 text-slate-300 pointer-events-none select-none text-[11px]';
+            cell.textContent = prevDay;
+            gridEl.appendChild(cell);
+        }
+
+        // Current month days
+        for (var day = 1; day <= daysInMonth; day++) {
+            var dayDate = new Date(bdmCalViewYear, bdmCalViewMonth, day);
+            var isPast = false;
+            var checkToday = new Date();
+            checkToday.setHours(0,0,0,0);
+            if (dayDate < checkToday) {
+                isPast = true;
+            }
+
+            var isToday = (bdmCalViewYear === todayYear && bdmCalViewMonth === todayMonth && day === todayDate);
+            var dateStr = bdmCalViewYear + '-' + String(bdmCalViewMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            var isSelected = (dateStr === bdmCalSelectedDateStr);
+
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = day;
+            btn.setAttribute('data-day', day);
+
+            if (isPast) {
+                btn.className = 'w-7.5 h-7.5 mx-auto flex items-center justify-center rounded-xl text-slate-300 cursor-not-allowed select-none border-0 bg-transparent text-[11px]';
+                btn.disabled = true;
+            } else if (isSelected) {
+                btn.className = 'w-7.5 h-7.5 mx-auto flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-extrabold shadow-md shadow-blue-500/30 text-[11px] border-0 cursor-pointer';
+                btn.onclick = (function(y, m, d) {
+                    return function(e) {
+                        e.stopPropagation();
+                        setBdmSelectedDate(y, m, d);
+                    };
+                })(bdmCalViewYear, bdmCalViewMonth, day);
+            } else if (isToday) {
+                btn.className = 'w-7.5 h-7.5 mx-auto flex items-center justify-center rounded-xl text-blue-600 font-bold border border-blue-400 hover:bg-blue-50 text-[11px] cursor-pointer transition-colors';
+                btn.onclick = (function(y, m, d) {
+                    return function(e) {
+                        e.stopPropagation();
+                        setBdmSelectedDate(y, m, d);
+                    };
+                })(bdmCalViewYear, bdmCalViewMonth, day);
+            } else {
+                btn.className = 'w-7.5 h-7.5 mx-auto flex items-center justify-center rounded-xl text-slate-700 hover:bg-blue-50 hover:text-blue-600 font-medium text-[11px] cursor-pointer transition-colors border-0 bg-transparent';
+                btn.onclick = (function(y, m, d) {
+                    return function(e) {
+                        e.stopPropagation();
+                        setBdmSelectedDate(y, m, d);
+                    };
+                })(bdmCalViewYear, bdmCalViewMonth, day);
+            }
+
+            gridEl.appendChild(btn);
+        }
+
+        // Next month filler days to complete rows (up to multiple of 7)
+        var totalCells = firstDayIndex + daysInMonth;
+        var remainingCells = (7 - (totalCells % 7)) % 7;
+        for (var n = 1; n <= remainingCells; n++) {
+            var nextCell = document.createElement('div');
+            nextCell.className = 'py-1.5 text-slate-300 pointer-events-none select-none text-[11px]';
+            nextCell.textContent = n;
+            gridEl.appendChild(nextCell);
+        }
+    }
+
+    // Close calendar on click outside
+    document.addEventListener('click', function(e) {
+        var container = document.getElementById('bdmDatePickerContainer');
+        var popup = document.getElementById('bdmCalendarPopup');
+        var chevron = document.getElementById('bdmCalendarChevron');
+        if (popup && !popup.classList.contains('hidden')) {
+            if (container && !container.contains(e.target)) {
+                popup.classList.add('hidden');
+                if (chevron) chevron.classList.remove('rotate-180');
+            }
+        }
+    });
+
+    // =========================================================
+    // RESET FORM
+    // =========================================================
+    function resetBookDemoModalForm() {
+        var form = document.getElementById('bookDemoModalForm');
+        if (form) form.reset();
+        // Clear custom date
+        var inputHidden = document.getElementById('bdmDemoDate');
+        var inputDisplay = document.getElementById('bdmDemoDateDisplay');
+        if (inputHidden) inputHidden.value = '';
+        if (inputDisplay) inputDisplay.value = '';
+        bdmCalSelectedDateStr = '';
+        var calPopup = document.getElementById('bdmCalendarPopup');
+        var calChevron = document.getElementById('bdmCalendarChevron');
+        if (calPopup) calPopup.classList.add('hidden');
+        if (calChevron) calChevron.classList.remove('rotate-180');
+
+        // Clear errors
+        document.querySelectorAll('.bdm-error').forEach(function(el) { el.classList.add('hidden'); });
+        // Hide address
+        var addrSec = document.getElementById('bdmAddressSection');
+        if (addrSec) addrSec.classList.add('hidden');
+        // Reset locked fields
+        ['bdmLockedTutorName','bdmLockedSubject','bdmLockedClass','bdmLockedMode','bdmLockedBoard','bdmLockedStream'].forEach(function(id) {
+            setVal(id, '');
+        });
+        var boardWrap = document.getElementById('bdmLockedBoardWrap');
+        var streamWrap = document.getElementById('bdmLockedStreamWrap');
+        if (boardWrap) boardWrap.classList.add('hidden');
+        if (streamWrap) streamWrap.classList.add('hidden');
+    }
+
+    // =========================================================
+    // FORM VALIDATION & SUBMISSION
+    // =========================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('bookDemoModalForm');
+        if (!form) return;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Clear errors
+            document.querySelectorAll('.bdm-error').forEach(function(el) { el.classList.add('hidden'); });
+
+            var isValid = true;
+
+            // Student Name
+            var studentName = (document.getElementById('bdmStudentName').value || '').trim();
+            if (!studentName || studentName.length < 2) {
+                showBdmError('bdmStudentName');
+                isValid = false;
+            }
+
+            // Mobile
+            var mobile = (document.getElementById('bdmStudentMobile').value || '').trim();
+            if (!/^[6-9]\d{9}$/.test(mobile)) {
+                showBdmError('bdmStudentMobile');
+                isValid = false;
+            }
+
+            // Email
+            var email = (document.getElementById('bdmStudentEmail').value || '').trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showBdmError('bdmStudentEmail');
+                isValid = false;
+            }
+
+            // Date
+            var demoDate = (document.getElementById('bdmDemoDate').value || '').trim();
+            if (!demoDate) {
+                showBdmError('bdmDemoDate');
+                isValid = false;
+            } else {
+                var selDate = new Date(demoDate);
+                var todayCheck = new Date();
+                todayCheck.setHours(0,0,0,0);
+                if (selDate < todayCheck) {
+                    showBdmError('bdmDemoDate');
+                    isValid = false;
+                }
+            }
+
+            // Time Slot
+            var timeSlot = (document.getElementById('bdmTimeSlot').value || '').trim();
+            if (!timeSlot) {
+                showBdmError('bdmTimeSlot');
+                isValid = false;
+            }
+
+            // Academic fields (Locked vs Neutral)
+            var finalClass = '';
+            var finalSubject = '';
+            var finalMode = 'Online / Offline';
+
+            if (bdmCurrentTutor) {
+                finalClass = bdmCurrentTutor.teaching_classes || 'Class 1-12';
+                finalSubject = bdmCurrentTutor.subjects || 'General';
+                finalMode = bdmCurrentTutor.tuition_mode || 'Online / Offline';
+            } else {
+                var neutralClass = (document.getElementById('bdmNeutralClass').value || '').trim();
+                var neutralSubject = (document.getElementById('bdmNeutralSubject').value || '').trim();
+                var neutralMode = (document.getElementById('bdmNeutralMode').value || '').trim();
+
+                if (!neutralClass) {
+                    showBdmError('bdmNeutralClass');
+                    isValid = false;
+                }
+                if (!neutralSubject) {
+                    showBdmError('bdmNeutralSubject');
+                    isValid = false;
+                }
+                finalClass = neutralClass;
+                finalSubject = neutralSubject;
+                finalMode = neutralMode || 'Online';
+            }
+
+            // Address validation (if Home Tuition)
+            if (finalMode.toLowerCase().indexOf('home') !== -1) {
+                var addrState = (document.getElementById('bdmAddrState').value || '').trim();
+                var addrCity = (document.getElementById('bdmAddrCity').value || '').trim();
+                var addrLocality = (document.getElementById('bdmAddrLocality').value || '').trim();
+                var addrComplete = (document.getElementById('bdmAddrComplete').value || '').trim();
+                if (!addrState) { showBdmError('bdmAddrState'); isValid = false; }
+                if (!addrCity) { showBdmError('bdmAddrCity'); isValid = false; }
+                if (!addrLocality) { showBdmError('bdmAddrLocality'); isValid = false; }
+                if (!addrComplete) { showBdmError('bdmAddrComplete'); isValid = false; }
+            }
+
+            if (!isValid) return;
+
+            // Build payload — EXACT SAME structure as backend expects
+            var tutorPayload = {};
+            if (bdmCurrentTutor) {
+                tutorPayload = {
+                    id: bdmCurrentTutor.id,
+                    tutor_id: bdmCurrentTutor.teacher_id || bdmCurrentTutor.id,
+                    name: bdmCurrentTutor.full_name,
+                    photo: bdmCurrentTutor.photo_url,
+                    skill: bdmCurrentTutor.subjects,
+                    exp: bdmCurrentTutor.experience,
+                    qualification: bdmCurrentTutor.qualification,
+                    location: (bdmCurrentTutor.city || '') + (bdmCurrentTutor.state ? (bdmCurrentTutor.city ? ', ' : '') + bdmCurrentTutor.state : ''),
+                    mode: bdmCurrentTutor.tuition_mode,
+                    rating: bdmCurrentTutor.rating
+                };
+            }
+
+            var isHomeMode = finalMode.toLowerCase().indexOf('home') !== -1;
+            var tutorIdVal = bdmCurrentTutor ? (bdmCurrentTutor.id || bdmCurrentTutor.teacher_id) : (document.getElementById('bdmTutorIdHidden').value || null);
+
+            var bookingRecord = {
+                tutor_id: tutorIdVal,
+                teacher_id: tutorIdVal,
+                tutor: tutorPayload,
+                student: {
+                    name: studentName,
+                    mobile: mobile,
+                    email: email,
+                    gender: (document.getElementById('bdmStudentGender').value || '').trim(),
+                    'class': finalClass
+                },
+                tuition: {
+                    mode: finalMode,
+                    subject: finalSubject,
+                    date: demoDate,
+                    timeSlot: timeSlot,
+                    sessionsCount: document.getElementById('bdmSessionsCount').value || '1',
+                    language: (document.getElementById('bdmLanguage').value || '').trim(),
+                    goal: (document.getElementById('bdmLearningGoal').value || '').trim(),
+                    notes: (document.getElementById('bdmNotes').value || '').trim(),
+                    address: isHomeMode ? {
+                        state: (document.getElementById('bdmAddrState').value || '').trim(),
+                        city: (document.getElementById('bdmAddrCity').value || '').trim(),
+                        locality: (document.getElementById('bdmAddrLocality').value || '').trim(),
+                        landmark: (document.getElementById('bdmAddrLandmark').value || '').trim(),
+                        complete: (document.getElementById('bdmAddrComplete').value || '').trim()
+                    } : null
+                }
+            };
+
+            // Submit button loading state
+            var submitBtn = document.getElementById('bdmSubmitBtn');
+            var submitText = document.getElementById('bdmSubmitText');
+            if (submitBtn) submitBtn.disabled = true;
+            if (submitText) submitText.textContent = 'Submitting...';
+
+            fetch('/api/book-demo/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingRecord)
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.status === 'success') {
+                    // Show success modal
+                    document.getElementById('bdmSuccessBookingId').textContent = data.booking_id || '';
+                    document.getElementById('bdmSuccessTutorName').textContent = bdmCurrentTutor ? (bdmCurrentTutor.full_name || 'Assigned Tutor') : 'EduTrust Assigned Tutor';
+                    document.getElementById('bdmSuccessDateTime').textContent = demoDate + ' (' + timeSlot + ')';
+
+                    document.getElementById('bdmSuccessModal').classList.remove('hidden');
+
+                    // Close main modal
+                    closeBookDemoModal();
+                } else {
+                    alert('Error: ' + (data.message || 'Submission failed. Please try again.'));
+                }
+            })
+            .catch(function(err) {
+                console.error('Book Demo Error:', err);
+                alert('Something went wrong. Please try again.');
+            })
+            .finally(function() {
+                if (submitBtn) submitBtn.disabled = false;
+                if (submitText) submitText.textContent = 'Book Free Trial';
+            });
+        });
+
+        // Reset button
+        var resetBtn = document.getElementById('bdmResetBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function() {
+                var form = document.getElementById('bookDemoModalForm');
+                if (form) form.reset();
+                document.querySelectorAll('.bdm-error').forEach(function(el) { el.classList.add('hidden'); });
+                if (bdmCurrentTutor) {
+                    populateBookDemoTutor(bdmCurrentTutor);
+                } else {
+                    setNeutralBookDemoState();
+                }
+            });
+        }
+
+        // Success close button
+        var successCloseBtn = document.getElementById('bdmSuccessCloseBtn');
+        if (successCloseBtn) {
+            successCloseBtn.addEventListener('click', function() {
+                document.getElementById('bdmSuccessModal').classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+        }
+    });
+
+    function showBdmError(fieldId) {
+        var err = document.querySelector('.bdm-error[data-for="' + fieldId + '"]');
+        if (err) err.classList.remove('hidden');
+    }
+
+    // =========================================================
+    // ESC KEY
+    // =========================================================
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && bdmIsOpen) {
+            closeBookDemoModal();
+        }
+    });
+
+    // =========================================================
+    // CLICK OUTSIDE
+    // =========================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = document.getElementById('bookDemoModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeBookDemoModal();
+                }
+            });
+        }
+    });
+
+    // =========================================================
+    // POPSTATE (Browser Back / Forward Navigation)
+    // =========================================================
+    window.addEventListener('popstate', function(e) {
+        var path = window.location.pathname.toLowerCase();
+        var isBookDemoPath = (path === '/book-demo/' || path === '/book-demo');
+
+        if (isBookDemoPath) {
+            var stateTutorId = (e.state && e.state.tutorId) ? e.state.tutorId : (window.activeBookDemoTutorId || null);
+            openBookDemoModal(stateTutorId, true);
+        } else {
+            if (bdmIsOpen) {
+                closeBookDemoModal(true);
+            }
+        }
+    });
+
+    // =========================================================
+    // DETECT POPUP STATE ON PAGE LOAD / REFRESH
+    // =========================================================
+    function detectBookDemoPopupState() {
+        var serverPopup = "{{ initial_popup|default:'' }}";
+        var path = window.location.pathname.toLowerCase();
+        if (serverPopup === 'free-trial' || path === '/book-demo/' || path === '/book-demo') {
+            var stateTutorId = (history.state && history.state.tutorId) ? history.state.tutorId : null;
+            return { open: true, tutorId: stateTutorId };
+        }
+        return { open: false, tutorId: null };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var detected = detectBookDemoPopupState();
+        if (detected.open) {
+            openBookDemoModal(detected.tutorId, true);
+        }
+    });
+
+})();
+</script>

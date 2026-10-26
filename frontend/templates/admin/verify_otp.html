@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification | EduTrust LMS Super Admin</title>
+        <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+        .admin-portal-card {
+            background-color: #E4F1FF;
+            border: 1px solid #B7D7F5;
+            box-shadow: 0 16px 36px -12px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(183, 215, 245, 0.65);
+        }
+        .otp-box {
+            width: 42px;
+            height: 46px;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #102A43;
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 0.65rem;
+            transition: all 0.2s ease;
+        }
+        .otp-box:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+        }
+        .btn-portal-primary {
+            width: 170px;
+            height: 42px;
+            background-color: #2563EB;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 0.8125rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-portal-primary:hover { background-color: #1D4ED8; transform: translateY(-1px); }
+    </style>
+</head>
+<body class="h-screen w-screen text-slate-800 antialiased flex flex-col justify-between relative selection:bg-blue-600 selection:text-white overflow-hidden">
+
+    <!-- Background Layer (No dots) -->
+    <div class="fixed inset-0 z-0 bg-white pointer-events-none">
+        <div class="absolute inset-0 bg-gradient-to-br from-sky-50/70 via-white to-blue-50/50"></div>
+    </div>
+
+    <!-- Curved Shapes -->
+    <div class="fixed -top-16 -left-16 w-[320px] sm:w-[440px] h-[320px] sm:h-[440px] pointer-events-none z-0">
+        <svg viewBox="0 0 500 500" class="w-full h-full opacity-80" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="curve1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#E0F2FE" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <path fill="url(#curve1)" d="M0,0 L360,0 C360,140 300,260 210,320 C120,380 40,390 0,370 Z"/>
+        </svg>
+    </div>
+    <div class="fixed -bottom-16 -right-16 w-[320px] sm:w-[440px] h-[320px] sm:h-[440px] pointer-events-none z-0">
+        <svg viewBox="0 0 500 500" class="w-full h-full opacity-80" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="curve2" x1="100%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#E0F2FE" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <path fill="url(#curve2)" d="M500,500 L140,500 C140,360 200,240 290,180 C380,120 460,110 500,130 Z"/>
+        </svg>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-10 w-full pt-3 sm:pt-4 px-4 sm:px-8 flex items-center justify-between shrink-0">
+        <a href="{% url 'home' %}" class="inline-flex items-center gap-2 group no-underline">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <span class="text-base sm:text-lg font-black tracking-tight text-slate-900">
+                Edu<span class="text-blue-600">Trust</span>
+            </span>
+        </a>
+    </header>
+
+    <main class="relative z-10 flex-1 flex items-center justify-center px-4 py-1 sm:py-2 min-h-0">
+        <div class="w-full max-w-[430px] admin-portal-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-3">
+            <div class="text-center space-y-1.5">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-600/10 border border-blue-200 text-blue-700 text-[9.5px] sm:text-[10px] font-black uppercase tracking-widest">
+                    <i class="fas fa-shield-halved text-xs"></i>
+                    <span>ADMIN PORTAL</span>
+                </div>
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-blue-600 border border-blue-200/80 shadow-2xs flex items-center justify-center mx-auto text-sm sm:text-base">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div class="space-y-0.5">
+                    <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">OTP Verification</h1>
+                    <p class="text-[11px] sm:text-xs text-slate-600 font-medium leading-normal max-w-xs mx-auto">
+                        Enter the 6-digit OTP code sent to your registered email address (<strong class="text-blue-600 font-bold">{{ masked_email }}</strong>).
+                    </p>
+                </div>
+            </div>
+
+            <div id="otpAlert" class="hidden p-2 rounded-xl text-xs font-semibold text-center border"></div>
+
+            <form id="otpForm" onsubmit="submitOtp(event)" class="space-y-3">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <input type="hidden" id="otpPurpose" value="{{ purpose }}">
+
+                <div class="flex items-center justify-center gap-1.5 sm:gap-2" id="otpBoxes">
+                    <input type="text" maxlength="1" class="otp-box">
+                    <input type="text" maxlength="1" class="otp-box">
+                    <input type="text" maxlength="1" class="otp-box">
+                    <input type="text" maxlength="1" class="otp-box">
+                    <input type="text" maxlength="1" class="otp-box">
+                    <input type="text" maxlength="1" class="otp-box">
+                </div>
+
+                <div class="text-center">
+                    <span class="text-[11px] text-slate-600">Didn't receive the OTP? </span>
+                    <button type="button" id="btnResend" onclick="resendOtp()" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-transparent border-0 cursor-pointer">
+                        Resend OTP <span id="cooldownTimer"></span>
+                    </button>
+                </div>
+
+                <div class="pt-0.5 text-center">
+                    <button type="submit" id="btnVerifyOtp" class="btn-portal-primary">
+                        <span>Verify OTP</span>
+                        <i class="fas fa-check-circle text-xs"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="pt-0.5 text-center">
+                <a href="/admin/login/" class="text-[11px] font-bold text-slate-600 hover:text-blue-600 no-underline inline-flex items-center gap-1.5">
+                    <i class="fas fa-arrow-left text-[9px]"></i>
+                    <span>Back to Login</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="relative z-10 w-full py-2.5 text-center text-[11px] text-slate-500 font-medium shrink-0">
+        <span>© 2026 EduTrust. All rights reserved.</span>
+    </footer>
+
+    <script>
+    const boxes = document.querySelectorAll('.otp-box');
+    boxes.forEach((box, idx) => {
+        box.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val ? val[val.length - 1] : '';
+            if (e.target.value && idx < boxes.length - 1) boxes[idx + 1].focus();
+        });
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) boxes[idx - 1].focus();
+        });
+    });
+
+    async function submitOtp(e) {
+        e.preventDefault();
+        const code = Array.from(boxes).map(b => b.value).join('');
+        const alertBox = document.getElementById('otpAlert');
+        const btn = document.getElementById('btnVerifyOtp');
+        const purpose = document.getElementById('otpPurpose').value;
+
+        if (code.length !== 6) {
+            alertBox.className = 'p-2 rounded-xl text-xs font-semibold text-center border bg-rose-50 border-rose-200 text-rose-700 block mb-2';
+            alertBox.textContent = 'Please enter all 6 digits of the OTP.';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Verifying...</span>';
+
+        const endpoint = (purpose === 'PASSWORD_RESET') ? '/api/admin/auth/recovery/verify-otp/' : '/api/admin/auth/verify-otp/';
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                },
+                body: JSON.stringify({ otp_code: code, purpose })
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                window.location.href = data.redirect_url || '/admin/dashboard/';
+            } else {
+                alertBox.className = 'p-2 rounded-xl text-xs font-semibold text-center border bg-rose-50 border-rose-200 text-rose-700 block mb-2';
+                alertBox.textContent = data.message || 'OTP verification failed.';
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span>Verify OTP</span> <i class="fas fa-check-circle text-xs"></i>';
+        }
+    }
+    </script>
+</body>
+</html>

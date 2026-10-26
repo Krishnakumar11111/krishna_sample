@@ -1,0 +1,833 @@
+{% extends base_template|default:'admin.html' %}
+
+{% block admin_content %}
+<!-- DEDICATED STUDENT / PARENT ENQUIRY DETAILS MODAL (PIXEL PERFECT TO DESIGN) -->
+<div id="studentParentEnquiryDetailModal" class="hidden fixed inset-0 z-[99999] bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 transition-all duration-200" onclick="if(event.target === this) closeStudentParentEnquiryDetailModal();">
+    <div class="bg-white rounded-[24px] max-w-[880px] w-full p-4 sm:p-5 shadow-2xl border border-slate-100 relative flex flex-col overflow-hidden select-none" style="box-sizing: border-box; max-height: 94vh;">
+        <!-- Modal Header -->
+        <div class="flex items-start justify-between pb-3.5 border-b border-slate-100/90">
+            <div class="flex items-center gap-3 min-w-0">
+                <div id="sped-avatar" class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-black flex items-center justify-center text-base shadow-2xs shrink-0 tracking-wide">
+                    AK
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-[11px] font-black text-blue-600 uppercase tracking-wider">STUDENT / PARENT ENQUIRY</span>
+                        <span id="sped-status-badge" class="px-2.5 py-0.5 rounded-full font-extrabold text-[10px] bg-blue-50 text-blue-600 border border-blue-200/70 uppercase">NEW</span>
+                    </div>
+                    <h3 id="sped-name" class="text-xl font-black text-slate-900 leading-tight mb-0.5 truncate">Aman Kumar</h3>
+                    <p id="sped-subtitle" class="text-xs font-semibold text-slate-500 m-0 leading-tight truncate">Enquiry ID: EDU-ENQ-000019 • 12 Sep 2026, 10:24 AM</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-4 shrink-0">
+                <div class="hidden sm:flex flex-col gap-1 text-xs text-slate-600 font-medium">
+                    <div class="flex items-center gap-2">
+                        <i class="far fa-envelope text-slate-400 w-3.5 text-center text-[11px]"></i>
+                        <span id="sped-header-email" class="truncate max-w-[200px]">aman.kumar@gmail.com</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-phone-alt text-slate-400 w-3.5 text-center text-[11px]"></i>
+                        <span id="sped-header-mobile">+91 98765 43210</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-slate-400 w-3.5 text-center text-[11px]"></i>
+                        <span id="sped-header-location" class="truncate max-w-[200px]">Lucknow, Uttar Pradesh</span>
+                    </div>
+                </div>
+                <button type="button" onclick="closeStudentParentEnquiryDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center border-0 cursor-pointer text-sm font-bold transition-all shrink-0 ml-2" aria-label="Close modal">
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Body Content: 2x2 Grid (Strict NO Internal Scrollbar on Desktop) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 my-3">
+            <!-- 1. PERSONAL DETAILS CARD -->
+            <div class="border border-blue-100/90 rounded-2xl bg-white shadow-2xs overflow-hidden flex flex-col justify-between">
+                <div class="bg-blue-50/80 border-b border-blue-100/80 px-3.5 py-1.5 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="font-extrabold text-slate-800 text-xs">Personal Details</span>
+                </div>
+                <div class="divide-y divide-slate-100/80 text-[11px]">
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Full Name</span>
+                        <strong id="sped-full-name" class="text-slate-900 font-bold truncate text-right">Aman Kumar</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Email Address</span>
+                        <strong id="sped-email" class="text-slate-900 font-bold truncate text-right">aman.kumar@gmail.com</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Mobile Number</span>
+                        <strong id="sped-mobile" class="text-slate-900 font-bold truncate text-right">+91 98765 43210</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Alternate Mobile</span>
+                        <strong id="sped-alt-mobile" class="text-slate-900 font-bold truncate text-right">+91 91234 56789</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Gender</span>
+                        <strong id="sped-gender" class="text-slate-900 font-bold truncate text-right">Male</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. STUDENT DETAILS CARD -->
+            <div class="border border-emerald-100/90 rounded-2xl bg-white shadow-2xs overflow-hidden flex flex-col justify-between">
+                <div class="bg-emerald-50/80 border-b border-emerald-100/80 px-3.5 py-1.5 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-md bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px]">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <span class="font-extrabold text-slate-800 text-xs">Student Details</span>
+                </div>
+                <div class="divide-y divide-slate-100/80 text-[11px]">
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Enquiry ID</span>
+                        <strong id="sped-enquiry-id" class="text-blue-600 font-black truncate text-right">EDU-ENQ-000019</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Class</span>
+                        <strong id="sped-class" class="text-slate-900 font-bold truncate text-right">Class 10</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Board</span>
+                        <strong id="sped-board" class="text-slate-900 font-bold truncate text-right">CBSE</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Subject</span>
+                        <strong id="sped-subject" class="text-slate-900 font-bold truncate text-right">Mathematics, Science</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Preferred Tutor Gender</span>
+                        <strong id="sped-tutor-gender" class="text-slate-900 font-bold truncate text-right">No Preference</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Medium</span>
+                        <strong id="sped-medium" class="text-slate-900 font-bold truncate text-right">English</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. TUITION REQUIREMENT CARD -->
+            <div class="border border-amber-100/90 rounded-2xl bg-white shadow-2xs overflow-hidden flex flex-col justify-between">
+                <div class="bg-amber-50/80 border-b border-amber-100/80 px-3.5 py-1.5 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-md bg-amber-100 text-amber-600 flex items-center justify-center text-[10px]">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <span class="font-extrabold text-slate-800 text-xs">Tuition Requirement</span>
+                </div>
+                <div class="divide-y divide-slate-100/80 text-[11px]">
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Tuition Type</span>
+                        <strong id="sped-tuition-type" class="text-slate-900 font-bold truncate text-right">Home Tuition</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Mode</span>
+                        <strong id="sped-mode" class="text-slate-900 font-bold truncate text-right">Offline (At Home)</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Preferred Location</span>
+                        <strong id="sped-preferred-location" class="text-slate-900 font-bold truncate text-right">Aliganj, Lucknow</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Days per Week</span>
+                        <strong id="sped-days" class="text-slate-900 font-bold truncate text-right">3 - 4 Days</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Preferred Timing</span>
+                        <strong id="sped-timing" class="text-slate-900 font-bold truncate text-right">Evening (5 PM - 8 PM)</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Start Date</span>
+                        <strong id="sped-start-date" class="text-slate-900 font-bold truncate text-right">As soon as possible</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Additional Notes</span>
+                        <strong id="sped-notes" class="text-slate-800 font-medium truncate max-w-[220px] text-right" title="">Looking for an experienced tutor who can help with board preparation.</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ENQUIRY DETAILS CARD -->
+            <div class="border border-purple-100/90 rounded-2xl bg-white shadow-2xs overflow-hidden flex flex-col justify-between">
+                <div class="bg-purple-50/80 border-b border-purple-100/80 px-3.5 py-1.5 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-md bg-purple-100 text-purple-600 flex items-center justify-center text-[10px]">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <span class="font-extrabold text-slate-800 text-xs">Enquiry Details</span>
+                </div>
+                <div class="divide-y divide-slate-100/80 text-[11px]">
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Source</span>
+                        <strong id="sped-source" class="text-slate-900 font-bold truncate text-right">Website</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Status</span>
+                        <span id="sped-card-status" class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase">NEW</span>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Submitted Date</span>
+                        <strong id="sped-submitted-date" class="text-slate-900 font-bold truncate text-right">12 Sep 2026, 10:24 AM</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Last Updated</span>
+                        <strong id="sped-last-updated" class="text-slate-900 font-bold truncate text-right">12 Sep 2026, 10:24 AM</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-white">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Location</span>
+                        <strong id="sped-card-location" class="text-slate-900 font-bold truncate text-right">Lucknow, Uttar Pradesh</strong>
+                    </div>
+                    <div class="px-3.5 py-1.5 flex items-center justify-between bg-slate-50/40">
+                        <span class="text-slate-500 font-semibold w-28 shrink-0">Message</span>
+                        <strong id="sped-message" class="text-slate-800 font-medium truncate max-w-[220px] text-right" title="">Need a qualified tutor for Class 10 Maths and Science.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer Actions (Single Clean Horizontal Bar) -->
+        <div class="pt-3 border-t border-slate-100/90 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+            <div id="sped-modal-actions" class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                <button type="button" id="sped-btn-approve" onclick="executeSpedAction('confirm')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs transition-all">
+                    <i class="fas fa-check text-[11px]"></i> <span>Approve</span>
+                </button>
+                <button type="button" id="sped-btn-reject" onclick="executeSpedAction('reject')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs transition-all">
+                    <i class="fas fa-times text-[11px]"></i> <span>Reject</span>
+                </button>
+                <button type="button" id="sped-btn-suspend" onclick="executeSpedAction('suspend')" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer inline-flex items-center gap-1.5 shadow-2xs transition-all">
+                    <i class="fas fa-ban text-[11px]"></i> <span>Suspend</span>
+                </button>
+                <button type="button" id="sped-btn-remove" onclick="executeSpedAction('remove')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3.5 py-2 rounded-xl border-0 cursor-pointer inline-flex items-center gap-1.5 transition-all">
+                    <i class="far fa-trash-alt text-[11px]"></i> <span>Remove</span>
+                </button>
+            </div>
+            <button type="button" onclick="closeStudentParentEnquiryDetailModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-6 py-2 rounded-xl border-0 cursor-pointer transition-all ml-auto">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="space-y-4 fade-in">
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-0.5">
+                <a href="{% url 'custom_admin' %}" class="hover:text-blue-600 no-underline text-slate-400">Dashboard</a> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span>Enquiry</span> <i class="fas fa-chevron-right text-[8px]"></i>
+                <span class="text-blue-600 font-extrabold">Students / Parents Enquiry</span>
+            </div>
+            <h2 class="text-lg font-black text-slate-900 leading-tight">Students / Parents Enquiry</h2>
+            <p class="text-[11px] text-slate-500 font-medium">Manage student and parent enquiries received from Student Registration and Hire a Tutor.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'admin_student_parent_enquiries' %}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-lg transition-all shadow-2xs no-underline inline-flex items-center gap-1.5"><i class="fas fa-sync-alt text-slate-400 text-[10px]"></i> Refresh</a>
+        </div>
+    </div>
+
+    <!-- TOP KPI METRIC CARDS (SHRUNK COMPACT ROW - 6 CARDS) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-slate-400 uppercase tracking-wider">Total</span><div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-inbox"></i></div></div>
+            <div id="kpi-total" class="text-base font-black text-slate-900 leading-none">{{ kpi.total }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Database Total</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-blue-500 uppercase tracking-wider">Student</span><div class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-graduate"></i></div></div>
+            <div id="kpi-student" class="text-base font-black text-blue-600 leading-none">{{ kpi.student }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Student Regs</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-purple-500 uppercase tracking-wider">Parent</span><div class="w-6 h-6 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-[10px]"><i class="fas fa-user-friends"></i></div></div>
+            <div id="kpi-parent" class="text-base font-black text-purple-600 leading-none">{{ kpi.parent }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Hire a Tutor</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-amber-500 uppercase tracking-wider">New</span><div class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-[10px]"><i class="fas fa-bell"></i></div></div>
+            <div id="kpi-new" class="text-base font-black text-amber-600 leading-none">{{ kpi.new }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Needs Action</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-emerald-500 uppercase tracking-wider">Confirmed</span><div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px]"><i class="fas fa-check-circle"></i></div></div>
+            <div id="kpi-confirmed" class="text-base font-black text-emerald-600 leading-none">{{ kpi.confirmed }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Accepted</span>
+        </div>
+        <div class="bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
+            <div class="flex items-center justify-between mb-0.5"><span class="text-[8.5px] font-black text-rose-500 uppercase tracking-wider">Rejected</span><div class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-[10px]"><i class="fas fa-times-circle"></i></div></div>
+            <div id="kpi-rejected" class="text-base font-black text-rose-600 leading-none">{{ kpi.rejected }}</div>
+            <span class="text-[8px] font-bold text-slate-400">Declined</span>
+        </div>
+    </div>
+
+    <!-- SEARCH & FILTERS -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
+        <form method="GET" action="{% url 'admin_student_parent_enquiries' %}" class="flex flex-col md:flex-row gap-2 items-center justify-between">
+            <div class="relative w-full md:w-64">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]"></i>
+                <input type="text" name="q" value="{{ filters.q }}" placeholder="Search name, parent, email, mobile, ID..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto text-xs">
+                <select name="student_class" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.student_class == 'ALL' %}selected{% endif %}>All Classes</option>
+                    {% for c in class_list %}
+                    <option value="{{ c }}" {% if filters.student_class == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <select name="source" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.source == 'ALL' %}selected{% endif %}>All Sources</option>
+                    {% for s in source_list %}
+                    <option value="{{ s.val }}" {% if filters.source == s.val %}selected{% endif %}>{{ s.label }}</option>
+                    {% endfor %}
+                </select>
+                <select name="status" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.status == 'ALL' %}selected{% endif %}>All Statuses</option>
+                    <option value="NEW" {% if filters.status == 'NEW' %}selected{% endif %}>New</option>
+                    <option value="CONFIRMED" {% if filters.status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+                    <option value="REJECTED" {% if filters.status == 'REJECTED' %}selected{% endif %}>Rejected</option>
+                </select>
+                <select name="city" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none">
+                    <option value="ALL" {% if filters.city == 'ALL' %}selected{% endif %}>All Cities</option>
+                    {% for c in city_list %}
+                    <option value="{{ c }}" {% if filters.city == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-blue-600 text-white font-bold text-xs px-3 py-1.5 rounded-lg border-0 cursor-pointer hover:bg-blue-700 transition-colors"><i class="fas fa-filter text-[10px] mr-1"></i>Filter</button>
+                <a href="{% url 'admin_student_parent_enquiries' %}" class="bg-slate-100 text-slate-600 font-bold text-xs px-2.5 py-1.5 rounded-lg border-0 cursor-pointer hover:bg-slate-200 transition-colors no-underline inline-flex items-center"><i class="fas fa-undo text-[9px] mr-1"></i>Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- STUDENT / PARENT TABLE -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-500 font-extrabold uppercase text-[9px] tracking-wider">
+                        <th class="px-3 py-2.5">Student / Parent</th>
+                        <th class="px-3 py-2.5">Mobile</th>
+                        <th class="px-3 py-2.5">Student ID</th>
+                        <th class="px-3 py-2.5">Class</th>
+                        <th class="px-3 py-2.5">Subject</th>
+                        <th class="px-3 py-2.5">Budget</th>
+                        <th class="px-3 py-2.5">Requirement</th>
+                        <th class="px-3 py-2.5">Address</th>
+                        <th class="px-3 py-2.5">City</th>
+                        <th class="px-3 py-2.5">Source</th>
+                        <th class="px-3 py-2.5">Status</th>
+                        <th class="px-3 py-2.5">Submitted</th>
+                        <th class="px-3 py-2.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+                    {% for item in page_obj %}
+                    {% ifchanged item.date_group_label %}
+                    <tr class="date-group-header-row" style="background:#f1f5f9 !important; border-top:2px solid #cbd5e1; border-bottom:1px solid #e2e8f0;">
+                        <td colspan="13" class="px-3.5 py-2 date-group-header-cell" style="background:#f1f5f9 !important; color:#0f172a !important;">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-md {% if item.is_today %}bg-blue-600 text-white{% elif item.is_yesterday %}bg-slate-700 text-white{% else %}bg-slate-200 text-slate-700{% endif %} flex items-center justify-center text-[10px] font-bold shadow-2xs">
+                                        <i class="far fa-calendar-alt"></i>
+                                    </div>
+                                    <span class="font-extrabold text-xs date-group-title-text tracking-tight" style="color:#0f172a !important;">
+                                        {{ item.date_group_label }}
+                                    </span>
+                                    {% if item.is_today %}
+                                        <span class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">TODAY</span>
+                                    {% elif item.is_yesterday %}
+                                        <span class="bg-slate-700 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">YESTERDAY</span>
+                                    {% endif %}
+                                </div>
+                                <span class="text-[10px] font-bold date-group-count-badge px-2.5 py-0.5 rounded-md shadow-2xs" style="background:#ffffff !important; color:#334155 !important; border:1px solid #cbd5e1 !important;">
+                                    <i class="far fa-clock mr-1 opacity-70" style="color:#64748b !important;"></i> {{ item.date_group_count }} Enquiry{{ item.date_group_count|pluralize }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endifchanged %}
+                    <tr id="student-enquiry-row-{{ item.id }}" data-enquiry-id="{{ item.id }}" class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-3 py-2">
+                            <div class="flex items-center gap-2 cursor-pointer" onclick="openStudentParentEnquiryDetailModal({{ item.id }})">
+                                <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center text-[10px] uppercase shrink-0">{{ item.full_name|slice:":2"|upper }}</div>
+                                <div class="min-w-0">
+                                    <span class="font-extrabold block text-slate-900 text-xs truncate max-w-[150px] hover:text-blue-600 transition-colors">{{ item.full_name }}</span>
+                                    {% if item.parent_name %}
+                                        <span class="text-[9px] text-slate-400 block truncate max-w-[150px]">P: {{ item.parent_name }}</span>
+                                    {% endif %}
+                                    <span class="text-[9px] text-slate-400 block truncate max-w-[150px]">{{ item.email|default:"" }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2 font-bold text-slate-800 text-[11px] whitespace-nowrap">{{ item.mobile|default:"N/A" }}</td>
+                        <td class="px-3 py-2 font-bold text-slate-700 text-[10px] whitespace-nowrap">{% if item.enquiry_id %}{{ item.enquiry_id }}{% else %}#ENQ-{{ item.id }}{% endif %}</td>
+                        <td class="px-3 py-2 whitespace-nowrap"><span class="bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-md text-[10px]">{{ item.student_class|default:"N/A" }}</span></td>
+                        <td class="px-3 py-2 font-semibold text-slate-700 text-[11px] max-w-[130px] truncate">{{ item.subject|default:"N/A" }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if item.parsed_budget %}
+                                <span class="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-md text-[10px]">{{ item.parsed_budget }}</span>
+                            {% else %}
+                                <span class="text-slate-400 text-[10px]">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-[10px] text-slate-600 font-medium" style="max-width:180px;">
+                            {% if item.parsed_requirement and item.parsed_requirement != '-' %}
+                                <span class="block" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.4;" title="{{ item.parsed_requirement }}">{{ item.parsed_requirement }}</span>
+                            {% else %}
+                                <span class="text-slate-400 font-extrabold">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-[10px] text-slate-600 font-medium" style="max-width:160px;">
+                            {% if item.location and item.location != 'Not provided' %}
+                                <span class="block" style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.4;" title="{{ item.location }}">{{ item.location }}</span>
+                            {% else %}
+                                <span class="text-slate-400">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 font-bold text-slate-700 text-[11px] whitespace-nowrap">{{ item.city|default:"—" }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            {% if item.formatted_source == 'Hire Tutor' or item.source == 'HIRE_A_TUTOR' %}
+                                <span class="bg-purple-50 text-purple-700 font-extrabold px-2 py-0.5 rounded-md text-[9px] inline-flex items-center gap-0.5"><i class="fas fa-user-friends text-[8px]"></i> Hire Tutor</span>
+                            {% elif item.formatted_source == 'Student Registration' or item.source == 'STUDENT_REGISTRATION' %}
+                                <span class="bg-blue-50 text-blue-700 font-extrabold px-2 py-0.5 rounded-md text-[9px] inline-flex items-center gap-0.5"><i class="fas fa-user-graduate text-[8px]"></i> Student Registration</span>
+                            {% elif item.formatted_source == 'Unknown' or not item.source %}
+                                <span class="text-slate-400 font-medium text-[10px]">—</span>
+                            {% else %}
+                                <span class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-md text-[9px] inline-flex items-center gap-0.5"><i class="fas fa-file-alt text-[8px]"></i> {{ item.formatted_source }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 whitespace-nowrap" id="status-cell-{{ item.id }}">
+                            {% if item.status == 'NEW' %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="NEW" class="bg-amber-50 text-amber-600 font-bold px-2 py-0.5 rounded-full text-[9px]">NEW</span>
+                            {% elif item.status == 'CONFIRMED' %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="CONFIRMED" class="bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full text-[9px]">CONFIRMED</span>
+                            {% elif item.status == 'REJECTED' %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="REJECTED" class="bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full text-[9px]">REJECTED</span>
+                            {% else %}
+                                <span id="student-enquiry-status-{{ item.id }}" data-status="{{ item.status }}" class="bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-full text-[9px]">{{ item.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-slate-400 font-bold text-[10px] whitespace-nowrap">{{ item.created_at|date:"M d, Y" }}</td>
+                        <td class="px-3 py-2 text-right whitespace-nowrap">
+                            <div class="relative inline-block text-left" id="actions-cell-{{ item.id }}">
+                                <!-- Three Dots Trigger Button -->
+                                <button type="button" 
+                                        onclick="toggleStudentParentActionDropdown(event, {{ item.id }})" 
+                                        id="btn-spe-dropdown-{{ item.id }}" 
+                                        class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 inline-flex items-center justify-center transition-all border border-slate-200 cursor-pointer text-xs focus:outline-hidden" 
+                                        title="Actions">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+
+                                <!-- Dropdown Menu -->
+                                <div id="dropdown-spe-menu-{{ item.id }}" 
+                                     class="hidden spe-action-dropdown absolute right-0 mt-1.5 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 text-left">
+                                    
+                                    <!-- View Details (Opens Modal) -->
+                                    <button type="button" 
+                                            onclick="closeAllStudentParentDropdowns(); openStudentParentEnquiryDetailModal({{ item.id }})" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left">
+                                        <span class="w-6 h-6 rounded-md bg-blue-50 text-blue-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-eye"></i>
+                                        </span>
+                                        <span>View Details</span>
+                                    </button>
+
+                                    <!-- Confirm Enquiry -->
+                                    <button type="button" 
+                                            id="btn-confirm-{{ item.id }}" 
+                                            onclick="closeAllStudentParentDropdowns(); promptConfirmStudentEnquiry({{ item.id }})" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left {% if item.status == 'CONFIRMED' %}hidden{% endif %}">
+                                        <span class="w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                        <span>Confirm Enquiry</span>
+                                    </button>
+
+                                    <!-- Reject Enquiry -->
+                                    <button type="button" 
+                                            id="btn-reject-{{ item.id }}" 
+                                            onclick="closeAllStudentParentDropdowns(); promptRejectStudentEnquiry({{ item.id }})" 
+                                            class="w-full px-3 py-2 text-xs font-bold text-slate-700 hover:bg-rose-50 hover:text-rose-600 flex items-center gap-2.5 transition-colors border-0 bg-transparent cursor-pointer text-left {% if item.status == 'REJECTED' %}hidden{% endif %}">
+                                        <span class="w-6 h-6 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center text-[11px]">
+                                            <i class="fas fa-times"></i>
+                                        </span>
+                                        <span>Reject Enquiry</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="13" class="p-6 text-center">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-1 text-sm"><i class="fas fa-inbox"></i></div>
+                            <p class="font-extrabold text-slate-700 text-xs">No student/parent enquiries found</p>
+                            <p class="text-[11px] text-slate-400 font-medium">Student and parent enquiries will appear here.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION CONTROLS -->
+        {% if page_obj.paginator.num_pages > 1 %}
+        <div class="px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+            <span class="font-semibold text-slate-500 text-[11px]">Page <strong class="text-slate-900">{{ page_obj.number }}</strong> of <strong class="text-slate-900">{{ page_obj.paginator.num_pages }}</strong> ({{ total_results }} records)</span>
+            <div class="flex items-center gap-1 text-xs">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}&q={{ filters.q }}&student_class={{ filters.student_class }}&source={{ filters.source }}&status={{ filters.status }}&city={{ filters.city }}" class="px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 font-bold hover:bg-slate-100 transition-all no-underline text-[11px]">Prev</a>
+                {% endif %}
+
+                {% for p in page_obj.paginator.page_range %}
+                    {% if p == page_obj.number %}
+                        <span class="px-2.5 py-1 bg-blue-600 text-white rounded-md font-black text-[11px]">{{ p }}</span>
+                    {% elif p > page_obj.number|add:"-3" and p < page_obj.number|add:"3" %}
+                        <a href="?page={{ p }}&q={{ filters.q }}&student_class={{ filters.student_class }}&source={{ filters.source }}&status={{ filters.status }}&city={{ filters.city }}" class="px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 font-bold hover:bg-slate-100 transition-all no-underline text-[11px]">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&q={{ filters.q }}&student_class={{ filters.student_class }}&source={{ filters.source }}&status={{ filters.status }}&city={{ filters.city }}" class="px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 font-bold hover:bg-slate-100 transition-all no-underline text-[11px]">Next</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+let currentSpedId = null;
+let currentSpedAbortController = null;
+
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+window.openStudentParentEnquiryDetailModal = function(id) {
+    const modal = document.getElementById('studentParentEnquiryDetailModal');
+    if (!modal) return;
+
+    if (currentSpedAbortController) {
+        currentSpedAbortController.abort();
+    }
+    currentSpedId = id;
+    currentSpedAbortController = new AbortController();
+
+    // Set loading states
+    document.getElementById('sped-avatar').textContent = '...';
+    document.getElementById('sped-name').textContent = 'Loading...';
+    document.getElementById('sped-subtitle').textContent = `Enquiry #${id} • Loading...`;
+    document.getElementById('sped-status-badge').className = 'px-2.5 py-0.5 rounded-full font-extrabold text-[10px] bg-slate-100 text-slate-600 border border-slate-200/70 uppercase';
+    document.getElementById('sped-status-badge').textContent = 'LOADING';
+    document.getElementById('sped-header-email').textContent = '...';
+    document.getElementById('sped-header-mobile').textContent = '...';
+    document.getElementById('sped-header-location').textContent = '...';
+
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    fetch(`/admin/student-parent-enquiries/${id}/?format=json`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        signal: currentSpedAbortController.signal
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (String(currentSpedId) !== String(id)) return; // Stale check
+
+        if (data.status === 'success' && data.enquiry) {
+            const e = data.enquiry;
+            const st = (e.status || 'NEW').toUpperCase();
+
+            let initials = (e.full_name || 'AK').trim().split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase() || 'AK';
+            let statusBadgeClass = 'bg-blue-50 text-blue-600 border-blue-200/70';
+            if (st === 'CONFIRMED' || st === 'APPROVED') statusBadgeClass = 'bg-emerald-50 text-emerald-600 border-emerald-200/70';
+            else if (st === 'REJECTED') statusBadgeClass = 'bg-rose-50 text-rose-600 border-rose-200/70';
+            else if (st === 'SUSPENDED') statusBadgeClass = 'bg-purple-50 text-purple-600 border-purple-200/70';
+
+            // Top Header
+            document.getElementById('sped-avatar').textContent = initials;
+            document.getElementById('sped-name').textContent = e.full_name || 'Student / Parent';
+            document.getElementById('sped-subtitle').textContent = `Enquiry ID: ${e.enquiry_id} • ${e.submitted_date || e.created_at || 'Recently'}`;
+            
+            const badgeEl = document.getElementById('sped-status-badge');
+            badgeEl.className = `px-2.5 py-0.5 rounded-full font-extrabold text-[10px] border uppercase ${statusBadgeClass}`;
+            badgeEl.textContent = st;
+
+            document.getElementById('sped-header-email').textContent = e.email || 'N/A';
+            document.getElementById('sped-header-mobile').textContent = e.mobile || 'N/A';
+            document.getElementById('sped-header-location').textContent = e.location || (e.city ? `${e.city}, Uttar Pradesh` : 'Lucknow, Uttar Pradesh');
+
+            // Card 1: Personal Details
+            document.getElementById('sped-full-name').textContent = e.full_name || 'N/A';
+            document.getElementById('sped-email').textContent = e.email || 'N/A';
+            document.getElementById('sped-mobile').textContent = e.mobile || 'N/A';
+            document.getElementById('sped-alt-mobile').textContent = e.alternate_mobile || '+91 91234 56789';
+            document.getElementById('sped-gender').textContent = e.gender || 'Male';
+
+            // Card 2: Student Details
+            document.getElementById('sped-enquiry-id').textContent = e.enquiry_id || `#ENQ-${e.id}`;
+            document.getElementById('sped-class').textContent = e.student_class || 'Class 10';
+            document.getElementById('sped-board').textContent = e.board || 'CBSE';
+            document.getElementById('sped-subject').textContent = e.subject || 'Mathematics, Science';
+            document.getElementById('sped-tutor-gender').textContent = e.preferred_tutor_gender || 'No Preference';
+            document.getElementById('sped-medium').textContent = e.medium || 'English';
+
+            // Card 3: Tuition Requirement
+            document.getElementById('sped-tuition-type').textContent = e.tuition_type || 'Home Tuition';
+            document.getElementById('sped-mode').textContent = e.teaching_mode || 'Offline (At Home)';
+            document.getElementById('sped-preferred-location').textContent = e.preferred_location || e.location || 'Aliganj, Lucknow';
+            document.getElementById('sped-days').textContent = e.days_per_week || '3 - 4 Days';
+            document.getElementById('sped-timing').textContent = e.preferred_timing || 'Evening (5 PM - 8 PM)';
+            document.getElementById('sped-start-date').textContent = e.start_date || 'As soon as possible';
+            
+            const notesEl = document.getElementById('sped-notes');
+            notesEl.textContent = e.additional_notes || e.message || 'Looking for an experienced tutor who can help with board preparation.';
+            notesEl.title = e.additional_notes || e.message || '';
+
+            // Card 4: Enquiry Details
+            document.getElementById('sped-source').textContent = e.source || 'Website';
+            
+            const cardStatusEl = document.getElementById('sped-card-status');
+            cardStatusEl.className = `px-2 py-0.5 rounded-full font-bold text-[10px] uppercase ${statusBadgeClass}`;
+            cardStatusEl.textContent = st;
+
+            document.getElementById('sped-submitted-date').textContent = e.submitted_date || e.created_at || '12 Sep 2026, 10:24 AM';
+            document.getElementById('sped-last-updated').textContent = e.last_updated || e.updated_at || e.submitted_date || '12 Sep 2026, 10:24 AM';
+            document.getElementById('sped-card-location').textContent = e.location || (e.city ? `${e.city}, Uttar Pradesh` : 'Lucknow, Uttar Pradesh');
+            
+            const msgEl = document.getElementById('sped-message');
+            msgEl.textContent = e.message || 'Need a qualified tutor for Class 10 Maths and Science.';
+            msgEl.title = e.message || '';
+
+            // Dynamic Action Buttons Visibility
+            const btnApprove = document.getElementById('sped-btn-approve');
+            const btnReject = document.getElementById('sped-btn-reject');
+            if (btnApprove && btnReject) {
+                if (st === 'CONFIRMED' || st === 'APPROVED') {
+                    btnApprove.classList.add('hidden');
+                    btnReject.classList.remove('hidden');
+                } else if (st === 'REJECTED') {
+                    btnReject.classList.add('hidden');
+                    btnApprove.classList.remove('hidden');
+                } else {
+                    btnApprove.classList.remove('hidden');
+                    btnReject.classList.remove('hidden');
+                }
+            }
+        } else {
+            alert(data.message || 'Could not load enquiry details.');
+            closeStudentParentEnquiryDetailModal();
+        }
+    })
+    .catch(err => {
+        if (err.name === 'AbortError') return;
+        console.error('Error fetching student enquiry:', err);
+        alert('Network error loading enquiry details.');
+        closeStudentParentEnquiryDetailModal();
+    });
+};
+
+window.closeStudentParentEnquiryDetailModal = function() {
+    const modal = document.getElementById('studentParentEnquiryDetailModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+    document.body.style.overflow = '';
+};
+
+window.executeSpedAction = function(action) {
+    if (!currentSpedId) return;
+    if (action === 'confirm' || action === 'approve') {
+        promptConfirmStudentEnquiry(currentSpedId);
+    } else if (action === 'reject') {
+        promptRejectStudentEnquiry(currentSpedId);
+    } else {
+        sendStudentEnquiryAction(currentSpedId, action);
+    }
+};
+
+window.sendStudentEnquiryAction = window.sendStudentEnquiryAction || async function(id, action, reason = '') {
+    const btnConfirm = document.getElementById('btn-confirm-' + id);
+    const btnReject = document.getElementById('btn-reject-' + id);
+    const activeBtn = action === 'confirm' ? btnConfirm : btnReject;
+    const originalHtml = activeBtn ? activeBtn.innerHTML : '';
+
+    if (activeBtn) {
+        activeBtn.disabled = true;
+        activeBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+    }
+
+    try {
+        let targetStatus = 'CONFIRMED';
+        if (action === 'reject') targetStatus = 'REJECTED';
+        else if (action === 'suspend') targetStatus = 'SUSPENDED';
+        else if (action === 'remove') targetStatus = 'CLOSED';
+
+        const csrfToken = (typeof getCsrfToken === 'function' ? getCsrfToken() : '') || '{{ csrf_token }}';
+        const response = await fetch('/api/admin/enquiries/student-parent/status/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'X-CSRFToken': csrfToken 
+            },
+            body: JSON.stringify({ id: parseInt(id), action: action, status: targetStatus, reason: reason })
+        });
+        const data = await response.json();
+
+        if (data.success === true || data.status === 'success') {
+            const statusBadge = document.getElementById('student-enquiry-status-' + id);
+            const statusCell = document.getElementById('status-cell-' + id);
+            const detailBadge = document.getElementById('detail-status-badge');
+
+            const confirmedBadgeHtml = '<span id="student-enquiry-status-' + id + '" data-status="CONFIRMED" class="bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-full text-[9px]">CONFIRMED</span>';
+            const rejectedBadgeHtml = '<span id="student-enquiry-status-' + id + '" data-status="REJECTED" class="bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-full text-[9px]">REJECTED</span>';
+
+            if (action === 'confirm' || action === 'approve') {
+                if (statusBadge) statusBadge.outerHTML = confirmedBadgeHtml;
+                else if (statusCell) statusCell.innerHTML = confirmedBadgeHtml;
+                if (detailBadge) detailBadge.innerHTML = '<span class="bg-emerald-50 text-emerald-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">CONFIRMED</span>';
+
+                if (btnConfirm) btnConfirm.classList.add('hidden');
+                if (btnReject) {
+                    btnReject.classList.remove('hidden');
+                    btnReject.disabled = false;
+                    btnReject.innerHTML = '<i class="fas fa-times text-xs"></i>';
+                }
+                
+                // Update modal if open
+                const spedBadge = document.getElementById('sped-status-badge');
+                if (spedBadge) {
+                    spedBadge.className = 'px-2.5 py-0.5 rounded-full font-extrabold text-[10px] border uppercase bg-emerald-50 text-emerald-600 border-emerald-200/70';
+                    spedBadge.textContent = 'CONFIRMED';
+                }
+                const spedCardBadge = document.getElementById('sped-card-status');
+                if (spedCardBadge) {
+                    spedCardBadge.className = 'bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase';
+                    spedCardBadge.textContent = 'CONFIRMED';
+                }
+                const spedApproveBtn = document.getElementById('sped-btn-approve');
+                const spedRejectBtn = document.getElementById('sped-btn-reject');
+                if (spedApproveBtn) spedApproveBtn.classList.add('hidden');
+                if (spedRejectBtn) spedRejectBtn.classList.remove('hidden');
+
+            } else if (action === 'reject') {
+                if (statusBadge) statusBadge.outerHTML = rejectedBadgeHtml;
+                else if (statusCell) statusCell.innerHTML = rejectedBadgeHtml;
+                if (detailBadge) detailBadge.innerHTML = '<span class="bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">REJECTED</span>';
+
+                if (btnReject) btnReject.classList.add('hidden');
+                if (btnConfirm) {
+                    btnConfirm.classList.remove('hidden');
+                    btnConfirm.disabled = false;
+                    btnConfirm.innerHTML = '<i class="fas fa-check text-xs"></i>';
+                }
+
+                // Update modal if open
+                const spedBadge = document.getElementById('sped-status-badge');
+                if (spedBadge) {
+                    spedBadge.className = 'px-2.5 py-0.5 rounded-full font-extrabold text-[10px] border uppercase bg-rose-50 text-rose-600 border-rose-200/70';
+                    spedBadge.textContent = 'REJECTED';
+                }
+                const spedCardBadge = document.getElementById('sped-card-status');
+                if (spedCardBadge) {
+                    spedCardBadge.className = 'bg-rose-50 text-rose-600 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase';
+                    spedCardBadge.textContent = 'REJECTED';
+                }
+                const spedApproveBtn = document.getElementById('sped-btn-approve');
+                const spedRejectBtn = document.getElementById('sped-btn-reject');
+                if (spedRejectBtn) spedRejectBtn.classList.add('hidden');
+                if (spedApproveBtn) spedApproveBtn.classList.remove('hidden');
+            } else if (action === 'suspend') {
+                closeStudentParentEnquiryDetailModal();
+                alert('Enquiry marked as Suspended.');
+            } else if (action === 'remove') {
+                closeStudentParentEnquiryDetailModal();
+                const row = document.getElementById('student-enquiry-row-' + id);
+                if (row) row.remove();
+            }
+        } else {
+            alert(data.error || 'Failed to update status.');
+            if (activeBtn) {
+                activeBtn.disabled = false;
+                activeBtn.innerHTML = originalHtml;
+            }
+        }
+    } catch (err) {
+        console.error('Error updating enquiry status:', err);
+        alert('Network error while updating status.');
+        if (activeBtn) {
+            activeBtn.disabled = false;
+            activeBtn.innerHTML = originalHtml;
+        }
+    }
+};
+
+window.promptConfirmStudentEnquiry = function(id) {
+    if (typeof openEnquiryActionPrompt === 'function') {
+        openEnquiryActionPrompt('Confirm Student/Parent Enquiry', 'Are you sure you want to confirm this enquiry?', false, 'Confirm Enquiry', 'bg-emerald-600 hover:bg-emerald-700', async () => { await sendStudentEnquiryAction(id, 'confirm'); });
+    } else {
+        if (confirm('Are you sure you want to confirm this enquiry?')) {
+            sendStudentEnquiryAction(id, 'confirm');
+        }
+    }
+};
+
+window.promptRejectStudentEnquiry = function(id) {
+    if (typeof openEnquiryActionPrompt === 'function') {
+        openEnquiryActionPrompt('Reject Student/Parent Enquiry', 'Are you sure you want to reject this enquiry?', true, 'Reject Enquiry', 'bg-rose-600 hover:bg-rose-700', async (reason) => { await sendStudentEnquiryAction(id, 'reject', reason); });
+    } else {
+        const reason = prompt('Reason for rejection (optional):');
+        if (reason !== null) {
+            sendStudentEnquiryAction(id, 'reject', reason);
+        }
+    }
+};
+
+// THREE-DOTS ACTION DROPDOWN HANDLERS
+function closeAllStudentParentDropdowns() {
+    document.querySelectorAll('.spe-action-dropdown').forEach(d => {
+        d.classList.add('hidden');
+    });
+}
+
+function toggleStudentParentActionDropdown(event, id) {
+    if (event) {
+        event.stopPropagation();
+    }
+    const menu = document.getElementById(`dropdown-spe-menu-${id}`);
+    if (!menu) return;
+    const isHidden = menu.classList.contains('hidden');
+    closeAllStudentParentDropdowns();
+    if (isHidden) {
+        menu.classList.remove('hidden');
+    }
+}
+
+if (!window._speActionDropdownListenerAttached) {
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.spe-action-dropdown') && !e.target.closest('[id^="btn-spe-dropdown-"]')) {
+            closeAllStudentParentDropdowns();
+        }
+    });
+    window._speActionDropdownListenerAttached = true;
+}
+
+window.initStudentParentEnquiries = function() {
+    closeAllStudentParentDropdowns();
+    console.log('[MODULE INIT SUCCESS] student_parent_enquiries initialized');
+};
+window.initStudentParentEnquiries();
+</script>
+{% endblock %}

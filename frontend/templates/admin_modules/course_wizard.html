@@ -1,0 +1,419 @@
+{% extends base_template|default:"admin_partial_base.html" %}
+
+{% block admin_content %}
+<div class="space-y-6 fade-in text-slate-800">
+    <!-- WIZARD HEADER & BACK BUTTON -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+        <div class="flex items-center gap-3">
+            <button onclick="navTo('courses')" class="w-9 h-9 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center border-0 cursor-pointer text-sm">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div>
+                <h2 class="text-xl font-black text-slate-900">Course Creation Wizard</h2>
+                <p class="text-xs text-slate-500 font-medium">Enterprise multi-step curriculum and batch builder</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="saveCourseWizard('Draft')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer">
+                <i class="fas fa-save mr-1"></i> Save Draft
+            </button>
+            <button onclick="saveCourseWizard('Published')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl border-0 cursor-pointer shadow-md">
+                <i class="fas fa-check-circle mr-1"></i> Publish Course
+            </button>
+        </div>
+    </div>
+
+    <!-- 5-STEP PROGRESS INDICATOR -->
+    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs">
+        <div class="grid grid-cols-5 gap-2 text-center text-xs font-extrabold">
+            <div id="step-indicator-1" onclick="goToWizardStep(1)" class="p-2.5 rounded-xl bg-amber-50 text-amber-700 border-2 border-amber-500 cursor-pointer transition-all">
+                <span class="block text-[10px] text-amber-600 uppercase font-black">Step 1</span>
+                1. Basic Info
+            </div>
+            <div id="step-indicator-2" onclick="goToWizardStep(2)" class="p-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer transition-all">
+                <span class="block text-[10px] text-slate-400 uppercase font-black">Step 2</span>
+                2. Subjects & Faculty
+            </div>
+            <div id="step-indicator-3" onclick="goToWizardStep(3)" class="p-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer transition-all">
+                <span class="block text-[10px] text-slate-400 uppercase font-black">Step 3</span>
+                3. Batch Config
+            </div>
+            <div id="step-indicator-4" onclick="goToWizardStep(4)" class="p-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer transition-all">
+                <span class="block text-[10px] text-slate-400 uppercase font-black">Step 4</span>
+                4. Pricing & Fee
+            </div>
+            <div id="step-indicator-5" onclick="goToWizardStep(5)" class="p-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer transition-all">
+                <span class="block text-[10px] text-slate-400 uppercase font-black">Step 5</span>
+                5. Review & Publish
+            </div>
+        </div>
+    </div>
+
+    <!-- SPLIT SCREEN LAYOUT: WIZARD FORM (LEFT) + LIVE COURSE PREVIEW (RIGHT) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- LEFT: WIZARD FORM CONTAINERS (2 COLS) -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- STEP 1: BASIC INFORMATION -->
+            <div id="wizard-step-1" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+                <h3 class="font-extrabold text-slate-900 text-sm border-b pb-2"><i class="fas fa-info-circle text-amber-500 mr-2"></i>Basic Course Information</h3>
+                <div class="space-y-3 text-xs font-medium">
+                    <div>
+                        <label class="block font-bold mb-1">Course Name *</label>
+                        <input type="text" id="w_title" oninput="updateLivePreview()" placeholder="e.g. Class 9 CBSE" class="w-full border p-2.5 rounded-xl outline-none font-semibold text-slate-900">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Class / Grade *</label>
+                            <select id="w_class" onchange="updateLivePreview()" class="w-full border p-2.5 rounded-xl outline-none bg-white font-semibold">
+                                <option value="KG">KG</option>
+                                <option value="Class 1">Class 1</option>
+                                <option value="Class 2">Class 2</option>
+                                <option value="Class 3">Class 3</option>
+                                <option value="Class 4">Class 4</option>
+                                <option value="Class 5">Class 5</option>
+                                <option value="Class 6">Class 6</option>
+                                <option value="Class 7">Class 7</option>
+                                <option value="Class 8">Class 8</option>
+                                <option value="Class 9" selected>Class 9</option>
+                                <option value="Class 10">Class 10</option>
+                                <option value="Class 11">Class 11</option>
+                                <option value="Class 12">Class 12</option>
+                                <option value="JEE Main & Advanced">JEE Main & Advanced</option>
+                                <option value="NEET Medical">NEET Medical</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Board *</label>
+                            <select id="w_board" onchange="updateLivePreview()" class="w-full border p-2.5 rounded-xl outline-none bg-white font-semibold">
+                                <option value="CBSE" selected>CBSE</option>
+                                <option value="ICSE">ICSE</option>
+                                <option value="UP Board">UP Board</option>
+                                <option value="State Board">State Board</option>
+                                <option value="JEE">JEE</option>
+                                <option value="NEET">NEET</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Academic Session *</label>
+                            <select id="w_session" onchange="updateLivePreview()" class="w-full border p-2.5 rounded-xl outline-none bg-white font-semibold">
+                                <option value="2024-25">2024–25</option>
+                                <option value="2025-26">2025–26</option>
+                                <option value="2026-27" selected>2026–27</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Course Type</label>
+                            <select id="w_type" class="w-full border p-2.5 rounded-xl outline-none bg-white font-semibold">
+                                <option value="Regular" selected>Regular</option>
+                                <option value="Crash Course">Crash Course</option>
+                                <option value="Foundation">Foundation</option>
+                                <option value="Test Series">Test Series</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Short Description</label>
+                        <input type="text" id="w_short_desc" oninput="updateLivePreview()" placeholder="Brief summary of syllabus coverage..." class="w-full border p-2.5 rounded-xl outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Long Description</label>
+                        <textarea id="w_desc" rows="3" placeholder="Full course syllabus overview, learning objectives..." class="w-full border p-2.5 rounded-xl outline-none resize-none"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button onclick="goToWizardStep(2)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl border-0 cursor-pointer">
+                        Next: Subjects & Faculty →
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: SUBJECTS & FACULTY -->
+            <div id="wizard-step-2" class="hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <h3 class="font-extrabold text-slate-900 text-sm"><i class="fas fa-layer-group text-blue-600 mr-2"></i>Subjects & Faculty Structure</h3>
+                    <button onclick="addWizardSubjectRow()" class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs px-3 py-1.5 rounded-lg border-0 cursor-pointer">
+                        <i class="fas fa-plus mr-1"></i> Add Subject
+                    </button>
+                </div>
+                <div id="wizardSubjectsContainer" class="space-y-3 text-xs">
+                    <!-- Dynamic Subject Rows generated via JS -->
+                </div>
+                <div class="flex justify-between pt-2">
+                    <button onclick="goToWizardStep(1)" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer">← Back</button>
+                    <button onclick="goToWizardStep(3)" class="bg-blue-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl border-0 cursor-pointer">Next: Batch Config →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: BATCH CONFIGURATION -->
+            <div id="wizard-step-3" class="hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+                <h3 class="font-extrabold text-slate-900 text-sm border-b pb-2"><i class="fas fa-users-class text-emerald-600 mr-2"></i>Batch Group Configuration</h3>
+                <div class="space-y-3 text-xs font-medium">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Batch Name *</label>
+                            <input type="text" id="w_batch_name" oninput="updateLivePreview()" value="Saksham Batch 2026–27" class="w-full border p-2.5 rounded-xl outline-none font-semibold">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Batch Code</label>
+                            <input type="text" id="w_batch_code" value="SAK-2026" class="w-full border p-2.5 rounded-xl outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Batch Mode</label>
+                            <select id="w_batch_mode" class="w-full border p-2.5 rounded-xl outline-none bg-white font-semibold">
+                                <option value="Online" selected>Online</option>
+                                <option value="Offline">Offline</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Max Students *</label>
+                            <input type="number" id="w_max_students" oninput="updateLivePreview()" value="50" class="w-full border p-2.5 rounded-xl outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Class Timing</label>
+                            <input type="text" id="w_class_timing" value="4:00 PM - 6:00 PM" class="w-full border p-2.5 rounded-xl outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Class Days</label>
+                            <input type="text" id="w_days" value="Mon, Wed, Fri" class="w-full border p-2.5 rounded-xl outline-none">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Branch / Classroom</label>
+                            <input type="text" id="w_branch" value="Main Campus Room 101" class="w-full border p-2.5 rounded-xl outline-none">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-2">
+                    <button onclick="goToWizardStep(2)" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer">← Back</button>
+                    <button onclick="goToWizardStep(4)" class="bg-blue-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl border-0 cursor-pointer">Next: Pricing →</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: PRICING & ENROLLMENT -->
+            <div id="wizard-step-4" class="hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+                <h3 class="font-extrabold text-slate-900 text-sm border-b pb-2"><i class="fas fa-wallet text-purple-600 mr-2"></i>Pricing & Fee Structure</h3>
+                <div class="space-y-3 text-xs font-medium">
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-bold mb-1">Original Course Fee (₹) *</label>
+                            <input type="number" id="w_price" oninput="calculateWizardPrice(); updateLivePreview();" value="3499" class="w-full border p-2.5 rounded-xl outline-none font-bold text-slate-900">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Discount Type</label>
+                            <select id="w_discount_type" onchange="calculateWizardPrice(); updateLivePreview();" class="w-full border p-2.5 rounded-xl outline-none bg-white font-semibold">
+                                <option value="Fixed Amount" selected>Fixed Amount (₹)</option>
+                                <option value="Percentage">Percentage (%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Discount Value</label>
+                            <input type="number" id="w_discount_value" oninput="calculateWizardPrice(); updateLivePreview();" value="500" class="w-full border p-2.5 rounded-xl outline-none font-bold">
+                        </div>
+                    </div>
+                    
+                    <!-- REALTIME PRICING CALCULATED SUMMARY -->
+                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="text-slate-500 font-bold block">Final Price After Discount</span>
+                            <span id="wizardFinalPriceDisplay" class="text-2xl font-black text-emerald-600">₹2,999</span>
+                        </div>
+                        <div class="text-right text-[11px] text-slate-500">
+                            <span class="block">Original Fee: <span id="summaryOriginalFee">₹3,499</span></span>
+                            <span class="block">Discount Off: -<span id="summaryDiscountOff">₹500</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-2">
+                    <button onclick="goToWizardStep(3)" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer">← Back</button>
+                    <button onclick="goToWizardStep(5)" class="bg-blue-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl border-0 cursor-pointer">Next: Review & Publish →</button>
+                </div>
+            </div>
+
+            <!-- STEP 5: REVIEW & PUBLISH -->
+            <div id="wizard-step-5" class="hidden bg-white p-6 rounded-3xl border border-slate-200 shadow-2xs space-y-4">
+                <h3 class="font-extrabold text-slate-900 text-sm border-b pb-2"><i class="fas fa-check-circle text-emerald-600 mr-2"></i>Review & Confirm Publishing</h3>
+                <div class="space-y-3 text-xs">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-1">
+                        <span class="text-[10px] font-bold text-amber-600 uppercase block">Curriculum Summary</span>
+                        <h4 id="reviewTitle" class="font-black text-slate-900 text-sm">Class 9 CBSE</h4>
+                        <p id="reviewSession" class="text-slate-500">Academic Session: 2026–27 • Board: CBSE</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-1">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase block">Batch & Pricing Summary</span>
+                        <p id="reviewBatch" class="font-extrabold text-slate-800">Batch: Saksham Batch 2026–27 (Capacity: 50)</p>
+                        <p id="reviewPrice" class="font-black text-emerald-600 text-sm">Final Enrollment Fee: ₹2,999</p>
+                    </div>
+                </div>
+                <div class="flex justify-between pt-4 border-t">
+                    <button onclick="goToWizardStep(4)" class="bg-slate-100 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer">← Back</button>
+                    <div class="flex gap-2">
+                        <button onclick="saveCourseWizard('Draft')" class="bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl border-0 cursor-pointer">Save as Draft</button>
+                        <button onclick="saveCourseWizard('Published')" class="bg-amber-600 hover:bg-amber-700 text-white font-black text-xs px-6 py-2.5 rounded-xl border-0 cursor-pointer shadow-lg">Publish Course Now</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: LIVE COURSE PREVIEW CARD (1 COL) -->
+        <div class="space-y-4">
+            <div class="sticky top-6 bg-white p-5 rounded-3xl border border-slate-200 shadow-lg space-y-4">
+                <div class="flex items-center justify-between border-b pb-2">
+                    <span class="text-[10px] font-black text-amber-600 uppercase tracking-wider flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>LIVE COURSE PREVIEW</span>
+                    <span class="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded-md">Real-time</span>
+                </div>
+
+                <!-- PREVIEW CARD COMPONENT -->
+                <div class="space-y-3">
+                    <div class="h-36 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black relative overflow-hidden shadow-inner">
+                        <i class="fas fa-atom opacity-30 text-7xl absolute -right-4 -bottom-4"></i>
+                        <span id="prevClassBadge" class="relative z-10 text-xl font-black tracking-wide">Class 9</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span id="prevBoardBadge" class="bg-blue-50 text-blue-600 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase">Class 9 • CBSE</span>
+                        <span id="prevSessionBadge" class="text-[10px] font-bold text-slate-400">2026–27</span>
+                    </div>
+
+                    <div>
+                        <h3 id="prevTitle" class="font-extrabold text-slate-900 text-sm leading-snug">Class 9 CBSE</h3>
+                        <p id="prevShortDesc" class="text-[10px] text-slate-400 mt-0.5">Comprehensive batch covering complete syllabus</p>
+                    </div>
+
+                    <!-- SUBJECTS LIST PREVIEW -->
+                    <div class="border-t pt-2 space-y-1.5 text-xs">
+                        <div class="flex justify-between text-[10px] font-extrabold text-slate-400">
+                            <span>SUBJECTS (<span id="prevSubjectCount">5</span>)</span>
+                            <span>FACULTY</span>
+                        </div>
+                        <div id="prevSubjectsList" class="space-y-1 text-[11px] font-semibold text-slate-700">
+                            <div class="flex justify-between"><span>Mathematics</span><span class="text-blue-600">Krishna</span></div>
+                            <div class="flex justify-between"><span>Physics</span><span class="text-slate-400">Faculty TBD</span></div>
+                            <div class="flex justify-between"><span>Chemistry</span><span class="text-purple-600">Ruchi</span></div>
+                            <div class="flex justify-between"><span>Hindi</span><span class="text-emerald-600">Soni</span></div>
+                            <div class="flex justify-between"><span>English</span><span class="text-rose-600">Sweety</span></div>
+                        </div>
+                    </div>
+
+                    <!-- BATCH & CAPACITY PREVIEW -->
+                    <div class="border-t pt-2 space-y-1 text-[11px]">
+                        <div class="flex justify-between font-extrabold text-slate-800">
+                            <span>Batch Group:</span>
+                            <span id="prevBatchName" class="text-amber-600">Saksham Batch 2026–27</span>
+                        </div>
+                        <div class="flex justify-between text-slate-500 font-semibold">
+                            <span>Capacity:</span>
+                            <span><span id="prevMaxStudents">50</span> Students</span>
+                        </div>
+                    </div>
+
+                    <!-- PRICING PREVIEW -->
+                    <div class="flex justify-between items-center pt-3 border-t text-xs font-bold">
+                        <div>
+                            <span class="text-[9px] text-slate-400 block line-through" id="prevOriginalPrice">₹3,499</span>
+                            <span class="text-emerald-600 font-black text-base" id="prevFinalPrice">₹2,999</span>
+                        </div>
+                        <span class="bg-emerald-50 text-emerald-600 text-[10px] font-extrabold px-3 py-1 rounded-xl">Enrollment Open</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let currentWizardStep = 1;
+
+    function goToWizardStep(stepNum) {
+        currentWizardStep = stepNum;
+
+        // Hide all steps
+        for (let i = 1; i <= 5; i++) {
+            const container = document.getElementById(`wizard-step-${i}`);
+            const indicator = document.getElementById(`step-indicator-${i}`);
+            if (container) container.classList.add('hidden');
+            if (indicator) {
+                indicator.className = "p-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer transition-all";
+            }
+        }
+
+        // Show active step
+        const activeContainer = document.getElementById(`wizard-step-${stepNum}`);
+        const activeIndicator = document.getElementById(`step-indicator-${stepNum}`);
+        if (activeContainer) activeContainer.classList.remove('hidden');
+        if (activeIndicator) {
+            activeIndicator.className = "p-2.5 rounded-xl bg-amber-50 text-amber-700 border-2 border-amber-500 cursor-pointer transition-all";
+        }
+
+        updateLivePreview();
+    }
+
+    function calculateWizardPrice() {
+        const orig = parseFloat(document.getElementById('w_price')?.value || 0);
+        const discType = document.getElementById('w_discount_type')?.value || 'Fixed Amount';
+        const discVal = parseFloat(document.getElementById('w_discount_value')?.value || 0);
+
+        let finalPrice = orig;
+        let discountOff = 0;
+
+        if (discType === 'Percentage') {
+            discountOff = (orig * discVal) / 100;
+        } else {
+            discountOff = discVal;
+        }
+        finalPrice = Math.max(0, orig - discountOff);
+
+        const disp = document.getElementById('wizardFinalPriceDisplay');
+        const origDisp = document.getElementById('summaryOriginalFee');
+        const offDisp = document.getElementById('summaryDiscountOff');
+        const prevOrig = document.getElementById('prevOriginalPrice');
+        const prevFinal = document.getElementById('prevFinalPrice');
+
+        if (disp) disp.innerText = `₹${finalPrice.toLocaleString('en-IN')}`;
+        if (origDisp) origDisp.innerText = `₹${orig.toLocaleString('en-IN')}`;
+        if (offDisp) offDisp.innerText = `₹${discountOff.toLocaleString('en-IN')}`;
+        if (prevOrig) prevOrig.innerText = `₹${orig.toLocaleString('en-IN')}`;
+        if (prevFinal) prevFinal.innerText = `₹${finalPrice.toLocaleString('en-IN')}`;
+    }
+
+    function updateLivePreview() {
+        const title = document.getElementById('w_title')?.value || 'Class 9 CBSE';
+        const className = document.getElementById('w_class')?.value || 'Class 9';
+        const board = document.getElementById('w_board')?.value || 'CBSE';
+        const session = document.getElementById('w_session')?.value || '2026–27';
+        const shortDesc = document.getElementById('w_short_desc')?.value || 'Comprehensive batch covering complete syllabus';
+        const batchName = document.getElementById('w_batch_name')?.value || 'Saksham Batch 2026–27';
+        const maxStudents = document.getElementById('w_max_students')?.value || '50';
+
+        if (document.getElementById('prevTitle')) document.getElementById('prevTitle').innerText = title;
+        if (document.getElementById('prevClassBadge')) document.getElementById('prevClassBadge').innerText = className;
+        if (document.getElementById('prevBoardBadge')) document.getElementById('prevBoardBadge').innerText = `${className} • ${board}`;
+        if (document.getElementById('prevSessionBadge')) document.getElementById('prevSessionBadge').innerText = session;
+        if (document.getElementById('prevShortDesc')) document.getElementById('prevShortDesc').innerText = shortDesc;
+        if (document.getElementById('prevBatchName')) document.getElementById('prevBatchName').innerText = batchName;
+        if (document.getElementById('prevMaxStudents')) document.getElementById('prevMaxStudents').innerText = maxStudents;
+
+        if (document.getElementById('reviewTitle')) document.getElementById('reviewTitle').innerText = title;
+        if (document.getElementById('reviewSession')) document.getElementById('reviewSession').innerText = `Academic Session: ${session} • Board: ${board}`;
+        if (document.getElementById('reviewBatch')) document.getElementById('reviewBatch').innerText = `Batch: ${batchName} (Capacity: ${maxStudents})`;
+    }
+
+    function saveCourseWizard(status) {
+        if (typeof showToast === 'function') {
+            showToast(`Course Wizard saved as ${status}!`);
+        } else {
+            alert(`Course Wizard saved as ${status}!`);
+        }
+        setTimeout(() => navTo('courses'), 800);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Stories | EduTrust Home Tuition Platform</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        handwritten: ['"Caveat"', 'cursive']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        navy: {
+                            800: '#11294d',
+                            900: '#0f2747',
+                            950: '#08172c'
+                        }
+                    },
+                    boxShadow: {
+                        '2xs': '0 1px 2px 0 rgba(15, 23, 42, 0.05)',
+                        'card': '0 4px 20px -2px rgba(37, 99, 235, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+                        'card-hover': '0 12px 30px -4px rgba(37, 99, 235, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-[#f3f9fe] text-slate-800 font-sans antialiased flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Global Public Header (Fixed 106px) -->
+    {% include "components/public_header.html" %}
+
+    <!-- Ambient Decorative Background Glows -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-b from-blue-200/50 via-cyan-100/35 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[600px] -left-40 w-[600px] h-[600px] bg-gradient-to-tr from-blue-100/40 via-sky-50/30 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[1300px] -right-40 w-[600px] h-[600px] bg-gradient-to-tl from-indigo-100/40 via-blue-50/30 to-transparent rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- MAIN WRAPPER WITH TOP OFFSET FOR FIXED HEADER -->
+    <main class="flex-1 w-full pt-[120px] sm:pt-[130px] pb-20 space-y-10 sm:space-y-12">
+
+        <!-- ========================================================= -->
+        <!-- 1. HERO SECTION -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative pt-4">
+            
+            <!-- Left Decorative Handwritten Annotation -->
+            <div class="hidden lg:flex flex-col items-center absolute top-0 left-2 xl:left-8 select-none pointer-events-none transform -rotate-6">
+                <span class="font-handwritten text-xl text-blue-600 font-bold tracking-wide leading-tight text-center">Better<br>Learning<br>Brighter Futures</span>
+                <svg class="w-14 h-12 text-blue-500 mt-1" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5 C 30 5, 45 25, 45 40" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <path d="M40 34 L 45 42 L 52 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Right Decorative Handwritten Annotation -->
+            <div class="hidden lg:flex flex-col items-center absolute top-0 right-2 xl:right-8 select-none pointer-events-none transform rotate-6">
+                <span class="font-handwritten text-xl text-blue-600 font-bold tracking-wide leading-tight text-center">Dreams<br>Turn Into<br>Achievements</span>
+                <svg class="w-14 h-12 text-blue-500 mt-1" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 5 C 30 5, 15 25, 15 40" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <path d="M20 34 L 15 42 L 8 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Top Pill Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-blue-200/80 shadow-2xs backdrop-blur-sm mb-4">
+                <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                <span class="text-[11px] font-black uppercase tracking-wider text-blue-700">SUCCESS STORIES</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 tracking-tight leading-[1.2] mb-3 max-w-3xl mx-auto">
+                What Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700">Students Say</span>
+            </h1>
+
+            <p class="text-slate-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-normal">
+                Real experiences from students who have achieved their goals with EduTrust.
+            </p>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 2. TESTIMONIAL CARDS (3 IN A ROW ON DESKTOP) -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+                
+                <!-- Card 1 -->
+                <div class="bg-white/95 backdrop-blur-xs p-6 sm:p-7 rounded-2xl border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between relative group">
+                    <div>
+                        <!-- Rating Stars & Quote Icon -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="text-blue-200 group-hover:text-blue-400 transition-colors text-xl">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Quote Text -->
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                            "Finding an advanced mathematics home tutor through EduTrust completely changed my grades. I went from scoring 65% to securing 94% in my board exams!"
+                        </p>
+                    </div>
+
+                    <!-- Author Info -->
+                    <div class="flex items-center gap-3.5 pt-4 border-t border-slate-100">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
+                            AS
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-navy-950 text-sm truncate">Aarav Sharma</h4>
+                            <p class="text-[11px] text-blue-600 font-semibold truncate">Class 12 Student (Maths & Physics)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white/95 backdrop-blur-xs p-6 sm:p-7 rounded-2xl border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between relative group">
+                    <div>
+                        <!-- Rating Stars & Quote Icon -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="text-blue-200 group-hover:text-blue-400 transition-colors text-xl">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Quote Text -->
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                            "As a professional tutor, registering on EduTrust allowed me to connect directly with dedicated students in my area. The platform is extremely simple and reliable."
+                        </p>
+                    </div>
+
+                    <!-- Author Info -->
+                    <div class="flex items-center gap-3.5 pt-4 border-t border-slate-100">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
+                            PK
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-navy-950 text-sm truncate">Priya Kapoor</h4>
+                            <p class="text-[11px] text-purple-600 font-semibold truncate">Verified Chemistry Expert</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white/95 backdrop-blur-xs p-6 sm:p-7 rounded-2xl border border-blue-100/90 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between relative group">
+                    <div>
+                        <!-- Rating Stars & Quote Icon -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-1 text-amber-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="text-blue-200 group-hover:text-blue-400 transition-colors text-xl">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Quote Text -->
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                            "EduTrust made my study journey so much easier. The verified tutors, quality resources and helpful support team gave me the confidence I needed to achieve my goals."
+                        </p>
+                    </div>
+
+                    <!-- Author Info -->
+                    <div class="flex items-center gap-3.5 pt-4 border-t border-slate-100">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
+                            SD
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-navy-950 text-sm truncate">Sneha Desai</h4>
+                            <p class="text-[11px] text-emerald-600 font-semibold truncate">Medical Aspirant</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    {% include "components/public_footer.html" %}
+
+</body>
+</html>

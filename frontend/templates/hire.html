@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hire a Tutor | EduTrust Platform</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    boxShadow: {
+                        'soft-blue': '0 20px 40px -15px rgba(37, 99, 235, 0.12)',
+                        'card-glow': '0 25px 50px -12px rgba(30, 58, 138, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f9 50%, #e2e8f0 100%);
+            color: #0f172a;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Ambient Background Glow Blobs */
+        .ambient-blob-1 {
+            position: fixed;
+            top: -120px;
+            left: -80px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ambient-blob-2 {
+            position: fixed;
+            bottom: -120px;
+            right: -80px;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.05) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(90px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Premium Light Input Styling */
+        .hire-input-field {
+            background-color: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            color: #0f172a;
+            transition: all 0.25s ease;
+        }
+
+        .hire-input-field:focus {
+            background-color: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+            outline: none;
+        }
+
+        .hire-input-field::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Autofill Overrides for Light Inputs */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        select:-webkit-autofill {
+            -webkit-text-fill-color: #0f172a !important;
+            -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen py-6 px-3 sm:px-6 relative">
+
+    <!-- Background Ambient Glow -->
+    <div class="ambient-blob-1"></div>
+    <div class="ambient-blob-2"></div>
+
+    <!-- SUCCESS MODAL POPUP -->
+    <div id="successModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md flex items-center justify-center z-50 hidden transition-all duration-300 p-4">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center transform scale-95 transition-transform duration-300 border border-slate-100" id="modalContent">
+            <div class="w-14 h-14 bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 rounded-full flex items-center justify-center text-2xl mx-auto mb-3.5 shadow-sm">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-2">Congratulations!</h3>
+            <p class="text-slate-600 text-xs sm:text-sm mb-5 leading-relaxed" id="successText">Your tutor request has been submitted successfully. We will connect with you soon!</p>
+            <button onclick="closeSuccessPopup()" class="w-full py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-extrabold rounded-2xl border-0 cursor-pointer shadow-lg shadow-blue-500/25 transition-all text-xs sm:text-sm">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN TWO-PANEL HIRE CARD (MAX-W-6XL) -->
+    <div class="w-full max-w-6xl bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-[2.5rem] shadow-soft-blue z-10 overflow-hidden my-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[660px]">
+            
+            <!-- ======================================================== -->
+            <!-- LEFT PANEL: PROMOTIONAL & TRUST AREA (46% width on LG)  -->
+            <!-- ======================================================== -->
+            <div class="lg:col-span-5 bg-gradient-to-b from-[#0b1e47] via-[#081639] to-[#040b1c] p-7 sm:p-9 text-white flex flex-col justify-between relative overflow-hidden border-b lg:border-b-0 lg:border-r border-slate-800/80">
+                
+                <!-- Decorative Ambient Blobs -->
+                <div class="absolute -top-20 -left-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 space-y-6">
+                    <!-- Brand Header -->
+                    <div class="flex items-center justify-between">
+                        <a href="{% url 'home' %}" class="inline-flex items-center gap-2.5 group no-underline">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-all">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <span class="text-xl font-extrabold tracking-tight text-white block leading-none">
+                                    Edu<span class="text-brand-400">Trust</span>
+                                </span>
+                                <span class="text-[9px] font-extrabold text-slate-400 tracking-widest uppercase block mt-1">
+                                    LEARN • TEACH • GROW
+                                </span>
+                            </div>
+                        </a>
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[11px] font-extrabold">
+                            <i class="fas fa-check-circle text-[10px]"></i>
+                            <span>Verified Platform</span>
+                        </span>
+                    </div>
+
+                    <!-- Main Hero Header -->
+                    <div class="pt-2 space-y-2">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/25 text-blue-300 text-xs font-bold">
+                            <i class="fas fa-users-crown text-amber-400 text-xs"></i>
+                            <span>Trusted by Thousands of Learners</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+                            Find the Right Tutor<br>
+                            <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
+                                for a Brighter Future
+                            </span>
+                        </h1>
+                        <p class="text-slate-300 text-xs sm:text-xs font-medium leading-relaxed">
+                            Get connected with verified and experienced tutors who match your learning goals. Personalised support for every learner, at every step.
+                        </p>
+                    </div>
+
+                    <!-- 4 Compact Benefit Items -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 pt-1">
+                        <!-- Benefit 1 -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-sm">
+                            <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs shrink-0 border border-blue-500/30">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-white leading-tight">Verified Tutors</h4>
+                                <p class="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">Learn from qualified & experienced educators</p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 2 -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-sm">
+                            <div class="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs shrink-0 border border-purple-500/30">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-white leading-tight">Personalized Learning</h4>
+                                <p class="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">Get the right tutor for your unique needs</p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 3 -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-sm">
+                            <div class="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs shrink-0 border border-cyan-500/30">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-white leading-tight">Flexible Learning</h4>
+                                <p class="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">Choose your mode, time and location</p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 4 -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-sm">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs shrink-0 border border-emerald-500/30">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-xs text-white leading-tight">Student Success</h4>
+                                <p class="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">We support your complete learning journey</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial Quote Card & Trust Footer -->
+                <div class="relative z-10 space-y-4 pt-4 mt-6 border-t border-slate-800/80">
+                    <!-- Quote Card -->
+                    <div class="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800/90 shadow-md">
+                        <div class="flex items-start gap-2.5">
+                            <i class="fas fa-quote-left text-brand-400 text-sm shrink-0 mt-0.5"></i>
+                            <p class="text-[11.5px] text-slate-300 italic font-medium leading-relaxed">
+                                “Education is the most powerful weapon which you can use to change the world.”
+                            </p>
+                        </div>
+                        <span class="text-[10.5px] font-extrabold text-brand-400 block text-right mt-1">— Nelson Mandela</span>
+                    </div>
+
+                    <!-- Trust Footer Items -->
+                    <div class="flex flex-wrap items-center justify-between text-[10.5px] font-bold text-slate-400 pt-1">
+                        <span>✓ Safe & Secure</span>
+                        <span>✓ Quality Tutors</span>
+                        <span>✓ Personal Support</span>
+                        <span>✓ Better Results</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- RIGHT PANEL: HIRE TUTOR FORM AREA (54% width on LG)     -->
+            <!-- ======================================================== -->
+            <div class="lg:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between space-y-6">
+                
+                <div class="space-y-6">
+                    <!-- Header -->
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold">
+                                <i class="fas fa-search text-[10px]"></i>
+                                <span>Tutor Request</span>
+                            </span>
+                            <a href="{% url 'home' %}" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1 no-underline">
+                                <span>Home</span>
+                                <i class="fas fa-chevron-right text-[9px]"></i>
+                            </a>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2.5">
+                            Hire a <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 bg-clip-text text-transparent">Tutor</span>
+                        </h2>
+                        <p class="text-slate-500 text-xs sm:text-sm font-medium mt-1">
+                            Fill out the details below to find and hire the best verified tutor for your academic needs.
+                        </p>
+                    </div>
+
+                    <!-- 5-Step Visual Progress Indicator -->
+                    <div class="grid grid-cols-5 gap-1.5 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 text-[10.5px] font-extrabold text-center">
+                        <div class="py-1.5 rounded-xl bg-white text-blue-600 shadow-sm border border-slate-200 flex items-center justify-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center">1</span>
+                            <span class="hidden sm:inline">Personal</span>
+                        </div>
+                        <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">2</span>
+                            <span class="hidden sm:inline">Academic</span>
+                        </div>
+                        <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">3</span>
+                            <span class="hidden sm:inline">Contact</span>
+                        </div>
+                        <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">4</span>
+                            <span class="hidden sm:inline">Location</span>
+                        </div>
+                        <div class="py-1.5 rounded-xl text-slate-600 flex items-center justify-center gap-1">
+                            <span class="w-4 h-4 rounded-full bg-slate-200 text-slate-700 text-[9px] flex items-center justify-center">5</span>
+                            <span class="hidden sm:inline">Other</span>
+                        </div>
+                    </div>
+
+                    <!-- FORM START -->
+                    <form id="tutorForm" onsubmit="handleFormSubmit(event)" class="space-y-5" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- 1. PERSONAL DETAILS SECTION -->
+                        <div class="p-4 rounded-2xl bg-blue-50/40 border border-blue-100 space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase text-blue-700 tracking-wider flex items-center gap-2 border-b border-blue-100 pb-2">
+                                <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span>Personal Details</span>
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Your Name <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <input type="text" id="fullName" name="student_name" placeholder="e.g. Rahul Kumar" required
+                                            class="w-full hire-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    </div>
+                                    <p id="error-fullName" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Phone Number <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                            <i class="fas fa-phone-alt"></i>
+                                        </div>
+                                        <input type="tel" id="phoneNumber" name="mobile" placeholder="10-digit mobile number" required maxlength="10"
+                                            class="w-full hire-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    </div>
+                                    <p id="error-phoneNumber" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. ACADEMIC REQUIREMENTS SECTION -->
+                        <div class="p-4 rounded-2xl bg-purple-50/40 border border-purple-100 space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase text-purple-700 tracking-wider flex items-center gap-2 border-b border-purple-100 pb-2">
+                                <span class="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </span>
+                                <span>Academic Requirements</span>
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="academicGrid">
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Class / Grade <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <select id="classSelect" name="student_class" required
+                                            class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium cursor-pointer">
+                                            <option value="" disabled selected class="bg-white text-slate-400">Select Class Level</option>
+                                            <option value="Class 1" class="bg-white text-slate-900">Class 1</option>
+                                            <option value="Class 2" class="bg-white text-slate-900">Class 2</option>
+                                            <option value="Class 3" class="bg-white text-slate-900">Class 3</option>
+                                            <option value="Class 4" class="bg-white text-slate-900">Class 4</option>
+                                            <option value="Class 5" class="bg-white text-slate-900">Class 5</option>
+                                            <option value="Class 6" class="bg-white text-slate-900">Class 6</option>
+                                            <option value="Class 7" class="bg-white text-slate-900">Class 7</option>
+                                            <option value="Class 8" class="bg-white text-slate-900">Class 8</option>
+                                            <option value="Class 9" class="bg-white text-slate-900">Class 9</option>
+                                            <option value="Class 10" class="bg-white text-slate-900">Class 10</option>
+                                            <option value="Class 11" class="bg-white text-slate-900">Class 11</option>
+                                            <option value="Class 12" class="bg-white text-slate-900">Class 12</option>
+                                        </select>
+                                    </div>
+                                    <p id="error-classSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+
+                                <div id="streamContainer" class="hidden">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Stream <span class="text-rose-500">*</span></label>
+                                    <select id="streamSelect" name="stream"
+                                        class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium cursor-pointer">
+                                        <option value="" disabled selected class="bg-white text-slate-400">Select Stream</option>
+                                        <option value="Science" class="bg-white text-slate-900">Science</option>
+                                        <option value="Commerce" class="bg-white text-slate-900">Commerce</option>
+                                        <option value="Arts / Humanities" class="bg-white text-slate-900">Arts / Humanities</option>
+                                    </select>
+                                    <p id="error-streamSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+
+                                <div id="subjectWrapper" class="md:col-span-1">
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Subject <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="subjectSelect" name="subject" list="subjectOptions" placeholder="Select or type subject..." required
+                                        class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <datalist id="subjectOptions"></datalist>
+                                    <p id="error-subjectSelect" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. CONTACT DETAILS SECTION -->
+                        <div class="p-4 rounded-2xl bg-teal-50/40 border border-teal-100 space-y-3">
+                            <h3 class="text-xs font-extrabold uppercase text-teal-700 tracking-wider flex items-center gap-2 border-b border-teal-100 pb-2">
+                                <span class="w-6 h-6 rounded-lg bg-teal-600 text-white flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <span>Contact Details</span>
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Pincode <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                            <i class="fas fa-map-pin"></i>
+                                        </div>
+                                        <input type="text" id="pincodeInput" name="pincode" placeholder="6-digit pincode" required maxlength="6"
+                                            class="w-full hire-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    </div>
+                                    <p id="error-pincodeInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <input type="email" id="emailAddress" name="email" placeholder="name@example.com" required
+                                            class="w-full hire-input-field pl-9 pr-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    </div>
+                                    <p id="error-emailAddress" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. ADDRESS DETAILS SECTION -->
+                        <div class="p-4 rounded-2xl bg-blue-50/40 border border-blue-100 space-y-3">
+                            <div class="flex items-center justify-between border-b border-blue-100 pb-2">
+                                <h3 class="text-xs font-extrabold uppercase text-blue-700 tracking-wider flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-[10px]">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </span>
+                                    <span>Address Details</span>
+                                </h3>
+                                <button type="button" id="hireDetectLocationBtn" title="Auto-detect current location" class="text-blue-700 hover:text-blue-800 text-[11px] font-extrabold px-3 py-1 bg-white hover:bg-blue-50 rounded-lg border border-blue-200 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs">
+                                    <i class="fas fa-crosshairs text-blue-600"></i> Auto Detect Location
+                                </button>
+                            </div>
+
+                            <div class="space-y-3.5 relative">
+                                <!-- Row 1: State | City -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">State <span class="text-rose-500">*</span></label>
+                                        <input type="text" id="stateInput" name="state" list="stateOptions" placeholder="Select or type state" required
+                                            class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                        <datalist id="stateOptions"></datalist>
+                                        <p id="error-stateInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">City <span class="text-rose-500">*</span></label>
+                                        <input type="text" id="cityInput" name="city" list="cityOptions" placeholder="Select or type city" required
+                                            class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                        <datalist id="cityOptions"></datalist>
+                                        <p id="error-cityInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2: Area / Locality | Landmark -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Area / Locality <span class="text-rose-500">*</span></label>
+                                        <input type="text" id="areaInput" name="area" placeholder="e.g. Gomti Nagar" required
+                                            class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                        <p id="error-areaInput" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Landmark <span class="text-xs text-slate-400 font-normal lowercase">(optional)</span></label>
+                                        <input type="text" id="landmarkInput" name="landmark" placeholder="e.g. Near City Mall"
+                                            class="w-full hire-input-field px-3.5 h-[46px] rounded-xl text-xs sm:text-sm font-medium">
+                                    </div>
+                                </div>
+
+                                <!-- Row 3: Your Complete Address -->
+                                <div>
+                                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Your Complete Address <span class="text-rose-500">*</span></label>
+                                    <textarea id="completeAddress" name="complete_address" rows="2" required placeholder="House/Flat No., Street, Colony, Building name..."
+                                        class="w-full hire-input-field p-3 rounded-xl text-xs sm:text-sm font-medium resize-none"></textarea>
+                                    <p id="error-completeAddress" class="text-rose-500 text-xs mt-1 font-semibold hidden"></p>
+                                </div>
+                                
+                                <!-- Location suggestions dropdown -->
+                                <div id="hireLocationSuggestions" class="hidden absolute left-0 right-0 top-12 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 max-h-56 overflow-y-auto text-xs"></div>
+                            </div>
+                        </div>
+
+                        <!-- 5. OTHER REQUIREMENTS SECTION -->
+                        <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100 space-y-2">
+                            <h3 class="text-xs font-extrabold uppercase text-indigo-700 tracking-wider flex items-center gap-2 border-b border-indigo-100 pb-2">
+                                <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-[10px]">
+                                    <i class="fas fa-comment-alt"></i>
+                                </span>
+                                <span>Additional Requirements <span class="text-xs text-slate-400 font-normal lowercase">(optional)</span></span>
+                            </h3>
+                            <textarea id="additionalRequirements" name="additional_requirements" rows="2" placeholder="Mention preferred timing, online/home tuition, tutor gender preference, or specific needs..."
+                                class="w-full hire-input-field p-3 rounded-xl text-xs sm:text-sm font-medium resize-none"></textarea>
+                        </div>
+
+                        <!-- Global Form Error Banner -->
+                        <div id="formErrorBanner" class="hidden p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-600 rounded-2xl text-xs font-semibold flex items-center gap-2">
+                            <i class="fas fa-exclamation-circle text-rose-500 text-base shrink-0"></i>
+                            <span id="formErrorMessage">Please correct the highlighted errors before submitting.</span>
+                        </div>
+
+                        <!-- SUBMIT BUTTON & NAVIGATION -->
+                        <div class="space-y-3 pt-2">
+                            <button type="submit" id="submitBtn"
+                                class="w-full h-[54px] bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl text-xs sm:text-sm transition-all duration-300 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 border-0 cursor-pointer flex items-center justify-center gap-2">
+                                <span id="btnText">Find My Tutor</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                            
+                            <div class="text-center pt-1">
+                                <a href="{% url 'home' %}" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors inline-flex items-center gap-1.5 no-underline">
+                                    <i class="fas fa-arrow-left text-[10px]"></i>
+                                    <span>Back to Home</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Security & Privacy Footer -->
+                        <div class="text-center pt-1 border-t border-slate-100">
+                            <p class="text-[11px] text-slate-500 font-medium flex items-center justify-center gap-1.5 mb-0">
+                                <i class="fas fa-shield-alt text-emerald-600"></i>
+                                <span>Your information is safe with us. We connect you with verified and trusted tutors only.</span>
+                            </p>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT SECTION (PRESERVED 100% UNTOUCHED LOGIC) -->
+    <script>
+        // 1. CLASS-WISE & STREAM-WISE SUBJECT MAPPING DATA
+        const classSubjectMapping = {
+            'Class 1': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 2': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 3': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 4': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 5': ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'General Knowledge'],
+            'Class 6': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer', 'Sanskrit'],
+            'Class 7': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer', 'Sanskrit'],
+            'Class 8': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer', 'Sanskrit'],
+            'Class 9': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer Science', 'Sanskrit'],
+            'Class 10': ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer Science', 'Sanskrit'],
+            'Class 11': {
+                'Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'English'],
+                'Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Entrepreneurship', 'English'],
+                'Arts / Humanities': ['History', 'Geography', 'Political Science', 'Sociology', 'Psychology', 'Economics', 'English', 'Hindi']
+            },
+            'Class 12': {
+                'Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'English'],
+                'Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Entrepreneurship', 'English'],
+                'Arts / Humanities': ['History', 'Geography', 'Political Science', 'Sociology', 'Psychology', 'Economics', 'English', 'Hindi']
+            }
+        };
+
+        // 2. INDIAN STATES AND CITIES MAPPING
+        const indianStatesAndCities = {
+            'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Kakinada', 'Tirupati', 'Rajahmundry', 'Kadapa', 'Anantapur'],
+            'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Pasighat', 'Tawang', 'Ziro'],
+            'Assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur'],
+            'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif', 'Arrah', 'Begusarai'],
+            'Chandigarh': ['Chandigarh'],
+            'Chhattisgarh': ['Raipur', 'Bhilai', 'Bilaspur', 'Korba', 'Durg', 'Rajnandgaon'],
+            'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi', 'Central Delhi', 'Dwarka', 'Rohini'],
+            'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Mapusa', 'Ponda'],
+            'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar', 'Junagadh', 'Anand'],
+            'Haryana': ['Gurugram', 'Faridabad', 'Panipat', 'Ambala', 'Karnal', 'Hisar', 'Rohtak', 'Sonipat', 'Panchkula'],
+            'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Mandi', 'Solan', 'Kullu', 'Hamirpur'],
+            'Jammu and Kashmir': ['Srinagar', 'Jammu', 'Anantnag', 'Baramulla', 'Udhampur'],
+            'Jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro', 'Hazaribagh', 'Deoghar'],
+            'Karnataka': ['Bengaluru', 'Mysuru', 'Hubballi', 'Mangaluru', 'Belagavi', 'Davangere', 'Ballari', 'Tumakuru'],
+            'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kollam', 'Kannur', 'Alappuzha', 'Kottayam'],
+            'Madhya Pradesh': ['Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Satna', 'Ratlam'],
+            'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Chhatrapati Sambhajinagar', 'Solapur', 'Amravati', 'Navi Mumbai', 'Kolhapur'],
+            'Manipur': ['Imphal', 'Churachandpur', 'Thoubal'],
+            'Meghalaya': ['Shillong', 'Tura', 'Jowai'],
+            'Mizoram': ['Aizawl', 'Lunglei'],
+            'Nagaland': ['Kohima', 'Dimapur', 'Mokokchung'],
+            'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur', 'Puri', 'Balasore'],
+            'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Pathankot', 'Hoshiarpur'],
+            'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Ajmer', 'Bhilwara', 'Alwar', 'Sikar'],
+            'Sikkim': ['Gangtok', 'Namchi', 'Gyalshing'],
+            'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tiruppur', 'Erode', 'Vellore', 'Thanjavur'],
+            'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Khammam', 'Ramagundam'],
+            'Tripura': ['Agartala', 'Udaipur', 'Dharmanagar'],
+            'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Varanasi', 'Noida', 'Greater Noida', 'Ghaziabad', 'Agra', 'Prayagraj', 'Meerut', 'Bareilly', 'Aligarh', 'Moradabad', 'Gorakhpur', 'Jhansi', 'Mathura', 'Saharanpur'],
+            'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Nainital', 'Rishikesh'],
+            'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Bardhaman', 'Malda', 'Kharagpur']
+        };
+
+        // Populate State Datalist
+        document.addEventListener('DOMContentLoaded', () => {
+            const stateDatalist = document.getElementById('stateOptions');
+            if (stateDatalist) {
+                stateDatalist.innerHTML = '';
+                Object.keys(indianStatesAndCities).sort().forEach(st => {
+                    const opt = document.createElement('option');
+                    opt.value = st;
+                    stateDatalist.appendChild(opt);
+                });
+            }
+        });
+
+        // State Change Event -> Populate City Datalist
+        document.getElementById('stateInput').addEventListener('input', function() {
+            const stateVal = this.value.trim();
+            const cityDatalist = document.getElementById('cityOptions');
+            if (!cityDatalist) return;
+            cityDatalist.innerHTML = '';
+
+            if (indianStatesAndCities[stateVal]) {
+                indianStatesAndCities[stateVal].forEach(ct => {
+                    const opt = document.createElement('option');
+                    opt.value = ct;
+                    cityDatalist.appendChild(opt);
+                });
+            }
+        });
+
+        // 3. CLASS & STREAM DYNAMIC CONTROLLER
+        const classSelect = document.getElementById('classSelect');
+        const streamContainer = document.getElementById('streamContainer');
+        const streamSelect = document.getElementById('streamSelect');
+        const subjectInput = document.getElementById('subjectSelect');
+        const subjectOptions = document.getElementById('subjectOptions');
+        const academicGrid = document.getElementById('academicGrid');
+
+        function updateSubjects(subjectsList) {
+            subjectOptions.innerHTML = '';
+            subjectInput.value = '';
+            subjectInput.disabled = false;
+
+            if (Array.isArray(subjectsList)) {
+                subjectsList.forEach(sub => {
+                    const opt = document.createElement('option');
+                    opt.value = sub;
+                    subjectOptions.appendChild(opt);
+                });
+            }
+        }
+
+        classSelect.addEventListener('change', function() {
+            const selectedClass = this.value;
+
+            if (selectedClass === 'Class 11' || selectedClass === 'Class 12') {
+                streamContainer.classList.remove('hidden');
+                streamSelect.required = true;
+                streamSelect.value = '';
+                academicGrid.className = 'grid grid-cols-1 md:grid-cols-3 gap-3.5';
+                subjectInput.value = '';
+                subjectInput.disabled = true;
+                subjectOptions.innerHTML = '';
+            } else {
+                streamContainer.classList.add('hidden');
+                streamSelect.required = false;
+                streamSelect.value = '';
+                academicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3.5';
+
+                if (classSubjectMapping[selectedClass]) {
+                    updateSubjects(classSubjectMapping[selectedClass]);
+                } else {
+                    subjectInput.disabled = false;
+                    subjectOptions.innerHTML = '';
+                }
+            }
+        });
+
+        streamSelect.addEventListener('change', function() {
+            const selectedClass = classSelect.value;
+            const selectedStream = this.value;
+
+            if ((selectedClass === 'Class 11' || selectedClass === 'Class 12') && classSubjectMapping[selectedClass] && classSubjectMapping[selectedClass][selectedStream]) {
+                updateSubjects(classSubjectMapping[selectedClass][selectedStream]);
+            }
+        });
+
+        // 4. FRONTEND VALIDATIONS & SUBMISSION HANDLER
+        function showFieldError(fieldId, errorMsg) {
+            const errEl = document.getElementById('error-' + fieldId);
+            const inputEl = document.getElementById(fieldId);
+            if (errEl) {
+                errEl.innerText = errorMsg;
+                errEl.classList.remove('hidden');
+            }
+            if (inputEl) {
+                inputEl.classList.add('border-rose-500', 'focus:ring-rose-500/20');
+                inputEl.classList.remove('border-slate-200/90');
+            }
+        }
+
+        function clearFieldErrors() {
+            document.querySelectorAll('[id^="error-"]').forEach(el => {
+                el.innerText = '';
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('input, select, textarea').forEach(inputEl => {
+                inputEl.classList.remove('border-rose-500', 'focus:ring-rose-500/20');
+                inputEl.classList.add('border-slate-200/90');
+            });
+            const banner = document.getElementById('formErrorBanner');
+            if (banner) banner.classList.add('hidden');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue || '';
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            clearFieldErrors();
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const emailAddress = document.getElementById('emailAddress').value.trim();
+            const studentClass = document.getElementById('classSelect').value;
+            const stream = document.getElementById('streamSelect').value;
+            const subject = document.getElementById('subjectSelect').value.trim();
+            const state = document.getElementById('stateInput').value.trim();
+            const city = document.getElementById('cityInput').value.trim();
+            const area = document.getElementById('areaInput').value.trim();
+            const landmark = document.getElementById('landmarkInput').value.trim();
+            const pincode = document.getElementById('pincodeInput').value.trim();
+            const completeAddress = document.getElementById('completeAddress').value.trim();
+            const additionalRequirements = document.getElementById('additionalRequirements').value.trim();
+
+            let isValid = true;
+
+            if (!fullName || fullName.length < 2) {
+                showFieldError('fullName', 'Please enter your full name (minimum 2 characters).');
+                isValid = false;
+            }
+
+            if (!phoneNumber || !/^[6-9]\d{9}$/.test(phoneNumber)) {
+                showFieldError('phoneNumber', 'Please enter a valid 10-digit Indian mobile number.');
+                isValid = false;
+            }
+
+            if (!studentClass) {
+                showFieldError('classSelect', 'Please select a class (Class 1 to Class 12).');
+                isValid = false;
+            }
+
+            if ((studentClass === 'Class 11' || studentClass === 'Class 12') && !stream) {
+                showFieldError('streamSelect', 'Please select your stream.');
+                isValid = false;
+            }
+
+            if (!subject) {
+                showFieldError('subjectSelect', 'Please select or type a subject.');
+                isValid = false;
+            }
+
+            if (!pincode || !/^\d{6}$/.test(pincode)) {
+                showFieldError('pincodeInput', 'Pincode must be exactly 6 numeric digits.');
+                isValid = false;
+            }
+
+            if (!emailAddress || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailAddress)) {
+                showFieldError('emailAddress', 'Please enter a valid email address (e.g. name@gmail.com).');
+                isValid = false;
+            }
+
+            if (!state) {
+                showFieldError('stateInput', 'Please enter or select your state.');
+                isValid = false;
+            }
+
+            if (!city) {
+                showFieldError('cityInput', 'Please enter or select your city.');
+                isValid = false;
+            }
+
+            if (!area) {
+                showFieldError('areaInput', 'Please enter your area / locality.');
+                isValid = false;
+            }
+
+            if (!completeAddress) {
+                showFieldError('completeAddress', 'Please enter your complete address.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                const banner = document.getElementById('formErrorBanner');
+                if (banner) {
+                    document.getElementById('formErrorMessage').innerText = 'Please correct the highlighted errors before submitting.';
+                    banner.classList.remove('hidden');
+                }
+                return;
+            }
+
+            // AJAX Submission
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Submitting...';
+
+            const payload = {
+                student_name: fullName,
+                mobile: phoneNumber,
+                email: emailAddress,
+                student_class: studentClass,
+                stream: (studentClass === 'Class 11' || studentClass === 'Class 12') ? stream : '',
+                subject: subject,
+                state: state,
+                city: city,
+                area: area,
+                landmark: landmark,
+                pincode: pincode,
+                complete_address: completeAddress,
+                additional_requirements: additionalRequirements
+            };
+
+            try {
+                const response = await fetch('/hire/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    // Show Success Popup
+                    const modal = document.getElementById('successModal');
+                    const modalContent = document.getElementById('modalContent');
+                    document.getElementById('successText').innerText = data.message || 'Your tutor request has been submitted successfully.';
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modalContent.classList.remove('scale-95');
+                        modalContent.classList.add('scale-100');
+                    }, 10);
+                } else {
+                    submitBtn.disabled = false;
+                    btnText.innerHTML = '<span>Find My Tutor</span><i class="fas fa-arrow-right text-xs"></i>';
+                    const banner = document.getElementById('formErrorBanner');
+                    if (banner) {
+                        document.getElementById('formErrorMessage').innerText = data.message || 'Submission failed. Please check your details.';
+                        banner.classList.remove('hidden');
+                    }
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(key => {
+                            let targetId = key;
+                            if (key === 'student_name') targetId = 'fullName';
+                            if (key === 'mobile') targetId = 'phoneNumber';
+                            if (key === 'email') targetId = 'emailAddress';
+                            if (key === 'student_class') targetId = 'classSelect';
+                            if (key === 'stream') targetId = 'streamSelect';
+                            if (key === 'subject') targetId = 'subjectSelect';
+                            if (key === 'state') targetId = 'stateInput';
+                            if (key === 'city') targetId = 'cityInput';
+                            if (key === 'area') targetId = 'areaInput';
+                            if (key === 'pincode') targetId = 'pincodeInput';
+                            if (key === 'complete_address') targetId = 'completeAddress';
+                            showFieldError(targetId, data.errors[key]);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Form submission error:', err);
+                submitBtn.disabled = false;
+                btnText.innerHTML = '<span>Find My Tutor</span><i class="fas fa-arrow-right text-xs"></i>';
+                const banner = document.getElementById('formErrorBanner');
+                if (banner) {
+                    document.getElementById('formErrorMessage').innerText = 'Network/Server error. Please try again.';
+                    banner.classList.remove('hidden');
+                }
+            }
+        }
+
+        function closeSuccessPopup() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('hidden');
+            document.getElementById('tutorForm').reset();
+            clearFieldErrors();
+            streamContainer.classList.add('hidden');
+            streamSelect.required = false;
+            academicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3.5';
+            subjectInput.disabled = true;
+            subjectOptions.innerHTML = '';
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            submitBtn.disabled = false;
+            btnText.innerHTML = '<span>Find My Tutor</span><i class="fas fa-arrow-right text-xs"></i>';
+        }
+
+        // 5. LOCATION DETECTION ENGINE (Autocompletion & Reverse Geocoding Integration)
+        function setupDynamicLocationSearch() {
+            const inputEl = document.getElementById('completeAddress');
+            const dropdownEl = document.getElementById('hireLocationSuggestions');
+            const detectBtnEl = document.getElementById('hireDetectLocationBtn');
+
+            if (!inputEl || !dropdownEl) return;
+
+            function showDropdown() {
+                dropdownEl.classList.remove('hidden');
+            }
+
+            function hideDropdown() {
+                dropdownEl.classList.add('hidden');
+            }
+
+            function fillAddressFields(loc) {
+                if (!loc) return;
+                const formatted = loc.display_name || loc.formatted || '';
+                const city = loc.city || loc.town || loc.village || loc.county || '';
+                const state = loc.state || '';
+                const pincode = loc.postcode || loc.pincode || '';
+                const area = loc.suburb || loc.neighbourhood || loc.primary || formatted.split(',')[0] || '';
+
+                if (state) document.getElementById('stateInput').value = state;
+                if (city) {
+                    document.getElementById('cityInput').value = city;
+                    const stateVal = document.getElementById('stateInput').value;
+                    if (indianStatesAndCities[stateVal]) {
+                        const cityDatalist = document.getElementById('cityOptions');
+                        cityDatalist.innerHTML = '';
+                        indianStatesAndCities[stateVal].forEach(ct => {
+                            const opt = document.createElement('option');
+                            opt.value = ct;
+                            cityDatalist.appendChild(opt);
+                        });
+                    }
+                }
+                if (area) document.getElementById('areaInput').value = area;
+                if (pincode && /^\d{6}$/.test(pincode)) document.getElementById('pincodeInput').value = pincode;
+                if (formatted) document.getElementById('completeAddress').value = formatted;
+                hideDropdown();
+            }
+
+            if (detectBtnEl) {
+                detectBtnEl.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!navigator.geolocation) {
+                        alert("Geolocation is not supported by your browser.");
+                        return;
+                    }
+                    detectBtnEl.disabled = true;
+                    detectBtnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting...';
+
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            fetch(`/api/location/reverse-geocode/?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    detectBtnEl.disabled = false;
+                                    detectBtnEl.innerHTML = '<i class="fas fa-crosshairs text-blue-600"></i> Auto Detect Location';
+                                    if (data && data.status === 200 && data.location) {
+                                        fillAddressFields(data.location);
+                                    } else {
+                                        alert("Could not detect full address details. Please enter manually.");
+                                    }
+                                })
+                                .catch(() => {
+                                    detectBtnEl.disabled = false;
+                                    detectBtnEl.innerHTML = '<i class="fas fa-crosshairs text-blue-600"></i> Auto Detect Location';
+                                    alert("Location detection failed. Please enter manually.");
+                                });
+                        },
+                        () => {
+                            detectBtnEl.disabled = false;
+                            detectBtnEl.innerHTML = '<i class="fas fa-crosshairs text-blue-600"></i> Auto Detect Location';
+                            alert("Location access denied. Please enter manually.");
+                        }
+                    );
+                });
+            }
+        }
+
+        setupDynamicLocationSearch();
+    </script>
+</body>
+</html>

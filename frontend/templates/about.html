@@ -1,0 +1,578 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | EduTrust Home Tuition Platform</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        handwritten: ['"Caveat"', 'cursive']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        navy: {
+                            800: '#11294d',
+                            900: '#0f2747',
+                            950: '#08172c'
+                        }
+                    },
+                    boxShadow: {
+                        '2xs': '0 1px 2px 0 rgba(15, 23, 42, 0.05)',
+                        'card': '0 4px 20px -2px rgba(37, 99, 235, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04)',
+                        'card-hover': '0 12px 30px -4px rgba(37, 99, 235, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-[#f3f9fe] text-slate-800 font-sans antialiased flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Global Public Header (Fixed 106px) -->
+    {% include "components/public_header.html" %}
+
+    <!-- Ambient Decorative Background Glows -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[500px] bg-gradient-to-b from-blue-200/50 via-cyan-100/35 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[600px] -left-40 w-[600px] h-[600px] bg-gradient-to-tr from-blue-100/40 via-sky-50/30 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-[1300px] -right-40 w-[600px] h-[600px] bg-gradient-to-tl from-indigo-100/40 via-blue-50/30 to-transparent rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- MAIN WRAPPER WITH TOP OFFSET FOR FIXED HEADER -->
+    <main class="flex-1 w-full pt-[120px] sm:pt-[130px] pb-16 space-y-16 sm:space-y-20">
+
+        <!-- ========================================================= -->
+        <!-- 1. HERO SECTION -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+            
+            <!-- Left Decorative Handwritten Annotation -->
+            <div class="hidden xl:flex flex-col items-center absolute -top-2 left-6 select-none pointer-events-none transform -rotate-6">
+                <span class="font-handwritten text-xl text-blue-600 font-bold tracking-wide">Better<br>Learning<br>Brighter Futures</span>
+                <svg class="w-14 h-12 text-blue-500 mt-1" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5 C 30 5, 45 25, 45 40" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <path d="M40 34 L 45 42 L 52 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Right Decorative Handwritten Annotation -->
+            <div class="hidden xl:flex flex-col items-center absolute -top-2 right-6 select-none pointer-events-none transform rotate-6">
+                <div class="flex items-center gap-2">
+                    <span class="font-handwritten text-xl text-blue-600 font-bold tracking-wide">Education<br>for a Brighter<br>Tomorrow</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm shadow-2xs border border-blue-200">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+                <svg class="w-14 h-12 text-blue-500 mt-1" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 5 C 30 5, 15 25, 15 40" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <path d="M20 34 L 15 42 L 8 36" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <!-- Top Pill Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-blue-200/80 shadow-2xs backdrop-blur-sm mb-4">
+                <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                <span class="text-[11px] font-black uppercase tracking-wider text-blue-700">ABOUT EDUTRUST</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 tracking-tight leading-[1.2] mb-4 max-w-4xl mx-auto">
+                Bridging Students with India’s Top<br class="hidden sm:inline">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700">Verified Tutors</span>
+            </h1>
+
+            <p class="text-slate-600 text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-normal">
+                EduTrust is India’s premier home tuition platform dedicated to providing personalized, high-impact education for students from Nursery through Class 12.
+            </p>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- 3. MISSION + VISION SECTION -->
+        <!-- ========================================================= -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                
+                <!-- Mission Card -->
+                <div class="bg-white/90 backdrop-blur-xs p-5 sm:p-6 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base sm:text-lg mb-2.5 sm:mb-3">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-black text-navy-950 mb-1.5 sm:mb-2">Our Mission</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                            To democratize access to world-class personal tutoring by providing a seamless, trusted marketplace where students connect with verified subject experts for personalized learning at home.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Vision Card -->
+                <div class="bg-white/90 backdrop-blur-xs p-5 sm:p-6 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base sm:text-lg mb-2.5 sm:mb-3">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-black text-navy-950 mb-1.5 sm:mb-2">Our Vision</h2>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                            To build India’s most dependable home tuition ecosystem that equips learners with conceptual clarity, exam mastery, and holistic academic confidence.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 4. WHY FAMILIES TRUST EDUTRUST -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8 sm:mb-10">
+                <h2 class="text-2xl sm:text-3xl font-black text-navy-950">Why Families Trust EduTrust</h2>
+                <p class="text-slate-500 text-sm sm:text-base mt-2">Core pillars that make our home tuition services stand apart</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Card 1 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 sm:p-7 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-lg">Verified Home Tutors</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                        Every home tutor undergoes multi-step verification including educational credentials, demo class assessment, and background checks.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 sm:p-7 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-chalkboard-user"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-lg">Personalized Home Learning</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                        Get one-on-one attention at home with customized learning plans based on your child’s learning style, pace, and goals.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 sm:p-7 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-lg">Safe & Reliable Home Tuition</h3>
+                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                        We ensure a safe, trusted, and hassle-free home tuition experience with verified and professional tutors.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 5. HOW EDUTRUST WORKS -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-b from-blue-50/90 to-indigo-50/50 rounded-3xl p-6 sm:p-10 border border-blue-100 shadow-card">
+                <div class="text-center mb-8 sm:mb-10">
+                    <h2 class="text-2xl sm:text-3xl font-black text-navy-950">How EduTrust Works</h2>
+                    <p class="text-slate-500 text-sm sm:text-base mt-2">A simple and transparent process to get home tuition for your child</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+                    
+                    <!-- Step 1 -->
+                    <div class="bg-white p-6 rounded-2xl border border-blue-100/80 shadow-xs relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <span class="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">01</span>
+                            </div>
+                            <h3 class="font-bold text-navy-950 text-base mb-1.5">Find a Home Tutor</h3>
+                            <p class="text-slate-500 text-xs leading-relaxed">Search by subject, class, location and preferences.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white p-6 rounded-2xl border border-blue-100/80 shadow-xs relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <span class="text-xs font-black text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">02</span>
+                            </div>
+                            <h3 class="font-bold text-navy-950 text-base mb-1.5">Connect & Compare</h3>
+                            <p class="text-slate-500 text-xs leading-relaxed">Review tutor profiles, qualifications, experience and fees.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white p-6 rounded-2xl border border-blue-100/80 shadow-xs relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <span class="text-xs font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-100">03</span>
+                            </div>
+                            <h3 class="font-bold text-navy-950 text-base mb-1.5">Book a Demo Class</h3>
+                            <p class="text-slate-500 text-xs leading-relaxed">Schedule a free demo at your home to experience the teaching style.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-white p-6 rounded-2xl border border-blue-100/80 shadow-xs relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">04</span>
+                            </div>
+                            <h3 class="font-bold text-navy-950 text-base mb-1.5">Start Learning at Home</h3>
+                            <p class="text-slate-500 text-xs leading-relaxed">Begin regular classes and track your child’s progress.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 6. OUR HOME TUITION SERVICES -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8 sm:mb-10">
+                <h2 class="text-2xl sm:text-3xl font-black text-navy-950">Our Home Tuition Services</h2>
+                <p class="text-slate-500 text-sm sm:text-base mt-2">Quality home tuition for every learning need — Nursery to Class 12</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Service 1 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-book-open-reader"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-base">Home Tuition (All Subjects)</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">
+                        Expert home tutors for all subjects at your doorstep.
+                    </p>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-shapes"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-base">Nursery to 5th (Primary)</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">
+                        Fun and engaging home tuition to build a strong foundation.
+                    </p>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-atom"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-base">6th to 8th (Middle School)</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">
+                        Concept clarity and regular practice with qualified home tutors.
+                    </p>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="bg-white/90 backdrop-blur-xs p-6 rounded-2xl border border-blue-100/80 shadow-card hover:shadow-card-hover transition-all space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3 class="font-bold text-navy-950 text-base">9th to 12th (Senior Secondary)</h3>
+                    <p class="text-slate-600 text-xs leading-relaxed">
+                        Focused home tuition for board preparation and subject excellence.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 7. EDUCATION AT YOUR DOORSTEP (COMMITMENT) -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white/95 backdrop-blur-xs rounded-3xl p-7 sm:p-10 border border-blue-100/80 shadow-card relative overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <div class="lg:col-span-6 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-wider">
+                            OUR COMMITMENT
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-navy-950">
+                            Education at Your Doorstep
+                        </h2>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed font-normal">
+                            At EduTrust, we are committed to making quality home tuition accessible for every learner from Nursery to Class 12, with trusted tutors and a safe learning environment.
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100/60">
+                                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-navy-950">Verified & trusted home tutors</span>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100/60">
+                                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-navy-950">Personalized learning plans</span>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100/60">
+                                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-navy-950">Flexible class timings</span>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100/60">
+                                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-navy-950">Safe & secure learning</span>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100/60">
+                                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-navy-950">Regular progress updates</span>
+                            </div>
+
+                            <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100/60">
+                                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs flex-shrink-0">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-semibold text-navy-950">Academic excellence</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- 8. FINAL CALL TO ACTION (CTA) -->
+        <!-- ========================================================= -->
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16">
+            <div class="relative bg-gradient-to-r from-[#0364f6] via-[#1258eb] to-[#1d4ed8] rounded-[24px] sm:rounded-[30px] py-7 sm:py-9 px-4 sm:px-8 text-center text-white shadow-xl shadow-blue-600/25 border border-blue-400/25 overflow-hidden">
+                
+                <!-- Background Ambient Glows -->
+                <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-16 -top-16 w-64 h-64 bg-white/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Subtle Dot Matrices (Decorative) -->
+                <div class="absolute top-6 right-6 w-20 h-16 opacity-20 pointer-events-none hidden xl:grid grid-cols-4 gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                </div>
+                <div class="absolute top-20 left-6 w-16 h-18 opacity-20 pointer-events-none hidden xl:grid grid-cols-3 gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div><div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+                </div>
+
+                <!-- LEFT SIDE DECORATIVE DOODLES & BOOKS ILLUSTRATION (Desktop / XL) -->
+                <div class="absolute top-4 left-5 text-left hidden lg:block pointer-events-none select-none z-10 scale-90 origin-top-left">
+                    <div class="text-white font-['Caveat',cursive] text-base font-bold -rotate-6 leading-tight flex flex-col items-center">
+                        <span class="relative">
+                            Learn Better
+                            <span class="absolute -top-2.5 -right-3 text-amber-300 text-[10px]">/ | \</span>
+                        </span>
+                        <svg class="w-5 h-5 text-blue-200 mt-0.5 transform -rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="absolute top-16 left-12 text-left hidden xl:block pointer-events-none select-none z-10 scale-85 origin-top-left">
+                    <div class="text-white font-['Caveat',cursive] text-base font-bold rotate-6 leading-tight flex flex-col items-center">
+                        <span>Grow with Confidence</span>
+                        <svg class="w-5 h-5 text-blue-200 mt-0.5 transform rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Left 3D Book Stack & Plant Illustration -->
+                <div class="absolute bottom-2.5 left-4 hidden lg:flex items-end gap-1.5 pointer-events-none select-none z-10 scale-75 origin-bottom-left">
+                    <div class="flex flex-col gap-1 w-24">
+                        <div class="bg-blue-400 text-white text-[9px] font-bold py-0.5 px-1.5 rounded shadow-sm border border-white/20 transform -rotate-2">
+                            Better Students
+                        </div>
+                        <div class="bg-white text-blue-800 text-[9px] font-bold py-0.5 px-1.5 rounded shadow-sm transform rotate-1">
+                            Brighter Futures
+                        </div>
+                        <div class="bg-amber-400 text-amber-950 text-[9px] font-bold py-0.5 px-1.5 rounded shadow-sm transform -rotate-1">
+                            Stronger Tomorrows
+                        </div>
+                    </div>
+                    <!-- Potted Plant Graphic -->
+                    <div class="flex flex-col items-center -mb-1">
+                        <span class="text-amber-300 text-[9px] -mb-1">/ | \</span>
+                        <div class="text-emerald-300 text-base"><i class="fas fa-seedling"></i></div>
+                        <div class="w-4 h-3.5 bg-white/90 rounded-b shadow-xs border border-slate-200"></div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE DECORATIVE DOODLES (Desktop / XL) -->
+                <div class="absolute top-4 right-8 text-right hidden lg:block pointer-events-none select-none z-10 scale-90 origin-top-right">
+                    <div class="text-white font-['Caveat',cursive] text-base font-bold rotate-6 leading-tight flex flex-col items-center">
+                        <span>Expert Guidance</span>
+                        <svg class="w-5 h-5 text-blue-200 mt-0.5 transform rotate-135" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="absolute top-16 right-16 text-right hidden xl:block pointer-events-none select-none z-10 scale-85 origin-top-right">
+                    <div class="text-white font-['Caveat',cursive] text-base font-bold -rotate-3 leading-tight flex flex-col items-center">
+                        <span>Better Learning</span>
+                        <svg class="w-5 h-5 text-blue-200 mt-0.5 transform rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Right Mortarboard Outline & Sparkle -->
+                <div class="absolute top-16 right-36 hidden xl:block text-white/40 text-3xl pointer-events-none select-none z-10 transform -rotate-12">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="absolute top-28 right-12 hidden xl:block text-amber-300 text-base pointer-events-none select-none z-10">
+                    ✦
+                </div>
+
+                <div class="absolute bottom-10 right-20 hidden xl:block pointer-events-none select-none z-10 scale-85 origin-bottom-right">
+                    <div class="text-white font-['Caveat',cursive] text-base font-bold -rotate-6 leading-tight flex flex-col items-center">
+                        <span>Brighter Future</span>
+                        <svg class="w-5 h-5 text-blue-200 mt-0.5 transform rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-2.5 right-6 hidden lg:block pointer-events-none select-none z-10 scale-85 origin-bottom-right">
+                    <div class="text-white font-['Caveat',cursive] text-lg font-bold -rotate-6 leading-tight">
+                        <span class="relative">
+                            Every Child Can Shine!
+                            <span class="absolute -top-2 -right-2.5 text-amber-300 text-[10px]">/ | \</span>
+                        </span>
+                        <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-[#38e1ff] to-transparent rounded-full mt-0.5"></div>
+                    </div>
+                </div>
+
+                <!-- MAIN CENTRAL CONTENT -->
+                <div class="relative z-20 max-w-2xl mx-auto space-y-2.5">
+                    
+                    <!-- Top Badge -->
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-[11px] sm:text-xs font-bold tracking-wider uppercase shadow-inner select-none">
+                            <i class="fas fa-graduation-cap text-xs text-white"></i>
+                            <span>START YOUR LEARNING JOURNEY</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Heading -->
+                    <h2 class="text-xl sm:text-2xl lg:text-[30px] font-black tracking-tight text-white leading-tight sm:leading-tight m-0">
+                        Ready to Get a <span class="text-[#38e1ff] relative inline-block">Home Tutor<span class="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-[#38e1ff]/80 rounded-full"></span></span> for Your Child?
+                    </h2>
+
+                    <!-- Subtitle -->
+                    <p class="text-blue-100 text-xs sm:text-sm font-normal max-w-lg mx-auto leading-relaxed pt-0.5 m-0">
+                        Start your child’s learning journey with EduTrust today.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
+                        <a href="{% url 'find_tutor' %}" class="inline-flex items-center justify-center gap-2 bg-white text-[#0f52db] font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm hover:bg-blue-50 hover:shadow-lg hover:shadow-white/25 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 no-underline group shadow-md">
+                            <i class="fas fa-search text-xs text-[#0f52db]"></i>
+                            <span>Find a Tutor</span>
+                            <i class="fas fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <button type="button" onclick="if(typeof openBookDemoModal==='function'){openBookDemoModal(null);}else if(typeof window.openBookDemoModal==='function'){window.openBookDemoModal(null);}else{window.location.href='{% url 'book_demo_page' %}';}" class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm border border-white/30 hover:border-white/50 backdrop-blur-sm hover:shadow-lg hover:shadow-blue-950/40 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 cursor-pointer shadow-sm">
+                            <i class="far fa-calendar-alt text-xs text-white"></i>
+                            <span>Book a Free Demo</span>
+                        </button>
+                    </div>
+
+                    <!-- Bottom Benefit Strip -->
+                    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 pt-4 text-[11px] sm:text-xs text-white/90 font-medium select-none border-t border-white/15 mt-4 max-w-xl mx-auto">
+                        <div class="flex items-center gap-1.5">
+                            <i class="far fa-check-circle text-[#38e1ff] text-xs"></i>
+                            <span>Safe &amp; Verified Tutors</span>
+                        </div>
+                        <span class="hidden sm:inline text-white/30 select-none">|</span>
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-user-friends text-[#38e1ff] text-xs"></i>
+                            <span>Personalized Learning</span>
+                        </div>
+                        <span class="hidden sm:inline text-white/30 select-none">|</span>
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-chart-line text-[#38e1ff] text-xs"></i>
+                            <span>A Brighter Future</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    {% include "components/public_footer.html" %}
+
+</body>
+</html>

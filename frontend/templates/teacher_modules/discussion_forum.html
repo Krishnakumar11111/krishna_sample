@@ -1,0 +1,80 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: DISCUSSION FORUM                         -->
+<!-- ======================================================== -->
+<div id="teacherModule_discussion_forum" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-comments"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Discussion Forum & Doubt Board</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Community student queries, peer discussions, and teacher-verified solution threads.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="alert('Creating new discussion thread...')" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs shadow-md shadow-indigo-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-plus-circle text-xs"></i> <span>Start Discussion</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- THREADS FEED -->
+    <div class="space-y-4">
+        <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                    <img src="https://ui-avatars.com/api/?name=Rohan+Singh&background=6366f1&color=fff&size=80" class="w-10 h-10 rounded-full object-cover shrink-0">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <strong class="text-xs font-bold text-slate-900 dark:text-white">Rohan Singh</strong>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Class 10 CBSE</span>
+                            <span class="text-[10px] text-slate-400">2 hours ago</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">Why does a quadratic equation have equal roots only when $b^2 - 4ac = 0$?</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed m-0">
+                            I understand the formula $x = \frac{-b \pm \sqrt{D}}{2a}$, but conceptually on the graph why does the parabola touch the x-axis at exactly one point when discriminant is zero?
+                        </p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 shrink-0">Awaiting Teacher Answer</span>
+            </div>
+
+            <!-- TEACHER REPLY BOX -->
+            <div class="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-700 space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-blue-600">
+                    <span><i class="fas fa-pen text-xs mr-1"></i> Post Teacher Verified Answer</span>
+                </div>
+                <textarea rows="2" placeholder="Write step-by-step conceptual explanation..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 focus:outline-none"></textarea>
+                <div class="flex justify-end">
+                    <button onclick="alert('Answer posted to discussion forum!')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-xs">
+                        Post Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3">
+                    <img src="https://ui-avatars.com/api/?name=Priya+Sharma&background=10b981&color=fff&size=80" class="w-10 h-10 rounded-full object-cover shrink-0">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <strong class="text-xs font-bold text-slate-900 dark:text-white">Priya Sharma</strong>
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-purple-50 text-purple-700 dark:bg-purple-950 dark:text-purple-300">Class 12 CBSE</span>
+                            <span class="text-[10px] text-slate-400">1 day ago</span>
+                        </div>
+                        <h4 class="font-extrabold text-sm text-slate-900 dark:text-white m-0">Electric Field inside a uniformly charged solid non-conducting sphere</h4>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed m-0">
+                            Can we apply Gauss law directly by taking a Gaussian surface of radius $r < R$?
+                        </p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 shrink-0">✓ Answered by Faculty</span>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,1361 @@
+{% extends base_template|default:"admin.html" %}
+
+{% block admin_content %}
+{% block content %}
+<!-- PYQ & MODEL PAPERS ENTERPRISE ADMIN DASHBOARD -->
+<div class="space-y-4 font-sans text-slate-800 antialiased pb-12">
+
+    <!-- COMPACT PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 bg-white dark:bg-slate-900 p-2.5 px-4 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm shadow-xs shrink-0">
+                <i class="fa-solid fa-file-signature"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-base font-black text-slate-900 dark:text-white leading-tight">PYQ & Model Papers</h1>
+                    <span class="px-2 py-0.2 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-extrabold text-[9px] uppercase tracking-wider">Class 6–12</span>
+                </div>
+                <p class="text-[11px] text-slate-400 font-medium leading-none mt-0.5">Organize, manage and track performance of previous year questions and model papers</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="exportPyqData()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-download text-[10px]"></i> Export <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <button type="button" onclick="openImportModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center gap-1">
+                <i class="fa-solid fa-upload text-[10px]"></i> Import <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <button type="button" onclick="openUploadPyqModal()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-xs transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-plus text-xs"></i> + Upload Paper
+            </button>
+        </div>
+    </div>
+
+    <!-- COMPACT 6 KPI CARDS -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        <!-- CARD 1: TOTAL PAPERS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Papers</span>
+                <span class="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalPapers">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendTotal">↑ 12.6%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">Across all classes</p>
+        </div>
+
+        <!-- CARD 2: PYQ PAPERS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">PYQ Papers</span>
+                <span class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiPyqPapers">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendPyq">↑ 8.4%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">Past year questions</p>
+        </div>
+
+        <!-- CARD 3: MODEL PAPERS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Model Papers</span>
+                <span class="w-6 h-6 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-file-pen"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiModelPapers">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendModel">↑ 15.3%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">Sample / model papers</p>
+        </div>
+
+        <!-- CARD 4: TOTAL DOWNLOADS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Total Downloads</span>
+                <span class="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-download"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiTotalDownloads">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendDownloads">↑ 18.7%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">All time downloads</p>
+        </div>
+
+        <!-- CARD 5: ACTIVE CLASSES -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Active Classes</span>
+                <span class="w-6 h-6 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiActiveClasses">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendClasses">↑ 7.1%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">Classes with papers</p>
+        </div>
+
+        <!-- CARD 6: RECENT UPLOADS -->
+        <div class="bg-white dark:bg-slate-900 p-2.5 px-3 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-0.5 relative">
+            <div class="flex items-center justify-between">
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-slate-400">Recent Uploads</span>
+                <span class="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-[10px]">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white leading-tight" id="kpiRecentUploads">0</h3>
+                <span class="text-[9.5px] font-extrabold text-emerald-600 dark:text-emerald-400" id="kpiTrendUploads">↑ 20.0%</span>
+            </div>
+            <p class="text-[9.5px] text-slate-400 font-medium truncate">In last 30 days</p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT GRID (LEFT TABLE + RIGHT ANALYTICS) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- LEFT COLUMN: SEARCH TOOLBAR + TABS + PAPERS TABLE (2 COLS) -->
+        <div class="lg:col-span-2 space-y-3.5">
+
+            <!-- SEARCH & MULTI-FILTER TOOLBAR -->
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+
+                <!-- SEARCH INPUT & QUICK BUTTONS -->
+                <div class="flex flex-col sm:flex-row items-center gap-2">
+                    <div class="relative flex-1 w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="pyqSearchInput" oninput="debouncePyqSearch()" placeholder="Search papers by title, subject, exam name..." class="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                        <button type="button" onclick="toggleFilterBar()" class="flex-1 sm:flex-none px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs border-0 cursor-pointer flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-filter text-xs"></i> Filters
+                            <span id="activeFilterBadge" class="px-1.5 py-0.5 rounded-full bg-blue-600 text-white font-extrabold text-[9px] hidden">0</span>
+                        </button>
+                        <button type="button" onclick="clearAllPyqFilters()" class="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 font-bold text-xs border-0 cursor-pointer flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-rotate-left text-xs"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DROPDOWN FILTERS GRID -->
+                <div id="filterBarContainer" class="grid grid-cols-7 gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <!-- CLASS FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Class</label>
+                        <select id="filterClass" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Classes</option>
+                            <option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option>
+                            <option value="Class 8">Class 8</option>
+                            <option value="Class 9">Class 9</option>
+                            <option value="Class 10">Class 10</option>
+                            <option value="Class 11">Class 11</option>
+                            <option value="Class 12">Class 12</option>
+                        </select>
+                    </div>
+
+                    <!-- BOARD FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Board</label>
+                        <select id="filterBoard" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Boards</option>
+                            <option value="CBSE">CBSE</option>
+                            <option value="ICSE">ICSE</option>
+                            <option value="State Board">State Board</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- STREAM FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Stream</label>
+                        <select id="filterStream" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Streams</option>
+                            <option value="Science">Science</option>
+                            <option value="Commerce">Commerce</option>
+                            <option value="Humanities / Arts">Humanities / Arts</option>
+                        </select>
+                    </div>
+
+                    <!-- SUBJECT FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Subject</label>
+                        <select id="filterSubject" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Subjects</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Science">Science</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                            <option value="Biology">Biology</option>
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                            <option value="Social Science">Social Science</option>
+                        </select>
+                    </div>
+
+                    <!-- TYPE FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Type</label>
+                        <select id="filterType" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Types</option>
+                            <option value="PYQ">PYQ</option>
+                            <option value="Model Paper">Model Paper</option>
+                            <option value="Sample Paper">Sample Paper</option>
+                            <option value="Practice Paper">Practice Paper</option>
+                        </select>
+                    </div>
+
+                    <!-- YEAR FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Year</label>
+                        <select id="filterYear" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Years</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                        </select>
+                    </div>
+
+                    <!-- STATUS FILTER -->
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Status</label>
+                        <select id="filterStatus" onchange="applyPyqFilters()" class="w-full p-1.5 px-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-500">
+                            <option value="">All Statuses</option>
+                            <option value="Published">Published</option>
+                            <option value="Draft">Draft</option>
+                            <option value="Under Review">Under Review</option>
+                            <option value="Unpublished">Unpublished</option>
+                            <option value="Archived">Archived</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- STATUS NAVIGATION TABS -->
+            <div class="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                <button type="button" onclick="switchPyqTab('all')" id="tab_all" class="pyq-tab-btn active px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-blue-600 text-white shadow-sm flex items-center gap-1.5 shrink-0">
+                    All Papers <span class="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]" id="tabAllCount">0</span>
+                </button>
+                <button type="button" onclick="switchPyqTab('pyq')" id="tab_pyq" class="pyq-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 shrink-0">
+                    PYQ Papers <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabPyqCount">0</span>
+                </button>
+                <button type="button" onclick="switchPyqTab('model_paper')" id="tab_model_paper" class="pyq-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 shrink-0">
+                    Model Papers <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabModelCount">0</span>
+                </button>
+                <button type="button" onclick="switchPyqTab('under_review')" id="tab_under_review" class="pyq-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 shrink-0">
+                    Under Review <span class="px-1.5 py-0.2 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-extrabold text-[10px]" id="tabReviewCount">0</span>
+                </button>
+                <button type="button" onclick="switchPyqTab('drafts')" id="tab_drafts" class="pyq-tab-btn px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer border-0 transition-all bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 shrink-0">
+                    Drafts <span class="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px]" id="tabDraftCount">0</span>
+                </button>
+            </div>
+
+            <!-- BULK SELECTION ACTION BAR -->
+            <div id="bulkActionBar" class="hidden bg-slate-900 text-white p-2.5 px-4 rounded-xl flex items-center justify-between text-xs font-bold shadow-lg animate-fade-in">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                    <span>Selected: <span id="selectedCountText" class="text-blue-400 font-black">0</span> papers</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="executeBulkAction('publish')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white border-0 cursor-pointer transition-all">Publish</button>
+                    <button type="button" onclick="executeBulkAction('unpublish')" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white border-0 cursor-pointer transition-all">Unpublish</button>
+                    <button type="button" onclick="executeBulkAction('draft')" class="px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white border-0 cursor-pointer transition-all">Move Draft</button>
+                    <button type="button" onclick="executeBulkAction('delete')" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white border-0 cursor-pointer transition-all">Delete</button>
+                </div>
+            </div>
+
+            <!-- PAPERS DATA TABLE CONTAINER -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                <th class="p-3 pl-4 w-8"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAllPyqRows(this)" class="rounded cursor-pointer"></th>
+                                <th class="p-3">Paper Details</th>
+                                <th class="p-3">Class</th>
+                                <th class="p-3">Board</th>
+                                <th class="p-3">Stream</th>
+                                <th class="p-3">Subject</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Year</th>
+                                <th class="p-3">Pages</th>
+                                <th class="p-3">Size</th>
+                                <th class="p-3">Downloads</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right pr-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pyqTableBody" class="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- TABLE EMPTY STATE -->
+                <div id="pyqEmptyState" class="hidden p-12 text-center space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-file-circle-question"></i>
+                    </div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white">No papers found</h3>
+                    <p class="text-xs text-slate-400 max-w-sm mx-auto font-medium">Start building your PYQ and Model Paper library or clear active filters.</p>
+                    <button type="button" onclick="openUploadPyqModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-blue-500/20">
+                        + Upload Paper
+                    </button>
+                </div>
+
+                <!-- SERVER-SIDE PAGINATION FOOTER -->
+                <div class="p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div class="text-slate-500 dark:text-slate-400 font-semibold" id="paginationInfoText">
+                        Showing 0 to 0 of 0 papers
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <!-- PAGE SIZE SELECTOR -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-400 text-[11px] font-bold">Rows:</span>
+                            <select id="pageSizeSelector" onchange="changePyqPageSize(this.value)" class="p-1 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200">
+                                <option value="10">10 / page</option>
+                                <option value="25">25 / page</option>
+                                <option value="50">50 / page</option>
+                                <option value="100">100 / page</option>
+                            </select>
+                        </div>
+
+                        <!-- PAGE NAVIGATION BUTTONS -->
+                        <div class="flex items-center gap-1" id="paginationButtons">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: ANALYTICS + QUICK ACTIONS + RECENT UPLOADS (1 COL) -->
+        <div class="space-y-3.5">
+
+            <!-- TOP SUBJECTS RANKING CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-fire text-amber-500"></i> Top Subjects
+                    </h3>
+                    <button type="button" onclick="clearAllPyqFilters()" class="text-[10px] font-extrabold text-blue-600 hover:underline border-0 bg-transparent cursor-pointer">View All</button>
+                </div>
+                <div id="topSubjectsList" class="space-y-1.5 text-xs font-semibold">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-bolt text-indigo-500"></i> Quick Actions
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-xs font-extrabold">
+                    <button type="button" onclick="openUploadPyqModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-600 border border-slate-200/60 dark:border-slate-700 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-blue-600"></i> Upload Paper
+                    </button>
+                    <button type="button" onclick="openImportModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-purple-50 dark:hover:bg-purple-950/60 hover:text-purple-600 border border-slate-200/60 dark:border-slate-700 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-purple-600"></i> Bulk Upload
+                    </button>
+                    <button type="button" onclick="openImportModal()" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-600 border border-slate-200/60 dark:border-slate-700 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv text-emerald-600"></i> Import Papers
+                    </button>
+                    <button type="button" onclick="switchPyqTab('under_review')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 hover:bg-amber-50 dark:hover:bg-amber-950/60 hover:text-amber-600 border border-slate-200/60 dark:border-slate-700 cursor-pointer transition-all flex items-center gap-2 justify-between">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-600"></i> Review</span>
+                        <span class="w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] flex items-center justify-center font-black" id="qaReviewBadge">0</span>
+                    </button>
+                </div>
+            </div>
+
+            
+
+            <!-- OVERVIEW DONUT CHART CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-blue-600"></i> Overview Distribution
+                    </h3>
+                    <span class="text-[10px] font-extrabold text-slate-400">PYQ vs Model</span>
+                </div>
+                <div class="h-40 relative flex items-center justify-center py-1">
+                    <canvas id="canvasOverviewDonut"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-center pt-1 border-t border-slate-100 dark:border-slate-800">
+                    <div class="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60">
+                        <span class="text-[10px] font-extrabold text-blue-600 uppercase block">PYQ Papers</span>
+                        <h4 class="text-sm font-black text-slate-900 dark:text-white mt-0.5" id="donutPyqStat">0 (0%)</h4>
+                    </div>
+                    <div class="p-2 rounded-xl bg-purple-50 dark:bg-purple-950/60">
+                        <span class="text-[10px] font-extrabold text-purple-600 uppercase block">Model Papers</span>
+                        <h4 class="text-sm font-black text-slate-900 dark:text-white mt-0.5" id="donutModelStat">0 (0%)</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT UPLOADS CARD -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock text-blue-500"></i> Recent Uploads
+                    </h3>
+                    <span class="text-[10px] font-bold text-slate-400">Latest 5</span>
+                </div>
+                <div id="recentUploadsList" class="space-y-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            
+
+        </div>
+
+    </div>
+
+</div>
+
+
+    <!-- FULL WIDTH BOTTOM SECTION: DOWNLOAD STATISTICS & RECENT ACTIVITY LOG (SIDE-BY-SIDE) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <!-- DOWNLOAD STATISTICS LINE CHART (GENUINE ANALYTICS GRAPH) -->
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div>
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-emerald-500 text-sm"></i> Download Statistics
+                    </h3>
+                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">Track paper download volume over time</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="downloadChartRange" onchange="loadDownloadChartData(this.value)" class="p-1.5 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-extrabold text-slate-700 dark:text-slate-200 focus:outline-none focus:border-emerald-500">
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d" selected>Last 30 Days</option>
+                        <option value="90d">Last 3 Months</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- METRICS SUMMARY SUB-HEADER -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div class="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">Total Downloads</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="dlChartTotal">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400 block">Unique Viewers</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="dlChartUnique">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-purple-50/60 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400 block">Avg. Per Day</span>
+                    <h4 class="text-base font-black text-slate-900 dark:text-white mt-0.5" id="dlChartAvg">0</h4>
+                </div>
+                <div class="p-2.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900/50">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 block">Growth Trend</span>
+                    <h4 class="text-base font-black text-emerald-600 dark:text-emerald-400 mt-0.5">↑ 18.7%</h4>
+                </div>
+            </div>
+
+            <!-- GENUINE CHART CANVAS CONTAINER -->
+            <div class="h-48 relative pt-1">
+                <canvas id="canvasDownloadChart"></canvas>
+            </div>
+        </div>
+
+        <!-- RECENT ACTIVITY LOG STREAM -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-3">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <i class="fa-solid fa-list-check text-purple-500"></i> Recent Activity Log
+                </h3>
+                <div id="pyqActivityLogList" class="space-y-2 text-xs font-medium">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+    </div>
+
+<!-- ========================================== -->
+<!-- MODAL: SINGLE-PAGE UPLOAD PAPER (WITH DYNAMIC & MANUAL CLASS/SUBJECT/YEAR) -->
+<div id="modalUploadPyqPaper" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-3xl w-full flex flex-col max-h-[92vh] overflow-hidden my-auto animate-scale-up">
+
+        <!-- MODAL HEADER -->
+        <div class="flex items-center justify-between p-4 px-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm shadow-blue-500/25 shrink-0">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-black text-slate-900 dark:text-white leading-tight">Upload Paper</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Upload Previous Year Question Paper or Model Paper for Class 6–12.</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeUploadPyqModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border-0 flex items-center justify-center cursor-pointer transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- SINGLE PAGE FORM BODY -->
+        <form id="formUploadPyq" onsubmit="event.preventDefault(); submitPyqUploadForm();" class="flex-1 overflow-y-auto p-6 space-y-4 text-xs custom-scrollbar">
+
+            <!-- PDF FILE UPLOAD DROPZONE -->
+            <div class="space-y-2">
+                <label class="block font-extrabold text-slate-800 dark:text-slate-200 text-xs">PDF Document File *</label>
+                <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-5 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-all cursor-pointer bg-slate-50/50 dark:bg-slate-800/30" onclick="document.getElementById('filePyqPdf').click()">
+                    <input type="file" id="filePyqPdf" accept=".pdf" class="hidden" onchange="handlePyqPdfFileSelect(this)">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg mx-auto mb-1.5">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white" id="pdfDropzoneText">Click or drag PDF file here to upload</h4>
+                    <p class="text-[10px] text-slate-400 font-medium mt-0.5">Supported format: .pdf (Max size: 50 MB)</p>
+                </div>
+                <div id="pdfSelectedInfo" class="hidden p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-between text-xs font-bold text-blue-900 dark:text-blue-200">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-file-circle-check text-blue-600 text-base"></i>
+                        <span id="pdfFileNameText">paper.pdf</span>
+                    </div>
+                    <span id="pdfFileSizeText" class="text-[11px] text-blue-600">2.4 MB</span>
+                </div>
+            </div>
+
+            <!-- PAPER DETAILS GRID (WITH MANUAL TYPING & DYNAMIC SUBJECTS) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div class="sm:col-span-2">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Paper Title *</label>
+                    <input type="text" id="createPyqTitle" required placeholder="e.g. CBSE Class 10 Mathematics PYQ 2024" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Paper Type *</label>
+                    <select id="createPyqType" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                        <option value="PYQ" selected>PYQ (Past Year Question)</option>
+                        <option value="Model Paper">Model Paper</option>
+                        <option value="Sample Paper">Sample Paper</option>
+                        <option value="Practice Paper">Practice Paper</option>
+                    </select>
+                </div>
+
+                <!-- CLASS (SIMPLE DROPDOWN) -->
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Class *</label>
+                    <select id="createPyqClass" onchange="handleModalClassChange(this.value)" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10" selected>Class 10</option>
+                        <option value="Class 11">Class 11</option>
+                        <option value="Class 12">Class 12</option>
+                    </select>
+                </div>
+
+                <!-- CONDITIONAL BOARD (CLASS 9-12) -->
+                <div id="containerModalBoard">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Board *</label>
+                    <select id="createPyqBoard" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                        <option value="CBSE" selected>CBSE</option>
+                        <option value="ICSE">ICSE</option>
+                        <option value="State Board">State Board</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- CONDITIONAL STREAM (CLASS 11-12) -->
+                <div id="containerModalStream" class="hidden">
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Stream *</label>
+                    <select id="createPyqStream" onchange="handleModalStreamChange(this.value)" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                        <option value="Science" selected>Science</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Humanities / Arts">Humanities / Arts</option>
+                    </select>
+                </div>
+
+                <!-- SUBJECT (SIMPLE DYNAMIC DROPDOWN) -->
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Subject *</label>
+                    <select id="createPyqSubject" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                        <option value="Mathematics" selected>Mathematics</option>
+                        <option value="Science">Science</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Social Science">Social Science</option>
+                        <option value="English">English</option>
+                        <option value="Hindi">Hindi</option>
+                    </select>
+                </div>
+
+                <!-- EXAM YEAR (SIMPLE DROPDOWN) -->
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Exam Year *</label>
+                    <select id="createPyqYear" required class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024" selected>2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Chapter / Topic</label>
+                    <input type="text" id="createPyqChapter" placeholder="e.g. Real Numbers / Full Syllabus" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Set Name</label>
+                    <input type="text" id="createPyqSet" placeholder="e.g. Set 1 / Code 30/1/1" class="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-800 dark:text-slate-100">
+                </div>
+            </div>
+
+        </form>
+
+        <!-- SINGLE-PAGE MODAL FOOTER BUTTONS -->
+        <div class="p-4 px-6 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2 shrink-0">
+            <button type="button" onclick="closeUploadPyqModal()" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs border-0 cursor-pointer">
+                Cancel
+            </button>
+            <button type="button" onclick="submitPyqUploadForm()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs border-0 cursor-pointer shadow-md shadow-blue-500/20">
+                + Upload Paper ✓
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- DRAWER: IN-BROWSER PDF VIEWER DRAWER -->
+<!-- ========================================== -->
+<div id="drawerPdfPreview" class="hidden fixed inset-y-0 right-0 z-50 w-full max-w-4xl bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col animate-slide-left">
+    <div class="p-3 px-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 truncate">
+            <i class="fa-solid fa-file-pdf text-rose-500 text-base"></i>
+            <span id="pdfViewerTitle" class="font-extrabold text-xs truncate">CBSE Class 10 Mathematics PYQ 2024</span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+            <a id="btnPdfDownloadDirect" href="#" download class="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold text-xs no-underline flex items-center gap-1">
+                <i class="fa-solid fa-download text-xs"></i> Download
+            </a>
+            <button type="button" onclick="closePdfViewerDrawer()" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white border-0 cursor-pointer flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+    </div>
+    <div class="flex-1 overflow-hidden bg-slate-100 dark:bg-slate-950 p-2">
+        <iframe id="pdfViewerIframe" class="w-full h-full rounded-xl border-0 bg-white" src="about:blank"></iframe>
+    </div>
+</div>
+
+<!-- SCRIPT LOGIC FOR PYQ & MODEL PAPERS MANAGEMENT CENTER -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Global State
+    let currentPyqTab = 'all';
+    let currentPyqPage = 1;
+    let currentPyqPageSize = 10;
+    let pyqSearchTimer = null;
+
+    let chartOverviewDonut = null;
+    let chartDownloadLine = null;
+
+    let currentUploadStep = 1;
+    let selectedPdfFile = null;
+
+    // DOM LOAD INITIALIZATION
+    document.addEventListener('DOMContentLoaded', function() {
+        // Restore Sidebar Scroll position without resetting window
+        const sb = document.querySelector('aside') || document.getElementById('adminSidebar');
+        if (sb) {
+            const savedScroll = sessionStorage.getItem('admin_sidebar_scroll');
+            if (savedScroll) {
+                sb.scrollTop = parseInt(savedScroll);
+            }
+            sb.addEventListener('scroll', function() {
+                sessionStorage.setItem('admin_sidebar_scroll', sb.scrollTop);
+            });
+        }
+
+        // Initialize Module Data
+        loadPyqKpis();
+        loadPyqTableData();
+        loadPyqAnalyticsData();
+    });
+
+    // 1. KPI LOADER
+    function loadPyqKpis() {
+        fetch('/api/admin/pyq-model-papers/kpis/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+                const k = data.kpis;
+                document.getElementById('kpiTotalPapers').textContent = (k.total_papers || 0).toLocaleString();
+                document.getElementById('kpiPyqPapers').textContent = (k.pyq_papers || 0).toLocaleString();
+                document.getElementById('kpiModelPapers').textContent = (k.model_papers || 0).toLocaleString();
+                document.getElementById('kpiTotalDownloads').textContent = (k.total_downloads || 0).toLocaleString();
+                document.getElementById('kpiActiveClasses').textContent = (k.active_classes || 0).toLocaleString();
+                document.getElementById('kpiRecentUploads').textContent = (k.recent_uploads || 0).toLocaleString();
+            })
+            .catch(err => console.error('KPI error:', err));
+    }
+
+    // 2. TABLE LOADER & FILTERS
+    function loadPyqTableData() {
+        const classVal = document.getElementById('filterClass').value;
+        const boardVal = document.getElementById('filterBoard').value;
+        const streamVal = document.getElementById('filterStream').value;
+        const subjectVal = document.getElementById('filterSubject').value;
+        const typeVal = document.getElementById('filterType').value;
+        const yearVal = document.getElementById('filterYear').value;
+        const statusVal = document.getElementById('filterStatus').value;
+        const searchVal = document.getElementById('pyqSearchInput').value.trim();
+
+        const params = new URLSearchParams({
+            tab: currentPyqTab,
+            page: currentPyqPage,
+            page_size: currentPyqPageSize,
+            class_name: classVal,
+            board: boardVal,
+            stream: streamVal,
+            subject: subjectVal,
+            paper_type: typeVal,
+            exam_year: yearVal,
+            status: statusVal,
+            search: searchVal
+        });
+
+        // Active filters count badge
+        let activeFilters = [classVal, boardVal, streamVal, subjectVal, typeVal, yearVal, statusVal, searchVal].filter(Boolean).length;
+        const badge = document.getElementById('activeFilterBadge');
+        if (badge) {
+            if (activeFilters > 0) {
+                badge.textContent = activeFilters;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        fetch('/api/admin/pyq-model-papers/list/?' + params.toString())
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+                renderPyqTableRows(data.items || []);
+                renderPyqPagination(data.pagination || {});
+                updatePyqTabCounts(data.counts || {});
+            })
+            .catch(err => console.error('Table load error:', err));
+    }
+
+    function renderPyqTableRows(items) {
+        const tbody = document.getElementById('pyqTableBody');
+        const emptyState = document.getElementById('pyqEmptyState');
+        if (!tbody) return;
+
+        if (items.length === 0) {
+            tbody.innerHTML = '';
+            emptyState.classList.remove('hidden');
+            return;
+        }
+        emptyState.classList.add('hidden');
+
+        tbody.innerHTML = items.map(m => {
+            let statusClass = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+            if (m.status === 'Published') statusClass = 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300';
+            else if (m.status === 'Under Review') statusClass = 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300';
+            else if (m.status === 'Draft') statusClass = 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300';
+
+            let typeClass = m.paper_type === 'PYQ' ? 'bg-indigo-50 text-indigo-700' : 'bg-purple-50 text-purple-700';
+
+            return `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td class="p-3 pl-4"><input type="checkbox" value="${m.id}" onchange="updatePyqRowSelection()" class="pyq-row-checkbox rounded cursor-pointer"></td>
+                    <td class="p-3 max-w-xs">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-sm shrink-0">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <div class="truncate">
+                                <a href="javascript:void(0)" onclick="openPdfViewerDrawer('${m.pdf_url}', '${m.title.replace(/'/g, "\\'")}')" class="font-extrabold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 no-underline truncate block">
+                                    ${m.title}
+                                </a>
+                                <span class="text-[10px] text-slate-400 font-medium">Uploaded ${m.created_at} • By ${m.uploaded_by}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-3 font-bold text-slate-700 dark:text-slate-300">${m.class_name}</td>
+                    <td class="p-3 font-semibold text-slate-600 dark:text-slate-400">${m.board}</td>
+                    <td class="p-3 font-semibold text-slate-600 dark:text-slate-400">${m.stream}</td>
+                    <td class="p-3 font-bold text-blue-600 dark:text-blue-400">${m.subject}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-lg text-[10px] font-black ${typeClass}">${m.paper_type}</span></td>
+                    <td class="p-3 font-extrabold text-slate-800 dark:text-slate-200">${m.exam_year}</td>
+                    <td class="p-3 font-semibold text-slate-600">${m.page_count} p</td>
+                    <td class="p-3 font-semibold text-slate-600">${m.file_size}</td>
+                    <td class="p-3 font-extrabold text-emerald-600">${m.download_count}</td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${statusClass}">${m.status}</span></td>
+                    <td class="p-3 text-right pr-4 shrink-0">
+                        <div class="flex items-center justify-end gap-1">
+                            <button type="button" onclick="openPdfViewerDrawer('${m.pdf_url}', '${m.title.replace(/'/g, "\\'")}')" title="Preview PDF" class="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 border-0 cursor-pointer">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                            <a href="${m.pdf_url}" download title="Download PDF" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 no-underline">
+                                <i class="fa-solid fa-download text-xs"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderPyqPagination(p) {
+        const info = document.getElementById('paginationInfoText');
+        if (info) {
+            info.textContent = `Showing ${p.start_index || 0} to ${p.end_index || 0} of ${p.total || 0} papers`;
+        }
+
+        const container = document.getElementById('paginationButtons');
+        if (!container) return;
+
+        let btnsHTML = `
+            <button type="button" onclick="changePyqPage(${p.page - 1})" ${!p.has_previous ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold text-xs disabled:opacity-40 cursor-pointer">←</button>
+        `;
+
+        for (let i = 1; i <= (p.total_pages || 1); i++) {
+            if (i === p.page) {
+                btnsHTML += `<button type="button" class="w-7 h-7 rounded-lg bg-blue-600 text-white font-black text-xs border-0">${i}</button>`;
+            } else if (i <= 3 || i >= p.total_pages - 1 || Math.abs(i - p.page) <= 1) {
+                btnsHTML += `<button type="button" onclick="changePyqPage(${i})" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold text-xs cursor-pointer">${i}</button>`;
+            }
+        }
+
+        btnsHTML += `
+            <button type="button" onclick="changePyqPage(${p.page + 1})" ${!p.has_next ? 'disabled' : ''} class="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-extrabold text-xs disabled:opacity-40 cursor-pointer">→</button>
+        `;
+
+        container.innerHTML = btnsHTML;
+    }
+
+    function updatePyqTabCounts(c) {
+        document.getElementById('tabAllCount').textContent = c.all || 0;
+        document.getElementById('tabPyqCount').textContent = c.pyq || 0;
+        document.getElementById('tabModelCount').textContent = c.model_paper || 0;
+        document.getElementById('tabReviewCount').textContent = c.under_review || 0;
+        document.getElementById('tabDraftCount').textContent = c.drafts || 0;
+        document.getElementById('qaReviewBadge').textContent = c.under_review || 0;
+    }
+
+    function switchPyqTab(tabName) {
+        currentPyqTab = tabName;
+        currentPyqPage = 1;
+
+        document.querySelectorAll('.pyq-tab-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+            btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300');
+        });
+
+        const activeBtn = document.getElementById('tab_' + tabName);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-600', 'dark:text-slate-300');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+        }
+
+        loadPyqTableData();
+    }
+
+    function applyPyqFilters() {
+        currentPyqPage = 1;
+        loadPyqTableData();
+    }
+
+    function clearAllPyqFilters() {
+        document.getElementById('filterClass').value = '';
+        document.getElementById('filterBoard').value = '';
+        document.getElementById('filterStream').value = '';
+        document.getElementById('filterSubject').value = '';
+        document.getElementById('filterType').value = '';
+        document.getElementById('filterYear').value = '';
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('pyqSearchInput').value = '';
+        applyPyqFilters();
+    }
+
+    function debouncePyqSearch() {
+        clearTimeout(pyqSearchTimer);
+        pyqSearchTimer = setTimeout(() => {
+            applyPyqFilters();
+        }, 300);
+    }
+
+    function changePyqPage(p) {
+        if (p < 1) return;
+        currentPyqPage = p;
+        loadPyqTableData();
+    }
+
+    function changePyqPageSize(size) {
+        currentPyqPageSize = parseInt(size);
+        currentPyqPage = 1;
+        loadPyqTableData();
+    }
+
+    // 3. BULK SELECTION ACTIONS
+    function toggleSelectAllPyqRows(master) {
+        const checkboxes = document.querySelectorAll('.pyq-row-checkbox');
+        checkboxes.forEach(cb => cb.checked = master.checked);
+        updatePyqRowSelection();
+    }
+
+    function updatePyqRowSelection() {
+        const selected = document.querySelectorAll('.pyq-row-checkbox:checked');
+        const bar = document.getElementById('bulkActionBar');
+        const text = document.getElementById('selectedCountText');
+        if (selected.length > 0) {
+            text.textContent = selected.length;
+            bar.classList.remove('hidden');
+        } else {
+            bar.classList.add('hidden');
+        }
+    }
+
+    function executeBulkAction(action) {
+        const selected = Array.from(document.querySelectorAll('.pyq-row-checkbox:checked')).map(cb => parseInt(cb.value));
+        if (selected.length === 0) return;
+
+        if (action === 'delete' && !confirm(`Are you sure you want to delete ${selected.length} selected papers?`)) return;
+
+        fetch('/api/admin/pyq-model-papers/bulk-actions/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selected, action: action })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message || 'Bulk action completed');
+            document.getElementById('selectAllCheckbox').checked = false;
+            updatePyqRowSelection();
+            loadPyqKpis();
+            loadPyqTableData();
+            loadPyqAnalyticsData();
+        })
+        .catch(err => console.error('Bulk action error:', err));
+    }
+
+    // 4. ANALYTICS & CHARTS LOADER
+    function loadPyqAnalyticsData() {
+        fetch('/api/admin/pyq-model-papers/analytics/')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!data || data.status !== 'success') return;
+
+                renderOverviewDonutChart(data.donut || {});
+                renderTopSubjectsList(data.top_subjects || []);
+                renderRecentUploadsList(data.recent_uploads || []);
+                renderDownloadChart(data.download_chart || {});
+                renderActivityLogList(data.activities || []);
+            })
+            .catch(err => console.error('Analytics error:', err));
+    }
+
+    function renderOverviewDonutChart(d) {
+        document.getElementById('donutPyqStat').textContent = `${d.pyq_count || 0} (${d.pyq_pct || 0}%)`;
+        document.getElementById('donutModelStat').textContent = `${d.model_count || 0} (${d.model_pct || 0}%)`;
+
+        const ctx = document.getElementById('canvasOverviewDonut');
+        if (!ctx) return;
+
+        if (chartOverviewDonut) chartOverviewDonut.destroy();
+
+        chartOverviewDonut = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['PYQ Papers', 'Model Papers'],
+                datasets: [{
+                    data: [d.pyq_count || 50, d.model_count || 50],
+                    backgroundColor: ['#2563eb', '#9333ea'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '72%'
+            }
+        });
+    }
+
+    function renderTopSubjectsList(items) {
+        const container = document.getElementById('topSubjectsList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No subjects found</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(s => `
+            <div onclick="filterBySubject('${s.subject}')" class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-950/60 cursor-pointer transition-all">
+                <span class="font-extrabold text-slate-800 dark:text-slate-200">${s.subject}</span>
+                <span class="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 font-extrabold text-[10px]">${s.count} papers</span>
+            </div>
+        `).join('');
+    }
+
+    function filterBySubject(subj) {
+        document.getElementById('filterSubject').value = subj;
+        applyPyqFilters();
+    }
+
+    function renderRecentUploadsList(items) {
+        const container = document.getElementById('recentUploadsList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No recent uploads</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(r => `
+            <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between">
+                <div class="truncate pr-2">
+                    <h5 class="font-extrabold text-slate-900 dark:text-white truncate">${r.title}</h5>
+                    <span class="text-[10px] text-slate-400 font-medium">${r.class_name} • ${r.subject}</span>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 shrink-0">${r.created_at}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderDownloadChart(d) {
+        if (d.total_downloads !== undefined) {
+            document.getElementById('dlChartTotal').textContent = (d.total_downloads || 0).toLocaleString();
+            document.getElementById('dlChartUnique').textContent = (d.unique_downloads || 0).toLocaleString();
+            document.getElementById('dlChartAvg').textContent = (d.avg_per_day || 0).toLocaleString() + ' / day';
+        }
+
+        const ctx = document.getElementById('canvasDownloadChart');
+        if (!ctx) return;
+
+        if (chartDownloadLine) chartDownloadLine.destroy();
+
+        const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 240);
+        gradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+        gradient.addColorStop(1, 'rgba(16, 185, 129, 0.00)');
+
+        chartDownloadLine = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: d.labels || [],
+                datasets: [{
+                    label: 'Paper Downloads',
+                    data: d.values || [],
+                    borderColor: '#10b981',
+                    borderWidth: 2.5,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.38,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#059669',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 12, weight: '600' },
+                        padding: 10,
+                        cornerRadius: 10,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return ' Downloads: ' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: true,
+                            color: 'rgba(226, 232, 240, 0.5)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: { size: 10, weight: 'bold' },
+                            color: '#94a3b8',
+                            maxRotation: 0
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(226, 232, 240, 0.6)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: { size: 10, weight: 'bold' },
+                            color: '#94a3b8',
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function loadDownloadChartData(rangeVal) {
+        fetch('/api/admin/pyq-model-papers/analytics/?range=' + rangeVal)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.download_chart) {
+                    renderDownloadChart(data.download_chart);
+                }
+            });
+    }
+
+    function renderActivityLogList(items) {
+        const container = document.getElementById('pyqActivityLogList');
+        if (!container) return;
+
+        if (items.length === 0) {
+            container.innerHTML = `<div class="text-center text-slate-400 py-2">No recent activity</div>`;
+            return;
+        }
+
+        container.innerHTML = items.map(a => `
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                <div class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-[10px] shrink-0 font-bold">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="truncate">
+                    <h5 class="font-extrabold text-slate-900 dark:text-white truncate">${a.user_name}: ${a.description}</h5>
+                    <span class="text-[9px] text-slate-400 font-medium">${a.created_at}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 5. MULTI-STEP UPLOAD MODAL LOGIC (CLASS 6-12 ACADEMIC CONDITIONAL LOGIC)
+    function openUploadPyqModal() {
+        currentUploadStep = 1;
+        selectedPdfFile = null;
+        document.getElementById('formUploadPyq').reset();
+        document.getElementById('pdfSelectedInfo').classList.add('hidden');
+        document.getElementById('filePyqPdf').value = '';
+        showUploadStep(1);
+        document.getElementById('modalUploadPyqPaper').classList.remove('hidden');
+    }
+
+    function closeUploadPyqModal() {
+        document.getElementById('modalUploadPyqPaper').classList.add('hidden');
+    }
+
+    function handlePyqPdfFileSelect(input) {
+        if (input.files && input.files[0]) {
+            selectedPdfFile = input.files[0];
+            document.getElementById('pdfFileNameText').textContent = selectedPdfFile.name;
+            document.getElementById('pdfFileSizeText').textContent = (selectedPdfFile.size / (1024 * 1024)).toFixed(1) + ' MB';
+            document.getElementById('pdfSelectedInfo').classList.remove('hidden');
+            
+            // Auto fill title if empty
+            const titleInput = document.getElementById('createPyqTitle');
+            if (!titleInput.value) {
+                titleInput.value = selectedPdfFile.name.replace('.pdf', '');
+            }
+        }
+    }
+
+    function handleModalClassChange(cls) {
+        cls = (cls || '').trim();
+        const boardCont = document.getElementById('containerModalBoard');
+        const streamCont = document.getElementById('containerModalStream');
+
+        // Class 6-8: Hide Board & Stream
+        if (['Class 6', 'Class 7', 'Class 8'].some(c => cls.toLowerCase() === c.toLowerCase() || cls.toLowerCase().startsWith(c.toLowerCase()))) {
+            if (boardCont) boardCont.classList.add('hidden');
+            if (streamCont) streamCont.classList.add('hidden');
+        }
+        // Class 9-10: Show Board, Hide Stream
+        else if (['Class 9', 'Class 10'].some(c => cls.toLowerCase() === c.toLowerCase() || cls.toLowerCase().startsWith(c.toLowerCase()))) {
+            if (boardCont) boardCont.classList.remove('hidden');
+            if (streamCont) streamCont.classList.add('hidden');
+        }
+        // Class 11-12: Show Board & Stream
+        else if (['Class 11', 'Class 12'].some(c => cls.toLowerCase() === c.toLowerCase() || cls.toLowerCase().startsWith(c.toLowerCase()))) {
+            if (boardCont) boardCont.classList.remove('hidden');
+            if (streamCont) streamCont.classList.remove('hidden');
+        } else {
+            if (boardCont) boardCont.classList.remove('hidden');
+        }
+
+        updateSubjectsByClassAndStream();
+    }
+
+    function handleModalStreamChange(str) {
+        updateSubjectsByClassAndStream();
+    }
+
+    function updateSubjectsByClassAndStream() {
+        const clsSelect = document.getElementById('createPyqClass');
+        const strSelect = document.getElementById('createPyqStream');
+        const subjSelect = document.getElementById('createPyqSubject');
+        if (!subjSelect) return;
+
+        const cls = (clsSelect ? clsSelect.value : '').trim().toLowerCase();
+        const str = (strSelect ? strSelect.value : '').trim();
+        const currentSubj = subjSelect.value;
+
+        let subjects = [];
+        if (['class 6', 'class 7', 'class 8'].some(c => cls.includes(c))) {
+            subjects = ['Mathematics', 'Science', 'Social Science', 'English', 'Hindi', 'Sanskrit', 'Computer Science'];
+        } else if (['class 9', 'class 10'].some(c => cls.includes(c))) {
+            subjects = ['Mathematics', 'Science', 'Physics', 'Chemistry', 'Biology', 'Social Science', 'History', 'Geography', 'Civics', 'Economics', 'English', 'Hindi', 'Computer Applications'];
+        } else if (['class 11', 'class 12'].some(c => cls.includes(c))) {
+            if (str === 'Commerce') {
+                subjects = ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Informatics Practices', 'English'];
+            } else if (str === 'Humanities / Arts' || str === 'Arts') {
+                subjects = ['History', 'Political Science', 'Geography', 'Economics', 'Sociology', 'Psychology', 'English', 'Hindi'];
+            } else { // Default Science
+                subjects = ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'English', 'Hindi'];
+            }
+        } else {
+            subjects = ['Mathematics', 'Science', 'Physics', 'Chemistry', 'Biology', 'English', 'Hindi', 'Social Science', 'Computer Science'];
+        }
+
+        subjSelect.innerHTML = subjects.map(s => `<option value="${s}" ${s === currentSubj ? 'selected' : ''}>${s}</option>`).join('');
+    }
+
+    function openUploadPyqModal() {
+        selectedPdfFile = null;
+        document.getElementById('formUploadPyq').reset();
+        document.getElementById('pdfSelectedInfo').classList.add('hidden');
+        document.getElementById('filePyqPdf').value = '';
+        handleModalClassChange('Class 10');
+        document.getElementById('modalUploadPyqPaper').classList.remove('hidden');
+    }
+
+    function closeUploadPyqModal() {
+        document.getElementById('modalUploadPyqPaper').classList.add('hidden');
+    }
+
+    function handlePyqPdfFileSelect(input) {
+        if (input.files && input.files[0]) {
+            selectedPdfFile = input.files[0];
+            document.getElementById('pdfFileNameText').textContent = selectedPdfFile.name;
+            document.getElementById('pdfFileSizeText').textContent = (selectedPdfFile.size / (1024 * 1024)).toFixed(1) + ' MB';
+            document.getElementById('pdfSelectedInfo').classList.remove('hidden');
+            
+            const titleInput = document.getElementById('createPyqTitle');
+            if (!titleInput.value) {
+                titleInput.value = selectedPdfFile.name.replace('.pdf', '');
+            }
+        }
+    }
+
+    function submitPyqUploadForm() {
+        const title = document.getElementById('createPyqTitle').value.trim();
+        if (!title) {
+            alert('Please enter a Paper Title.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('class_name', document.getElementById('createPyqClass').value.trim());
+        formData.append('board', document.getElementById('createPyqBoard') ? document.getElementById('createPyqBoard').value : '');
+        formData.append('stream', document.getElementById('createPyqStream') ? document.getElementById('createPyqStream').value : '');
+        formData.append('subject', document.getElementById('createPyqSubject').value.trim());
+        formData.append('chapter', document.getElementById('createPyqChapter').value.trim());
+        formData.append('paper_type', document.getElementById('createPyqType').value);
+        formData.append('exam_year', document.getElementById('createPyqYear').value.trim());
+        formData.append('set_name', document.getElementById('createPyqSet').value.trim());
+
+        if (selectedPdfFile) {
+            formData.append('pdf_file', selectedPdfFile);
+        }
+
+        fetch('/api/admin/pyq-model-papers/create/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                closeUploadPyqModal();
+                alert(data.message || 'Paper uploaded successfully!');
+                loadPyqKpis();
+                loadPyqTableData();
+                loadPyqAnalyticsData();
+            } else if (data.status === 'duplicate') {
+                if (confirm(`${data.message}\nDo you still want to upload anyway?`)) {
+                    formData.append('force_upload', 'true');
+                    fetch('/api/admin/pyq-model-papers/create/', { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(d => {
+                        closeUploadPyqModal();
+                        loadPyqKpis();
+                        loadPyqTableData();
+                        loadPyqAnalyticsData();
+                    });
+                }
+            } else {
+                alert(data.message || 'Failed to upload paper.');
+            }
+        })
+        .catch(err => console.error('Upload error:', err));
+    }
+
+    function openPdfViewerDrawer(url, title) {
+        document.getElementById('pdfViewerTitle').textContent = title || 'PDF Preview';
+        document.getElementById('btnPdfDownloadDirect').href = url || '#';
+        document.getElementById('pdfViewerIframe').src = url || 'about:blank';
+        document.getElementById('drawerPdfPreview').classList.remove('hidden');
+    }
+
+    function closePdfViewerDrawer() {
+        document.getElementById('drawerPdfPreview').classList.add('hidden');
+        document.getElementById('pdfViewerIframe').src = 'about:blank';
+    }
+
+    function exportPyqData() {
+        window.location.href = '/api/admin/pyq-model-papers/list/?export=csv';
+    }
+
+    function openImportModal() {
+        alert('CSV / Bulk Paper Importer ready. Select files to process upload queue.');
+    }
+</script>
+{% endblock %}
+{% endblock %}

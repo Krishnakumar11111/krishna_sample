@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | EduTrust Platform</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+        <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Aurora Background Blobs */
+        .aurora-blob-1 {
+            position: fixed;
+            top: -150px;
+            left: -100px;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(37, 99, 235, 0.1) 70%, transparent 100%);
+            filter: blur(90px);
+            border-radius: 50%;
+            z-index: 0;
+            animation: moveAurora1 14s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        .aurora-blob-2 {
+            position: fixed;
+            bottom: -150px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, rgba(99, 102, 241, 0.1) 70%, transparent 100%);
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: 0;
+            animation: moveAurora2 18s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes moveAurora1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 60px) scale(1.15); }
+        }
+
+        @keyframes moveAurora2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-90px, -70px) scale(1.2); }
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.82);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: rgba(15, 23, 42, 0.85);
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-center items-center py-8 px-4 sm:px-6 relative selection:bg-brand-500 selection:text-white">
+
+    <!-- Background Aurora Blobs -->
+    <div class="aurora-blob-1"></div>
+    <div class="aurora-blob-2"></div>
+
+    <!-- Main Centered Registration Card -->
+    <div class="w-full max-w-[720px] z-10 my-4">
+        <div class="w-full glass-card p-6 sm:p-9 rounded-3xl shadow-floating text-white relative">
+            
+            <!-- Header Branding & Icon -->
+            <div class="text-center mb-6">
+                <a href="{% url 'home' %}" class="inline-flex items-center justify-center mb-3 group no-underline">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-blue-500 to-cyan-400 text-white font-bold text-2xl flex items-center justify-center shadow-lg shadow-brand-500/40 group-hover:scale-105 transition-transform duration-300">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </a>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Student Registration</h1>
+                <p class="text-xs sm:text-sm text-slate-300 font-medium mt-1">Create your account to get started</p>
+            </div>
+
+            <!-- Message Box -->
+            <div id="messageBox" class="hidden p-3 rounded-xl text-xs font-semibold text-center mb-4"></div>
+
+            <!-- Registration Form (2-Column Grid on Desktop / 1-Column on Mobile) -->
+            <form id="registerForm" onsubmit="return validatePassword(event)" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- First Name -->
+                    <div>
+                        <label for="firstName" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">First Name <span class="text-rose-400">*</span></label>
+                        <input type="text" id="firstName" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold" placeholder="e.g. Rahul" required>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="lastName" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Last Name <span class="text-rose-400">*</span></label>
+                        <input type="text" id="lastName" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold" placeholder="e.g. Kumar" required>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div>
+                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Email Address <span class="text-rose-400">*</span></label>
+                        <input type="email" id="email" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold" placeholder="rahul@example.com" required>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Mobile Number <span class="text-rose-400">*</span></label>
+                        <div class="flex rounded-xl border border-slate-700/80 overflow-hidden focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500 transition-all bg-slate-900/60">
+                            <span class="flex items-center bg-slate-800/80 px-3.5 text-slate-400 font-bold border-r border-slate-700/80 text-xs sm:text-sm">+91</span>
+                            <input type="tel" id="phone" class="w-full px-3.5 py-2.5 outline-none bg-transparent text-white font-semibold text-xs sm:text-sm" placeholder="9876543210" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                        </div>
+                        <div id="phoneError" class="text-rose-400 text-xs mt-1 font-semibold hidden"><i class="fas fa-exclamation-circle mr-1"></i>Please enter a valid 10-digit mobile number.</div>
+                    </div>
+
+                    <!-- Class Selection -->
+                    <div>
+                        <label for="studentClass" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Class <span class="text-rose-400">*</span></label>
+                        <select id="studentClass" name="student_class" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer" required>
+                            <option value="" class="bg-slate-900 text-slate-400">Select Class</option>
+                            <option value="Nursery" class="bg-slate-900 text-white">Nursery</option>
+                            <option value="LKG" class="bg-slate-900 text-white">LKG</option>
+                            <option value="UKG" class="bg-slate-900 text-white">UKG</option>
+                            <option value="Class 1" class="bg-slate-900 text-white">Class 1</option>
+                            <option value="Class 2" class="bg-slate-900 text-white">Class 2</option>
+                            <option value="Class 3" class="bg-slate-900 text-white">Class 3</option>
+                            <option value="Class 4" class="bg-slate-900 text-white">Class 4</option>
+                            <option value="Class 5" class="bg-slate-900 text-white">Class 5</option>
+                            <option value="Class 6" class="bg-slate-900 text-white">Class 6</option>
+                            <option value="Class 7" class="bg-slate-900 text-white">Class 7</option>
+                            <option value="Class 8" class="bg-slate-900 text-white">Class 8</option>
+                            <option value="Class 9" class="bg-slate-900 text-white">Class 9</option>
+                            <option value="Class 10" class="bg-slate-900 text-white">Class 10</option>
+                            <option value="Class 11" class="bg-slate-900 text-white">Class 11</option>
+                            <option value="Class 12" class="bg-slate-900 text-white">Class 12</option>
+                        </select>
+                        <div id="classError" class="text-rose-400 text-xs mt-1 font-semibold hidden"><i class="fas fa-exclamation-circle mr-1"></i>Please select your class.</div>
+                    </div>
+
+                    <!-- Board Selection (Dynamic for Class 9-12) -->
+                    <div id="boardContainer" class="hidden">
+                        <label for="board" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Board <span class="text-rose-400">*</span></label>
+                        <select id="board" name="board" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer">
+                            <option value="" class="bg-slate-900 text-slate-400">Select Board</option>
+                            <option value="CBSE" class="bg-slate-900 text-white">CBSE</option>
+                            <option value="ICSE" class="bg-slate-900 text-white">ICSE</option>
+                            <option value="UP Board" class="bg-slate-900 text-white">UP Board</option>
+                            <option value="Other" class="bg-slate-900 text-white">Other</option>
+                        </select>
+                        <div id="boardError" class="text-rose-400 text-xs mt-1 font-semibold hidden"><i class="fas fa-exclamation-circle mr-1"></i>Please select your board.</div>
+                    </div>
+
+                    <!-- Stream Selection (Dynamic for Class 11-12) -->
+                    <div id="streamContainer" class="hidden">
+                        <label for="stream" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Stream <span class="text-rose-400">*</span></label>
+                        <select id="stream" name="stream" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer">
+                            <option value="" class="bg-slate-900 text-slate-400">Select Stream</option>
+                            <option value="Science (PCM)" class="bg-slate-900 text-white">Science (PCM)</option>
+                            <option value="Science (PCB)" class="bg-slate-900 text-white">Science (PCB)</option>
+                            <option value="Commerce" class="bg-slate-900 text-white">Commerce</option>
+                            <option value="Arts / Humanities" class="bg-slate-900 text-white">Arts / Humanities</option>
+                        </select>
+                        <div id="streamError" class="text-rose-400 text-xs mt-1 font-semibold hidden"><i class="fas fa-exclamation-circle mr-1"></i>Please select your stream.</div>
+                    </div>
+
+                    <!-- I am a... Role Selection -->
+                    <div>
+                        <label for="role" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">I am a...</label>
+                        <select id="role" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer" required>
+                            <option value="STUDENT" class="bg-slate-900 text-white">Student</option>
+                        </select>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Password <span class="text-rose-400">*</span></label>
+                        <input type="password" id="password" minlength="6" maxlength="6" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold" placeholder="••••••••" required>
+                    </div>
+
+                    <!-- Confirm Password (Full Width on 2-Column Grid) -->
+                    <div class="col-span-1 sm:col-span-2">
+                        <label for="confirmPassword" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Confirm Password <span class="text-rose-400">*</span></label>
+                        <input type="password" id="confirmPassword" minlength="6" maxlength="6" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <!-- Centered Smaller Register Button -->
+                <button type="submit" id="registerBtn" class="w-[200px] mx-auto block bg-gradient-to-r from-brand-600 via-indigo-600 to-cyan-500 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold py-2 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:scale-[1.01] border-0 cursor-pointer flex items-center justify-center gap-2 mt-4">
+                    <span>Register</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </form>
+
+            <!-- Footer Login Link -->
+            <div class="pt-4 border-t border-slate-700/80 text-center mt-4">
+                <p class="text-xs text-slate-400 mb-0 font-medium">
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="text-brand-400 font-extrabold hover:text-brand-300 hover:underline transition-colors no-underline ml-1">
+                        Login here
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal Popup -->
+    <div id="successModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 hidden opacity-0 transition-all duration-300 p-4">
+        <div class="bg-slate-900 border border-slate-700/80 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center transform scale-95 transition-all duration-300" id="modalContent">
+            <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 border border-emerald-500/40 shadow-lg shadow-emerald-500/20">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-white mb-2">Congratulations!</h3>
+            <p class="text-slate-300 text-xs sm:text-sm mb-6 leading-relaxed" id="successText">Your form has been submitted successfully.</p>
+            <button onclick="closeSuccessPopup()" class="w-full py-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold rounded-2xl border-0 cursor-pointer shadow-lg shadow-brand-500/30 transition-all">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const seniorClasses = ['Class 9', 'Class 10', 'Class 11', 'Class 12'];
+        const streamClasses = ['Class 11', 'Class 12'];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const studentClassSelect = document.getElementById('studentClass');
+            const boardContainer = document.getElementById('boardContainer');
+            const boardSelect = document.getElementById('board');
+            const streamContainer = document.getElementById('streamContainer');
+            const streamSelect = document.getElementById('stream');
+            const classError = document.getElementById('classError');
+            const boardError = document.getElementById('boardError');
+            const streamError = document.getElementById('streamError');
+
+            if (studentClassSelect) {
+                studentClassSelect.addEventListener('change', function () {
+                    const selectedClass = this.value;
+                    if (classError) classError.classList.add('hidden');
+
+                    if (seniorClasses.includes(selectedClass)) {
+                        boardContainer.classList.remove('hidden');
+                        boardSelect.required = true;
+                    } else {
+                        boardContainer.classList.add('hidden');
+                        boardSelect.value = '';
+                        boardSelect.required = false;
+                        if (boardError) boardError.classList.add('hidden');
+                    }
+
+                    if (streamClasses.includes(selectedClass)) {
+                        streamContainer.classList.remove('hidden');
+                        streamSelect.required = true;
+                    } else {
+                        streamContainer.classList.add('hidden');
+                        streamSelect.value = '';
+                        streamSelect.required = false;
+                        if (streamError) streamError.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (boardSelect) {
+                boardSelect.addEventListener('change', function () {
+                    if (boardError) boardError.classList.add('hidden');
+                });
+            }
+        });
+
+        function validatePassword(event) {
+            event.preventDefault();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const studentClass = document.getElementById('studentClass').value;
+            const board = document.getElementById('board').value;
+
+            const phoneError = document.getElementById('phoneError');
+            const classError = document.getElementById('classError');
+            const boardError = document.getElementById('boardError');
+            const messageBox = document.getElementById('messageBox');
+            const registerBtn = document.getElementById('registerBtn');
+
+            if (!studentClass) {
+                if (classError) classError.classList.remove('hidden');
+                return false;
+            } else {
+                if (classError) classError.classList.add('hidden');
+            }
+
+            if (seniorClasses.includes(studentClass) && !board) {
+                if (boardError) boardError.classList.remove('hidden');
+                return false;
+            } else {
+                if (boardError) boardError.classList.add('hidden');
+            }
+
+            if (phone.length !== 10) {
+                if (phoneError) phoneError.classList.remove('hidden');
+                return false;
+            } else {
+                if (phoneError) phoneError.classList.add('hidden');
+            }
+
+            if (password.length !== 6 || confirmPassword.length !== 6) {
+                if (messageBox) {
+                    messageBox.className = 'p-3 rounded-xl mb-4 text-xs font-semibold text-center bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                    messageBox.textContent = 'Password must be exactly 6 characters.';
+                }
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                if (messageBox) {
+                    messageBox.className = 'p-3 rounded-xl mb-4 text-xs font-semibold text-center bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                    messageBox.textContent = 'Passwords do not match! Please check again.';
+                }
+                return false;
+            }
+
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Registering...';
+
+            const fullName = `${firstName} ${lastName}`.trim();
+            const formData = new FormData();
+            formData.append('name', fullName);
+            formData.append('email', email);
+            formData.append('mobile', phone);
+            formData.append('student_class', studentClass);
+            formData.append('class', studentClass);
+            formData.append('board', seniorClasses.includes(studentClass) ? board : '');
+            formData.append('password', password);
+            formData.append('role', document.getElementById('role').value);
+
+            fetch('{% url "student_registration" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'pending_approval' || data.status === 'success') {
+                    localStorage.setItem('student_name', fullName);
+                    const modal = document.getElementById('successModal');
+                    const successText = document.getElementById('successText');
+                    if (successText) successText.textContent = data.message || 'Registration submitted successfully. Your account is pending admin approval. You will be able to log in after your account is approved.';
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                    }
+                } else {
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = '<span>Register</span><i class="fas fa-arrow-right text-xs"></i>';
+                    if (messageBox) {
+                        messageBox.className = 'p-4 rounded-2xl mb-6 text-xs font-semibold text-center bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                        messageBox.textContent = data.message || 'Registration failed. Please try again.';
+                    }
+                }
+            })
+            .catch(err => {
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<span>Register</span><i class="fas fa-arrow-right text-xs"></i>';
+                if (messageBox) {
+                    messageBox.className = 'p-4 rounded-2xl mb-6 text-xs font-semibold text-center bg-rose-500/10 border border-rose-500/30 text-rose-400 block';
+                    messageBox.textContent = 'Server error during registration. Please try again.';
+                }
+            });
+
+            return false;
+        }
+
+        function closeSuccessPopup() {
+            window.location.href = "{% url 'login' %}";
+        }
+    </script>
+    <script src="study.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Portal | EduTrust LMS</title>
+        <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        portal: {
+                            card: '#E4F1FF',
+                            border: '#B7D7F5',
+                            dark: '#102A43',
+                            muted: '#486581',
+                            primary: '#2563EB',
+                            primaryHover: '#1D4ED8',
+                            surface: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-color: #F8FAFC;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Admin Portal Card */
+        .admin-portal-card {
+            background-color: #E4F1FF;
+            border: 1px solid #B7D7F5;
+            box-shadow: 0 16px 36px -12px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(183, 215, 245, 0.65);
+        }
+
+        /* Form Inputs */
+        .portal-input {
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            color: #102A43;
+            transition: all 0.2s ease;
+        }
+        .portal-input:focus {
+            background-color: #FFFFFF;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+        }
+        .portal-input::placeholder {
+            color: #94A3B8;
+        }
+
+        /* OTP Digit Boxes */
+        .otp-box {
+            width: 42px;
+            height: 46px;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #102A43;
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 0.65rem;
+            transition: all 0.2s ease;
+        }
+        .otp-box:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+            background-color: #FFFFFF;
+        }
+
+        /* Compact Centered Action Buttons */
+        .btn-portal-primary {
+            width: 170px;
+            height: 42px;
+            background-color: #2563EB;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 0.8125rem;
+            letter-spacing: 0.02em;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-portal-primary:hover {
+            background-color: #1D4ED8;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+        .btn-portal-primary:active {
+            transform: translateY(0);
+        }
+        .btn-portal-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-portal-secondary {
+            width: 110px;
+            height: 42px;
+            background-color: #FFFFFF;
+            color: #475569;
+            font-weight: 700;
+            font-size: 0.8125rem;
+            border-radius: 0.75rem;
+            border: 1px solid #CBD5E1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-portal-secondary:hover {
+            background-color: #F1F5F9;
+            color: #1E293B;
+        }
+
+        /* Security Feature Badge */
+        .security-badge {
+            background-color: rgba(255, 255, 255, 0.75);
+            border: 1px solid #B7D7F5;
+            border-radius: 0.65rem;
+            padding: 0.35rem 0.2rem;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen text-slate-800 antialiased flex flex-col justify-between relative selection:bg-blue-600 selection:text-white overflow-hidden">
+
+    <!-- ========================================== -->
+    <!-- CLEAN PLAIN BACKGROUND LAYER (NO DOTS) -->
+    <!-- ========================================== -->
+    <div class="fixed inset-0 z-0 bg-white pointer-events-none">
+        <!-- Subtle Pale Sky-Blue Atmosphere -->
+        <div class="absolute inset-0 bg-gradient-to-br from-sky-50/70 via-white to-blue-50/50"></div>
+    </div>
+
+    <!-- Top-Left Soft Curved Sky-Blue Shape -->
+    <div class="fixed -top-16 -left-16 w-[320px] sm:w-[440px] lg:w-[500px] h-[320px] sm:h-[440px] lg:h-[500px] pointer-events-none z-0">
+        <svg viewBox="0 0 500 500" class="w-full h-full opacity-80" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="curveGradTopLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#E0F2FE" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <path fill="url(#curveGradTopLeft)" d="M0,0 L360,0 C360,140 300,260 210,320 C120,380 40,390 0,370 Z"/>
+            <circle cx="140" cy="140" r="160" fill="#93C5FD" fill-opacity="0.22" filter="blur(40px)"/>
+        </svg>
+    </div>
+
+    <!-- Bottom-Right Soft Curved Sky-Blue Shape -->
+    <div class="fixed -bottom-16 -right-16 w-[320px] sm:w-[440px] lg:w-[500px] h-[320px] sm:h-[440px] lg:h-[500px] pointer-events-none z-0">
+        <svg viewBox="0 0 500 500" class="w-full h-full opacity-80" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="curveGradBottomRight" x1="100%" y1="100%" x2="0%" y2="0%">
+                    <stop offset="0%" stop-color="#BAE6FD" stop-opacity="0.9"/>
+                    <stop offset="50%" stop-color="#E0F2FE" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <path fill="url(#curveGradBottomRight)" d="M500,500 L140,500 C140,360 200,240 290,180 C380,120 460,110 500,130 Z"/>
+            <circle cx="360" cy="360" r="160" fill="#93C5FD" fill-opacity="0.22" filter="blur(40px)"/>
+        </svg>
+    </div>
+
+    <!-- Top Bar Navigation (Clean, Compact Spacing) -->
+    <header class="relative z-10 w-full pt-3 sm:pt-4 px-4 sm:px-8 flex items-center justify-between shrink-0">
+        <a href="{% url 'home' %}" class="inline-flex items-center gap-2 group no-underline">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <span class="text-base sm:text-lg font-black tracking-tight text-slate-900">
+                Edu<span class="text-blue-600">Trust</span>
+            </span>
+        </a>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/85 border border-blue-100 text-[10px] sm:text-[11px] font-bold text-slate-600 shadow-2xs backdrop-blur-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Admin Gateway</span>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- MAIN CENTERED AUTHENTICATION CARD (VIEWPORT FIT) -->
+    <!-- ========================================== -->
+    <main class="relative z-10 flex-1 flex items-center justify-center px-4 py-1 sm:py-2 min-h-0">
+        <div class="w-full max-w-[430px] admin-portal-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 space-y-3 sm:space-y-4">
+            
+            <!-- Card Brand & Portal Header -->
+            <div class="text-center space-y-1.5 sm:space-y-2">
+                <!-- Logo Badge -->
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-600/10 border border-blue-200 text-blue-700 text-[9px] sm:text-[10px] font-black uppercase tracking-widest">
+                    <i class="fas fa-shield-halved text-xs"></i>
+                    <span>ADMIN PORTAL</span>
+                </div>
+
+                <!-- Shield / Lock Graphic -->
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white text-blue-600 border border-blue-200/80 shadow-2xs flex items-center justify-center mx-auto text-sm sm:text-base">
+                    <i id="portalHeaderIcon" class="fas fa-lock"></i>
+                </div>
+
+                <!-- Dynamic Title & Description -->
+                <div class="space-y-0.5">
+                    <h1 id="portalCardTitle" class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
+                        Administrator Login
+                    </h1>
+                    <p id="portalCardSubtitle" class="text-[11px] sm:text-xs text-slate-600 font-medium leading-normal max-w-xs mx-auto">
+                        Access your admin dashboard to manage the platform securely.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Shared Toast Alert -->
+            <div id="authAlert" class="hidden p-2 rounded-xl text-xs font-semibold text-center border transition-all"></div>
+
+            {% if expired == '1' %}
+            <div class="p-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                <i class="fas fa-clock text-xs shrink-0 text-amber-600"></i>
+                <span>Session expired due to inactivity. Please login again.</span>
+            </div>
+            {% endif %}
+
+            <!-- ========================================== -->
+            <!-- 1. ADMIN LOGIN FORM (STATE 1) -->
+            <!-- ========================================== -->
+            <div id="state_login" class="auth-state {% if initial_state and initial_state != 'login' %}hidden{% endif %} space-y-3 sm:space-y-3.5">
+                <form id="adminLoginForm" onsubmit="submitAdminLogin(event)" class="space-y-2.5 sm:space-y-3">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <input type="hidden" id="nextUrl" value="{{ next_url|default:'/admin/dashboard/' }}">
+
+                    <!-- Username / Email Field -->
+                    <div class="space-y-0.5 text-left">
+                        <label for="username_or_email" class="block text-[9.5px] sm:text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                            Username or Email
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" id="username_or_email" required placeholder="Enter admin username or email" class="w-full portal-input text-xs font-medium rounded-xl pl-8 pr-3 py-2">
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-0.5 text-left">
+                        <div class="flex items-center justify-between">
+                            <label for="admin_password" class="block text-[9.5px] sm:text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                                Password
+                            </label>
+                            <button type="button" onclick="switchState('forgot')" class="text-[10.5px] font-bold text-blue-600 hover:text-blue-800 bg-transparent border-0 cursor-pointer transition-colors">
+                                Forgot Password?
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="admin_password" required placeholder="Enter your password" class="w-full portal-input text-xs font-medium rounded-xl pl-8 pr-9 py-2">
+                            <button type="button" onclick="togglePass('admin_password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs bg-transparent border-0 cursor-pointer">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Compact Centered Login Button -->
+                    <div class="pt-1 text-center">
+                        <button type="submit" id="btnAdminLogin" class="btn-portal-primary">
+                            <span>Login</span>
+                            <i class="fas fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Security Information Row -->
+                <div class="pt-2 border-t border-blue-200/80 grid grid-cols-3 gap-1.5 text-center">
+                    <div class="security-badge flex flex-col items-center justify-center">
+                        <i class="fas fa-shield-alt text-emerald-600 text-[11px] mb-0.5"></i>
+                        <span class="block text-[10px] sm:text-[10.5px] font-extrabold text-slate-900 leading-tight">Secure Access</span>
+                        <span class="text-[8.5px] text-slate-500 font-medium leading-none mt-0.5">Role Verified</span>
+                    </div>
+                    <div class="security-badge flex flex-col items-center justify-center">
+                        <i class="fas fa-lock text-blue-600 text-[11px] mb-0.5"></i>
+                        <span class="block text-[10px] sm:text-[10.5px] font-extrabold text-slate-900 leading-tight">Direct Access</span>
+                        <span class="text-[8.5px] text-slate-500 font-medium leading-none mt-0.5">Instant Auth</span>
+                    </div>
+                    <div class="security-badge flex flex-col items-center justify-center">
+                        <i class="fas fa-user-lock text-indigo-600 text-[11px] mb-0.5"></i>
+                        <span class="block text-[10px] sm:text-[10.5px] font-extrabold text-slate-900 leading-tight">Authorized Only</span>
+                        <span class="text-[8.5px] text-slate-500 font-medium leading-none mt-0.5">Admin Privileges</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 2. FORGOT PASSWORD FORM (STATE 2) -->
+            <!-- ========================================== -->
+            <div id="state_forgot" class="auth-state {% if initial_state != 'forgot' %}hidden{% endif %} space-y-3 sm:space-y-3.5">
+                <form id="forgotForm" onsubmit="submitForgotSendOtp(event)" class="space-y-2.5 sm:space-y-3">
+                    <div class="space-y-0.5 text-left">
+                        <label for="forgot_identifier" class="block text-[9.5px] sm:text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                            Registered Email or Username
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="text" id="forgot_identifier" required placeholder="Enter registered username or email" class="w-full portal-input text-xs font-medium rounded-xl pl-8 pr-3 py-2">
+                        </div>
+                    </div>
+
+                    <!-- Compact Centered Send OTP Button -->
+                    <div class="pt-1 text-center">
+                        <button type="submit" id="btnSendOtp" class="btn-portal-primary">
+                            <span>Send OTP</span>
+                            <i class="fas fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="pt-1 text-center">
+                    <button type="button" onclick="switchState('login')" class="text-xs font-bold text-slate-600 hover:text-blue-600 bg-transparent border-0 cursor-pointer transition-colors inline-flex items-center gap-1.5">
+                        <i class="fas fa-arrow-left text-[10px]"></i>
+                        <span>Back to Login</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 3. OTP VERIFICATION FORM (STATE 3) -->
+            <!-- ========================================== -->
+            <div id="state_otp" class="auth-state {% if initial_state != 'otp' %}hidden{% endif %} space-y-3">
+                <form id="otpForm" onsubmit="submitVerifyOtp(event)" class="space-y-3">
+                    <div class="space-y-1.5 text-center">
+                        <label class="block text-[9.5px] sm:text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                            Enter 6-Digit Code
+                        </label>
+                        <!-- 6 Compact OTP Digit Boxes -->
+                        <div class="flex items-center justify-center gap-1.5 sm:gap-2" id="otpBoxContainer">
+                            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otp_0">
+                            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otp_1">
+                            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otp_2">
+                            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otp_3">
+                            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otp_4">
+                            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otp_5">
+                        </div>
+                        <input type="hidden" id="otp_code_input" value="">
+                    </div>
+
+                    <!-- Resend Link -->
+                    <div class="text-center">
+                        <span class="text-[11px] text-slate-600">Didn't receive the OTP? </span>
+                        <button type="button" onclick="submitResendOtp()" id="btnResendOtp" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 bg-transparent border-0 cursor-pointer">
+                            Resend OTP
+                        </button>
+                    </div>
+
+                    <!-- Compact Centered Verify Button -->
+                    <div class="pt-0.5 text-center">
+                        <button type="submit" id="btnVerifyOtp" class="btn-portal-primary">
+                            <span>Verify OTP</span>
+                            <i class="fas fa-check-circle text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="pt-0.5 text-center">
+                    <button type="button" onclick="switchState('login')" class="text-[11px] font-bold text-slate-600 hover:text-blue-600 bg-transparent border-0 cursor-pointer transition-colors inline-flex items-center gap-1.5">
+                        <i class="fas fa-arrow-left text-[9px]"></i>
+                        <span>Back to Login</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 4. RESET / UPDATE PASSWORD FORM (STATE 4) -->
+            <!-- ========================================== -->
+            <div id="state_update" class="auth-state {% if initial_state != 'update' %}hidden{% endif %} space-y-2.5">
+                <form id="accountUpdateForm" onsubmit="submitAccountUpdate(event)" class="space-y-2">
+                    <!-- New Username (Optional) -->
+                    <div class="space-y-0.5 text-left">
+                        <label for="update_new_username" class="block text-[9px] font-black text-slate-700 uppercase tracking-wider">
+                            New Username (Optional)
+                        </label>
+                        <input type="text" id="update_new_username" placeholder="Leave blank to keep current" class="w-full portal-input text-xs font-medium rounded-xl px-3 py-1.5">
+                    </div>
+
+                    <!-- New Email (Optional) -->
+                    <div class="space-y-0.5 text-left">
+                        <label for="update_new_email" class="block text-[9px] font-black text-slate-700 uppercase tracking-wider">
+                            New Email Address (Optional)
+                        </label>
+                        <input type="email" id="update_new_email" placeholder="Leave blank to keep current" class="w-full portal-input text-xs font-medium rounded-xl px-3 py-1.5">
+                    </div>
+
+                    <!-- New Password -->
+                    <div class="space-y-0.5 text-left">
+                        <label for="update_new_password" class="block text-[9px] font-black text-slate-700 uppercase tracking-wider">
+                            New Password
+                        </label>
+                        <div class="relative">
+                            <input type="password" id="update_new_password" placeholder="Enter new password" class="w-full portal-input text-xs font-medium rounded-xl pl-3 pr-8 py-1.5">
+                            <button type="button" onclick="togglePass('update_new_password', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs bg-transparent border-0 cursor-pointer">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confirm New Password -->
+                    <div class="space-y-0.5 text-left">
+                        <label for="update_confirm_password" class="block text-[9px] font-black text-slate-700 uppercase tracking-wider">
+                            Confirm New Password
+                        </label>
+                        <div class="relative">
+                            <input type="password" id="update_confirm_password" placeholder="Confirm new password" class="w-full portal-input text-xs font-medium rounded-xl pl-3 pr-8 py-1.5">
+                            <button type="button" onclick="togglePass('update_confirm_password', this)" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs bg-transparent border-0 cursor-pointer">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-1.5 text-center flex items-center justify-center gap-2">
+                        <button type="button" onclick="switchState('login')" class="btn-portal-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" id="btnSaveAccountUpdate" class="btn-portal-primary">
+                            <span>Update Password</span>
+                            <i class="fas fa-save text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Copyright (Compact) -->
+    <footer class="relative z-10 w-full py-2.5 text-center text-[11px] text-slate-500 font-medium shrink-0">
+        <span>© 2026 EduTrust. All rights reserved.</span>
+    </footer>
+
+    <!-- Frontend Single-Page Controller Script -->
+    <script>
+    let currentOtpPurpose = '{{ purpose|default:"LOGIN" }}';
+    const otpBoxes = document.querySelectorAll('.otp-box');
+
+    // Setup 6-Box OTP interaction
+    otpBoxes.forEach((box, idx) => {
+        box.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val ? val[val.length - 1] : '';
+            syncOtpFromBoxes();
+            if (e.target.value && idx < otpBoxes.length - 1) {
+                otpBoxes[idx + 1].focus();
+            }
+        });
+
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                otpBoxes[idx - 1].focus();
+            } else if (e.key === 'ArrowLeft' && idx > 0) {
+                otpBoxes[idx - 1].focus();
+            } else if (e.key === 'ArrowRight' && idx < otpBoxes.length - 1) {
+                otpBoxes[idx + 1].focus();
+            }
+        });
+
+        box.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').trim();
+            if (text.length >= 6) {
+                text.slice(0, 6).split('').forEach((ch, i) => {
+                    if (otpBoxes[i]) otpBoxes[i].value = ch;
+                });
+                syncOtpFromBoxes();
+                otpBoxes[5].focus();
+            }
+        });
+    });
+
+    function syncOtpFromBoxes() {
+        const fullCode = Array.from(otpBoxes).map(b => b.value).join('');
+        const input = document.getElementById('otp_code_input');
+        if (input) input.value = fullCode;
+    }
+
+    function showToast(message, isSuccess = false) {
+        const alertBox = document.getElementById('authAlert');
+        alertBox.className = isSuccess 
+            ? 'p-2 rounded-xl text-xs font-semibold text-center border bg-emerald-50 border-emerald-200 text-emerald-700 block mb-2'
+            : 'p-2 rounded-xl text-xs font-semibold text-center border bg-rose-50 border-rose-200 text-rose-700 block mb-2';
+        alertBox.textContent = message;
+    }
+
+    function hideToast() {
+        const alertBox = document.getElementById('authAlert');
+        alertBox.className = 'hidden';
+        alertBox.textContent = '';
+    }
+
+    function switchState(stateName, updateHistory = true) {
+        hideToast();
+        document.querySelectorAll('.auth-state').forEach(el => el.classList.add('hidden'));
+        
+        const target = document.getElementById('state_' + stateName);
+        if (target) {
+            target.classList.remove('hidden');
+        }
+
+        const titleEl = document.getElementById('portalCardTitle');
+        const subEl = document.getElementById('portalCardSubtitle');
+        const iconEl = document.getElementById('portalHeaderIcon');
+
+        if (stateName === 'login') {
+            titleEl.textContent = 'Administrator Login';
+            subEl.textContent = 'Access your admin dashboard to manage the platform securely.';
+            iconEl.className = 'fas fa-lock';
+        } else if (stateName === 'forgot') {
+            titleEl.textContent = 'Forgot Password?';
+            subEl.textContent = "Enter your registered email address and we'll send you an OTP to reset your password.";
+            iconEl.className = 'fas fa-key';
+        } else if (stateName === 'otp') {
+            titleEl.textContent = 'OTP Verification';
+            subEl.textContent = 'Enter the 6-digit OTP code sent to your registered email address.';
+            iconEl.className = 'fas fa-shield-halved';
+            if (otpBoxes[0]) setTimeout(() => otpBoxes[0].focus(), 100);
+        } else if (stateName === 'update') {
+            titleEl.textContent = 'Reset Password';
+            subEl.textContent = 'Enter your new password below.';
+            iconEl.className = 'fas fa-user-shield';
+        }
+
+        if (updateHistory) {
+            let path = '/admin/login/';
+            if (stateName === 'forgot') path = '/admin/forgot-password/';
+            else if (stateName === 'otp') path = '/admin/verify-otp/';
+            else if (stateName === 'update') path = '/admin/reset-password/';
+
+            if (window.location.pathname !== path) {
+                history.pushState({ state: stateName }, '', path);
+            }
+        }
+    }
+
+    window.addEventListener('popstate', (e) => {
+        const path = window.location.pathname;
+        if (path.includes('forgot-password')) switchState('forgot', false);
+        else if (path.includes('verify-otp')) switchState('otp', false);
+        else if (path.includes('reset-password')) switchState('update', false);
+        else switchState('login', false);
+    });
+
+    function togglePass(id, btn) {
+        const input = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'far fa-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'far fa-eye';
+        }
+    }
+
+    // 1. Submit Admin Login (State 1)
+    async function submitAdminLogin(e) {
+        e.preventDefault();
+        hideToast();
+        const btn = document.getElementById('btnAdminLogin');
+        const username_or_email = document.getElementById('username_or_email').value.trim();
+        const password = document.getElementById('admin_password').value.trim();
+        const nextUrl = document.getElementById('nextUrl').value;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Logging in...</span>';
+
+        try {
+            const res = await fetch('/api/admin/auth/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                },
+                body: JSON.stringify({ username_or_email, password, next: nextUrl })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                showToast(data.message || 'Login successful! Redirecting...', true);
+                setTimeout(() => {
+                    window.location.href = data.redirect_url || '/admin/dashboard/';
+                }, 400);
+            } else {
+                showToast(data.message || 'Authentication failed. Please check your credentials.');
+                btn.disabled = false;
+                btn.innerHTML = '<span>Login</span> <i class="fas fa-arrow-right text-xs"></i>';
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Server connection error. Please check your network and try again.');
+            btn.disabled = false;
+            btn.innerHTML = '<span>Login</span> <i class="fas fa-arrow-right text-xs"></i>';
+        }
+    }
+
+    // 2. Submit Forgot Password Send OTP (State 2)
+    async function submitForgotSendOtp(e) {
+        e.preventDefault();
+        hideToast();
+        const btn = document.getElementById('btnSendOtp');
+        const username_or_email = document.getElementById('forgot_identifier').value.trim();
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Sending...</span>';
+
+        try {
+            const res = await fetch('/api/admin/auth/recovery/send-otp/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                },
+                body: JSON.stringify({ username_or_email })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                currentOtpPurpose = 'PASSWORD_RESET';
+                const maskedEl = document.getElementById('otpMaskedEmailDisplay');
+                if (maskedEl) maskedEl.textContent = data.masked_email || username_or_email;
+                switchState('otp');
+                showToast(data.message || 'OTP code sent to your email successfully!', true);
+            } else {
+                showToast(data.message || 'Failed to send OTP code.');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Server connection error. Please try again.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span>Send OTP</span> <i class="fas fa-paper-plane text-xs"></i>';
+        }
+    }
+
+    // 3. Submit Verify OTP (State 3)
+    async function submitVerifyOtp(e) {
+        e.preventDefault();
+        hideToast();
+        syncOtpFromBoxes();
+        const btn = document.getElementById('btnVerifyOtp');
+        const otp_code = document.getElementById('otp_code_input').value.trim();
+
+        if (otp_code.length !== 6) {
+            showToast('Please enter all 6 digits of your OTP code.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Verifying...</span>';
+
+        const endpoint = (currentOtpPurpose === 'PASSWORD_RESET') 
+            ? '/api/admin/auth/recovery/verify-otp/'
+            : '/api/admin/auth/verify-otp/';
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                },
+                body: JSON.stringify({ otp_code, purpose: currentOtpPurpose })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                if (currentOtpPurpose === 'PASSWORD_RESET') {
+                    switchState('update');
+                    showToast('OTP verified successfully! Set your new password.', true);
+                } else {
+                    showToast('OTP verified! Access granted. Redirecting...', true);
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || '/admin/dashboard/';
+                    }, 500);
+                }
+            } else {
+                showToast(data.message || 'Incorrect OTP code.');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Server connection error. Please try again.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span>Verify OTP</span> <i class="fas fa-check-circle text-xs"></i>';
+        }
+    }
+
+    // 3b. Resend OTP
+    async function submitResendOtp() {
+        hideToast();
+        const btn = document.getElementById('btnResendOtp');
+        btn.disabled = true;
+        btn.textContent = 'Resending...';
+
+        try {
+            const res = await fetch('/api/admin/auth/resend-otp/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                }
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                showToast(data.message || 'A new OTP code has been sent to your email.', true);
+            } else {
+                showToast(data.message || 'Failed to resend OTP.');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Error resending OTP code.');
+        } finally {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = 'Resend OTP';
+            }, 3000);
+        }
+    }
+
+    // 4. Submit Account Update / Reset Password (State 4)
+    async function submitAccountUpdate(e) {
+        e.preventDefault();
+        hideToast();
+        const btn = document.getElementById('btnSaveAccountUpdate');
+        const new_username = document.getElementById('update_new_username').value.trim();
+        const new_email = document.getElementById('update_new_email').value.trim();
+        const new_password = document.getElementById('update_new_password').value.trim();
+        const confirm_password = document.getElementById('update_confirm_password').value.trim();
+
+        if (!new_username && !new_email && !new_password) {
+            showToast('Please enter a new password or account detail to update.');
+            return;
+        }
+
+        if (new_password && new_password !== confirm_password) {
+            showToast('New password and confirm password do not match.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Saving...</span>';
+
+        try {
+            const res = await fetch('/api/admin/auth/recovery/update-account/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': (document.querySelector('[name=csrfmiddlewaretoken]') || {}).value || ''
+                },
+                body: JSON.stringify({ new_username, new_email, new_password, confirm_password })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                showToast(data.message || 'Account updated successfully! Redirecting to login...', true);
+                setTimeout(() => {
+                    switchState('login');
+                }, 1200);
+            } else {
+                showToast(data.message || 'Failed to update account.');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Server connection error.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span>Update Password</span> <i class="fas fa-save text-xs"></i>';
+        }
+    }
+
+    // Initialize initial state titles
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.location.search && (window.location.search.includes('next=/admin/') || window.location.search.includes('next=/admin'))) {
+            history.replaceState({}, '', '/admin/login/');
+        }
+        const init = '{{ initial_state|default:"login" }}';
+        switchState(init, false);
+        {% if initial_state == 'otp' %}
+        showToast('Verification OTP sent to {{ masked_email|default:"registered email" }}.', true);
+        {% elif initial_state == 'update' %}
+        showToast('OTP verified successfully! Set your new password.', true);
+        {% endif %}
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: MY PROFILE                               -->
+<!-- ======================================================== -->
+<div id="teacherModule_profile" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-user-circle"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Faculty Profile & Bio</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Manage your personal credentials, education qualifications, teaching subjects, and student public profile.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openTeacherProfileModal(event)" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-user-edit text-xs"></i> <span>Edit Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- PROFILE DETAILS CARD -->
+    <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-6">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <img src="https://ui-avatars.com/api/?name={{ teacher_name|urlencode }}&background=2563eb&color=fff&size=200" alt="Avatar" class="w-24 h-24 rounded-3xl object-cover ring-4 ring-blue-500/20 shadow-md">
+            <div class="space-y-2 text-center sm:text-left min-w-0 flex-1">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white m-0">{{ teacher_name|default:"Teacher" }}</h3>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 flex items-center gap-1">
+                        <i class="fas fa-check-circle"></i> Verified Faculty
+                    </span>
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 font-mono">
+                        {{ teacher_employee_id|default:"EDUT-0001" }}
+                    </span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-bold m-0">{{ teacher_designation|default:"Senior Faculty & Subject Matter Expert" }} • {{ subject_name|default:"Mathematics" }}</p>
+                <div class="flex items-center justify-center sm:justify-start gap-3 pt-1 text-xs text-slate-500">
+                    <span><i class="fas fa-star text-amber-500"></i> {{ teacher_rating_display|default:"4.9 / 5" }} ({{ teacher_total_reviews|default:"48" }} Reviews)</span>
+                    <span>•</span>
+                    <span><i class="fas fa-chalkboard-teacher text-blue-500"></i> 6+ Years Exp</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DETAILS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            <div class="space-y-3">
+                <h4 class="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider text-slate-400">Educational Background</h4>
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 space-y-2 font-medium text-slate-700 dark:text-slate-300">
+                    <p class="m-0 font-bold text-slate-900 dark:text-white">Master of Science (M.Sc) in Mathematics</p>
+                    <p class="m-0 text-slate-500">University First Class Honors • B.Ed Certified</p>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-extrabold text-slate-900 dark:text-white text-xs uppercase tracking-wider text-slate-400">Teaching Expertise</h4>
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700 flex flex-wrap gap-1.5">
+                    <span class="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-[11px]">CBSE Class 10th Maths</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-[11px]">CBSE Class 12th Physics</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-[11px]">JEE Foundation</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-[11px]">Interactive Live Classes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

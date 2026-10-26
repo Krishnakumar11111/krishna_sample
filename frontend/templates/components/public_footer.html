@@ -1,0 +1,511 @@
+{% load static %}
+{% if footer_config.general.enabled and not footer_disabled_on_this_page and footer_config.general.show_on_website %}
+<!-- ========================================================= -->
+<!-- DYNAMIC CMS-POWERED PREMIUM FOOTER FOR EDUTRUST WEBSITE   -->
+<!-- ========================================================= -->
+<footer id="edutrust-public-footer" class="relative bg-[#040d21] text-slate-300 pt-8 sm:pt-10 pb-8 border-t border-blue-950/60 overflow-hidden font-sans transition-colors duration-200" style="{% if footer_config.appearance.bg_color %}background-color: {{ footer_config.appearance.bg_color }};{% endif %}{% if footer_config.appearance.text_color %}color: {{ footer_config.appearance.text_color }};{% endif %}">
+    
+    <!-- Background Atmospheric Glows -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-24 -right-24 w-[32rem] h-[32rem] bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    
+    <!-- Decorative Dot Grids (Reference Accents) -->
+    <div class="absolute top-4 right-10 w-28 h-20 opacity-20 pointer-events-none hidden lg:grid grid-cols-4 gap-2.5">
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+    </div>
+    <div class="absolute top-48 left-6 w-20 h-28 opacity-20 pointer-events-none hidden lg:grid grid-cols-3 gap-2.5">
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+    </div>
+
+    <div class="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+        
+        <!-- Optional Pre-Footer CTA Banner (If Enabled in CMS) -->
+        {% if footer_config.cta.show_cta_banner and footer_config.general.show_cta_banner|default_if_none:False %}
+        <div class="mb-14 p-6 sm:p-8 rounded-2xl text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-blue-500/20" style="background: {{ footer_config.cta.background_gradient|default:'linear-gradient(135deg, #0e2b5c 0%, #1d72fe 100%)' }};">
+            <div class="space-y-1.5 text-center md:text-left">
+                <h3 class="text-xl sm:text-2xl font-black tracking-tight text-white m-0">{{ footer_config.cta.title|default:"Ready to Start Learning with India's Best Tutors?" }}</h3>
+                <p class="text-blue-100 text-xs sm:text-sm font-normal m-0 max-w-xl">{{ footer_config.cta.subtitle|default:"Book your 100% free trial session today and experience personalized learning." }}</p>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+                {% if footer_config.cta.button_visible|default_if_none:True %}
+                <a href="{{ footer_config.cta.button_url|default:'/book-demo/' }}" class="px-6 py-3 rounded-xl bg-white hover:bg-blue-50 text-blue-900 font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 no-underline">
+                    {{ footer_config.cta.button_text|default:"Book Free Trial" }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Main Footer 4-Column Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12 sm:mb-16">
+            
+            <!-- Column 1: Brand & Contact Info (lg:col-span-4) -->
+            {% if footer_config.branding.show_brand_section|default_if_none:True and footer_config.general.show_brand_column|default_if_none:True %}
+            <div class="lg:col-span-4 flex flex-col justify-between">
+                <div>
+                    <!-- Brand Logo & Name -->
+                    <a href="{% url 'home' %}" class="inline-flex items-center gap-3.5 mb-4 text-decoration-none group">
+                        {% if footer_config.branding.show_logo|default_if_none:True %}
+                        <div class="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/25 group-hover:scale-105 transition-transform relative shrink-0">
+                            <!-- Cap icon placed on badge -->
+                            <i class="fas fa-graduation-cap text-base text-white"></i>
+                        </div>
+                        {% endif %}
+                        {% if footer_config.branding.show_company_name|default_if_none:True %}
+                        <div>
+                            <span class="text-2xl font-black tracking-tight text-white leading-none block">{{ footer_config.branding.company_name|default:"Edu" }}<span class="text-blue-500">{{ footer_config.branding.company_name_highlight|default:"Trust" }}</span></span>
+                            <span class="text-[11px] text-slate-400 font-medium tracking-wide block mt-1">Learn Today, Grow Tomorrow</span>
+                        </div>
+                        {% endif %}
+                    </a>
+
+                    <!-- Brand Description -->
+                    {% if footer_config.general.show_description|default_if_none:True and footer_config.branding.show_description|default_if_none:True %}
+                    <p class="text-slate-400 mb-6 leading-relaxed text-sm font-normal max-w-sm">
+                        {{ footer_config.branding.description|default:"India's most trusted platform for online and home tuition. Empowering students with top-tier education since 2020." }}
+                    </p>
+                    {% endif %}
+
+                    <!-- Contact Details with Circular Icon Badges -->
+                    {% if footer_config.contact.show_contact_info|default_if_none:True %}
+                    <div class="mb-6 space-y-3 text-xs sm:text-sm text-slate-300">
+                        <div class="flex items-center gap-3 group">
+                            <div class="w-8 h-8 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-blue-400 text-xs shrink-0 group-hover:border-blue-400 transition-colors">
+                                <i class="far fa-envelope"></i>
+                            </div>
+                            <a href="mailto:{{ footer_config.contact.email|default:'support@edutrust.com' }}" class="text-slate-300 hover:text-white transition-colors no-underline break-all">
+                                {{ footer_config.contact.email|default:"support@edutrust.com" }}
+                            </a>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 group">
+                            <div class="w-8 h-8 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-blue-400 text-xs shrink-0 group-hover:border-blue-400 transition-colors">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <a href="tel:{{ footer_config.contact.phone|default:'+919876543210' }}" class="text-slate-300 hover:text-white transition-colors no-underline">
+                                {{ footer_config.contact.phone|default:"+91 98765 43210" }}
+                            </a>
+                        </div>
+                        
+                        <div class="flex items-start gap-3 group">
+                            <div class="w-8 h-8 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-blue-400 text-xs shrink-0 mt-0.5 group-hover:border-blue-400 transition-colors">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <span class="text-slate-300 leading-snug">
+                                {{ footer_config.contact.address|default:"123 Education Hub, Sector 5, Salt Lake, Kolkata 700091" }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Social Media Channels -->
+                    {% if footer_config.social.show_social_icons|default_if_none:True and footer_config.general.show_social_column|default_if_none:True %}
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        {% for soc in footer_config.social.links %}
+                            {% if soc.is_active and soc.url %}
+                            <a href="{{ soc.url }}" target="_blank" rel="noopener noreferrer"
+                                aria-label="{{ soc.label }}"
+                                class="w-9 h-9 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all text-xs no-underline">
+                                <i class="{{ soc.icon }}"></i>
+                            </a>
+                            {% endif %}
+                        {% empty %}
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="w-9 h-9 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all text-xs no-underline"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="w-9 h-9 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all text-xs no-underline"><i class="fab fa-twitter"></i></a>
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="w-9 h-9 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all text-xs no-underline"><i class="fab fa-instagram"></i></a>
+                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="w-9 h-9 rounded-full bg-[#0d2246] border border-blue-500/20 flex items-center justify-center text-slate-300 hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all text-xs no-underline"><i class="fab fa-linkedin-in"></i></a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Handwritten Decorative Text Bottom-Left (As in Reference) -->
+                <div class="mt-6 pt-2">
+                    <div class="inline-flex items-center gap-1.5 text-blue-400 font-['Caveat',cursive] text-lg sm:text-xl font-bold -rotate-3 select-none opacity-90">
+                        <span class="text-blue-300 text-xs">✦</span>
+                        <span>Education for a Brighter Tomorrow</span>
+                        <span class="text-blue-300 text-xs">✦</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Column 2: Quick Links (lg:col-span-2) -->
+            <div class="lg:col-span-2">
+                <h4 class="text-white font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center gap-2.5">
+                    <span class="text-blue-400 text-sm"><i class="fas fa-link"></i></span>
+                    <span>Quick Links</span>
+                </h4>
+                <ul class="space-y-1 text-sm list-none p-0 m-0">
+                    <li>
+                        <a href="{% url 'home' %}" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Home</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'about' %}" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">About Us</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'find_tutor' %}" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Find Tutor</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'teacher_registration' %}" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Become a Tutor</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'success' %}" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Success Stories</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'faq' %}" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">FAQs</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'contact' %}" class="group flex items-center justify-between py-2 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Contact Support</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Top Subjects (lg:col-span-2) -->
+            <div class="lg:col-span-2">
+                <h4 class="text-white font-bold text-base sm:text-lg mb-4 sm:mb-6 flex items-center gap-2.5">
+                    <span class="text-blue-400 text-sm"><i class="fas fa-book-open"></i></span>
+                    <span>Top Subjects</span>
+                </h4>
+                <ul class="space-y-1 text-sm list-none p-0 m-0">
+                    <li>
+                        <a href="{% url 'find_tutor' %}?subject=math" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Mathematics</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'find_tutor' %}?subject=physics" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Physics</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'find_tutor' %}?subject=chemistry" class="group flex items-center justify-between py-2 border-b border-slate-800/60 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">Chemistry</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'find_tutor' %}?subject=english" class="group flex items-center justify-between py-2 text-slate-300 hover:text-blue-400 transition-all text-decoration-none">
+                            <span class="group-hover:translate-x-1 transition-transform">English</span>
+                            <i class="fas fa-chevron-right text-[10px] text-blue-500/70 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Newsletter Subscription & Feature Highlights (lg:col-span-4) -->
+            {% if footer_config.newsletter.show_newsletter|default_if_none:True and footer_config.general.show_newsletter_column|default_if_none:True %}
+            <div class="lg:col-span-4 flex flex-col justify-between">
+                <div>
+                    <!-- Header -->
+                    <h4 class="text-white font-bold text-base sm:text-lg mb-3 flex items-center gap-2.5">
+                        <span class="text-blue-400 text-sm"><i class="fas fa-paper-plane"></i></span>
+                        <span>{{ footer_config.newsletter.title|default:"Subscribe to Our Newsletter" }}</span>
+                    </h4>
+                    
+                    <p class="text-slate-400 mb-4 text-xs sm:text-sm leading-relaxed">
+                        {{ footer_config.newsletter.description|default:"Subscribe to get latest updates and educational tips." }}
+                    </p>
+
+                    <!-- Subscription Input Box -->
+                    <form class="relative mb-4" onsubmit="return handleNewsletterSubscription(event, this);">
+                        <div class="bg-[#0b1e3d] border border-blue-500/30 hover:border-blue-500/50 focus-within:border-blue-500 rounded-2xl p-1.5 flex items-center shadow-lg transition-all">
+                            <div class="flex items-center gap-2.5 flex-1 pl-3 pr-2 min-w-0">
+                                <i class="far fa-envelope text-slate-400 text-xs sm:text-sm shrink-0"></i>
+                                <input type="email" required placeholder="{{ footer_config.newsletter.placeholder|default:'Enter your email' }}"
+                                    class="bg-transparent text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none w-full">
+                            </div>
+                            <button type="submit"
+                                class="bg-[#1d72fe] hover:bg-blue-600 text-white font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 rounded-xl shadow-md flex items-center gap-1.5 active:scale-95 transition-all shrink-0 cursor-pointer border-0">
+                                <span>{{ footer_config.newsletter.button_text|default:"Subscribe" }}</span>
+                                <i class="fas fa-arrow-right text-xs"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- 3 Benefit Pills Container (Reference Feature Box) -->
+                    <div class="bg-[#0b1e3d]/70 border border-blue-500/20 rounded-2xl p-3 grid grid-cols-3 gap-2 text-center">
+                        <div class="flex flex-col items-center gap-1.5 p-1">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-md shadow-blue-600/30">
+                                <i class="far fa-envelope"></i>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-300 leading-tight">Latest Updates</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5 p-1 border-x border-slate-800/80">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-md shadow-blue-600/30">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-300 leading-tight">Learning Tips</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5 p-1">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shadow-md shadow-blue-600/30">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-300 leading-tight">Exclusive Offers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Handwritten Decorative Text Bottom-Right (As in Reference) -->
+                <div class="mt-6 pt-2 text-right">
+                    <div class="inline-flex flex-col items-end text-blue-400 font-['Caveat',cursive] text-lg sm:text-xl font-bold -rotate-3 select-none opacity-95">
+                        <span class="leading-tight">Stay Connected</span>
+                        <span class="text-base text-blue-300 font-bold flex items-center gap-1">
+                            ✦ Keep Learning!
+                            <svg class="w-5 h-5 text-blue-400 inline-block -rotate-12 transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 19V5M5 12l7-7 7 7"/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Bottom Legal & Copyright Bar -->
+        {% if footer_config.legal.show_legal_bar|default_if_none:True and footer_config.general.show_bottom_links|default_if_none:True %}
+        <div class="border-t border-slate-800/80 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-slate-400">
+            {% if footer_config.legal.show_copyright|default_if_none:True %}
+            <p class="m-0 text-center md:text-left text-slate-400">
+                {{ footer_config.general.copyright_text|default:"&copy; 2026 EduTrust Platform. All rights reserved." }}
+            </p>
+            {% else %}
+            <div></div>
+            {% endif %}
+
+            <div class="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
+                {% for lnk in footer_config.legal.links %}
+                    {% if lnk.is_active %}
+                    <a href="{{ lnk.url }}" {% if lnk.target == '_blank' %}target="_blank" rel="noopener noreferrer"{% endif %}
+                       class="hover:text-blue-400 transition-colors text-decoration-none text-slate-400">
+                        {{ lnk.label }}
+                    </a>
+                    {% if not forloop.last %}<span class="text-slate-700 select-none">|</span>{% endif %}
+                    {% endif %}
+                {% empty %}
+                    <a href="{% url 'privacy_policy' %}" class="hover:text-blue-400 transition-colors text-slate-400 text-decoration-none">Privacy Policy</a>
+                    <span class="text-slate-700 select-none">|</span>
+                    <a href="{% url 'terms_of_service' %}" class="hover:text-blue-400 transition-colors text-slate-400 text-decoration-none">Terms of Service</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</footer>
+{% endif %}
+
+<!-- ========================================================= -->
+<!-- NEWSLETTER SUBSCRIPTION UNAVAILABLE NOTIFICATION POPUP   -->
+<!-- ========================================================= -->
+<div id="newsletterUnavailableModal" class="fixed inset-0 z-[99999] hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="newsletterModalTitle">
+    <!-- Backdrop Overlay with Dark Navy & Blur -->
+    <div class="fixed inset-0 bg-[#051228]/80 backdrop-blur-sm transition-opacity duration-300" onclick="closeNewsletterUnavailableModal()"></div>
+
+    <!-- Compact Modal Card Container -->
+    <div id="newsletterModalCard" class="relative w-full max-w-[460px] bg-white text-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-100 z-10 transform transition-all duration-300 scale-95 opacity-0 text-center overflow-hidden" style="box-shadow: 0 25px 50px -12px rgba(5, 18, 40, 0.35);">
+        
+        <!-- Ambient Corner Pastel Glows -->
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-blue-100/50 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-rose-100/40 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Circular Close Button -->
+        <button type="button" onclick="closeNewsletterUnavailableModal()" aria-label="Close modal" class="absolute top-3.5 right-3.5 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer border-0 outline-none focus:ring-2 focus:ring-blue-400/40">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <!-- Top Illustration: Perfectly Proportioned Student, Laptop, Speech Bubble, Books & Plant -->
+        <div class="flex justify-center mb-2.5 pt-1">
+            <svg class="w-56 h-32 max-w-full" viewBox="0 0 240 125" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Desk Surface Line -->
+                <line x1="15" y1="118" x2="225" y2="118" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round" />
+
+                <!-- Left: Succulent Plant in Pot -->
+                <g id="plant">
+                    <path d="M28 118 L31 103 L43 103 L46 118 Z" fill="#FCA5A5" />
+                    <rect x="27" y="100" width="20" height="3.5" rx="1.5" fill="#F87171" />
+                    <path d="M37 100 C31 90 26 92 31 83 C35 75 39 89 37 100 Z" fill="#10B981" />
+                    <path d="M37 100 C43 90 48 92 43 83 C39 75 35 89 37 100 Z" fill="#059669" />
+                    <path d="M37 100 C34 88 35 78 37 74 C39 78 40 88 37 100 Z" fill="#34D399" />
+                </g>
+
+                <!-- Right: Stack of Books -->
+                <g id="books">
+                    <rect x="168" y="110" width="34" height="8" rx="2" fill="#4F46E5" />
+                    <rect x="171" y="112" width="28" height="4" fill="#E0E7FF" opacity="0.9" />
+                    <rect x="171" y="102" width="30" height="7" rx="2" fill="#0D9488" />
+                    <rect x="174" y="104" width="24" height="3.5" fill="#CCFBF1" opacity="0.9" />
+                    <rect x="169" y="95" width="32" height="7" rx="2" fill="#FB923C" />
+                    <rect x="172" y="97" width="26" height="3.5" fill="#FFEDD5" opacity="0.9" />
+                    <path d="M195 95 L195 106 L192 103 L189 106 L189 95 Z" fill="#EF4444" />
+                </g>
+
+                <!-- Character: Student at Laptop -->
+                <g id="student">
+                    <!-- Hair Back Bun & Scrunchie -->
+                    <circle cx="106" cy="36" r="13" fill="#291A14" />
+                    <ellipse cx="106" cy="40" rx="8" ry="3.5" fill="#F43F5E" />
+                    
+                    <!-- Torso -->
+                    <path d="M84 118 C84 86 128 86 128 118 Z" fill="#F59E0B" />
+                    <path d="M100 86 C100 91 112 91 112 86 Z" fill="#FED7AA" />
+
+                    <!-- Arms & Hands -->
+                    <path d="M86 96 C86 106 94 111 102 113" stroke="#D97706" stroke-width="5.5" stroke-linecap="round" fill="none" />
+                    <path d="M126 96 C126 106 118 111 110 113" stroke="#D97706" stroke-width="5.5" stroke-linecap="round" fill="none" />
+                    <circle cx="102" cy="113" r="3" fill="#FED7AA" />
+                    <circle cx="110" cy="113" r="3" fill="#FED7AA" />
+
+                    <!-- Neck -->
+                    <rect x="102" y="74" width="8" height="13" fill="#FED7AA" rx="3" />
+
+                    <!-- Head & Ears -->
+                    <circle cx="97" cy="65" r="3.5" fill="#FED7AA" />
+                    <circle cx="115" cy="65" r="3.5" fill="#FED7AA" />
+                    <ellipse cx="106" cy="63" rx="11.5" ry="13" fill="#FED7AA" />
+
+                    <!-- Hair Bangs -->
+                    <path d="M95 59 C99 50 113 50 117 59 C114 55 110 54 106 54 C102 54 98 55 95 59 Z" fill="#291A14" />
+                    <path d="M95 59 C95 68 96 72 97 74 C95 69 94 64 95 59 Z" fill="#291A14" />
+                    <path d="M117 59 C117 68 116 72 115 74 C117 69 118 64 117 59 Z" fill="#291A14" />
+
+                    <!-- Face: Eyes, Smile, Rosy Cheeks -->
+                    <path d="M100 61 Q102 58 104 61" stroke="#451A03" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                    <path d="M108 61 Q110 58 112 61" stroke="#451A03" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                    <path d="M104 67 Q106 70 108 67" stroke="#9A3412" stroke-width="1.3" stroke-linecap="round" fill="none" />
+                    <ellipse cx="99" cy="66" rx="2.2" ry="1.4" fill="#FDA4AF" opacity="0.95" />
+                    <ellipse cx="113" cy="66" rx="2.2" ry="1.4" fill="#FDA4AF" opacity="0.95" />
+
+                    <!-- Laptop -->
+                    <path d="M91 118 L121 118 L118 115 L94 115 Z" fill="#475569" />
+                    <path d="M94 115 L99 94 L113 94 L118 115 Z" fill="#1E293B" />
+                    <path d="M96 113 L100 96 L112 96 L116 113 Z" fill="#E0F2FE" />
+                    <path d="M106 102 L110 104 L106 106 L102 104 Z" fill="#0284C7" />
+                </g>
+
+                <!-- Speech Bubble: "Sorry for the Inconvenience!" -->
+                <g id="speechBubble">
+                    <path d="M128 8 C121 8 116 13 116 19 C116 22 117 25 119 27 C117 30 114 34 110 37 C115 36 119 35 122 33 C125 36 130 37 135 37 L205 37 C213 37 219 31 219 23 C219 15 213 8 205 8 Z" fill="#FFF1F2" stroke="#FECDD3" stroke-width="1.4" />
+                    <text x="168" y="20" text-anchor="middle" font-size="9.5" font-weight="700" fill="#9F1239" font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Sorry for</text>
+                    <text x="168" y="31" text-anchor="middle" font-size="10.5" font-weight="800" fill="#E11D48" font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">the Inconvenience!</text>
+                    
+                    <path d="M113 12 Q113 15 110 15 Q113 15 113 18 Q113 15 116 15 Q113 15 113 12 Z" fill="#FB7185" />
+                    <path d="M225 15 Q225 19 221 19 Q225 19 225 23 Q225 19 229 19 Q225 19 225 15 Z" fill="#FB7185" />
+                    <circle cx="222" cy="34" r="1.5" fill="#F43F5E" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- Heading -->
+        <h3 id="newsletterModalTitle" class="text-xl sm:text-2xl font-black text-[#07132b] tracking-tight leading-snug mb-2">
+            We're Sorry for the <span class="text-[#1d72fe]">Inconvenience!</span>
+        </h3>
+
+        <!-- Description -->
+        <p class="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-[390px] mx-auto mb-3.5 font-normal px-1">
+            Our newsletter subscription service is not yet available, but we’re working on it to bring you valuable learning tips, updates and resources soon.
+        </p>
+
+        <!-- Thank-you Information Strip -->
+        <div class="w-full max-w-[390px] mx-auto bg-rose-50 border border-rose-100/90 rounded-xl py-2 px-3 mb-3.5 flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="text-rose-500 text-sm">❤️</span>
+            <span class="text-rose-800 text-xs font-semibold">Thank you for your patience and understanding!</span>
+        </div>
+
+        <!-- EduTrust Blue CTA Button -->
+        <div class="w-full max-w-[390px] mx-auto mb-2.5">
+            <button type="button" onclick="closeNewsletterUnavailableModal()" class="w-full py-3 px-6 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 hover:shadow-blue-500/40 active:scale-[0.98] transition-all duration-200 cursor-pointer border-0" style="background: linear-gradient(135deg, #1d72fe 0%, #0056d6 100%);">
+                <span>Got It</span>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Micro Branding -->
+        <div class="text-[10px] font-bold text-slate-400 select-none tracking-[0.15em] uppercase">
+            EDUTRUST • LEARN TODAY • GROW TOMORROW
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleNewsletterSubscription(event, form) {
+        if (event) event.preventDefault();
+        var input = form ? form.querySelector('input[type="email"]') : null;
+        if (input && input.value) {
+            input.value = '';
+        }
+        openNewsletterUnavailableModal();
+        return false;
+    }
+
+    function openNewsletterUnavailableModal() {
+        var modal = document.getElementById('newsletterUnavailableModal');
+        var card = document.getElementById('newsletterModalCard');
+        if (!modal || !card) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(function() {
+            card.classList.remove('scale-95', 'opacity-0');
+            card.classList.add('scale-100', 'opacity-100');
+        });
+    }
+
+    function closeNewsletterUnavailableModal() {
+        var modal = document.getElementById('newsletterUnavailableModal');
+        var card = document.getElementById('newsletterModalCard');
+        if (!modal || !card) return;
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+        setTimeout(function() {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 200);
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+            var modal = document.getElementById('newsletterUnavailableModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeNewsletterUnavailableModal();
+            }
+        }
+    });
+</script>

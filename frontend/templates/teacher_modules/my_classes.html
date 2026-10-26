@@ -1,0 +1,929 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: MY CLASSES & COMPLETE TEACHING HISTORY   -->
+<!-- ======================================================== -->
+<div id="teacherModule_my_classes" class="teacher-module-view space-y-4 hidden">
+
+    <!-- MODULE HEADER (COMPACT & CLEAN) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+                <span class="w-7 h-7 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs font-black shadow-2xs">
+                    <i class="fas fa-layer-group"></i>
+                </span>
+                <div>
+                    <h2 class="text-base font-black text-slate-900 dark:text-white tracking-tight">My Classes & Batches</h2>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Complete record with separate columns for Class, Subject, Course/Batch, Topic, Creation time and Activity history.</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openLiveClassModal()" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all border-0 cursor-pointer flex items-center gap-1.5">
+                <i class="fas fa-video text-[10px]"></i> <span>Schedule Live</span>
+            </button>
+            <button onclick="openScheduleClassModal()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition-all border-0 cursor-pointer flex items-center gap-1">
+                <i class="fas fa-plus-circle text-[10px]"></i> <span>Add Batch</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- COMPACT METRIC CARDS (PURE STATS) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        
+        <!-- Total Classes -->
+        <div class="glass-card p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">All Classes</span>
+                <i class="fas fa-layer-group text-blue-500 text-[10px]"></i>
+            </div>
+            <strong class="text-sm font-black text-slate-900 dark:text-white block">{{ all_teacher_live_classes|length|default:"6" }}</strong>
+            <span class="text-[8px] text-slate-500 font-medium">Total Record</span>
+        </div>
+
+        <!-- Live Now -->
+        <div class="glass-card p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">Live Now</span>
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            </div>
+            <strong class="text-sm font-black text-rose-600 block">{{ live_now_count|default:"1" }}</strong>
+            <span class="text-[8px] text-rose-500 font-medium">In progress</span>
+        </div>
+
+        <!-- Published -->
+        <div class="glass-card p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">Published</span>
+                <i class="fas fa-calendar-check text-emerald-500 text-[10px]"></i>
+            </div>
+            <strong class="text-sm font-black text-emerald-600 block">{{ active_scheduled_classes|length|default:"3" }}</strong>
+            <span class="text-[8px] text-emerald-500 font-medium">Active / Scheduled</span>
+        </div>
+
+        <!-- Completed -->
+        <div class="glass-card p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">Completed</span>
+                <i class="fas fa-check-circle text-indigo-500 text-[10px]"></i>
+            </div>
+            <strong class="text-sm font-black text-indigo-600 block">{{ classes_conducted_count|default:"2" }}</strong>
+            <span class="text-[8px] text-indigo-500 font-medium">Past Lectures</span>
+        </div>
+
+        <!-- Drafts -->
+        <div class="glass-card p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">Drafts</span>
+                <i class="fas fa-edit text-amber-500 text-[10px]"></i>
+            </div>
+            <strong class="text-sm font-black text-amber-600 block">1</strong>
+            <span class="text-[8px] text-amber-500 font-medium">Unpublished</span>
+        </div>
+
+        <!-- Cancelled -->
+        <div class="glass-card p-2.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-0.5">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">Cancelled</span>
+                <i class="fas fa-ban text-slate-400 text-[10px]"></i>
+            </div>
+            <strong class="text-sm font-black text-slate-500 block">0</strong>
+            <span class="text-[8px] text-slate-400 font-medium">Archived</span>
+        </div>
+
+    </div>
+
+    <!-- FILTER & SEARCH BAR -->
+    <div class="glass-card rounded-2xl p-3 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-2.5">
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
+            
+            <!-- Search Box -->
+            <div class="md:col-span-4 relative">
+                <i class="fas fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="myClassesSearchInput" oninput="applyMyClassesFilters()" placeholder="Search class, topic, subject, course..." class="w-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-[11px] rounded-xl pl-7 pr-6 py-1.5 border border-slate-200/80 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                <button type="button" onclick="document.getElementById('myClassesSearchInput').value=''; applyMyClassesFilters();" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-[9px] border-0 bg-transparent cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="md:col-span-2">
+                <select id="myClassesFilterStatus" onchange="applyMyClassesFilters()" class="w-full bg-slate-50 dark:bg-slate-900 text-[11px] font-bold text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer">
+                    <option value="all">All Statuses</option>
+                    <option value="live">🔴 Live Now</option>
+                    <option value="published">🟢 Published</option>
+                    <option value="completed">🟣 Completed</option>
+                    <option value="draft">🟡 Draft</option>
+                    <option value="cancelled">⚫ Cancelled</option>
+                </select>
+            </div>
+
+            <!-- Course / Subject Filter -->
+            <div class="md:col-span-2">
+                <select id="myClassesFilterCourse" onchange="applyMyClassesFilters()" class="w-full bg-slate-50 dark:bg-slate-900 text-[11px] font-bold text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer">
+                    <option value="all">All Subjects</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Foundation">Foundation</option>
+                </select>
+            </div>
+
+            <!-- Class Grade Filter -->
+            <div class="md:col-span-2">
+                <select id="myClassesFilterGrade" onchange="applyMyClassesFilters()" class="w-full bg-slate-50 dark:bg-slate-900 text-[11px] font-bold text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 rounded-xl px-2 py-1.5 focus:outline-none cursor-pointer">
+                    <option value="all">All Grades</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                </select>
+            </div>
+
+            <!-- View Switcher & Reset -->
+            <div class="md:col-span-2 flex items-center justify-end gap-1.5">
+                <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700">
+                    <button type="button" id="myClassesViewListBtn" onclick="setMyClassesViewMode('list')" title="Table View" class="px-2 py-1 rounded text-xs font-bold transition-all bg-white dark:bg-slate-700 text-blue-600 shadow-2xs border-0 cursor-pointer">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button type="button" id="myClassesViewGridBtn" onclick="setMyClassesViewMode('grid')" title="Grid View" class="px-2 py-1 rounded text-xs font-bold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 border-0 bg-transparent cursor-pointer">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
+                <button type="button" onclick="resetMyClassesFilters()" title="Reset Filters" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-600 font-bold text-xs transition-all border-0 cursor-pointer">
+                    <i class="fas fa-redo-alt"></i>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Showing Result Counter -->
+        <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800 text-[10px]">
+            <span class="text-slate-500 dark:text-slate-400 font-medium">
+                Showing: <strong id="myClassesResultCount" class="text-blue-600 dark:text-blue-400 font-bold">6 classes</strong>
+            </span>
+            <span class="text-slate-400 text-[9px]">Real-time synchronized history</span>
+        </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: COMPACT TABLE HISTORY VIEW (WITH SEPARATE COLS)  -->
+    <!-- ======================================================== -->
+    <div id="myClassesListView" class="glass-card rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 shadow-soft overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[1150px]">
+            <thead>
+                <tr class="border-b border-slate-200/80 dark:border-slate-800 text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[75px]">Class</th>
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[90px]">Subject</th>
+                    <th class="pb-2 px-2.5 min-w-[130px]">Course / Batch</th>
+                    <th class="pb-2 px-2.5 min-w-[160px]">Topic / Chapter</th>
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[100px]">Created Time</th>
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[110px]">Scheduled Slot</th>
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[95px]">Status</th>
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[140px]">Last Activity / End Time</th>
+                    <th class="pb-2 px-2.5 whitespace-nowrap min-w-[85px]">Students</th>
+                    <th class="pb-2 px-2.5 text-right whitespace-nowrap min-w-[85px]">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-[11px]">
+                
+                <!-- Row 1: Live Now -->
+                <tr class="my-class-table-row hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    data-status="live" data-course="Mathematics" data-grade="Class 10" data-timestamp="2026-10-07T11:30:00" data-students="34" data-title="Class 10 Quadratic Equations">
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 whitespace-nowrap inline-block">Class 10</span>
+                    </td>
+                    <td class="py-2.5 px-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                        Mathematics
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">CBSE Target 100</div>
+                        <div class="text-[10px] text-slate-400 whitespace-nowrap">Code: <span class="font-bold text-slate-600 dark:text-slate-300">MATH-10-A</span></div>
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Quadratic Equations</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">Nature of Roots & Word Problems</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">07 Oct 2026</div>
+                        <div class="text-[9px] text-slate-400">09:15 AM</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 text-[10px]">Today, 11:30 AM</div>
+                        <div class="text-[9px] text-blue-600 font-medium">60 mins slot</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-500 text-white flex items-center gap-1 w-max shadow-2xs animate-pulse">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white"></span> LIVE NOW
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-rose-600 text-[10px]">Started: 11:30 AM</div>
+                        <div class="text-[9px] text-slate-400">Live for 45m (Ongoing)</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-emerald-600 text-[10px]">34 / 38</div>
+                        <div class="text-[9px] text-slate-400">89% Present</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                        <a href="/teacher-live-dashboard/" class="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-[10px] no-underline inline-block shadow-xs">Join Studio</a>
+                    </td>
+                </tr>
+
+                <!-- Row 2: Published Class 1 -->
+                <tr class="my-class-table-row hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    data-status="published" data-course="Physics" data-grade="Class 12" data-timestamp="2026-10-07T16:00:00" data-students="28" data-title="Class 12 Ray Optics">
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400 whitespace-nowrap inline-block">Class 12</span>
+                    </td>
+                    <td class="py-2.5 px-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                        Physics
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Board Achievers</div>
+                        <div class="text-[10px] text-slate-400 whitespace-nowrap">Code: <span class="font-bold text-slate-600 dark:text-slate-300">PHY-12-B</span></div>
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Ray Optics</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">Lens Formula & Telescope</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">06 Oct 2026</div>
+                        <div class="text-[9px] text-slate-400">03:40 PM</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 text-[10px]">Today, 04:00 PM</div>
+                        <div class="text-[9px] text-slate-400">90 mins slot</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 w-max inline-block">
+                            PUBLISHED
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-emerald-600 text-[10px]">Published: 06 Oct, 04:00 PM</div>
+                        <div class="text-[9px] text-slate-400">Ready for broadcast</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-200 text-[10px]">28 Enrolled</div>
+                        <div class="text-[9px] text-slate-400">Active batch</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                        <button onclick="openLiveClassModal()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] border-0 cursor-pointer shadow-xs">Start Class</button>
+                    </td>
+                </tr>
+
+                <!-- Row 3: Published Class 2 -->
+                <tr class="my-class-table-row hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    data-status="published" data-course="Chemistry" data-grade="Class 11" data-timestamp="2026-10-08T17:00:00" data-students="22" data-title="Class 11 Chemical Bonding">
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400 whitespace-nowrap inline-block">Class 11</span>
+                    </td>
+                    <td class="py-2.5 px-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                        Chemistry
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Target JEE / NEET</div>
+                        <div class="text-[10px] text-slate-400 whitespace-nowrap">Code: <span class="font-bold text-slate-600 dark:text-slate-300">CHEM-11-A</span></div>
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Chemical Bonding</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">Chapter 4: VSEPR & Hybridization</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">06 Oct 2026</div>
+                        <div class="text-[9px] text-slate-400">06:20 PM</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 text-[10px]">Tomorrow, 05:00 PM</div>
+                        <div class="text-[9px] text-slate-400">75 mins slot</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 w-max inline-block">
+                            PUBLISHED
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-emerald-600 text-[10px]">Published: 06 Oct, 06:30 PM</div>
+                        <div class="text-[9px] text-slate-400">Schedule updated</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-200 text-[10px]">22 Enrolled</div>
+                        <div class="text-[9px] text-slate-400">Active batch</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                        <button onclick="openLiveClassModal()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] border-0 cursor-pointer shadow-xs">Start Class</button>
+                    </td>
+                </tr>
+
+                <!-- Row 4: Completed Class 1 -->
+                <tr class="my-class-table-row hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    data-status="completed" data-course="Mathematics" data-grade="Class 10" data-timestamp="2026-10-06T10:00:00" data-students="36" data-title="Class 10 Trigonometry">
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 whitespace-nowrap inline-block">Class 10</span>
+                    </td>
+                    <td class="py-2.5 px-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                        Mathematics
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">CBSE Target 100</div>
+                        <div class="text-[10px] text-slate-400 whitespace-nowrap">Code: <span class="font-bold text-slate-600 dark:text-slate-300">MATH-10-A</span></div>
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Trigonometry</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">NCERT Exemplar & PYQs</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">05 Oct 2026</div>
+                        <div class="text-[9px] text-slate-400">02:10 PM</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 text-[10px]">06 Oct, 10:00 AM</div>
+                        <div class="text-[9px] text-slate-400">65 mins duration</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 flex items-center gap-1 w-max">
+                            <i class="fas fa-check-circle text-[8px]"></i> COMPLETED
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-indigo-600 text-[10px]">Ended: 06 Oct, 11:05 AM</div>
+                        <div class="text-[9px] text-slate-400">Recording available</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-emerald-600 text-[10px]">36 / 38 (95%)</div>
+                        <div class="text-[9px] text-slate-400">Attendance logged</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                        <button onclick="switchTeacherModule('recorded_lectures')" class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[10px] border-0 cursor-pointer">Recording</button>
+                    </td>
+                </tr>
+
+                <!-- Row 5: Completed Class 2 -->
+                <tr class="my-class-table-row hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    data-status="completed" data-course="Physics" data-grade="Class 12" data-timestamp="2026-10-05T18:00:00" data-students="30" data-title="Class 12 Wave Optics">
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400 whitespace-nowrap inline-block">Class 12</span>
+                    </td>
+                    <td class="py-2.5 px-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                        Physics
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Board Achievers</div>
+                        <div class="text-[10px] text-slate-400 whitespace-nowrap">Code: <span class="font-bold text-slate-600 dark:text-slate-300">PHY-12-B</span></div>
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Wave Optics</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">Young's Double Slit Experiment</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">04 Oct 2026</div>
+                        <div class="text-[9px] text-slate-400">11:00 AM</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 text-[10px]">05 Oct, 06:00 PM</div>
+                        <div class="text-[9px] text-slate-400">70 mins duration</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 flex items-center gap-1 w-max">
+                            <i class="fas fa-check-circle text-[8px]"></i> COMPLETED
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-indigo-600 text-[10px]">Ended: 05 Oct, 07:10 PM</div>
+                        <div class="text-[9px] text-slate-400">Full lecture saved</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-emerald-600 text-[10px]">30 / 32 (94%)</div>
+                        <div class="text-[9px] text-slate-400">Attendance logged</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                        <button onclick="switchTeacherModule('recorded_lectures')" class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[10px] border-0 cursor-pointer">Recording</button>
+                    </td>
+                </tr>
+
+                <!-- Row 6: Draft -->
+                <tr class="my-class-table-row hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    data-status="draft" data-course="Foundation" data-grade="Class 9" data-timestamp="2026-10-09T15:00:00" data-students="0" data-title="Class 9 Atoms & Molecules">
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 whitespace-nowrap inline-block">Class 9</span>
+                    </td>
+                    <td class="py-2.5 px-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                        Foundation Science
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Foundation Builder</div>
+                        <div class="text-[10px] text-slate-400 whitespace-nowrap">Code: <span class="font-bold text-slate-600 dark:text-slate-300">FOUND-9-A</span></div>
+                    </td>
+                    <td class="py-2.5 px-2.5">
+                        <div class="font-bold text-slate-900 dark:text-white leading-tight">Atoms & Molecules</div>
+                        <div class="text-[10px] text-slate-400 line-clamp-1">Mole Concept & Problem Set</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-700 dark:text-slate-300 text-[10px]">07 Oct 2026</div>
+                        <div class="text-[9px] text-slate-400">08:45 AM</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-800 dark:text-slate-200 text-[10px]">09 Oct, 03:00 PM</div>
+                        <div class="text-[9px] text-amber-500 font-medium">Draft slot</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 flex items-center gap-1 w-max">
+                            <i class="fas fa-edit text-[8px]"></i> DRAFT
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-amber-600 text-[10px]">Draft Saved: 07 Oct, 08:45 AM</div>
+                        <div class="text-[9px] text-slate-400">Unpublished</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 whitespace-nowrap">
+                        <div class="font-bold text-slate-400 text-[10px]">0 Students</div>
+                        <div class="text-[9px] text-slate-400">Unpublished</div>
+                    </td>
+                    <td class="py-2.5 px-2.5 text-right whitespace-nowrap">
+                        <button onclick="publishDraftClass(this)" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[10px] border-0 cursor-pointer shadow-xs">Publish</button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- VIEW 2: COMPACT GRID CARDS                   -->
+    <!-- ============================================ -->
+    <div id="myClassesGridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 hidden">
+
+        <!-- CARD 1: LIVE NOW -->
+        <div class="my-class-card glass-card rounded-2xl p-3.5 border border-rose-200 dark:border-rose-900/50 shadow-soft space-y-2.5 hover:border-rose-400 transition-all flex flex-col justify-between"
+             data-status="live" data-course="Mathematics" data-grade="Class 10" data-timestamp="2026-10-07T11:30:00" data-students="34" data-title="Class 10 CBSE - Quadratic Equations Masterclass">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                        Maths • Class 10
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-rose-500 text-white flex items-center gap-1 shadow-2xs animate-pulse">
+                        <span class="w-1.5 h-1.5 rounded-full bg-white"></span> LIVE NOW
+                    </span>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-slate-900 dark:text-white leading-snug">Class 10 - Quadratic Equations</h4>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Chapter 4: Nature of Roots & Word Problems</p>
+                </div>
+
+                <div class="p-2 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-100 dark:border-rose-900/30 space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-500"><i class="far fa-plus-square text-blue-500 mr-1"></i> Created:</span>
+                        <strong class="text-slate-800 dark:text-slate-200">07 Oct, 09:15 AM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-500"><i class="far fa-clock text-rose-500 mr-1"></i> Started:</span>
+                        <strong class="text-rose-600">Today, 11:30 AM (In Progress)</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-500"><i class="fas fa-users text-emerald-500 mr-1"></i> Present:</span>
+                        <strong class="text-emerald-600 font-bold">34 / 38 Students (89%)</strong>
+                    </div>
+                </div>
+
+                <div class="text-[9px] text-slate-400 flex items-center justify-between">
+                    <span>Batch: <strong class="text-slate-600 dark:text-slate-300">MATH-10-A</strong></span>
+                    <span>Live broadcast active</span>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+                <a href="/teacher-live-dashboard/" class="flex-1 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[10px] no-underline text-center shadow-xs flex items-center justify-center gap-1">
+                    <i class="fas fa-broadcast-tower animate-pulse"></i> Join Studio
+                </a>
+                <button onclick="openMarkAttendanceModal()" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-bold text-xs border-0 cursor-pointer" title="Attendance">
+                    <i class="fas fa-user-check"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 2: PUBLISHED CLASS 1 -->
+        <div class="my-class-card glass-card rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-2.5 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all flex flex-col justify-between"
+             data-status="published" data-course="Physics" data-grade="Class 12" data-timestamp="2026-10-07T16:00:00" data-students="28" data-title="Class 12 CBSE - Ray Optics & Optical Instruments">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 whitespace-nowrap">
+                        Physics • Class 12
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                    </span>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-slate-900 dark:text-white leading-snug">Class 12 - Ray Optics</h4>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Chapter 9: Lens Formula & Telescopes</p>
+                </div>
+
+                <div class="p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-plus-square text-blue-500 mr-1"></i> Created:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">06 Oct, 03:40 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-calendar-alt text-blue-500 mr-1"></i> Slot:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">Today, 04:00 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="fas fa-bullhorn text-emerald-500 mr-1"></i> Published:</span>
+                        <strong class="text-emerald-600">06 Oct, 04:00 PM</strong>
+                    </div>
+                </div>
+
+                <div class="text-[9px] text-slate-400 flex items-center justify-between">
+                    <span>Batch: <strong class="text-slate-600 dark:text-slate-300">PHY-12-B</strong></span>
+                    <span>28 Enrolled</span>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+                <button onclick="openLiveClassModal()" class="flex-1 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[10px] border-0 cursor-pointer shadow-xs flex items-center justify-center gap-1">
+                    <i class="fas fa-play"></i> Start Class
+                </button>
+                <button onclick="openScheduleClassModal()" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-bold text-xs border-0 cursor-pointer" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 3: PUBLISHED CLASS 2 -->
+        <div class="my-class-card glass-card rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-2.5 hover:border-emerald-300 dark:hover:border-emerald-700 transition-all flex flex-col justify-between"
+             data-status="published" data-course="Chemistry" data-grade="Class 11" data-timestamp="2026-10-08T17:00:00" data-students="22" data-title="Class 11 CBSE - Chemical Bonding & Molecular Structure">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                        Chemistry • Class 11
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> PUBLISHED
+                    </span>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-slate-900 dark:text-white leading-snug">Class 11 - Chemical Bonding</h4>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Chapter 4: VSEPR & Hybridization</p>
+                </div>
+
+                <div class="p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-plus-square text-blue-500 mr-1"></i> Created:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">06 Oct, 06:20 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-calendar-alt text-blue-500 mr-1"></i> Slot:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">Tomorrow, 05:00 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="fas fa-bullhorn text-emerald-500 mr-1"></i> Published:</span>
+                        <strong class="text-emerald-600">06 Oct, 06:30 PM</strong>
+                    </div>
+                </div>
+
+                <div class="text-[9px] text-slate-400 flex items-center justify-between">
+                    <span>Batch: <strong class="text-slate-600 dark:text-slate-300">CHEM-11-A</strong></span>
+                    <span>22 Enrolled</span>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+                <button onclick="openLiveClassModal()" class="flex-1 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[10px] border-0 cursor-pointer shadow-xs flex items-center justify-center gap-1">
+                    <i class="fas fa-play"></i> Start Class
+                </button>
+                <button onclick="openScheduleClassModal()" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-bold text-xs border-0 cursor-pointer" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 4: COMPLETED CLASS 1 -->
+        <div class="my-class-card glass-card rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-2.5 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all flex flex-col justify-between"
+             data-status="completed" data-course="Mathematics" data-grade="Class 10" data-timestamp="2026-10-06T10:00:00" data-students="36" data-title="Class 10 CBSE - Trigonometric Identities & Heights and Distances">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                        Maths • Class 10
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 flex items-center gap-1">
+                        <i class="fas fa-check-circle text-[8px]"></i> COMPLETED
+                    </span>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-slate-900 dark:text-white leading-snug">Class 10 - Trigonometry</h4>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Chapter 8: NCERT Exemplar & PYQs</p>
+                </div>
+
+                <div class="p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-plus-square text-blue-500 mr-1"></i> Created:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">05 Oct, 02:10 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-calendar-check text-indigo-500 mr-1"></i> Slot:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">06 Oct, 10:00 AM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="fas fa-flag-checkered text-indigo-500 mr-1"></i> Ended:</span>
+                        <strong class="text-indigo-600 font-bold">06 Oct, 11:05 AM (65m)</strong>
+                    </div>
+                </div>
+
+                <div class="text-[9px] text-slate-400 flex items-center justify-between">
+                    <span>Batch: <strong class="text-slate-600 dark:text-slate-300">MATH-10-A</strong></span>
+                    <span>36 / 38 Present (95%)</span>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+                <button onclick="switchTeacherModule('recorded_lectures')" class="flex-1 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 font-bold text-[10px] border-0 cursor-pointer flex items-center justify-center gap-1">
+                    <i class="fas fa-play-circle"></i> Recording
+                </button>
+                <button onclick="switchTeacherModule('attendance')" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-bold text-xs border-0 cursor-pointer" title="Attendance">
+                    <i class="fas fa-clipboard-check"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 5: DRAFT CLASS -->
+        <div class="my-class-card glass-card rounded-2xl p-3.5 border border-amber-200/80 dark:border-amber-900/40 shadow-soft space-y-2.5 hover:border-amber-400 transition-all flex flex-col justify-between"
+             data-status="draft" data-course="Foundation" data-grade="Class 9" data-timestamp="2026-10-09T15:00:00" data-students="0" data-title="Class 9 Foundation - Atoms & Molecules Numerical Problem Set">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                        Foundation • Class 9
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 flex items-center gap-1">
+                        <i class="fas fa-edit text-[8px]"></i> DRAFT
+                    </span>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-slate-900 dark:text-white leading-snug">Class 9 - Atoms & Molecules</h4>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Mole Concept & Problem Set</p>
+                </div>
+
+                <div class="p-2 bg-amber-50/40 dark:bg-amber-950/20 rounded-xl border border-amber-100 dark:border-amber-900/30 space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-plus-square text-blue-500 mr-1"></i> Created:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">07 Oct, 08:45 AM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-calendar-alt text-amber-500 mr-1"></i> Planned:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">09 Oct, 03:00 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="fas fa-save text-amber-500 mr-1"></i> Last Saved:</span>
+                        <span class="text-amber-600 font-bold">07 Oct, 08:45 AM (Draft)</span>
+                    </div>
+                </div>
+
+                <div class="text-[9px] text-slate-400 flex items-center justify-between">
+                    <span>Batch: <strong class="text-slate-600 dark:text-slate-300">FOUND-9-A</strong></span>
+                    <span>Not published</span>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+                <button onclick="publishDraftClass(this)" class="flex-1 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-[10px] border-0 cursor-pointer shadow-xs flex items-center justify-center gap-1">
+                    <i class="fas fa-paper-plane"></i> Publish Now
+                </button>
+                <button onclick="openScheduleClassModal()" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-bold text-xs border-0 cursor-pointer" title="Edit">
+                    <i class="fas fa-pen"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 6: COMPLETED CLASS 2 -->
+        <div class="my-class-card glass-card rounded-2xl p-3.5 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-2.5 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all flex flex-col justify-between"
+             data-status="completed" data-course="Physics" data-grade="Class 12" data-timestamp="2026-10-05T18:00:00" data-students="30" data-title="Class 12 CBSE - Wave Optics & Interference Pattern">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-md text-[9px] font-extrabold bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 whitespace-nowrap">
+                        Physics • Class 12
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 flex items-center gap-1">
+                        <i class="fas fa-check-circle text-[8px]"></i> COMPLETED
+                    </span>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-xs text-slate-900 dark:text-white leading-snug">Class 12 - Wave Optics</h4>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Chapter 10: Young's Double Slit Experiment</p>
+                </div>
+
+                <div class="p-2 bg-slate-50 dark:bg-slate-800/60 rounded-xl space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-plus-square text-blue-500 mr-1"></i> Created:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">04 Oct, 11:00 AM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="far fa-calendar-check text-indigo-500 mr-1"></i> Slot:</span>
+                        <strong class="text-slate-700 dark:text-slate-200">05 Oct, 06:00 PM</strong>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400"><i class="fas fa-flag-checkered text-indigo-500 mr-1"></i> Ended:</span>
+                        <strong class="text-indigo-600 font-bold">05 Oct, 07:10 PM (70m)</strong>
+                    </div>
+                </div>
+
+                <div class="text-[9px] text-slate-400 flex items-center justify-between">
+                    <span>Batch: <strong class="text-slate-600 dark:text-slate-300">PHY-12-B</strong></span>
+                    <span>30 / 32 Present (94%)</span>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5">
+                <button onclick="switchTeacherModule('recorded_lectures')" class="flex-1 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 font-bold text-[10px] border-0 cursor-pointer flex items-center justify-center gap-1">
+                    <i class="fas fa-play-circle"></i> Recording
+                </button>
+                <button onclick="switchTeacherModule('study_material')" class="px-2 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-bold text-xs border-0 cursor-pointer" title="Notes">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="myClassesEmptyState" class="glass-card rounded-2xl p-6 text-center border border-dashed border-slate-300 dark:border-slate-800 space-y-2 hidden">
+        <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto text-xs">
+            <i class="fas fa-filter"></i>
+        </div>
+        <h4 class="font-extrabold text-xs text-slate-800 dark:text-slate-200">No classes found matching criteria</h4>
+        <p class="text-[10px] text-slate-500 max-w-xs mx-auto">Try resetting the search or status filter to view all classes.</p>
+        <button type="button" onclick="resetMyClassesFilters()" class="px-2.5 py-1 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition-all border-0 cursor-pointer shadow-xs">
+            Reset Filters
+        </button>
+    </div>
+
+</div>
+
+<!-- ============================================ -->
+<!-- JAVASCRIPT FILTERING & INTERACTIVITY LOGIC   -->
+<!-- ============================================ -->
+<script>
+    function setMyClassesViewMode(mode) {
+        const gridView = document.getElementById('myClassesGridView');
+        const listView = document.getElementById('myClassesListView');
+        const gridBtn = document.getElementById('myClassesViewGridBtn');
+        const listBtn = document.getElementById('myClassesViewListBtn');
+
+        if (mode === 'grid') {
+            if (gridView) gridView.classList.remove('hidden');
+            if (listView) listView.classList.add('hidden');
+            if (gridBtn) {
+                gridBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-2xs');
+                gridBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+            }
+            if (listBtn) {
+                listBtn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-2xs');
+                listBtn.classList.add('text-slate-500', 'dark:text-slate-400');
+            }
+        } else {
+            if (gridView) gridView.classList.add('hidden');
+            if (listView) listView.classList.remove('hidden');
+            if (listBtn) {
+                listBtn.classList.add('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-2xs');
+                listBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+            }
+            if (gridBtn) {
+                gridBtn.classList.remove('bg-white', 'dark:bg-slate-700', 'text-blue-600', 'shadow-2xs');
+                gridBtn.classList.add('text-slate-500', 'dark:text-slate-400');
+            }
+        }
+    }
+
+    function applyMyClassesFilters() {
+        const searchInput = document.getElementById('myClassesSearchInput');
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        const statusSelect = document.getElementById('myClassesFilterStatus');
+        const status = statusSelect ? statusSelect.value : 'all';
+
+        const courseSelect = document.getElementById('myClassesFilterCourse');
+        const course = courseSelect ? courseSelect.value : 'all';
+
+        const gradeSelect = document.getElementById('myClassesFilterGrade');
+        const grade = gradeSelect ? gradeSelect.value : 'all';
+
+        const cards = Array.from(document.querySelectorAll('.my-class-card'));
+        const rows = Array.from(document.querySelectorAll('.my-class-table-row'));
+
+        let visibleCount = 0;
+
+        // Filter Grid Cards
+        cards.forEach(card => {
+            const cStatus = (card.getAttribute('data-status') || '').toLowerCase();
+            const cCourse = (card.getAttribute('data-course') || '').toLowerCase();
+            const cGrade = (card.getAttribute('data-grade') || '').toLowerCase();
+            const cTitle = (card.getAttribute('data-title') || '').toLowerCase();
+            const cardText = card.innerText.toLowerCase();
+
+            let matchStatus = (status === 'all') || 
+                              (status === 'live' && cStatus === 'live') ||
+                              (status === 'published' && (cStatus === 'published' || cStatus === 'scheduled')) ||
+                              (status === 'completed' && cStatus === 'completed') ||
+                              (status === 'draft' && cStatus === 'draft') ||
+                              (status === 'cancelled' && cStatus === 'cancelled');
+
+            let matchCourse = (course === 'all') || cCourse.includes(course.toLowerCase());
+            let matchGrade = (grade === 'all') || cGrade.includes(grade.toLowerCase());
+            let matchSearch = !query || cTitle.includes(query) || cardText.includes(query);
+
+            if (matchStatus && matchCourse && matchGrade && matchSearch) {
+                card.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        // Filter Table Rows
+        rows.forEach(row => {
+            const rStatus = (row.getAttribute('data-status') || '').toLowerCase();
+            const rCourse = (row.getAttribute('data-course') || '').toLowerCase();
+            const rGrade = (row.getAttribute('data-grade') || '').toLowerCase();
+            const rTitle = (row.getAttribute('data-title') || '').toLowerCase();
+            const rowText = row.innerText.toLowerCase();
+
+            let matchStatus = (status === 'all') || 
+                              (status === 'live' && rStatus === 'live') ||
+                              (status === 'published' && (rStatus === 'published' || rStatus === 'scheduled')) ||
+                              (status === 'completed' && rStatus === 'completed') ||
+                              (status === 'draft' && rStatus === 'draft') ||
+                              (status === 'cancelled' && rStatus === 'cancelled');
+
+            let matchCourse = (course === 'all') || rCourse.includes(course.toLowerCase());
+            let matchGrade = (grade === 'all') || rGrade.includes(grade.toLowerCase());
+            let matchSearch = !query || rTitle.includes(query) || rowText.includes(query);
+
+            if (matchStatus && matchCourse && matchGrade && matchSearch) {
+                row.classList.remove('hidden');
+                visibleCount++;
+            } else {
+                row.classList.add('hidden');
+            }
+        });
+
+        // Update Result Counter
+        const countElem = document.getElementById('myClassesResultCount');
+        if (countElem) {
+            countElem.innerText = `${visibleCount} class${visibleCount === 1 ? '' : 'es'}`;
+        }
+
+        // Toggle Empty State
+        const emptyState = document.getElementById('myClassesEmptyState');
+        const gridView = document.getElementById('myClassesGridView');
+        const listView = document.getElementById('myClassesListView');
+
+        if (visibleCount === 0) {
+            if (emptyState) emptyState.classList.remove('hidden');
+            if (gridView) gridView.classList.add('hidden');
+            if (listView) listView.classList.add('hidden');
+        } else {
+            if (emptyState) emptyState.classList.add('hidden');
+            const isGridActive = document.getElementById('myClassesViewGridBtn')?.classList.contains('text-blue-600');
+            if (isGridActive) {
+                if (gridView) gridView.classList.remove('hidden');
+                if (listView) listView.classList.add('hidden');
+            } else {
+                if (listView) listView.classList.remove('hidden');
+                if (gridView) gridView.classList.add('hidden');
+            }
+        }
+    }
+
+    function resetMyClassesFilters() {
+        const searchInput = document.getElementById('myClassesSearchInput');
+        if (searchInput) searchInput.value = '';
+
+        const statusSelect = document.getElementById('myClassesFilterStatus');
+        if (statusSelect) statusSelect.value = 'all';
+
+        const courseSelect = document.getElementById('myClassesFilterCourse');
+        if (courseSelect) courseSelect.value = 'all';
+
+        const gradeSelect = document.getElementById('myClassesFilterGrade');
+        if (gradeSelect) gradeSelect.value = 'all';
+
+        applyMyClassesFilters();
+    }
+
+    function publishDraftClass(btn) {
+        if (!confirm('Are you sure you want to publish this class to students?')) return;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+        setTimeout(() => {
+            alert('✅ Class published successfully! It is now scheduled and visible to enrolled students.');
+            btn.closest('tr')?.setAttribute('data-status', 'published');
+            btn.closest('.my-class-card')?.setAttribute('data-status', 'published');
+            applyMyClassesFilters();
+        }, 600);
+    }
+</script>

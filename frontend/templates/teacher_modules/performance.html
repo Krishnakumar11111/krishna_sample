@@ -1,0 +1,130 @@
+<!-- ======================================================== -->
+<!-- TEACHER MODULE: PERFORMANCE & ANALYTICS                 -->
+<!-- ======================================================== -->
+<div id="teacherModule_performance" class="teacher-module-view space-y-6 hidden">
+
+    <!-- MODULE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 flex items-center justify-center text-sm font-black">
+                    <i class="fas fa-chart-line"></i>
+                </span>
+                <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Student & Class Performance</h2>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">In-depth student learning metrics, test scores, homework completion rates and subject mastery insights.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="alert('Exporting Performance PDF Report...')" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md shadow-purple-500/20 transition-all border-0 cursor-pointer flex items-center gap-2">
+                <i class="fas fa-file-download text-xs"></i> <span>Download Class Report</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Overall Average</span>
+            <strong class="text-xl font-black text-slate-900 dark:text-white block">{{ best_class_score|default:"82.4%" }}</strong>
+            <span class="text-[10px] text-emerald-600 font-bold">+4.2% from last month</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Top Tier (>90%)</span>
+            <strong class="text-xl font-black text-blue-600 block">24 Students</strong>
+            <span class="text-[10px] text-blue-600 font-bold">28% of enrolled</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Homework Turn-in</span>
+            <strong class="text-xl font-black text-purple-600 block">{{ submitted_pct|default:"92%" }}</strong>
+            <span class="text-[10px] text-purple-600 font-bold">On-time completion</span>
+        </div>
+        <div class="glass-card p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-1">
+            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Pass Percentage</span>
+            <strong class="text-xl font-black text-emerald-600 block">96.8%</strong>
+            <span class="text-[10px] text-emerald-600 font-bold">In term assessments</span>
+        </div>
+    </div>
+
+    <!-- PERFORMANCE BREAKDOWN CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Chapter-wise Class Mastery</h3>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <div class="flex justify-between font-bold mb-1">
+                        <span class="text-slate-700 dark:text-slate-300">Quadratic Equations</span>
+                        <span class="text-emerald-600">88% Mastery</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-emerald-500 h-full rounded-full" style="width: 88%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between font-bold mb-1">
+                        <span class="text-slate-700 dark:text-slate-300">Arithmetic Progressions</span>
+                        <span class="text-blue-600">84% Mastery</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-full rounded-full" style="width: 84%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between font-bold mb-1">
+                        <span class="text-slate-700 dark:text-slate-300">Triangles & Coordinate Geometry</span>
+                        <span class="text-amber-600">72% Mastery</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-amber-500 h-full rounded-full" style="width: 72%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between font-bold mb-1">
+                        <span class="text-slate-700 dark:text-slate-300">Trigonometric Identities</span>
+                        <span class="text-purple-600">79% Mastery</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-purple-500 h-full rounded-full" style="width: 79%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+            <h3 class="text-sm font-extrabold text-slate-900 dark:text-white">Top Rankers (Class Leaderboard)</h3>
+            <div class="space-y-3">
+                {% for s in top_students %}
+                <div class="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 font-black flex items-center justify-center text-[10px]">#{{ forloop.counter }}</span>
+                        <strong class="text-slate-900 dark:text-white">{{ s.name }}</strong>
+                    </div>
+                    <span class="font-extrabold text-emerald-600">{{ s.score_display }}</span>
+                </div>
+                {% empty %}
+                <div class="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-700 font-black flex items-center justify-center text-[10px]">#1</span>
+                        <strong class="text-slate-900 dark:text-white">Aman Verma</strong>
+                    </div>
+                    <span class="font-extrabold text-emerald-600">96.5%</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-black flex items-center justify-center text-[10px]">#2</span>
+                        <strong class="text-slate-900 dark:text-white">Priya Sharma</strong>
+                    </div>
+                    <span class="font-extrabold text-emerald-600">94.0%</span>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs">
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-amber-50 text-amber-800 font-black flex items-center justify-center text-[10px]">#3</span>
+                        <strong class="text-slate-900 dark:text-white">Rohan Singh</strong>
+                    </div>
+                    <span class="font-extrabold text-emerald-600">91.8%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>

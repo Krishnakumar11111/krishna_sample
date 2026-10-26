@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Popular Subjects | EduTrust</title>
+
+        <script>
+        (function() {
+            var origWarn = console.warn;
+            console.warn = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) {
+                    return;
+                }
+                origWarn.apply(console, arguments);
+            };
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        @keyframes pagePopup {
+            0% { opacity: 0.95; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .page-popup-anim {
+            animation: pagePopup 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="page-bg text-gray-800 min-h-screen flex flex-col justify-between">
+
+    {% include "components/public_header.html" %}
+
+    <div class="page-popup-anim pt-[122px] pb-8 md:pt-[130px] md:pb-12 flex-grow">
+        <!-- SECTION 1: COURSE BATCHES CATALOG -->
+        <section id="courses" class="container mx-auto max-w-[1500px] px-4 md:px-6 lg:px-8 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 py-4 md:py-5 mb-5">
+            
+            <!-- SECTION HEADER & FILTERS -->
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4 pb-3 border-b border-gray-100">
+                <!-- Left Side: Title & Description -->
+                <div class="max-w-xl">
+                    <span class="text-[10px] font-extrabold text-[#2563EB] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100 uppercase tracking-wider">🎓 FEATURED BATCHES 2026-27</span>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-[#0F172A] mt-1 tracking-tight">Explore Premium Learning Batches</h2>
+                    <p class="text-[11.5px] text-gray-500 mt-0.5 leading-normal">Full-year syllabus, daily DPPs, handwritten notes, and live doubt resolution by India's top faculty.</p>
+                </div>
+
+                <!-- Right Side: Board, Class & Stream Filter Controls -->
+                <div class="flex flex-col gap-2 w-full lg:w-auto shrink-0">
+                    <!-- 1. Board Filter Tabs (Hidden until Class 9-12 is selected) -->
+                    <div id="boardFilterContainer" class="hidden items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-thin">
+                        <button onclick="setBoardFilter('all')" id="btnBoardAll" class="board-filter-btn active bg-[#2563EB] text-white font-bold text-[11px] px-3 py-1.5 rounded-lg border-0 cursor-pointer shadow-xs transition-all">⚡ All Batches</button>
+                        <button onclick="setBoardFilter('UP Board')" id="btnBoardUP" class="board-filter-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] px-3 py-1.5 rounded-lg border border-emerald-200 cursor-pointer transition-all">🟢 UP Board</button>
+                        <button onclick="setBoardFilter('CBSE')" id="btnBoardCBSE" class="board-filter-btn bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-[11px] px-3 py-1.5 rounded-lg border border-blue-200 cursor-pointer transition-all">🔵 CBSE Board</button>
+                        <button onclick="setBoardFilter('ICSE')" id="btnBoardICSE" class="board-filter-btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-[11px] px-3 py-1.5 rounded-lg border border-purple-200 cursor-pointer transition-all">🟣 ICSE Board</button>
+                    </div>
+
+                    <!-- 2. Class Filter Pills (Class 6th to 12th) -->
+                    <div class="flex items-center gap-1 overflow-x-auto scrollbar-thin bg-slate-50 p-1 rounded-xl border border-slate-200/60">
+                        <span class="text-[10px] font-bold text-gray-500 px-1.5 shrink-0"><i class="fas fa-layer-group text-[#2563EB] mr-1"></i>Select Class:</span>
+                        <button onclick="setClassFilter('all')" id="btnClassAll" class="class-filter-btn active bg-white text-[#2563EB] font-bold text-[11px] px-2.5 py-1 rounded-lg border border-gray-200 cursor-pointer shadow-xs transition-all">All Classes</button>
+                        <button onclick="setClassFilter('Class 6')" id="btnClass6" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 6th</button>
+                        <button onclick="setClassFilter('Class 7')" id="btnClass7" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 7th</button>
+                        <button onclick="setClassFilter('Class 8')" id="btnClass8" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 8th</button>
+                        <button onclick="setClassFilter('Class 9')" id="btnClass9" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 9th</button>
+                        <button onclick="setClassFilter('Class 10')" id="btnClass10" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 10th</button>
+                        <button onclick="setClassFilter('Class 11')" id="btnClass11" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 11th</button>
+                        <button onclick="setClassFilter('Class 12')" id="btnClass12" class="class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all">Class 12th</button>
+                    </div>
+
+                    <!-- 3. Stream Filter Pills (Hidden until Class 9-12 is selected) -->
+                    <div id="streamFilterContainer" class="hidden items-center gap-1 overflow-x-auto scrollbar-thin bg-slate-50 p-1 rounded-xl border border-slate-200/60">
+                        <span class="text-[10px] font-bold text-gray-500 px-1.5 shrink-0"><i class="fas fa-microscope text-[#2563EB] mr-1"></i>Select Stream:</span>
+                        <button onclick="setStreamFilter('all')" id="btnStreamAll" class="stream-filter-btn active bg-white text-[#2563EB] font-bold text-[11px] px-2.5 py-1 rounded-lg border border-gray-200 cursor-pointer shadow-xs transition-all">All Streams</button>
+                        <button onclick="setStreamFilter('Science')" id="btnStreamScience" class="stream-filter-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px] px-2.5 py-1 rounded-lg border border-emerald-200 cursor-pointer transition-all">🧪 Science</button>
+                        <button onclick="setStreamFilter('Commerce')" id="btnStreamCommerce" class="stream-filter-btn bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold text-[11px] px-2.5 py-1 rounded-lg border border-amber-200 cursor-pointer transition-all">📈 Commerce</button>
+                        <button onclick="setStreamFilter('Arts')" id="btnStreamArts" class="stream-filter-btn bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-[11px] px-2.5 py-1 rounded-lg border border-purple-200 cursor-pointer transition-all">🎨 Arts / Humanities</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEATURE HIGHLIGHTS STRIP -->
+            <div class="bg-gradient-to-r from-slate-50 via-blue-50/40 to-slate-50 border border-slate-200/80 rounded-xl p-2.5 mb-4 shadow-xs">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 divide-y md:divide-y-0 md:divide-x divide-slate-200/60">
+                    <div class="flex items-center gap-2.5 pt-1.5 md:pt-0 px-1.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-[#2563EB] flex items-center justify-center text-sm shrink-0">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[#0F172A] text-[11px] m-0">Top Faculties</h4>
+                            <p class="text-[10px] text-gray-500 m-0">Experienced mentors</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 pt-1.5 md:pt-0 px-1.5">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm shrink-0">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[#0F172A] text-[11px] m-0">Live + Recorded</h4>
+                            <p class="text-[10px] text-gray-500 m-0">Learn at your pace</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 pt-1.5 md:pt-0 px-1.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-sm shrink-0">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[#0F172A] text-[11px] m-0">Doubt Resolution</h4>
+                            <p class="text-[10px] text-gray-500 m-0">Live doubt support</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 pt-1.5 md:pt-0 px-1.5">
+                        <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-sm shrink-0">
+                            <i class="fas fa-file-signature"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[#0F172A] text-[11px] m-0">Test + Practice</h4>
+                            <p class="text-[10px] text-gray-500 m-0">Regular tests & DPPs</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 pt-1.5 md:pt-0 px-1.5">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm shrink-0">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-[#0F172A] text-[11px] m-0">Certification</h4>
+                            <p class="text-[10px] text-gray-500 m-0">Earn completion cert.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Course Cards Grid (4 Columns on Desktop - Compact Style) -->
+            <div id="courseCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5" style="min-height: 700px;">
+                <!-- 8 Skeleton Loader Cards to prevent footer layout flash on page refresh -->
+                {% for i in "12345678" %}
+                <div class="bg-white rounded-xl border border-[#E2E8F0] p-2.5 animate-pulse space-y-1.5 h-[370px] flex flex-col justify-between box-border">
+                    <div class="bg-slate-200 h-[135px] rounded-lg w-full shrink-0"></div>
+                    <div class="space-y-1 flex-1 flex flex-col justify-between overflow-hidden">
+                        <div class="bg-slate-200 h-8 rounded-md w-3/4"></div>
+                        <div class="bg-slate-200 h-4 rounded-md w-1/2"></div>
+                        <div class="bg-slate-100 h-14 rounded-xl border border-slate-200/50"></div>
+                        <div class="bg-slate-200 h-5 rounded-md w-full"></div>
+                    </div>
+                    <div class="pt-1 border-t border-slate-100 flex items-center justify-between h-[40px] shrink-0">
+                        <div class="bg-slate-200 h-5 w-20 rounded-md"></div>
+                        <div class="bg-slate-200 h-7 w-24 rounded-lg"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+{% comment %} Explore Subject Wise Tutors section removed as requested {% endcomment %}
+    </div>
+
+    {% include "components/public_footer.html" %}
+
+    <!-- COURSE SYLLABUS & ENROLLMENT MODAL -->
+    <div id="courseDetailModal" style="z-index: 99999; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh;" class="bg-slate-900/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 md:p-6 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[calc(100vh-2rem)] flex flex-col shadow-2xl border border-gray-100 overflow-hidden relative my-auto">
+            <div class="p-4 sm:p-6 bg-gradient-to-r from-[#2563EB] to-indigo-600 text-white flex justify-between items-start shrink-0">
+                <div>
+                    <span id="cmClassSubject" class="text-xs font-extrabold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">Class 10 | Mathematics</span>
+                    <h3 id="cmTitle" class="text-lg sm:text-xl md:text-2xl font-extrabold mt-2">Class 10 CBSE Math & Science Masterclass</h3>
+                    <p id="cmTeacher" class="text-xs text-blue-100 mt-1"><i class="fas fa-chalkboard-teacher mr-1"></i> Er. Rajesh Sharma</p>
+                </div>
+                <button type="button" onclick="closeCourseModal()" aria-label="Close modal" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center font-bold text-lg border-0 cursor-pointer transition-all shrink-0 ml-2">&times;</button>
+            </div>
+            
+            <div class="p-6 flex-1 overflow-y-auto space-y-6">
+                <div class="bg-blue-50/60 p-4 rounded-2xl border border-blue-100 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-gray-500 font-semibold block">Enrollment Fee</span>
+                        <div class="flex items-baseline gap-2">
+                            <span id="cmEffectivePrice" class="text-2xl font-extrabold text-brand-700">₹1,799</span>
+                            <span id="cmOriginalPrice" class="text-sm text-gray-400 line-through">₹2,999</span>
+                            <span id="cmDiscount" class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-md">40% OFF</span>
+                        </div>
+                    </div>
+                    <button id="btnEnrollModal" onclick="submitEnrollment()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl shadow-lg shadow-emerald-600/30 border-0 cursor-pointer transition-all flex items-center gap-2">
+                        <i class="fas fa-bolt"></i> Enroll in Premium Tier (₹1,799)
+                    </button>
+                </div>
+
+                <!-- 3-TIER BATCH PLAN FEATURES COMPARISON WITH SELECT OPTIONS -->
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-gray-900 text-sm flex items-center gap-2 m-0">
+                            <i class="fas fa-layer-group text-brand-600"></i> Select Your Plan Tier & Features
+                        </h4>
+                        <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">Selected: <span id="lblSelectedTier">Premium Tier</span></span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                        <!-- Normal Tier Card -->
+                        <div id="cardPlanNormal" onclick="selectCoursePlan('Normal')" class="plan-card cursor-pointer bg-white border-2 border-slate-200 rounded-2xl p-4 flex flex-col justify-between space-y-3 relative hover:border-slate-400 transition-all shadow-xs">
+                            <div>
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <span class="font-extrabold text-slate-800 text-xs flex items-center gap-1">🥉 Normal Tier</span>
+                                    <span id="priceNormal" class="text-xs font-extrabold text-slate-900">₹1,250</span>
+                                </div>
+                                <ul id="featuresNormalList" class="mt-3 space-y-2 text-[11px] text-gray-600 font-medium">
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check text-emerald-500 text-xs"></i> Full HD Recorded Video Lectures</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check text-emerald-500 text-xs"></i> Class PDF Notes & Formulas</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check text-emerald-500 text-xs"></i> Daily Practice Homework (DPPs)</li>
+                                </ul>
+                            </div>
+                            <button type="button" id="btnSelectNormal" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl border border-slate-300 transition-all flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                                <i class="far fa-circle text-slate-400"></i> Select Normal Plan
+                            </button>
+                        </div>
+
+                        <!-- Premium Tier Card -->
+                        <div id="cardPlanPremium" onclick="selectCoursePlan('Premium')" class="plan-card cursor-pointer bg-gradient-to-b from-amber-50 to-orange-50/50 border-2 border-amber-500 rounded-2xl p-4 flex flex-col justify-between space-y-3 relative shadow-md transition-all ring-2 ring-amber-400">
+                            <span class="absolute -top-2.5 right-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">Most Popular</span>
+                            <div>
+                                <div class="flex items-center justify-between pb-2 border-b border-amber-200/60">
+                                    <span class="font-extrabold text-amber-950 text-xs flex items-center gap-1">🥈 Premium Tier</span>
+                                    <span id="pricePremium" class="text-xs font-extrabold text-amber-900">₹1,799</span>
+                                </div>
+                                <ul id="featuresPremiumList" class="mt-3 space-y-2 text-[11px] text-amber-950 font-medium">
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Everything in Normal Plan</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Daily Live Classes & Q&A</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Weekly Live Doubt Clearing</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-check-circle text-amber-600 text-xs"></i> Weekly Mock Tests & Ranks</li>
+                                </ul>
+                            </div>
+                            <button type="button" id="btnSelectPremium" class="w-full py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                                <i class="fas fa-check-circle"></i> Selected (Best Value)
+                            </button>
+                        </div>
+
+                        <!-- Ultra Premium Tier Card -->
+                        <div id="cardPlanUltra" onclick="selectCoursePlan('Ultra Premium')" class="plan-card cursor-pointer bg-gradient-to-b from-purple-50 via-indigo-50/50 to-cyan-50 border-2 border-purple-300 rounded-2xl p-4 flex flex-col justify-between space-y-3 relative hover:border-purple-500 transition-all shadow-xs">
+                            <span class="absolute -top-2.5 right-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">VIP Mentorship</span>
+                            <div>
+                                <div class="flex items-center justify-between pb-2 border-b border-purple-200/60">
+                                    <span class="font-extrabold text-purple-950 text-xs flex items-center gap-1">🥇 Ultra Premium</span>
+                                    <span id="priceUltra" class="text-xs font-extrabold text-purple-900">₹3,240</span>
+                                </div>
+                                <ul id="featuresUltraList" class="mt-3 space-y-2 text-[11px] text-purple-950 font-medium">
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> Everything in Premium Plan</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> 1-on-1 Personal Home Tutor</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> Dedicated VIP Academic Mentor</li>
+                                    <li class="flex items-center gap-1.5"><i class="fas fa-star text-purple-600 text-xs"></i> Instant 24/7 AI Doubts Solver</li>
+                                </ul>
+                            </div>
+                            <button type="button" id="btnSelectUltra" class="w-full py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-extrabold text-xs rounded-xl border border-purple-300 transition-all flex items-center justify-center gap-1.5 border-0 cursor-pointer">
+                                <i class="far fa-circle text-purple-400"></i> Select Ultra Premium
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-extrabold text-gray-900 text-base mb-3 flex items-center gap-2">
+                        <i class="fas fa-list-ol text-brand-600"></i> Course Syllabus & Chapters Tree
+                    </h4>
+                    <div id="cmSyllabusTree" class="space-y-3">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM AUTH / BATCH PURCHASE NOTIFICATION MODAL -->
+    <div id="authNoticeModal" style="z-index: 100000; position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh;" class="bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative text-center my-auto space-y-5">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-indigo-600 text-white flex items-center justify-center text-2xl mx-auto shadow-lg shadow-blue-500/30">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h3 id="authNoticeTitle" class="text-xl font-extrabold text-[#0F172A] tracking-tight">Edu<span class="text-[#2563EB]">Trust</span> Notice</h3>
+                <p id="authNoticeMessage" class="text-xs sm:text-sm text-gray-600 mt-2.5 leading-relaxed font-medium">Please register or log in as a student to purchase a batch.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+                <a id="btnAuthNoticeLogin" href="/student/login/" class="flex-1 bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-md transition-all text-center no-underline border-0">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Student Login / Register
+                </a>
+                <button type="button" onclick="closeAuthNoticeModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 px-4 rounded-xl transition-all cursor-pointer border-0">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allCoursesData = [];
+        let activeBoardFilter = 'all';
+        let activeClassFilter = 'all';
+        let activeStreamFilter = 'all';
+
+        function fetchCourses(className = activeClassFilter, boardName = activeBoardFilter, streamName = activeStreamFilter) {
+            const grid = document.getElementById('courseCardsGrid');
+            if (!grid) return;
+
+            fetch(`/api/courses/?class_name=${encodeURIComponent(className)}&board=${encodeURIComponent(boardName)}&stream=${encodeURIComponent(streamName)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.courses && data.courses.length > 0) {
+                        allCoursesData = data.courses;
+                        grid.innerHTML = data.courses.map(c => {
+                            const fallbackImg = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80';
+                            const imgUrl = (c.banner_image && c.banner_image.trim() !== '') ? c.banner_image : fallbackImg;
+
+                            return `
+                            <div class="bg-white rounded-xl border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between group relative h-[370px] box-border">
+                                <div class="relative h-[135px] w-full shrink-0 overflow-hidden bg-slate-100">
+                                    <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${c.title}" onerror="this.onerror=null; this.src='${fallbackImg}';">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent"></div>
+                                    <span class="absolute top-2 left-2 bg-[#2563EB] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-xs">${c.board} • ${c.class_name}</span>
+                                    ${c.discount_percent > 0 ? `<span class="absolute top-2 right-2 bg-rose-600 text-white text-[9.5px] font-bold px-2 py-0.5 rounded-full shadow-xs">${c.discount_percent}% OFF</span>` : ''}
+                                </div>
+
+                                <div class="p-2.5 flex-1 flex flex-col justify-between overflow-hidden">
+                                    <div>
+                                        <div class="h-[36px] overflow-hidden mb-1 w-full min-w-0">
+                                            <h3 class="font-bold text-[#0F172A] text-[13px] leading-[1.25] group-hover:text-[#2563EB] transition-colors line-clamp-2" title="${c.title}">${c.title}</h3>
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-between gap-1 text-[10.5px] h-[22px] overflow-hidden mb-1 w-full min-w-0">
+                                            <span class="font-bold text-indigo-700 flex items-center gap-1 min-w-0 flex-1 overflow-hidden" title="${c.teacher_name}">
+                                                <i class="fas fa-chalkboard-teacher text-[#2563EB] shrink-0"></i>
+                                                <span class="truncate block">${c.teacher_name}</span>
+                                            </span>
+                                            <span class="text-[8.5px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shrink-0 whitespace-nowrap">
+                                                <i class="fas fa-check-circle"></i> Verified
+                                            </span>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200/60 text-[10px] font-medium text-gray-700 h-[60px] overflow-hidden mb-1 w-full min-w-0">
+                                            <div class="min-w-0 overflow-hidden truncate"><span class="text-gray-400 block text-[8px] uppercase font-semibold whitespace-nowrap truncate">Class</span> 📖 <span class="truncate">${c.class_name}</span></div>
+                                            <div class="min-w-0 overflow-hidden truncate"><span class="text-gray-400 block text-[8px] uppercase font-semibold whitespace-nowrap truncate">Board</span> 🏛 <span class="truncate">${c.board}</span></div>
+                                            <div class="min-w-0 overflow-hidden truncate"><span class="text-gray-400 block text-[8px] uppercase font-semibold whitespace-nowrap truncate">Stream</span> ⚛ <span class="truncate">${c.stream || 'Science'}</span></div>
+                                            <div class="min-w-0 overflow-hidden truncate"><span class="text-gray-400 block text-[8px] uppercase font-semibold whitespace-nowrap truncate">Faculty</span> 👤 <span class="truncate">Mentors</span></div>
+                                            <div class="min-w-0 overflow-hidden truncate"><span class="text-gray-400 block text-[8px] uppercase font-semibold whitespace-nowrap truncate">Duration</span> 📅 <span class="truncate">Full Year</span></div>
+                                            <div class="min-w-0 overflow-hidden truncate"><span class="text-gray-400 block text-[8px] uppercase font-semibold whitespace-nowrap truncate">Mode</span> 🖥 <span class="truncate">Online+Offline</span></div>
+                                        </div>
+
+                                        <div class="bg-blue-50/80 text-[#2563EB] font-bold text-[10.5px] py-0.5 px-2 rounded-md flex items-center justify-center gap-1 border border-blue-100 h-[24px] overflow-hidden w-full min-w-0 whitespace-nowrap truncate">
+                                            <i class="fas fa-users text-[#2563EB] shrink-0"></i> 👥 ${c.enrollment_count || 142} Students Enrolled
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-1 border-t border-gray-100 flex items-center justify-between gap-1.5 h-[40px] shrink-0 mt-auto w-full min-w-0">
+                                        <div class="min-w-0 flex-1 overflow-hidden">
+                                            <span class="text-[8px] text-gray-400 font-semibold block uppercase whitespace-nowrap truncate">Course Fee</span>
+                                            <div class="flex items-baseline gap-1 min-w-0 overflow-hidden">
+                                                <strong class="text-[14.5px] font-extrabold text-[#0F172A] whitespace-nowrap truncate">₹${c.effective_price}</strong>
+                                                ${c.discount_percent > 0 ? `<span class="text-[9px] text-gray-400 line-through whitespace-nowrap truncate">₹${c.original_price}</span>` : ''}
+                                            </div>
+                                        </div>
+                                        <button onclick="openCourseDetails('${c.course_id}')" style="height: 32px; padding: 4px 9px; border-radius: 6px;" class="bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-[10.5px] shadow-xs border-0 cursor-pointer transition-all flex items-center gap-1 shrink-0 whitespace-nowrap">
+                                            <i class="fas fa-play-circle text-[9.5px]"></i> View Batch →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+                    } else {
+                        grid.innerHTML = `<div class="col-span-full py-16 text-center text-gray-400 font-medium">No learning batches available for selected board, class & stream filters.</div>`;
+                    }
+                })
+                .catch(err => console.error("Error fetching courses:", err));
+        }
+
+        function setBoardFilter(boardName) {
+            activeBoardFilter = boardName;
+            document.querySelectorAll('.board-filter-btn').forEach(btn => {
+                btn.className = 'board-filter-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-[11px] px-3 py-1.5 rounded-lg border-0 cursor-pointer transition-all';
+            });
+            if (event && event.currentTarget) {
+                event.currentTarget.className = 'board-filter-btn active bg-[#2563EB] text-white font-bold text-[11px] px-3 py-1.5 rounded-lg border-0 cursor-pointer shadow-xs transition-all';
+            }
+            fetchCourses(activeClassFilter, activeBoardFilter, activeStreamFilter);
+        }
+
+        function setClassFilter(className) {
+            activeClassFilter = className;
+
+            const boardCont = document.getElementById('boardFilterContainer');
+            const streamCont = document.getElementById('streamFilterContainer');
+            const isHighClass = ['Class 9', 'Class 10', 'Class 11', 'Class 12'].includes(className);
+
+            if (isHighClass) {
+                if (boardCont) boardCont.classList.remove('hidden');
+                if (streamCont) streamCont.classList.remove('hidden');
+            } else {
+                if (boardCont) boardCont.classList.add('hidden');
+                if (streamCont) streamCont.classList.add('hidden');
+                activeBoardFilter = 'all';
+                activeStreamFilter = 'all';
+
+                document.querySelectorAll('.board-filter-btn').forEach(btn => {
+                    btn.className = 'board-filter-btn bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-[11px] px-3 py-1.5 rounded-lg border-0 cursor-pointer transition-all';
+                });
+                const bAll = document.getElementById('btnBoardAll');
+                if (bAll) bAll.className = 'board-filter-btn active bg-[#2563EB] text-white font-bold text-[11px] px-3 py-1.5 rounded-lg border-0 cursor-pointer shadow-xs transition-all';
+
+                document.querySelectorAll('.stream-filter-btn').forEach(btn => {
+                    btn.className = 'stream-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all';
+                });
+                const sAll = document.getElementById('btnStreamAll');
+                if (sAll) sAll.className = 'stream-filter-btn active bg-white text-[#2563EB] font-bold text-[11px] px-2.5 py-1 rounded-lg border border-gray-200 cursor-pointer shadow-xs transition-all';
+            }
+
+            document.querySelectorAll('.class-filter-btn').forEach(btn => {
+                btn.className = 'class-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all';
+            });
+            if (event && event.currentTarget) {
+                event.currentTarget.className = 'class-filter-btn active bg-white text-[#2563EB] font-bold text-[11px] px-2.5 py-1 rounded-lg border border-gray-200 cursor-pointer shadow-xs transition-all';
+            }
+            fetchCourses(activeClassFilter, activeBoardFilter, activeStreamFilter);
+        }
+
+        function setStreamFilter(streamName) {
+            activeStreamFilter = streamName;
+            document.querySelectorAll('.stream-filter-btn').forEach(btn => {
+                btn.className = 'stream-filter-btn bg-transparent text-gray-600 hover:bg-white hover:text-gray-900 font-bold text-[11px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-all';
+            });
+            if (event && event.currentTarget) {
+                event.currentTarget.className = 'stream-filter-btn active bg-white text-[#2563EB] font-bold text-[11px] px-2.5 py-1 rounded-lg border border-gray-200 cursor-pointer shadow-xs transition-all';
+            }
+            fetchCourses(activeClassFilter, activeBoardFilter, activeStreamFilter);
+        }
+
+        let activeSelectedTier = 'Premium';
+        let currentBatchRealPrices = { Normal: 1999, Premium: 2999, 'Ultra Premium': 4999 };
+        let currentBatchTierDiscounts = { Normal: 20, Premium: 30, 'Ultra Premium': 40 };
+
+        function getDiscountedPrice(realPrice, discPct) {
+            if (!discPct || discPct <= 0) return Math.round(realPrice);
+            return Math.round(realPrice * (1 - discPct / 100.0));
+        }
+
+        function selectCoursePlan(tier) {
+            activeSelectedTier = tier;
+            const realPrice = currentBatchRealPrices[tier] || 2999;
+            const discPct = currentBatchTierDiscounts[tier] || 0;
+            const effectivePrice = getDiscountedPrice(realPrice, discPct);
+
+            const lblTier = document.getElementById('lblSelectedTier');
+            if (lblTier) lblTier.textContent = `${tier} Tier (₹${effectivePrice.toLocaleString('en-IN')})`;
+
+            const effPrice = document.getElementById('cmEffectivePrice');
+            if (effPrice) effPrice.textContent = `₹${effectivePrice.toLocaleString('en-IN')}`;
+
+            const cmOrig = document.getElementById('cmOriginalPrice');
+            if (cmOrig) {
+                if (discPct > 0) {
+                    cmOrig.textContent = `₹${realPrice.toLocaleString('en-IN')}`;
+                    cmOrig.style.display = 'inline';
+                } else {
+                    cmOrig.style.display = 'none';
+                }
+            }
+
+            const cmDisc = document.getElementById('cmDiscount');
+            if (cmDisc) {
+                if (discPct > 0) {
+                    cmDisc.textContent = `${discPct}% OFF`;
+                    cmDisc.style.display = 'inline-block';
+                } else {
+                    cmDisc.style.display = 'none';
+                }
+            }
+
+            const btnEnroll = document.getElementById('btnEnrollModal');
+            if (btnEnroll) {
+                btnEnroll.innerHTML = `<i class="fas fa-bolt"></i> Enroll in ${tier} Tier (₹${effectivePrice.toLocaleString('en-IN')})`;
+            }
+
+            const cardNormal = document.getElementById('cardPlanNormal');
+            const cardPremium = document.getElementById('cardPlanPremium');
+            const cardUltra = document.getElementById('cardPlanUltra');
+
+            const btnNormal = document.getElementById('btnSelectNormal');
+            const btnPremium = document.getElementById('btnSelectPremium');
+            const btnUltra = document.getElementById('btnSelectUltra');
+
+            [cardNormal, cardPremium, cardUltra].forEach(c => {
+                if (c) c.classList.remove('ring-4', 'ring-slate-800', 'ring-amber-500', 'ring-purple-600', 'shadow-lg');
+            });
+
+            if (btnNormal) btnNormal.innerHTML = `<i class="far fa-circle text-slate-400"></i> Select Normal Plan`;
+            if (btnPremium) btnPremium.innerHTML = `<i class="far fa-circle text-amber-500"></i> Select Premium Plan`;
+            if (btnUltra) btnUltra.innerHTML = `<i class="far fa-circle text-purple-400"></i> Select Ultra Premium`;
+
+            if (tier === 'Normal') {
+                if (cardNormal) cardNormal.classList.add('ring-4', 'ring-slate-800', 'shadow-lg');
+                if (btnNormal) btnNormal.innerHTML = `<i class="fas fa-check-circle text-emerald-600"></i> Selected Normal Plan`;
+            } else if (tier === 'Premium') {
+                if (cardPremium) cardPremium.classList.add('ring-4', 'ring-amber-500', 'shadow-lg');
+                if (btnPremium) btnPremium.innerHTML = `<i class="fas fa-check-circle"></i> Selected (Best Value)`;
+            } else if (tier === 'Ultra Premium') {
+                if (cardUltra) cardUltra.classList.add('ring-4', 'ring-purple-600', 'shadow-lg');
+                if (btnUltra) btnUltra.innerHTML = `<i class="fas fa-check-circle text-purple-600"></i> Selected Ultra Premium`;
+            }
+        }
+
+        let currentLoadedCourseId = '';
+
+        function showAuthNoticeModal(message, redirectUrl = '/student/login/?next=/courses/', isSuccess = false) {
+            document.body.style.overflow = 'hidden';
+            const msgElem = document.getElementById('authNoticeMessage');
+            const loginBtn = document.getElementById('btnAuthNoticeLogin');
+            const titleElem = document.getElementById('authNoticeTitle');
+            
+            if (msgElem) msgElem.textContent = message || 'Please register or log in as a student to purchase a batch.';
+            if (loginBtn) {
+                if (redirectUrl) {
+                    loginBtn.href = redirectUrl;
+                    loginBtn.classList.remove('hidden');
+                } else {
+                    loginBtn.classList.add('hidden');
+                }
+            }
+            if (titleElem) {
+                titleElem.innerHTML = isSuccess ? 'Enrollment <span class="text-emerald-600">Successful</span>' : 'Edu<span class="text-[#2563EB]">Trust</span> Notice';
+            }
+            
+            const modal = document.getElementById('authNoticeModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            }
+        }
+
+        function closeAuthNoticeModal() {
+            document.body.style.overflow = '';
+            const modal = document.getElementById('authNoticeModal');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function submitEnrollment() {
+            const realPrice = currentBatchRealPrices[activeSelectedTier] || 2999;
+            const discPct = currentBatchTierDiscounts[activeSelectedTier] || 0;
+            const price = getDiscountedPrice(realPrice, discPct);
+
+            const formData = new FormData();
+            formData.append('batch_id', currentLoadedCourseId);
+            formData.append('amount', price);
+
+            fetch('/api/batch/enroll/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showAuthNoticeModal(data.message || 'Enrollment completed successfully!', data.redirect_url || '/studymaterial/', true);
+                } else {
+                    showAuthNoticeModal(data.message || 'Please register or log in as a student to purchase a batch.', data.redirect_url || '/student/login/?next=/courses/', false);
+                }
+            })
+            .catch(err => {
+                showAuthNoticeModal('Error processing batch enrollment. Please try again.', null, false);
+            });
+        }
+
+        function renderFeatureList(rawText, iconClass = 'fa-check text-emerald-500', defaultItems = []) {
+            if (!rawText || !rawText.trim()) {
+                return defaultItems.map(item => `<li class="flex items-center gap-1.5"><i class="fas ${iconClass} text-xs"></i> ${item}</li>`).join('');
+            }
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            return lines.map(l => {
+                const cleanLine = l.replace(/^•\s*/, '').replace(/^-\s*/, '');
+                return `<li class="flex items-center gap-1.5"><i class="fas ${iconClass} text-xs"></i> ${cleanLine}</li>`;
+            }).join('');
+        }
+
+        function openCourseDetails(courseId) {
+            currentLoadedCourseId = courseId;
+            fetch(`/api/courses/${courseId}/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success' && data.course) {
+                        const c = data.course;
+                        document.getElementById('cmTitle').textContent = c.title;
+                        document.getElementById('cmClassSubject').textContent = `${c.class_name} | ${c.subject}`;
+                        document.getElementById('cmTeacher').innerHTML = `<i class="fas fa-chalkboard-teacher mr-1"></i> ${c.teacher_name}`;
+
+                        currentBatchRealPrices = {
+                            Normal: c.price_normal ? Math.round(c.price_normal) : 1999,
+                            Premium: c.price_premium ? Math.round(c.price_premium) : Math.round(c.original_price || 2999),
+                            'Ultra Premium': c.price_ultra ? Math.round(c.price_ultra) : 4999
+                        };
+
+                        currentBatchTierDiscounts = {
+                            Normal: c.discount_normal || c.discount_percent || 20,
+                            Premium: c.discount_premium || c.discount_percent || 30,
+                            'Ultra Premium': c.discount_ultra || c.discount_percent || 40
+                        };
+                        
+                        const effNorm = getDiscountedPrice(currentBatchRealPrices.Normal, currentBatchTierDiscounts.Normal);
+                        const effPrem = getDiscountedPrice(currentBatchRealPrices.Premium, currentBatchTierDiscounts.Premium);
+                        const effUlt = getDiscountedPrice(currentBatchRealPrices['Ultra Premium'], currentBatchTierDiscounts['Ultra Premium']);
+
+                        const pNorm = document.getElementById('priceNormal');
+                        if (pNorm) pNorm.textContent = `₹${effNorm.toLocaleString('en-IN')}`;
+                        const pPrem = document.getElementById('pricePremium');
+                        if (pPrem) pPrem.textContent = `₹${effPrem.toLocaleString('en-IN')}`;
+                        const pUlt = document.getElementById('priceUltra');
+                        if (pUlt) pUlt.textContent = `₹${effUlt.toLocaleString('en-IN')}`;
+
+                        // Render Feature Checklist Points typed by Admin
+                        const ulNorm = document.getElementById('featuresNormalList');
+                        if (ulNorm) ulNorm.innerHTML = renderFeatureList(c.features_normal, 'fa-check text-emerald-500', ['Full HD Recorded Video Lectures', 'Class PDF Notes & Formulas', 'Daily Practice Homework (DPPs)']);
+
+                        const ulPrem = document.getElementById('featuresPremiumList');
+                        if (ulPrem) ulPrem.innerHTML = renderFeatureList(c.features_premium, 'fa-check-circle text-amber-600', ['Everything in Normal Plan', 'Daily Live Classes & Q&A', 'Weekly Live Doubt Clearing', 'Weekly Mock Tests & Ranks']);
+
+                        const ulUlt = document.getElementById('featuresUltraList');
+                        if (ulUlt) ulUlt.innerHTML = renderFeatureList(c.features_ultra, 'fa-star text-purple-600', ['Everything in Premium Plan', '1-on-1 Personal Home Tutor', 'Dedicated VIP Academic Mentor', 'Instant 24/7 AI Doubts Solver']);
+
+                        selectCoursePlan('Premium');
+
+                        const tree = document.getElementById('cmSyllabusTree');
+                        if (c.chapters && c.chapters.length > 0) {
+                            tree.innerHTML = c.chapters.map(ch => `
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <h5 class="font-extrabold text-gray-900 text-sm flex items-center gap-2 m-0">
+                                            <span class="w-6 h-6 rounded-lg bg-brand-600 text-white flex items-center justify-center text-xs font-bold">${ch.sequence_number}</span> ${ch.title}
+                                        </h5>
+                                        <span class="bg-cyan-50 text-cyan-700 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-cyan-100"><i class="fas fa-file-invoice mr-1"></i> Chapter DPP Included</span>
+                                    </div>
+                                    <div class="pl-8 space-y-1.5">
+                                        ${ch.lectures.map(lec => `
+                                            <div class="flex items-center justify-between text-xs py-1.5 px-3 bg-white rounded-xl border border-gray-100 shadow-xs">
+                                                <span class="font-semibold text-gray-800"><i class="fas fa-circle-play text-brand-600 mr-2"></i> ${lec.title} (${lec.duration} min)</span>
+                                                ${lec.is_free_demo ? `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded">FREE DEMO</span>` : `<i class="fas fa-lock text-gray-300"></i>`}
+                                            </div>
+                                        `).join('')}
+                                        <div class="flex items-center justify-between text-xs py-1.5 px-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200/60 mt-2">
+                                            <span class="font-bold text-amber-900 flex items-center gap-1.5"><i class="fas fa-file-pdf text-amber-600"></i> 📄 ${ch.title} — Daily Practice Paper (DPP & Solutions)</span>
+                                            <button onclick="alert('Downloading DPP PDF for ${ch.title}...'); window.open('/studymaterial/', '_blank');" class="bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-[10px] px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-colors shadow-xs">
+                                                Download DPP PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('');
+                        } else {
+                            tree.innerHTML = `<p class="text-xs text-gray-400">Chapters & syllabus tree being updated.</p>`;
+                        }
+
+                        const modal = document.getElementById('courseDetailModal');
+                        if (modal) {
+                            document.body.style.overflow = 'hidden';
+                            modal.classList.remove('hidden');
+                            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                        }
+                    }
+                });
+        }
+
+        function closeCourseModal() {
+            document.body.style.overflow = '';
+            const modal = document.getElementById('courseDetailModal');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCourseModal();
+                closeAuthNoticeModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCourses('all');
+            const modalOverlay = document.getElementById('courseDetailModal');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) {
+                        closeCourseModal();
+                    }
+                });
+            }
+            const authNoticeOverlay = document.getElementById('authNoticeModal');
+            if (authNoticeOverlay) {
+                authNoticeOverlay.addEventListener('click', function(e) {
+                    if (e.target === authNoticeOverlay) {
+                        closeAuthNoticeModal();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Floating 24/7 AI Doubt Solver Drawer Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleDoubtDrawer()" class="w-14 h-14 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-2xl hover:scale-110 transition-transform cursor-pointer border-2 border-white" title="24/7 AI Doubt Solver">
+            <i class="fas fa-robot"></i>
+        </button>
+    </div>
+
+    <!-- AI Doubt Solver Interactive Drawer -->
+    <div id="aiDoubtDrawer" class="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border border-slate-200 z-50 p-5 space-y-4 hidden transition-all">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-indigo-50 text-brand-600 flex items-center justify-center font-bold">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-slate-900 text-sm m-0">24/7 EduTrust AI Doubt Solver</h4>
+                    <p class="text-[10px] text-emerald-600 font-extrabold m-0"><i class="fas fa-circle text-[7px] mr-1"></i> Instant AI Faculty Active</p>
+                </div>
+            </div>
+            <button onclick="toggleDoubtDrawer()" class="text-slate-400 hover:text-slate-600 border-0 bg-transparent text-lg cursor-pointer">&times;</button>
+        </div>
+
+        <div id="doubtChatBox" class="max-h-60 overflow-y-auto space-y-2 text-xs bg-slate-50 p-3 rounded-2xl border border-slate-100">
+            <div class="bg-indigo-100/80 text-slate-800 p-2.5 rounded-xl font-medium">
+                👋 Hello! Ask me any physics, math, or chemistry question or upload a photo of your problem for instant step-by-step resolution.
+            </div>
+        </div>
+
+        <form id="aiDoubtForm" onsubmit="submitAIDoubt(event)" class="space-y-2">
+            <textarea id="doubtText" rows="2" placeholder="Type your doubt question here..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-500 font-medium"></textarea>
+            <div class="flex justify-between items-center">
+                <label class="cursor-pointer text-[11px] font-bold text-brand-600 hover:underline flex items-center gap-1">
+                    <i class="fas fa-camera"></i> Attach Photo
+                    <input type="file" id="doubtImage" accept="image/*" class="hidden" onchange="alert('Photo attached!')">
+                </label>
+                <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl border-0 cursor-pointer shadow-xs flex items-center gap-1">
+                    Solve Doubt <i class="fas fa-paper-plane text-[10px]"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function toggleDoubtDrawer() {
+            const drawer = document.getElementById('aiDoubtDrawer');
+            if (drawer) drawer.classList.toggle('hidden');
+        }
+
+        function submitAIDoubt(e) {
+            e.preventDefault();
+            const text = document.getElementById('doubtText').value.trim();
+            const imageInput = document.getElementById('doubtImage');
+            
+            if (!text && (!imageInput.files || !imageInput.files[0])) return;
+
+            const chat = document.getElementById('doubtChatBox');
+            chat.innerHTML += `<div class="bg-brand-600 text-white p-2.5 rounded-xl font-medium self-end text-right">❓ ${text || 'Photo Question Submitted'}</div>`;
+            document.getElementById('doubtText').value = '';
+
+            const fd = new FormData();
+            fd.append('query_text', text);
+            if (imageInput.files && imageInput.files[0]) fd.append('image_query', imageInput.files[0]);
+
+            fetch('/api/doubts/solve/', {
+                method: 'POST',
+                body: fd
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    chat.innerHTML += `<div class="bg-white border border-indigo-100 text-slate-800 p-2.5 rounded-xl font-medium shadow-xs">${data.solution.replace(/\n/g, '<br>')}</div>`;
+                    chat.scrollTop = chat.scrollHeight;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
