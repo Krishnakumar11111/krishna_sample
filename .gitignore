@@ -46,3 +46,8 @@ Thumbs.db
 # Temporary & Scratch files
 scratch_*.js
 scratch/
+
+backend/backup.json
+sqlite_backup.json
+sqlite_backup_filtered.json
+.env
