@@ -13,6 +13,7 @@ Django==6.0.4
 filelock==3.29.1
 fonttools==4.60.1
 fsspec==2026.4.0
+gunicorn>=23.0.0
 h11==0.16.0
 hf-xet==1.5.0
 httpcore==1.0.9
@@ -58,3 +59,4 @@ tqdm==4.68.1
 typer==0.25.1
 typing_extensions==4.15.0
 tzdata==2025.2
+whitenoise>=6.6.0

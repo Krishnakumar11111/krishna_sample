@@ -1,0 +1,203 @@
+
+        /* Base & Resets */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Custom Gradients */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+        }
+
+        .bg-gradient-brand {
+            background-image: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .bg-gradient-hover:hover {
+            background-image: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            transform: translateX(-40px);
+        }
+
+        .reveal-right {
+            transform: translateX(40px);
+        }
+
+        .reveal-zoom {
+            transform: scale(0.9);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes float-delayed {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-float-delayed {
+            animation: float-delayed 7s ease-in-out infinite 2s;
+        }
+
+        /* Blob Background */
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* Hover Lift */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* FAQ Accordion */
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+
+        .faq-item.active .faq-content {
+            max-height: 500px;
+            /* arbitrary large value */
+            padding-bottom: 1.25rem;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Sticky Nav Transitions */
+        #navbar {
+            transition: all 0.3s ease;
+        }
+
+        #navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Decorative Backgrounds */
+        .pattern-bg {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+
+        /* Study material  */
+              body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Custom Modern Background Theme */
+        .page-bg {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.07) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Glassmorphism Effect for Section/Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Floating Animation for Decorative Elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .floating-badge {
+            animation: float 4s ease-in-out infinite;
+        }
+
+
+  
+    /* Scrollbar hide karne ke liye taaki slider clean dikhe */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+/* Slide bar  */
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    /* Smooth Vertical Infinite Scrolling Animation */
+    @keyframes verticalScroll {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); }
+    }
+    .animate-vertical-slider {
+        display: flex;
+        flex-direction: column;
+        animation: verticalScroll 18s linear infinite;
+    }
+    .animate-vertical-slider:hover {
+        animation-play-state: paused;
+    }
