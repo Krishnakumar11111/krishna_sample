@@ -8,9 +8,13 @@ Updated for EduTrust Frontend & Backend Reorganization and Render Deployment.
 import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project: BASE_DIR points to backend/
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env", override=True)
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Top-level frontend directory containing templates and static assets
 FRONTEND_DIR = BASE_DIR / "frontend" if (BASE_DIR / "frontend").exists() else BASE_DIR.parent / "frontend"
@@ -103,16 +107,6 @@ WSGI_APPLICATION = 'edutrust.wsgi.application'
 
 # Database Configuration - PostgreSQL
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'edutrust_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'krishna@9151',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -124,13 +118,16 @@ if DATABASE_URL:
         )
     }
 else:
-    # Local development fallback
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
+  DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "edutrust_db"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
+}
 
 
 
