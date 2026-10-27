@@ -13,7 +13,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Top-level frontend directory containing templates and static assets
-FRONTEND_DIR = BASE_DIR.parent / "frontend"
+FRONTEND_DIR = BASE_DIR / "frontend" if (BASE_DIR / "frontend").exists() else BASE_DIR.parent / "frontend"
 
 
 # Quick-start development settings - unsuitable for production
@@ -81,7 +81,7 @@ ROOT_URLCONF = 'edutrust.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [FRONTEND_DIR / 'templates'],
+        'DIRS': [d for d in [FRONTEND_DIR / 'templates', BASE_DIR / 'templates'] if d.exists()],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -152,9 +152,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    FRONTEND_DIR / "static",
-]
+STATICFILES_DIRS = [d for d in [FRONTEND_DIR / "static", BASE_DIR / "static"] if d.exists()]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
