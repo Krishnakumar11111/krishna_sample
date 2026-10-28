@@ -140,15 +140,28 @@ def deep_merge(target, source):
             target[key] = val
     return target
 
+import time
+
+_SAVED_FOOTER_CACHE = None
+_SAVED_FOOTER_CACHE_TIME = 0
+
 def get_active_footer_config(current_path=None):
-    cfg = get_default_footer_config()
-    try:
-        setting_obj = SystemSetting.objects.filter(key='hp_footer', category='homepage').first()
-        if setting_obj and setting_obj.value:
-            saved = json.loads(setting_obj.value) if isinstance(setting_obj.value, str) else setting_obj.value
-            cfg = deep_merge(cfg, saved)
-    except Exception as e:
-        print(f"[FOOTER CONFIG ERROR] {e}")
+    global _SAVED_FOOTER_CACHE, _SAVED_FOOTER_CACHE_TIME
+    now = time.time()
+
+    if _SAVED_FOOTER_CACHE is not None and (now - _SAVED_FOOTER_CACHE_TIME < 60):
+        cfg = copy.deepcopy(_SAVED_FOOTER_CACHE)
+    else:
+        cfg = get_default_footer_config()
+        try:
+            setting_obj = SystemSetting.objects.filter(key='hp_footer', category='homepage').first()
+            if setting_obj and setting_obj.value:
+                saved = json.loads(setting_obj.value) if isinstance(setting_obj.value, str) else setting_obj.value
+                cfg = deep_merge(cfg, saved)
+        except Exception as e:
+            print(f"[FOOTER CONFIG ERROR] {e}")
+        _SAVED_FOOTER_CACHE = copy.deepcopy(cfg)
+        _SAVED_FOOTER_CACHE_TIME = now
 
     is_master_enabled = cfg.get('general', {}).get('enabled', True)
     if not is_master_enabled or cfg.get('general', {}).get('show_on_website') is False:

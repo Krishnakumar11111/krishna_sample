@@ -83,11 +83,22 @@ FEATURE_MATRIX = {
 }
 
 
+import time
+
+_WEBSITE_MODE_CACHE = None
+_WEBSITE_MODE_CACHE_TIME = 0
+
 def get_website_mode():
     """
     Returns the normalized current active website mode.
     One of: 'home_tuition', 'online_tuition', 'full_lms'
+    Fast cached implementation (60-second TTL).
     """
+    global _WEBSITE_MODE_CACHE, _WEBSITE_MODE_CACHE_TIME
+    now = time.time()
+    if _WEBSITE_MODE_CACHE is not None and (now - _WEBSITE_MODE_CACHE_TIME < 60):
+        return _WEBSITE_MODE_CACHE
+
     try:
         from .models import SystemSetting
         mode_setting = SystemSetting.objects.filter(key='website_mode', category='homepage').first()
@@ -97,12 +108,17 @@ def get_website_mode():
 
     # Normalize legacy database values
     if raw_val in ['home_tuition_only', 'home_tuition']:
-        return 'home_tuition'
+        res = 'home_tuition'
     elif raw_val in ['home_online', 'online_tuition']:
-        return 'online_tuition'
+        res = 'online_tuition'
     elif raw_val == 'full_lms':
-        return 'full_lms'
-    return DEFAULT_WEBSITE_MODE
+        res = 'full_lms'
+    else:
+        res = DEFAULT_WEBSITE_MODE
+
+    _WEBSITE_MODE_CACHE = res
+    _WEBSITE_MODE_CACHE_TIME = now
+    return res
 
 
 def is_home_tuition_mode():

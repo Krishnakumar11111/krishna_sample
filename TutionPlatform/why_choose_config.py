@@ -1,5 +1,12 @@
 import json
+import time
 from .models import SystemSetting
+
+_FIND_TUTOR_CARDS_CACHE = None
+_FIND_TUTOR_CARDS_CACHE_TIME = 0
+
+_WHY_CHOOSE_CACHE = None
+_WHY_CHOOSE_CACHE_TIME = 0
 
 DEFAULT_WHY_CHOOSE_CONFIG = {
     "enabled": True,
@@ -216,6 +223,11 @@ def get_find_tutor_cards_config():
     - help_banner (Card 2)
     - faster_banner (Card 3)
     """
+    global _FIND_TUTOR_CARDS_CACHE, _FIND_TUTOR_CARDS_CACHE_TIME
+    now = time.time()
+    if _FIND_TUTOR_CARDS_CACHE is not None and (now - _FIND_TUTOR_CARDS_CACHE_TIME) < 60:
+        return _FIND_TUTOR_CARDS_CACHE
+
     merged = json.loads(json.dumps(DEFAULT_WHY_CHOOSE_CONFIG))
     try:
         obj = SystemSetting.objects.filter(category='homepage', key='hp_why_choose', is_active=True).first()
@@ -264,7 +276,7 @@ def get_find_tutor_cards_config():
         fb_data = {}
     def_fb = DEFAULT_WHY_CHOOSE_CONFIG.get('faster_banner', {})
 
-    return {
+    res = {
         'why_choose_tutors': {
             'enabled': to_bool(wct_data.get('enabled'), def_wct.get('enabled', True)),
             'title': wct_data.get('title') or def_wct.get('title', 'Why Choose EduTrust Tutors?'),
@@ -290,6 +302,9 @@ def get_find_tutor_cards_config():
             'icon': fb_data.get('icon') or def_fb.get('icon', 'fa-bolt')
         }
     }
+    _FIND_TUTOR_CARDS_CACHE = res
+    _FIND_TUTOR_CARDS_CACHE_TIME = now
+    return res
 
 
 def get_why_choose_config():
@@ -298,6 +313,11 @@ def get_why_choose_config():
     Performs deep merging with DEFAULT_WHY_CHOOSE_CONFIG and formats features & explore_subjects.
     Excludes Find Tutor Page Cards to keep them strictly scoped.
     """
+    global _WHY_CHOOSE_CACHE, _WHY_CHOOSE_CACHE_TIME
+    now = time.time()
+    if _WHY_CHOOSE_CACHE is not None and (now - _WHY_CHOOSE_CACHE_TIME) < 60:
+        return _WHY_CHOOSE_CACHE
+
     merged = json.loads(json.dumps(DEFAULT_WHY_CHOOSE_CONFIG))
     merged.pop('why_choose_tutors', None)
     merged.pop('help_banner', None)
@@ -458,5 +478,7 @@ def get_why_choose_config():
         'active_subjects': [s for s in processed_subjects if s['enabled']]
     }
 
+    _WHY_CHOOSE_CACHE = merged
+    _WHY_CHOOSE_CACHE_TIME = now
     return merged
 

@@ -1158,3 +1158,114 @@
 </script>
 {% endif %}
 {% endif %}
+
+<!-- INSTANT PAGE TRANSITION & SPECULATIVE PREFETCH ENGINE -->
+<style>
+    #edutrust-page-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2.5px;
+        background: linear-gradient(90deg, #2563eb, #38bdf8, #6366f1);
+        z-index: 2147483647;
+        width: 0%;
+        opacity: 0;
+        pointer-events: none;
+        transition: width 0.25s ease-out, opacity 0.15s ease-in;
+        box-shadow: 0 0 10px rgba(37, 99, 235, 0.7);
+    }
+</style>
+<div id="edutrust-page-progress"></div>
+
+<script>
+(function() {
+    'use strict';
+    const prefetchedUrls = new Set();
+    const currentOrigin = window.location.origin;
+    const progressEl = document.getElementById('edutrust-page-progress');
+
+    function isPrefetchable(anchor) {
+        if (!anchor || !anchor.href) return false;
+        if (anchor.target && anchor.target !== '_self') return false;
+        if (anchor.hasAttribute('download')) return false;
+        
+        try {
+            const url = new URL(anchor.href, currentOrigin);
+            if (url.origin !== currentOrigin) return false;
+            const p = url.pathname;
+            if (p.startsWith('/admin') || p.startsWith('/django-admin') || p.startsWith('/api') || 
+                p.startsWith('/logout') || p.endsWith('.pdf') || p.endsWith('.zip') || 
+                (p === window.location.pathname && (url.hash || url.search === window.location.search))) {
+                return false;
+            }
+            return url.href;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    function prefetchUrl(targetHref) {
+        if (!targetHref || prefetchedUrls.has(targetHref)) return;
+        prefetchedUrls.add(targetHref);
+
+        try {
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = targetHref;
+            link.as = 'document';
+            document.head.appendChild(link);
+        } catch(e) {}
+
+        if (window.fetch) {
+            try {
+                fetch(targetHref, { priority: 'low', credentials: 'same-origin' }).catch(function() {});
+            } catch(e) {}
+        }
+    }
+
+    document.addEventListener('mouseover', function(e) {
+        const anchor = e.target.closest('a');
+        const href = isPrefetchable(anchor);
+        if (href) prefetchUrl(href);
+    }, { passive: true });
+
+    document.addEventListener('touchstart', function(e) {
+        const anchor = e.target.closest('a');
+        const href = isPrefetchable(anchor);
+        if (href) prefetchUrl(href);
+    }, { passive: true });
+
+    document.addEventListener('click', function(e) {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const anchor = e.target.closest('a');
+        const href = isPrefetchable(anchor);
+        if (href && progressEl) {
+            progressEl.style.opacity = '1';
+            progressEl.style.width = '75%';
+        }
+    }, { passive: true });
+
+    function prefetchMainLinks() {
+        const navLinks = [
+            '/',
+            '/about/',
+            '/find-tutor/',
+            '/tuition-jobs/',
+            '/success-stories/',
+            '/faq/',
+            '/contact/'
+        ];
+        navLinks.forEach(function(path) {
+            if (path !== window.location.pathname) {
+                prefetchUrl(currentOrigin + path);
+            }
+        });
+    }
+
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(prefetchMainLinks, { timeout: 2000 });
+    } else {
+        setTimeout(prefetchMainLinks, 1000);
+    }
+})();
+</script>

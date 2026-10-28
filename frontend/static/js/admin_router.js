@@ -43,13 +43,40 @@
         'coupons_rewards': '/admin/coupons-rewards/',
         'coupons-rewards': '/admin/coupons-rewards/',
         'roles_permissions': '/admin/roles-permissions/',
-        'settings': '/admin/settings/'
+        'settings': '/admin/settings/',
+        'backup_restore': '/admin/backup-restore/',
+        'backup-restore': '/admin/backup-restore/'
     };
 
     // State Tracking
     const moduleLoadPromises = {};
     let activeLoadingModule = null;
     let currentNavGeneration = 0;
+
+    // Top Navigation Progress Bar
+    function showNavProgressBar() {
+        let bar = document.getElementById('admin-nav-progress');
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'admin-nav-progress';
+            bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#2563eb,#7c3aed,#38bdf8);z-index:99999;transition:width 0.25s ease-out,opacity 0.3s ease-out;width:0%;pointer-events:none;box-shadow:0 0 10px rgba(37,99,235,0.7);';
+            document.body.appendChild(bar);
+        }
+        bar.style.opacity = '1';
+        bar.style.width = '35%';
+        setTimeout(() => { if (bar && bar.style.opacity === '1') bar.style.width = '75%'; }, 150);
+    }
+
+    function finishNavProgressBar() {
+        const bar = document.getElementById('admin-nav-progress');
+        if (bar) {
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.opacity = '0';
+                setTimeout(() => { bar.style.width = '0%'; }, 300);
+            }, 200);
+        }
+    }
 
     // Helper: Compute clean canonical URL path for history state
     function getCleanAdminModulePath(canonical) {
@@ -58,6 +85,7 @@
         if (canonical === 'student_parent_enquiries' || canonical === 'student_enquiries') return '/admin/student-parent-enquiries/';
         if (canonical === 'teacher_enquiries') return '/admin/teacher-enquiries/';
         if (canonical === 'demo_enquiries' || canonical === 'demo_bookings') return '/admin/demo-bookings/';
+        if (canonical === 'backup_restore' || canonical === 'backup-restore') return '/admin/backup-restore/';
         const slug = canonical.replace(/_/g, '-');
         return `/admin/${slug}/`;
     }
@@ -72,26 +100,54 @@
         document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('sidebar-active-item');
         });
-        let activeNavId = 'nav-' + primaryModule;
+
+        // Normalize for ID lookup: e.g. 'study_material/assignments' -> 'study_material_assignments'
+        const cleanId = primaryModule.replace(/[\/-]/g, '_');
+        let activeNavId = 'nav-' + cleanId;
+
         if (primaryModule === 'enquiries' || primaryModule === 'contact_enquiries') {
             activeNavId = 'nav-contact_enquiries';
         } else if (primaryModule === 'demo_bookings' || primaryModule === 'demo_enquiries') {
             activeNavId = 'nav-demo_bookings';
+        } else if (primaryModule === 'student_enquiries') {
+            activeNavId = 'nav-student_parent_enquiries';
+        } else if (primaryModule === 'teacher_enquiries') {
+            activeNavId = 'nav-teacher_enquiries';
         }
-        let activeNav = document.getElementById(activeNavId) || (primaryModule.includes('demo') ? document.getElementById('nav-demo_enquiries') : null);
+
+        let activeNav = document.getElementById(activeNavId) || 
+                        document.getElementById('nav-' + primaryModule) ||
+                        (primaryModule.includes('demo') ? document.getElementById('nav-demo_enquiries') : null);
+
         if (activeNav) {
             activeNav.classList.add('sidebar-active-item');
         }
-        if (primaryModule === 'enquiries' || primaryModule === 'contact_enquiries' || primaryModule === 'student_parent_enquiries' || primaryModule === 'teacher_enquiries' || primaryModule === 'demo_enquiries' || primaryModule === 'demo_bookings') {
+
+        // Auto-expand Enquiries submenu if enquiry module selected
+        if (['enquiries', 'contact_enquiries', 'student_parent_enquiries', 'student_enquiries', 'teacher_enquiries', 'demo_enquiries', 'demo_bookings'].includes(primaryModule)) {
             const menu = document.getElementById('enquiriesSubmenu') || document.getElementById('enquiryDropdownMenu');
             const chevron = document.getElementById('enquiriesChevron') || document.getElementById('enquiryChevron');
-            if (menu && menu.style.display !== 'none') {
+            if (menu) {
                 menu.classList.remove('hidden');
                 menu.style.display = 'block';
                 if (chevron) {
                     chevron.style.transform = 'rotate(180deg)';
                     chevron.classList.add('rotate-180');
                 }
+            }
+        }
+
+        // Auto-expand Study Material dropdown if study material child selected
+        if (primaryModule.includes('study_material') || ['assignments', 'dpp', 'dpp_practice', 'tests', 'tests_quizzes', 'test_series', 'pyq', 'pyq_model_papers', 'e_library', 'e_newspaper', 'recorded_lectures'].includes(primaryModule)) {
+            const dd = document.getElementById('dropdown-study-material');
+            const chevron = document.getElementById('chevron-study-material');
+            if (dd) {
+                dd.classList.remove('hidden');
+                dd.style.display = 'block';
+            }
+            if (chevron) {
+                chevron.classList.remove('fa-chevron-right');
+                chevron.classList.add('fa-chevron-down');
             }
         }
     }
@@ -112,9 +168,6 @@
                 sub.style.display = 'block';
                 if (chev) chev.style.transform = 'rotate(180deg)';
                 if (typeof saveOpenSubmenusState === 'function') saveOpenSubmenusState();
-                if (typeof window.navTo === 'function') {
-                    window.navTo('enquiries', e);
-                }
             } else {
                 sub.classList.add('hidden');
                 sub.style.display = 'none';
@@ -171,8 +224,94 @@
     }
     window.triggerModuleInit = triggerModuleInit;
 
-    // 3. Authoritative Module Loader (Single In-Flight Fetch & Safe Script Lifecycle)
-    async function loadAdminModule(rawName, updateHistory = true, forceReload = false) {
+    // In-Memory Module Cache & Prefetcher (Instantaneous SPA Navigation)
+    const moduleHtmlCache = new Map();
+    const MODULE_CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+
+    function invalidateAdminModuleCache(moduleName) {
+        if (!moduleName) {
+            moduleHtmlCache.clear();
+            return;
+        }
+        const clean = moduleName.replace(/[\/-]/g, '_');
+        for (const key of moduleHtmlCache.keys()) {
+            if (key === clean || key.startsWith(clean + '?')) {
+                moduleHtmlCache.delete(key);
+            }
+        }
+    }
+    window.invalidateAdminModuleCache = invalidateAdminModuleCache;
+
+    function renderModuleHtml(html, canonical, updateHistory, queryPart) {
+        const mainContent = document.getElementById('main-content');
+        if (!mainContent) return false;
+
+        if (updateHistory) {
+            let cleanPath = getCleanAdminModulePath(canonical);
+            if (queryPart) {
+                cleanPath += '?' + queryPart;
+            }
+            if (window.location.pathname + window.location.search !== cleanPath) {
+                history.pushState(null, null, cleanPath);
+            }
+        }
+
+        highlightSidebar(canonical);
+
+        mainContent.setAttribute('data-active-module', canonical);
+        mainContent.removeAttribute('data-server-rendered');
+        mainContent.innerHTML = html;
+        mainContent.style.opacity = '1';
+        mainContent.style.pointerEvents = 'auto';
+        mainContent.scrollTop = 0;
+
+        // Safe Script Evaluation Lifecycle
+        const scriptTags = mainContent.querySelectorAll('script');
+        scriptTags.forEach(oldScript => {
+            try {
+                const src = oldScript.getAttribute('src') || '';
+                const type = oldScript.getAttribute('type') || '';
+                if (src && (src.includes('admin_spa.js') || src.includes('admin_router.js') || src.includes('tailwindcss') || src.includes('fontawesome') || src.includes('chart.js') || src.includes('bootstrap'))) {
+                    return; // Skip shared base scripts
+                }
+                const newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                if (oldScript.src) {
+                    newScript.src = oldScript.src;
+                } else {
+                    const code = oldScript.textContent || oldScript.innerHTML || '';
+                    if (code && code.trim()) {
+                        if (type.toLowerCase().includes('json')) {
+                            newScript.textContent = code;
+                        } else {
+                            const funcMatches = code.matchAll(/(?:^|\n)\s*(?:async\s+)?function\s+([a-zA-Z0-9_]+)\s*\(/g);
+                            let exportStatements = '';
+                            const seenFns = new Set();
+                            for (const match of funcMatches) {
+                                const fnName = match[1];
+                                if (!seenFns.has(fnName)) {
+                                    seenFns.add(fnName);
+                                    exportStatements += `try { if (typeof ${fnName} === 'function') window.${fnName} = ${fnName}; } catch(e){}\n`;
+                                }
+                            }
+                            newScript.textContent = "/* [SAFE SPA MODULE SCRIPT EVALUATION] */\n(function() {\n" + code + "\n" + exportStatements + "\n})();";
+                        }
+                    }
+                }
+                if (oldScript.parentNode) {
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                }
+            } catch (scriptErr) {
+                console.warn('[ADMIN ROUTER] Dynamic script execution error caught safely:', scriptErr);
+            }
+        });
+
+        triggerModuleInit(canonical);
+        finishNavProgressBar();
+        return true;
+    }
+
+    function resolveEndpoint(rawName) {
         const rawStr = String(rawName || 'dashboard').trim();
         const parts = rawStr.split('?');
         const pathPart = parts[0];
@@ -189,13 +328,44 @@
         if (canonical === 'student_enquiries') canonical = 'student_parent_enquiries';
         if (canonical === 'recorded_lectures') canonical = 'study_material';
 
-        const requestKey = canonical + (queryPart ? ('?' + queryPart) : '');
-
-        // In-flight deduplication: Return existing active Promise for module
-        if (moduleLoadPromises[requestKey]) {
-            console.log('[ADMIN MODULE IN-FLIGHT REUSE]', requestKey);
-            return moduleLoadPromises[requestKey];
+        let baseEndpoint = '';
+        if (pathPart.startsWith('/admin/') || pathPart.startsWith('/admin-module/')) {
+            baseEndpoint = pathPart.endsWith('/') ? pathPart : (pathPart + '/');
+        } else {
+            baseEndpoint = window.ADMIN_MODULES[pathPart] || window.ADMIN_MODULES[canonical];
+            if (!baseEndpoint) {
+                const slug = canonical.replace(/_/g, '-');
+                baseEndpoint = `/admin/${slug}/`;
+            }
         }
+        const endpoint = baseEndpoint + (queryPart ? ('?' + queryPart) : '');
+        const requestKey = canonical + (queryPart ? ('?' + queryPart) : '');
+        return { canonical, endpoint, requestKey, queryPart, pathPart };
+    }
+
+    // Speculative Module Prefetcher on Hover / Touch
+    function prefetchAdminModule(rawName) {
+        if (!rawName) return;
+        const { endpoint, requestKey } = resolveEndpoint(rawName);
+        const cached = moduleHtmlCache.get(requestKey);
+        if (cached && (Date.now() - cached.time < MODULE_CACHE_TTL)) return;
+        if (moduleLoadPromises[requestKey]) return;
+
+        fetch(endpoint, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            priority: 'low'
+        }).then(res => {
+            if (res.ok) return res.text();
+            throw new Error('Not ok');
+        }).then(html => {
+            moduleHtmlCache.set(requestKey, { html, time: Date.now() });
+        }).catch(() => {});
+    }
+    window.prefetchAdminModule = prefetchAdminModule;
+
+    // 3. Authoritative Module Loader (Instant Cache First + Single In-Flight Fetch & Safe Script Lifecycle)
+    async function loadAdminModule(rawName, updateHistory = true, forceReload = false) {
+        const { canonical, endpoint, requestKey, queryPart } = resolveEndpoint(rawName);
 
         const mainContent = document.getElementById('main-content');
         if (!mainContent) return false;
@@ -205,29 +375,37 @@
 
         // If module and query are identical and not forceReload, avoid redundant fetch
         if (!forceReload && currentActive === canonical && currentSearch === queryPart && !moduleLoadPromises[requestKey]) {
-            console.log('[ADMIN NAV] Module and filters already active, skipping duplicate request:', canonical);
             highlightSidebar(canonical);
             return false;
         }
+
+        // Instant Cache Hit: 0ms Switch!
+        if (!forceReload) {
+            const cached = moduleHtmlCache.get(requestKey);
+            if (cached && (Date.now() - cached.time < MODULE_CACHE_TTL)) {
+                console.log('[ADMIN MODULE INSTANT CACHE HIT]', requestKey);
+                highlightSidebar(canonical);
+                renderModuleHtml(cached.html, canonical, updateHistory, queryPart);
+                return true;
+            }
+        }
+
+        // In-flight deduplication: Return existing active Promise for module
+        if (moduleLoadPromises[requestKey]) {
+            console.log('[ADMIN MODULE IN-FLIGHT REUSE]', requestKey);
+            return moduleLoadPromises[requestKey];
+        }
+
+        highlightSidebar(canonical);
+        showNavProgressBar();
+        mainContent.style.transition = 'opacity 0.1s ease';
+        mainContent.style.opacity = '0.7';
 
         const navGen = ++currentNavGeneration;
         activeLoadingModule = canonical;
 
         moduleLoadPromises[requestKey] = (async () => {
             try {
-                let baseEndpoint = '';
-                if (pathPart.startsWith('/admin/') || pathPart.startsWith('/admin-module/')) {
-                    baseEndpoint = pathPart.endsWith('/') ? pathPart : (pathPart + '/');
-                } else {
-                    baseEndpoint = window.ADMIN_MODULES[pathPart] || window.ADMIN_MODULES[canonical];
-                    if (!baseEndpoint) {
-                        const slug = canonical.replace(/_/g, '-');
-                        baseEndpoint = `/admin/${slug}/`;
-                    }
-                }
-
-                const endpoint = baseEndpoint + (queryPart ? ('?' + queryPart) : '');
-
                 console.log('[ADMIN NAV]', rawName);
                 console.log('[ADMIN MODULE REQUEST]', endpoint);
 
@@ -239,7 +417,6 @@
 
                 console.log('[ADMIN MODULE RESPONSE]', response.status);
 
-                // Prevent stale response from overwriting newer navigation DOM state
                 if (navGen !== currentNavGeneration) {
                     console.log('[ADMIN MODULE STALE ABORT]', rawName, 'Gen:', navGen, 'CurrentGen:', currentNavGeneration);
                     return false;
@@ -262,68 +439,9 @@
                 }
 
                 const html = await response.text();
+                moduleHtmlCache.set(requestKey, { html, time: Date.now() });
 
-                if (updateHistory) {
-                    let cleanPath = getCleanAdminModulePath(canonical);
-                    if (queryPart) {
-                        cleanPath += '?' + queryPart;
-                    }
-                    if (window.location.pathname + window.location.search !== cleanPath) {
-                        history.pushState(null, null, cleanPath);
-                    }
-                }
-
-                highlightSidebar(canonical);
-
-                mainContent.setAttribute('data-active-module', canonical);
-                mainContent.removeAttribute('data-server-rendered');
-                mainContent.innerHTML = html;
-                mainContent.style.opacity = '1';
-
-                // Safe Script Evaluation Lifecycle:
-                // Isolates top-level let/const in IIFE closure to eliminate SyntaxError collisions upon module reload,
-                // while auto-binding top-level declared functions onto window for inline onclick handlers.
-                const scriptTags = mainContent.querySelectorAll('script');
-                scriptTags.forEach(oldScript => {
-                    try {
-                        const src = oldScript.getAttribute('src') || '';
-                        const type = oldScript.getAttribute('type') || '';
-                        if (src && (src.includes('admin_spa.js') || src.includes('admin_router.js') || src.includes('tailwindcss') || src.includes('fontawesome') || src.includes('chart.js') || src.includes('bootstrap'))) {
-                            return; // Skip shared base scripts
-                        }
-                        const newScript = document.createElement('script');
-                        Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                        if (oldScript.src) {
-                            newScript.src = oldScript.src;
-                        } else {
-                            const code = oldScript.textContent || oldScript.innerHTML || '';
-                            if (code && code.trim()) {
-                                if (type.toLowerCase().includes('json')) {
-                                    newScript.textContent = code;
-                                } else {
-                                    const funcMatches = code.matchAll(/(?:^|\n)\s*(?:async\s+)?function\s+([a-zA-Z0-9_]+)\s*\(/g);
-                                    let exportStatements = '';
-                                    const seenFns = new Set();
-                                    for (const match of funcMatches) {
-                                        const fnName = match[1];
-                                        if (!seenFns.has(fnName)) {
-                                            seenFns.add(fnName);
-                                            exportStatements += `try { if (typeof ${fnName} === 'function') window.${fnName} = ${fnName}; } catch(e){}\n`;
-                                        }
-                                    }
-                                    newScript.textContent = "/* [SAFE SPA MODULE SCRIPT EVALUATION] */\n(function() {\n" + code + "\n" + exportStatements + "\n})();";
-                                }
-                            }
-                        }
-                        if (oldScript.parentNode) {
-                            oldScript.parentNode.replaceChild(newScript, oldScript);
-                        }
-                    } catch (scriptErr) {
-                        console.warn('[ADMIN ROUTER] Dynamic script execution error caught safely:', scriptErr);
-                    }
-                });
-
-                triggerModuleInit(canonical);
+                renderModuleHtml(html, canonical, updateHistory, queryPart);
                 console.log('[ADMIN MODULE LOADED]', rawName);
                 return true;
 
@@ -340,6 +458,11 @@
             } finally {
                 activeLoadingModule = null;
                 delete moduleLoadPromises[requestKey];
+                finishNavProgressBar();
+                if (mainContent) {
+                    mainContent.style.opacity = '1';
+                    mainContent.style.pointerEvents = 'auto';
+                }
             }
         })();
 
@@ -538,6 +661,56 @@
                 }
             }
         });
+
+        // C. Hover & Touch Speculative Prefetching on Admin Sidebar Items
+        function extractTargetModule(el) {
+            if (!el) return '';
+            const onclickAttr = el.getAttribute('onclick') || '';
+            const match = onclickAttr.match(/navTo\(['"]([^'"]+)['"]\)/);
+            if (match && match[1]) return match[1];
+            if (el.id && el.id.startsWith('nav-')) return el.id.replace('nav-', '');
+            if (el.dataset && el.dataset.module) return el.dataset.module;
+            const href = el.getAttribute('href') || '';
+            if (href.includes('/admin/')) {
+                const segs = href.split('/admin/')[1].split('/').filter(Boolean);
+                if (segs.length > 0) return segs[0].replace(/-/g, '_');
+            }
+            return '';
+        }
+
+        document.addEventListener('mouseover', function(e) {
+            const navLink = e.target.closest('.nav-item, [onclick*="navTo"]');
+            const targetMod = extractTargetModule(navLink);
+            if (targetMod && targetMod !== 'dashboard') {
+                prefetchAdminModule(targetMod);
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchstart', function(e) {
+            const navLink = e.target.closest('.nav-item, [onclick*="navTo"]');
+            const targetMod = extractTargetModule(navLink);
+            if (targetMod && targetMod !== 'dashboard') {
+                prefetchAdminModule(targetMod);
+            }
+        }, { passive: true });
+
+        // D. Automatic Idle Prefetch for Top Admin Modules (0ms First Click)
+        function prefetchKeyAdminModules() {
+            const keyModules = [
+                'students', 'teachers', 'courses', 'contact_enquiries',
+                'student_parent_enquiries', 'teacher_enquiries', 'live_classes',
+                'study_material', 'payments', 'notices', 'roles_permissions', 'settings'
+            ];
+            keyModules.forEach(mod => {
+                try { prefetchAdminModule(mod); } catch(err) {}
+            });
+        }
+
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(prefetchKeyAdminModules, { timeout: 2500 });
+        } else {
+            setTimeout(prefetchKeyAdminModules, 1200);
+        }
     }
 
 })(window, document);

@@ -48,20 +48,21 @@
         function dismissLoaderOverlay() {
             if (dismissed) return;
             dismissed = true;
-            loaderEl.classList.add('hidden', 'is-hidden');
+            loaderEl.style.transition = 'opacity 0.25s ease-out';
             loaderEl.style.opacity = '0';
             loaderEl.style.pointerEvents = 'none';
             document.body.classList.remove('app-is-loading', 'loader-active');
             document.documentElement.classList.remove('app-is-loading', 'loader-active');
             setTimeout(function() {
+                loaderEl.classList.add('hidden', 'is-hidden');
                 if (loaderEl && loaderEl.parentNode) {
                     loaderEl.parentNode.removeChild(loaderEl);
                 }
-            }, 400);
+            }, 250);
         }
 
-        const minDuration = parseInt("{{ platform_active_loader.minimum_display_time|default:500 }}") || 500;
-        const maxDuration = Math.min(parseInt("{{ platform_active_loader.maximum_display_time|default:3500 }}") || 3500, 3500);
+        const minDuration = Math.min(parseInt("{{ platform_active_loader.minimum_display_time|default:0 }}") || 0, 200);
+        const maxDuration = Math.min(parseInt("{{ platform_active_loader.maximum_display_time|default:1000 }}") || 1000, 1500);
         
         const maxSafetyTimer = setTimeout(dismissLoaderOverlay, maxDuration);
 
@@ -78,34 +79,31 @@
                 const fb = document.getElementById('videoLoaderBufferFallback');
                 if (fb) fb.classList.add('hidden');
             });
-            videoEl.addEventListener('loadedmetadata', function() {
-                if (videoEl.duration && !isNaN(videoEl.duration) && videoEl.duration > 0) {
-                    setTimeout(dismissLoaderOverlay, Math.min(videoEl.duration * 1000, maxDuration));
-                }
-            });
             videoEl.addEventListener('error', dismissLoaderOverlay);
 
             try {
                 const p = videoEl.play();
                 if (p && p.catch) {
                     p.catch(function(err) {
-                        const fb = document.getElementById('videoLoaderBufferFallback');
-                        if (fb) fb.classList.remove('hidden');
-                        setTimeout(dismissLoaderOverlay, minDuration);
+                        dismissLoaderOverlay();
                     });
                 }
             } catch(e) {
-                setTimeout(dismissLoaderOverlay, minDuration);
+                dismissLoaderOverlay();
             }
-        } else {
-            window.addEventListener('load', function() {
-                setTimeout(dismissLoaderOverlay, minDuration);
-            });
         }
 
-        window.addEventListener('load', function() {
-            setTimeout(dismissLoaderOverlay, minDuration + 500);
-        });
+        // Dismiss immediately as soon as DOM is ready or window loads
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(dismissLoaderOverlay, minDuration);
+        } else {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(dismissLoaderOverlay, minDuration);
+            });
+            window.addEventListener('load', function() {
+                dismissLoaderOverlay();
+            });
+        }
     })();
 </script>
 {% endif %}

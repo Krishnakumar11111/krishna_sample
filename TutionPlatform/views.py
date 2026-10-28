@@ -2,6 +2,7 @@ import urllib.parse
 import urllib.request
 import json
 import random
+import time
 from urllib.parse import quote
 from django.utils.text import slugify
 from django.shortcuts import render, redirect, get_object_or_404
@@ -162,7 +163,25 @@ def log_user_auth_event(request, activity_type, email, full_name=None, mobile=No
 # HTML Page Views & Auth Engine
 # ===========================
 
+_HOME_BASE_CACHE = {}
+_HOME_BASE_CACHE_TIME = 0
+
 def home(request, auth_initial_view=None, initial_popup=None):
+    global _HOME_BASE_CACHE, _HOME_BASE_CACHE_TIME
+    now = time.time()
+
+    search_city = request.GET.get('city', '').strip()
+    search_subject = request.GET.get('subject', '').strip()
+    search_class = request.GET.get('class', '').strip()
+    is_filtered = bool(search_city or search_subject or search_class)
+
+    # Instant sub-second response for standard homepage and login/register modals
+    if not is_filtered and _HOME_BASE_CACHE and (now - _HOME_BASE_CACHE_TIME < 60):
+        context = dict(_HOME_BASE_CACHE)
+        context['auth_initial_view'] = auth_initial_view
+        context['initial_popup'] = initial_popup
+        return render(request, 'edutrust_tuition_platform.html', context)
+
     import re
     from django.db.models import Q
     from django.utils import timezone
@@ -173,17 +192,14 @@ def home(request, auth_initial_view=None, initial_popup=None):
     from .website_mode import filter_teachers_query
     approved_tutors = TeacherProfile.objects.filter(verification_status='Approved', approved=True, account_status='Active').order_by('-updated_at')
     approved_tutors = filter_teachers_query(approved_tutors, request=request)
-    approved_tutors_count = approved_tutors.count()
-    
-    search_city = request.GET.get('city', '').strip()
-    search_subject = request.GET.get('subject', '').strip()
-    search_class = request.GET.get('class', '').strip()
+    approved_tutors_count = total_teachers or approved_tutors.count()
+    approved_tutors_preview = list(approved_tutors[:12])
 
     from TutionPlatform.models import TuitionRequirement
     
     confirmed_spe_list = []
 
-    # 1. Fetch StudentParentEnquiry
+    # 1. Fetch StudentParentEnquiry (max 25 recent items for fast page load)
     spe_qs = StudentParentEnquiry.objects.filter(status__in=['CONFIRMED', 'APPROVED', 'Confirmed', 'Approved']).order_by('-created_at', '-id')
     if search_city:
         spe_qs = spe_qs.filter(Q(city__icontains=search_city) | Q(location__icontains=search_city) | Q(message__icontains=search_city))
@@ -192,7 +208,7 @@ def home(request, auth_initial_view=None, initial_popup=None):
     if search_class and search_class.lower() not in ['all', 'all classes', 'select class']:
         spe_qs = spe_qs.filter(Q(student_class__icontains=search_class) | Q(message__icontains=search_class))
 
-    for spe in spe_qs:
+    for spe in spe_qs[:25]:
         msg = spe.message or ''
         budget_match = re.search(r'Budget:\s*(.+)', msg)
         parsed_budget = budget_match.group(1).strip() if budget_match else ''
@@ -234,7 +250,7 @@ def home(request, auth_initial_view=None, initial_popup=None):
             'created_ts': spe.created_at.timestamp() if spe.created_at else 0
         })
 
-    # 2. Fetch TuitionRequirement
+    # 2. Fetch TuitionRequirement (max 25 recent items)
     reqs_qs = TuitionRequirement.objects.exclude(Q(id=6) | Q(requirement_id='REQ-6')).filter(
         status__in=['CONFIRMED', 'APPROVED', 'Confirmed', 'Approved', 'Approved/Confirmed', 'Open', 'OPEN', 'Active', 'ACTIVE', 'Published']
     ).order_by('-created_at', '-id')
@@ -246,7 +262,7 @@ def home(request, auth_initial_view=None, initial_popup=None):
     if search_class and search_class.lower() not in ['all', 'all classes', 'select class']:
         reqs_qs = reqs_qs.filter(student_class__icontains=search_class)
 
-    for r in reqs_qs:
+    for r in reqs_qs[:25]:
         subj_val = r.subject or 'General'
         cls_val = r.student_class or 'All Classes'
         loc_val = r.location or r.city or 'India'
@@ -278,7 +294,7 @@ def home(request, auth_initial_view=None, initial_popup=None):
 
     context = {
         'why_choose': why_choose,
-        'approved_tutors': approved_tutors,
+        'approved_tutors': approved_tutors_preview,
         'approved_tutors_count': approved_tutors_count,
         'total_students': total_students,
         'total_teachers': total_teachers,
@@ -287,10 +303,15 @@ def home(request, auth_initial_view=None, initial_popup=None):
         'search_city': search_city,
         'search_subject': search_subject,
         'search_class': search_class,
-        'is_filtered': bool(search_city or search_subject or search_class),
+        'is_filtered': is_filtered,
         'auth_initial_view': auth_initial_view,
         'initial_popup': initial_popup
     }
+
+    if not is_filtered:
+        _HOME_BASE_CACHE = dict(context)
+        _HOME_BASE_CACHE_TIME = now
+
     return render(request, 'edutrust_tuition_platform.html', context)
 
 import hashlib
@@ -1824,21 +1845,34 @@ def success(request):
 def faqs(request):
     return render(request, 'FAQs.html')
 
+_ADMIN_METRICS_CACHE = {}
+_ADMIN_METRICS_CACHE_TIME = 0
+
 def custom_admin(request):
     if not (request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)):
         from django.shortcuts import redirect
         return redirect('/admin/login/')
+
+    global _ADMIN_METRICS_CACHE, _ADMIN_METRICS_CACHE_TIME
+    now = time.time()
+
+    # Fast cache return: Sub-millisecond response for admin reloads
+    if _ADMIN_METRICS_CACHE and (now - _ADMIN_METRICS_CACHE_TIME < 180):
+        cached_ctx = dict(_ADMIN_METRICS_CACHE)
+        return render(request, 'admin.html', cached_ctx)
+
     try:
         from django.contrib.auth.models import User
+        from bookings.models import FreeTrialBooking
         from TutionPlatform.models import (
             StudentProfile, TeacherProfile, LiveClass, StudyMaterial,
             OnlineTest, CourseBatch, CourseLecture, HomeworkAssignment, NoticeBoard, ActivityLog, CourseEnrollment,
-            StudentParentEnquiry, TeacherEnquiry
+            StudentParentEnquiry, TeacherEnquiry, PaymentTransaction
         )
         
         all_students_qs = StudentProfile.objects.order_by('-id')
         all_teachers_qs = TeacherProfile.objects.order_by('-id')
-        all_payments_qs = CourseEnrollment.objects.order_by('-id')
+        all_payments_qs = PaymentTransaction.objects.order_by('-id')
         all_courses_qs = CourseBatch.objects.order_by('-id')
         all_live_qs = LiveClass.objects.exclude(status='Deleted').order_by('-id')
         all_study_qs = StudyMaterial.objects.exclude(status='Deleted').order_by('-id')
@@ -1846,51 +1880,62 @@ def custom_admin(request):
         all_tests_qs = OnlineTest.objects.order_by('-id')
         all_notices_qs = NoticeBoard.objects.order_by('-id')
         all_logs_qs = ActivityLog.objects.order_by('-id')[:20]
-        
-        total_students = all_students_qs.count()
-        active_students = all_students_qs.filter(Q(account_status='Active') | Q(account_status='Approved') | Q(account_status='Verified')).count()
-        
-        total_teachers = all_teachers_qs.count()
-        active_teachers = all_teachers_qs.filter(Q(account_status='Active') | Q(verification_status='Approved')).count()
-        
-        total_users = total_students + total_teachers + 1  # Including Super Admin
+
+        # Consolidated Aggregated DB Counts (1 query per model instead of 2-4)
+        stu_agg = all_students_qs.aggregate(
+            total=Count('id'),
+            active=Count('id', filter=Q(account_status__in=['Active', 'Approved', 'Verified']))
+        )
+        total_students = stu_agg['total'] or 0
+        active_students = stu_agg['active'] or 0
+
+        tch_agg = all_teachers_qs.aggregate(
+            total=Count('id'),
+            active=Count('id', filter=Q(account_status='Active') | Q(verification_status='Approved'))
+        )
+        total_teachers = tch_agg['total'] or 0
+        active_teachers = tch_agg['active'] or 0
+
+        live_agg = all_live_qs.aggregate(
+            total=Count('id'),
+            live_today=Count('id', filter=Q(status='Live')),
+            upcoming=Count('id', filter=Q(status__in=['Upcoming', 'Scheduled'])),
+            cancelled=Count('id', filter=Q(status='Cancelled'))
+        )
+        total_live_classes = live_agg['total'] or 0
+        live_today_count = live_agg['live_today'] or 0
+        upcoming_classes_count = live_agg['upcoming'] or 0
+        cancelled_classes_count = live_agg['cancelled'] or 0
+
+        total_users = total_students + total_teachers + 1
         total_courses = all_courses_qs.count()
-        total_live_classes = LiveClass.objects.count()
-        live_today_count = LiveClass.objects.filter(status='Live').count()
-        upcoming_classes_count = LiveClass.objects.filter(Q(status='Upcoming') | Q(status='Scheduled')).count()
-        cancelled_classes_count = LiveClass.objects.filter(status='Cancelled').count()
         recorded_count = CourseLecture.objects.count()
-        
-        total_videos = CourseLecture.objects.count()
+        total_videos = recorded_count
         total_study_materials = all_study_qs.count()
         total_assignments = all_assignments_qs.count()
         total_tests = all_tests_qs.count()
         total_notices = all_notices_qs.count()
         total_demo_bookings = FreeTrialBooking.objects.count()
-        
-        # Calculate Real Revenue
-        total_revenue = 0
+
+        # Calculate Revenue (Sum in single query)
+        rev_agg = PaymentTransaction.objects.filter(status='Success').aggregate(total_rev=Sum('amount'))
+        total_revenue = float(rev_agg['total_rev'] or 0)
+
         all_payments_list = []
-        for p in all_payments_qs:
-            amt = 0
-            if hasattr(p, 'amount') and p.amount:
-                try:
-                    amt = float(p.amount)
-                    total_revenue += amt
-                except Exception:
-                    pass
+        for p in all_payments_qs[:30]:
+            amt = float(p.amount) if hasattr(p, 'amount') and p.amount else 0
             all_payments_list.append({
                 'id': getattr(p, 'id', 'N/A'),
-                'student_name': getattr(p, 'student_name', None) or (getattr(p.student, 'full_name', 'Student') if hasattr(p, 'student') and p.student else 'Student'),
-                'course_title': getattr(p, 'course_title', None) or (getattr(p.course, 'title', 'Course Batch') if hasattr(p, 'course') and p.course else 'Course Batch'),
+                'student_name': getattr(p, 'student_name', 'Student'),
+                'course_title': getattr(p, 'course_title', 'Course Batch'),
                 'amount': amt,
                 'status': getattr(p, 'status', 'Completed'),
                 'created_at': p.created_at.strftime('%Y-%m-%d %H:%M') if hasattr(p, 'created_at') and p.created_at else ''
             })
 
-        # Serialized Real Data
+        # Serialized Preview Slices (max 30 items for instant load)
         real_students = []
-        for s in all_students_qs:
+        for s in all_students_qs[:30]:
             real_students.append({
                 'student_id': s.student_id or f"STU-{s.id}",
                 'full_name': s.full_name or 'Student',
@@ -1902,7 +1947,7 @@ def custom_admin(request):
             })
 
         real_teachers = []
-        for t in all_teachers_qs:
+        for t in all_teachers_qs[:30]:
             real_teachers.append({
                 'teacher_id': t.teacher_id or f"TCH-{t.id}",
                 'full_name': t.full_name or 'Teacher',
@@ -1915,7 +1960,7 @@ def custom_admin(request):
             })
 
         real_courses = []
-        for c in all_courses_qs:
+        for c in all_courses_qs[:30]:
             real_courses.append({
                 'title': getattr(c, 'title', None) or getattr(c, 'course_name', 'Course Batch'),
                 'category': getattr(c, 'category', 'Class 10 CBSE'),
@@ -1925,7 +1970,7 @@ def custom_admin(request):
             })
 
         real_live_classes = []
-        for l in all_live_qs:
+        for l in all_live_qs[:30]:
             real_live_classes.append({
                 'title': getattr(l, 'topic', None) or getattr(l, 'title', 'Live Session'),
                 'subject': getattr(l, 'subject', 'Science'),
@@ -1935,7 +1980,7 @@ def custom_admin(request):
             })
 
         real_study_materials = []
-        for sm in all_study_qs:
+        for sm in all_study_qs[:30]:
             real_study_materials.append({
                 'title': sm.title,
                 'class_name': sm.class_name,
@@ -1945,7 +1990,7 @@ def custom_admin(request):
             })
 
         real_notices = []
-        for n in all_notices_qs:
+        for n in all_notices_qs[:20]:
             real_notices.append({
                 'title': getattr(n, 'title', 'Notice'),
                 'message': getattr(n, 'message', getattr(n, 'content', '')),
@@ -1953,7 +1998,7 @@ def custom_admin(request):
             })
 
         real_logs = []
-        for lg in all_logs_qs:
+        for lg in all_logs_qs[:20]:
             real_logs.append({
                 'user_name': lg.user_name,
                 'user_role': lg.user_role,
@@ -1965,7 +2010,7 @@ def custom_admin(request):
 
         all_student_enquiries_qs = StudentParentEnquiry.objects.order_by('-created_at')
         real_student_enquiries = []
-        for se in all_student_enquiries_qs:
+        for se in all_student_enquiries_qs[:30]:
             real_student_enquiries.append({
                 'id': se.id,
                 'full_name': se.full_name,
@@ -1988,7 +2033,7 @@ def custom_admin(request):
 
         all_teacher_enquiries_qs = TeacherEnquiry.objects.filter(is_removed=False).order_by('-created_at')
         real_teacher_enquiries = []
-        for te in all_teacher_enquiries_qs:
+        for te in all_teacher_enquiries_qs[:30]:
             real_teacher_enquiries.append({
                 'id': te.id,
                 'full_name': te.full_name,
@@ -2012,9 +2057,9 @@ def custom_admin(request):
                 'updated_at': te.updated_at.strftime('%b %d, %Y %I:%M %p') if hasattr(te, 'updated_at') and te.updated_at else ''
             })
 
-        all_demo_enquiries_qs = FreeTrialBooking.objects.all().order_by('-created_at')
+        all_demo_enquiries_qs = FreeTrialBooking.objects.select_related('assigned_teacher').all().order_by('-created_at')
         real_demo_enquiries = []
-        for de in all_demo_enquiries_qs:
+        for de in all_demo_enquiries_qs[:30]:
             real_demo_enquiries.append({
                 'id': de.id,
                 'booking_id': de.booking_id or f"DEMO-{de.id}",
@@ -2035,8 +2080,6 @@ def custom_admin(request):
 
     except Exception as e:
         print("Admin metrics calculation error:", e)
-        all_students_qs = []
-        all_teachers_qs = []
         total_students = 0
         total_teachers = 0
         total_users = 0
@@ -2048,6 +2091,7 @@ def custom_admin(request):
         total_assignments = 0
         total_tests = 0
         total_notices = 0
+        total_demo_bookings = 0
         total_revenue = 0
         real_students = []
         real_teachers = []
@@ -2062,8 +2106,6 @@ def custom_admin(request):
         real_demo_enquiries = []
 
     context = {
-        'all_students': list(all_students_qs),
-        'all_teachers': list(all_teachers_qs),
         'total_students': total_students,
         'total_teachers': total_teachers,
         'total_users': total_users,
@@ -2085,11 +2127,59 @@ def custom_admin(request):
         'notices_json': json.dumps(real_notices),
         'logs_json': json.dumps(real_logs),
         'payments_json': json.dumps(all_payments_list),
-        'student_parent_enquiries_json': json.dumps(real_student_enquiries if 'real_student_enquiries' in locals() else []),
-        'teacher_enquiries_json': json.dumps(real_teacher_enquiries if 'real_teacher_enquiries' in locals() else []),
-        'demo_enquiries_json': json.dumps(real_demo_enquiries if 'real_demo_enquiries' in locals() else []),
+        'student_parent_enquiries_json': json.dumps(real_student_enquiries),
+        'teacher_enquiries_json': json.dumps(real_teacher_enquiries),
+        'demo_enquiries_json': json.dumps(real_demo_enquiries),
     }
-    return admin_dashboard_view(request)
+    _ADMIN_METRICS_CACHE = dict(context)
+    _ADMIN_METRICS_CACHE_TIME = now
+
+    return render(request, 'admin.html', context)
+
+_MODULE_COUNTS_CACHE = {}
+_MODULE_COUNTS_CACHE_TIME = 0
+
+def _get_cached_module_counts():
+    global _MODULE_COUNTS_CACHE, _MODULE_COUNTS_CACHE_TIME
+    now = time.time()
+    if _MODULE_COUNTS_CACHE and (now - _MODULE_COUNTS_CACHE_TIME < 180):
+        return dict(_MODULE_COUNTS_CACHE)
+
+    try:
+        from TutionPlatform.models import (
+            StudentProfile, TeacherProfile, CourseBatch, LiveClass,
+            StudyMaterial, CourseLecture, HomeworkAssignment, OnlineTest,
+            ELibraryBook, ActivityLog, PaymentTransaction
+        )
+        total_students = StudentProfile.objects.count()
+        total_teachers = TeacherProfile.objects.count()
+        total_courses = CourseBatch.objects.count()
+        total_rec = LiveClass.objects.exclude(status='Deleted').filter(
+            (Q(recorded_video_file__isnull=False) & ~Q(recorded_video_file='')) |
+            (Q(recorded_video_link__isnull=False) & ~Q(recorded_video_link=''))
+        ).count() + CourseLecture.objects.count()
+
+        _MODULE_COUNTS_CACHE = {
+            'total_students': total_students,
+            'total_teachers': total_teachers,
+            'total_courses': total_courses,
+            'total_users': total_students + total_teachers,
+            'total_revenue': float(PaymentTransaction.objects.filter(status='Success').aggregate(total=Sum('amount'))['total'] or 0),
+            'live_today_count': LiveClass.objects.filter(status='Live').count(),
+            'recorded_count': total_rec,
+            'total_videos': total_rec,
+            'total_study_materials': StudyMaterial.objects.exclude(status='Deleted').count(),
+            'total_assignments': HomeworkAssignment.objects.count(),
+            'total_quizzes': OnlineTest.objects.count(),
+            'total_tests': OnlineTest.objects.count(),
+            'total_dpps': HomeworkAssignment.objects.count(),
+            'total_books': ELibraryBook.objects.count(),
+            'total_notices': ActivityLog.objects.filter(activity_type__icontains='Notice').count(),
+        }
+        _MODULE_COUNTS_CACHE_TIME = now
+    except Exception:
+        pass
+    return dict(_MODULE_COUNTS_CACHE)
 
 def admin_module_view(request, module_name, extra_context=None):
     from django.template.loader import get_template
@@ -2178,78 +2268,69 @@ def admin_module_view(request, module_name, extra_context=None):
             CourseLecture, CourseMaterial, HomeworkAssignment, OnlineTest,
             PreviousYearQuestion, ELibraryBook, CourseSubject
         )
-        recorded_file_lectures = LiveClass.objects.filter(
-            Q(recorded_video_file__isnull=False) & ~Q(recorded_video_file='')
-        ).exclude(status='Deleted')
-        recorded_link_lectures = LiveClass.objects.filter(
-            (Q(recorded_video_link__isnull=False) & ~Q(recorded_video_link='')) |
-            (Q(meet_link__isnull=False) & ~Q(meet_link=''))
-        ).exclude(status='Deleted')
-        course_video_lectures = CourseLecture.objects.all()
-        total_rec = recorded_file_lectures.count() + recorded_link_lectures.count() + course_video_lectures.count()
+
+        counts_ctx = _get_cached_module_counts()
 
         context = {
             'active_module': clean_module,
             'subroute': request.GET.get('subroute', ''),
-            'all_students': StudentProfile.objects.order_by('-id'),
-            'all_teachers': TeacherProfile.objects.order_by('-id'),
-            'all_courses': CourseBatch.objects.order_by('-id'),
-            'all_payments': PaymentTransaction.objects.order_by('-id'),
-            'all_live_classes': LiveClass.objects.order_by('-id'),
-            'all_study_materials': StudyMaterial.objects.exclude(status='Deleted').order_by('-id'),
-            'admin_notifications': AdminNotification.objects.order_by('-id'),
-            'recent_logs': ActivityLog.objects.order_by('-id')[:10],
-            'total_students': StudentProfile.objects.count(),
-            'total_teachers': TeacherProfile.objects.count(),
-            'total_courses': CourseBatch.objects.count(),
-            'total_users': StudentProfile.objects.count() + TeacherProfile.objects.count(),
-            'total_revenue': PaymentTransaction.objects.filter(status='Success').aggregate(total=Sum('amount'))['total'] or 0,
-            'live_today_count': LiveClass.objects.filter(created_at__date=timezone.now().date()).count() or LiveClass.objects.count(),
-            'recorded_count': total_rec,
-            'total_videos': total_rec,
-            'total_study_materials': StudyMaterial.objects.exclude(status='Deleted').count(),
-            'total_assignments': HomeworkAssignment.objects.count(),
-            'total_quizzes': OnlineTest.objects.count(),
-            'total_tests': OnlineTest.objects.count(),
-            'total_dpps': HomeworkAssignment.objects.count(),
-            'total_books': ELibraryBook.objects.count(),
-            'total_notices': ActivityLog.objects.filter(activity_type__icontains='Notice').count(),
         }
+        context.update(counts_ctx)
+
+        if clean_module == 'dashboard':
+            context.update({
+                'all_students': StudentProfile.objects.order_by('-id')[:10],
+                'all_teachers': TeacherProfile.objects.order_by('-id')[:10],
+                'all_courses': CourseBatch.objects.order_by('-id')[:10],
+                'admin_notifications': AdminNotification.objects.order_by('-id')[:10],
+                'recent_logs': ActivityLog.objects.order_by('-id')[:10],
+            })
+        elif clean_module in ['courses', 'subjects', 'chapters', 'manage_course', 'course_wizard']:
+            context.update({
+                'all_courses': CourseBatch.objects.order_by('-id')[:50],
+                'all_course_subjects': CourseSubject.objects.all()[:50],
+            })
+        elif clean_module in ['payments', 'wallet', 'invoices', 'location_analytics']:
+            context.update({
+                'all_payments': PaymentTransaction.objects.order_by('-id')[:50],
+            })
+        elif clean_module in ['live_classes', 'live_classes_center']:
+            context.update({
+                'all_live_classes': LiveClass.objects.exclude(status='Deleted').order_by('-id')[:50],
+            })
+        elif clean_module in ['study_material', 'recorded_lectures', 'study_materials', 'assignments', 'dpp', 'tests', 'test_series', 'pyq', 'e_library', 'e_newspaper', 'notices', 'announcements']:
+            context.update({
+                'all_study_materials': StudyMaterial.objects.exclude(status='Deleted').order_by('-id')[:50],
+            })
+        else:
+            context.update({
+                'all_students': StudentProfile.objects.order_by('-id')[:20],
+                'all_teachers': TeacherProfile.objects.order_by('-id')[:20],
+                'all_courses': CourseBatch.objects.order_by('-id')[:20],
+            })
 
         # Real DB counts for study_material and academic modules
         if clean_module in ['study_material', 'recorded_lectures', 'study_materials', 'assignments', 'dpp', 'tests', 'test_series', 'pyq', 'e_library', 'e_newspaper', 'notices', 'announcements']:
             recorded_file_lectures = LiveClass.objects.filter(
                 Q(recorded_video_file__isnull=False) & ~Q(recorded_video_file='')
-            ).exclude(status='Deleted').order_by('-id')
+            ).exclude(status='Deleted').order_by('-id')[:30]
             
             recorded_link_lectures = LiveClass.objects.filter(
                 (Q(recorded_video_link__isnull=False) & ~Q(recorded_video_link='')) |
                 (Q(meet_link__isnull=False) & ~Q(meet_link=''))
-            ).exclude(status='Deleted').order_by('-id')
+            ).exclude(status='Deleted').order_by('-id')[:30]
             
-            course_video_lectures = CourseLecture.objects.all().order_by('-id')
+            course_video_lectures = CourseLecture.objects.all().order_by('-id')[:30]
 
             context.update({
-                'total_study_materials': StudyMaterial.objects.exclude(status='Deleted').count(),
-                'total_published': StudyMaterial.objects.filter(status='Published').count(),
-                'total_draft': StudyMaterial.objects.filter(status='Draft').count(),
-                'total_recorded_lectures': recorded_file_lectures.count() + recorded_link_lectures.count() + course_video_lectures.count(),
-                'total_uploaded_file_lectures': recorded_file_lectures.count(),
-                'total_link_lectures': recorded_link_lectures.count() + course_video_lectures.count(),
                 'recorded_file_lectures': recorded_file_lectures,
                 'recorded_link_lectures': recorded_link_lectures,
                 'course_video_lectures': course_video_lectures,
-                'total_live_classes': LiveClass.objects.count(),
-                'conducted_live_classes': LiveClass.objects.filter(status='Ended').count(),
-                'scheduled_live_classes': LiveClass.objects.filter(status='Scheduled').count(),
-                'live_now_classes': LiveClass.objects.filter(status='Live').count(),
-                'total_assignments': HomeworkAssignment.objects.count(),
-                'total_tests': OnlineTest.objects.count(),
                 'total_pyqs': PreviousYearQuestion.objects.count(),
                 'total_ebooks': ELibraryBook.objects.count(),
                 'total_course_materials': CourseMaterial.objects.count(),
-                'all_batches': CourseBatch.objects.order_by('-id'),
-                'all_course_subjects': CourseSubject.objects.all(),
+                'all_batches': CourseBatch.objects.order_by('-id')[:30],
+                'all_course_subjects': CourseSubject.objects.all()[:30],
                 'distinct_classes': StudyMaterial.objects.exclude(status='Deleted').values_list('class_name', flat=True).distinct().order_by('class_name'),
                 'distinct_subjects': StudyMaterial.objects.exclude(status='Deleted').values_list('subject', flat=True).distinct().order_by('subject'),
                 'sm_recent_logs': ActivityLog.objects.filter(activity_type__icontains='Study Material').order_by('-id')[:10],
@@ -9708,10 +9789,15 @@ def admin_teacher_enquiries(request):
     if active_tab not in ['applications', 'enquiries']:
         active_tab = 'applications'
 
-    # Pre-fetch original job budgets map for all TuitionRequirements & StudentParentEnquiries
-    req_map = {r.requirement_id: r.budget for r in TuitionRequirement.objects.all()}
-    req_id_map = {str(r.id): r.budget for r in TuitionRequirement.objects.all()}
-    spe_map = {str(s.id): getattr(s, 'budget', None) for s in StudentParentEnquiry.objects.all()}
+    # Pre-fetch original job budgets map for TuitionRequirements (lightweight values_list)
+    req_map = {}
+    req_id_map = {}
+    spe_map = {}
+    if active_tab == 'applications':
+        for rid, pk_id, b in TuitionRequirement.objects.values_list('requirement_id', 'id', 'budget'):
+            if rid:
+                req_map[rid] = b
+            req_id_map[str(pk_id)] = b
 
     # Fetch Total Counts for Tab Badges
     total_applications_count = TeacherJobApplication.objects.count()
@@ -9861,10 +9947,12 @@ def admin_teacher_enquiries(request):
     page_obj = filtered_list
     apply_realtime_date_grouping(page_obj)
 
-    from bookings.models import FreeTrialBooking
-    from TutionPlatform.models import PaymentTransaction, CourseLecture, LiveClass, CourseBatch, ActivityLog, AdminNotification, StudentProfile
+    is_ajax = (request.headers.get('x-requested-with') == 'XMLHttpRequest')
+    base_template = 'admin_partial_base.html' if is_ajax else 'admin.html'
 
-    total_revenue_val = PaymentTransaction.objects.filter(status='Success').aggregate(total=Sum('amount'))['total'] or 0
+    counts_ctx = {}
+    if not is_ajax:
+        counts_ctx = _get_cached_module_counts()
 
     context = {
         'active_module': 'teacher_enquiries',
@@ -9885,24 +9973,9 @@ def admin_teacher_enquiries(request):
         'subject_list': subject_list,
         'mode_list': mode_list,
         'total_results': len(filtered_list),
-        'total_students': StudentProfile.objects.count(),
-        'total_teachers': TeacherProfile.objects.count(),
-        'total_courses': CourseBatch.objects.count(),
-        'total_live_classes': LiveClass.objects.count(),
-        'live_today_count': LiveClass.objects.filter(status='Live').count(),
-        'upcoming_classes_count': LiveClass.objects.filter(Q(status='Upcoming') | Q(status='Scheduled')).count(),
-        'cancelled_classes_count': LiveClass.objects.filter(status='Cancelled').count(),
-        'recorded_count': CourseLecture.objects.count(),
-        'total_demo_bookings': FreeTrialBooking.objects.count(),
-        'total_revenue': float(total_revenue_val),
-        'all_students': list(StudentProfile.objects.order_by('-id')[:10]),
-        'all_courses': list(CourseBatch.objects.order_by('-id')[:10]),
-        'all_teachers': list(TeacherProfile.objects.order_by('-id')[:10]),
-        'recent_logs': ActivityLog.objects.order_by('-id')[:10],
-        'admin_notifications': AdminNotification.objects.order_by('-id')[:10],
+        'base_template': base_template,
+        **counts_ctx
     }
-    base_template = 'admin_partial_base.html' if request.headers.get('x-requested-with') == 'XMLHttpRequest' else 'admin.html'
-    context['base_template'] = base_template
     return render(request, 'admin/teacher_enquiries.html', context)
 
 
@@ -10090,14 +10163,22 @@ def admin_student_parent_enquiries(request):
     """
     all_qs = StudentParentEnquiry.objects.order_by('-created_at')
 
-    # KPI Metrics (Real DB counts)
+    # KPI Metrics (Single aggregated DB query instead of 6 separate round-trips)
+    agg = all_qs.aggregate(
+        total=Count('id'),
+        student=Count('id', filter=Q(source='STUDENT_REGISTRATION') | Q(source__icontains='STUDENT')),
+        parent=Count('id', filter=Q(source='HIRE_A_TUTOR') | Q(source__icontains='HIRE')),
+        new=Count('id', filter=Q(status='NEW')),
+        confirmed=Count('id', filter=Q(status='CONFIRMED')),
+        rejected=Count('id', filter=Q(status='REJECTED')),
+    )
     kpi = {
-        'total': all_qs.count(),
-        'student': all_qs.filter(Q(source='STUDENT_REGISTRATION') | Q(source__icontains='STUDENT')).count(),
-        'parent': all_qs.filter(Q(source='HIRE_A_TUTOR') | Q(source__icontains='HIRE')).count(),
-        'new': all_qs.filter(status='NEW').count(),
-        'confirmed': all_qs.filter(status='CONFIRMED').count(),
-        'rejected': all_qs.filter(status='REJECTED').count(),
+        'total': agg['total'] or 0,
+        'student': agg['student'] or 0,
+        'parent': agg['parent'] or 0,
+        'new': agg['new'] or 0,
+        'confirmed': agg['confirmed'] or 0,
+        'rejected': agg['rejected'] or 0,
     }
 
     # Search & Filters
@@ -10133,12 +10214,11 @@ def admin_student_parent_enquiries(request):
     if city_filter and city_filter != 'ALL':
         qs = qs.filter(city__iexact=city_filter)
 
-    # Dynamic Filter Options from DB
-    class_list = sorted(list(set([c for c in all_qs.values_list('student_class', flat=True) if c])))
-    city_list = sorted(list(set([c for c in all_qs.values_list('city', flat=True) if c])))
-    
-    # Dynamic Source List from DB
-    raw_sources = sorted(list(set([s for s in all_qs.values_list('source', flat=True) if s])))
+    # Dynamic Filter Options from DB (Fetched in single distinct query)
+    distinct_meta = all_qs.values('student_class', 'city', 'source').distinct()
+    class_list = sorted({m['student_class'] for m in distinct_meta if m.get('student_class')})
+    city_list = sorted({m['city'] for m in distinct_meta if m.get('city')})
+    raw_sources = sorted({m['source'] for m in distinct_meta if m.get('source')})
     source_list = [{'val': s, 'label': format_source_name(s)} for s in raw_sources]
 
     # Pagination (20 per page)
@@ -10183,7 +10263,7 @@ def admin_student_parent_enquiries(request):
         'class_list': class_list,
         'city_list': city_list,
         'source_list': source_list,
-        'total_results': qs.count(),
+        'total_results': paginator.count,
     }
     base_template = 'admin_partial_base.html' if request.headers.get('x-requested-with') == 'XMLHttpRequest' else 'admin.html'
     context['base_template'] = base_template
@@ -10310,14 +10390,22 @@ def admin_demo_bookings(request):
     """
     all_qs = FreeTrialBooking.objects.order_by('-created_at')
 
-    # KPI Metrics (Real DB counts)
+    # KPI Metrics (Single aggregated DB query instead of 6 separate round-trips)
+    agg = all_qs.aggregate(
+        total=Count('id'),
+        pending=Count('id', filter=Q(booking_status__iexact='Pending') | Q(booking_status__iexact='NEW')),
+        confirmed=Count('id', filter=Q(booking_status__iexact='Approved') | Q(booking_status__iexact='Confirmed')),
+        completed=Count('id', filter=Q(booking_status__iexact='Completed')),
+        cancelled=Count('id', filter=Q(booking_status__iexact='Cancelled')),
+        rejected=Count('id', filter=Q(booking_status__iexact='Rejected')),
+    )
     kpi = {
-        'total': all_qs.count(),
-        'pending': all_qs.filter(Q(booking_status__iexact='Pending') | Q(booking_status__iexact='NEW')).count(),
-        'confirmed': all_qs.filter(Q(booking_status__iexact='Approved') | Q(booking_status__iexact='Confirmed')).count(),
-        'completed': all_qs.filter(booking_status__iexact='Completed').count(),
-        'cancelled': all_qs.filter(booking_status__iexact='Cancelled').count(),
-        'rejected': all_qs.filter(booking_status__iexact='Rejected').count(),
+        'total': agg['total'] or 0,
+        'pending': agg['pending'] or 0,
+        'confirmed': agg['confirmed'] or 0,
+        'completed': agg['completed'] or 0,
+        'cancelled': agg['cancelled'] or 0,
+        'rejected': agg['rejected'] or 0,
     }
 
     # Search & Filters
@@ -12167,13 +12255,20 @@ def admin_contact_enquiries(request):
     """
     all_qs = ContactEnquiry.objects.all().order_by('-created_at')
 
-    # KPI Summary Cards (5 Dynamic real-time metrics)
+    # KPI Summary Cards (Single aggregated DB query instead of 5 separate round-trips)
+    agg = all_qs.aggregate(
+        total=Count('id'),
+        new=Count('id', filter=Q(status__iexact='New')),
+        read=Count('id', filter=Q(status__iexact='Read')),
+        replied=Count('id', filter=Q(status__iexact='Replied')),
+        closed=Count('id', filter=Q(status__iexact='Closed')),
+    )
     kpi = {
-        'total': all_qs.count(),
-        'new': all_qs.filter(status='New').count(),
-        'read': all_qs.filter(status='Read').count(),
-        'replied': all_qs.filter(status='Replied').count(),
-        'closed': all_qs.filter(status='Closed').count(),
+        'total': agg['total'] or 0,
+        'new': agg['new'] or 0,
+        'read': agg['read'] or 0,
+        'replied': agg['replied'] or 0,
+        'closed': agg['closed'] or 0,
     }
 
     # Search & Filters
@@ -12284,7 +12379,7 @@ def admin_contact_enquiries(request):
         },
         'enquiry_type_options': enquiry_type_options,
         'status_options': status_options,
-        'total_results': qs.count(),
+        'total_results': paginator.count,
     }
     base_template = 'admin_partial_base.html' if request.headers.get('x-requested-with') == 'XMLHttpRequest' else 'admin.html'
     context['base_template'] = base_template

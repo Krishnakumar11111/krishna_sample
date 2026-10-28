@@ -9,8 +9,8 @@ class ActivityLoggingMiddleware:
         response = self.get_response(request)
         
         path = request.path
-        # Ignore static, media, admin assets
-        if path.startswith('/static/') or path.startswith('/media/') or path.endswith('.png') or path.endswith('.jpg') or path.endswith('.ico') or path.endswith('.css') or path.endswith('.js'):
+        # Ignore static, media, admin assets, internal admin panel, and AJAX requests for maximum performance
+        if path.startswith('/static/') or path.startswith('/media/') or path.startswith('/admin/') or path.startswith('/admin-module/') or request.headers.get('x-requested-with') == 'XMLHttpRequest' or path.endswith(('.png', '.jpg', '.ico', '.css', '.js', '.svg', '.woff', '.woff2')):
             return response
 
         try:
@@ -33,45 +33,51 @@ class ActivityLoggingMiddleware:
             elif 'Edg' in user_agent:
                 browser = 'Edge'
 
-            today = timezone.now().date()
+            # Throttle visitor logging per session (prevents blocking WAN DB queries on every page redirect/click)
+            now_ts = int(timezone.now().timestamp())
+            last_visit_log = request.session.get('last_visit_log')
             
-            # Log Visitor
-            VisitorTracker.objects.update_or_create(
-                ip_address=ip,
-                page_visited=path,
-                visit_date=today,
-                defaults={'user_agent': user_agent, 'last_seen': timezone.now()}
-            )
-
-            # Log Page Visit for key pages if GET
-            if request.method == 'GET' and not path.startswith('/api/'):
-                page_names = {
-                    '/': 'Home Page',
-                    '/edutrust_tuition_platform.html': 'Home Page',
-                    '/findtutor.html': 'Find Tutor Page',
-                    '/find-tutor/': 'Find Tutor Page',
-                    '/teacher-registration.html': 'Teacher Registration Page',
-                    '/teacher-registration/': 'Teacher Registration Page',
-                    '/registration.html': 'Student Registration Page',
-                    '/login.html': 'Login Page',
-                    '/book-demo/': 'Book Demo Page',
-                    '/book_demo.html': 'Book Demo Page',
-                    '/studymaterial.html': 'Study Material Page',
-                    '/admin.html': 'Super Admin Dashboard',
-                    '/custom-admin/': 'Super Admin Dashboard',
-                }
+            if not last_visit_log or (now_ts - last_visit_log > 600):
+                today = timezone.now().date()
                 
-                if path in page_names:
-                    ActivityLog.objects.create(
-                        activity_type='Page Visit',
-                        user_name='Visitor',
-                        user_role='Visitor',
-                        description=f"Visited {page_names[path]} ({path})",
-                        page_url=path,
-                        ip_address=ip,
-                        browser=browser,
-                        device_type=device_type
-                    )
+                # Log Visitor
+                VisitorTracker.objects.update_or_create(
+                    ip_address=ip,
+                    page_visited=path,
+                    visit_date=today,
+                    defaults={'user_agent': user_agent, 'last_seen': timezone.now()}
+                )
+
+                # Log Page Visit for key pages if GET
+                if request.method == 'GET' and not path.startswith('/api/'):
+                    page_names = {
+                        '/': 'Home Page',
+                        '/edutrust_tuition_platform.html': 'Home Page',
+                        '/findtutor.html': 'Find Tutor Page',
+                        '/find-tutor/': 'Find Tutor Page',
+                        '/teacher-registration.html': 'Teacher Registration Page',
+                        '/teacher-registration/': 'Teacher Registration Page',
+                        '/registration.html': 'Student Registration Page',
+                        '/login.html': 'Login Page',
+                        '/book-demo/': 'Book Demo Page',
+                        '/book_demo.html': 'Book Demo Page',
+                        '/studymaterial.html': 'Study Material Page',
+                        '/admin.html': 'Super Admin Dashboard',
+                        '/custom-admin/': 'Super Admin Dashboard',
+                    }
+                    
+                    if path in page_names:
+                        ActivityLog.objects.create(
+                            activity_type='Page Visit',
+                            user_name='Visitor',
+                            user_role='Visitor',
+                            description=f"Visited {page_names[path]} ({path})",
+                            page_url=path,
+                            ip_address=ip,
+                            browser=browser,
+                            device_type=device_type
+                        )
+                request.session['last_visit_log'] = now_ts
 
         except Exception as e:
             # Prevent middleware errors from affecting user requests
@@ -158,8 +164,9 @@ class SuperAdminAccessMiddleware:
                     import urllib.parse
                     return redirect(f'/admin/login/?next={urllib.parse.quote(path)}&expired=1')
                 
-                # Update last activity timestamp
-                request.session['admin_last_activity'] = now_ts
+                # Update last activity timestamp only if at least 60s has passed (avoids writing session DB on every rapid request)
+                if not last_activity or (now_ts - last_activity > 60):
+                    request.session['admin_last_activity'] = now_ts
 
             if not is_authenticated or not is_super_admin or not is_active:
                 if path.startswith('/api/'):

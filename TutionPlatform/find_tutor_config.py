@@ -1,6 +1,10 @@
 import json
+import time
 from django.db.models import Q
 from .models import SystemSetting, AcademicSubject, TeacherProfile, StudentProfile
+
+_FIND_TUTOR_CONFIG_CACHE = None
+_FIND_TUTOR_CONFIG_CACHE_TIME = 0
 
 DEFAULT_FIND_TUTOR_CONFIG = {
     "enabled": True,
@@ -72,6 +76,12 @@ def get_find_tutor_config():
     Load Find Tutor CMS configuration from SystemSetting database record.
     Falls back to default config if none exists.
     """
+    global _FIND_TUTOR_CONFIG_CACHE, _FIND_TUTOR_CONFIG_CACHE_TIME
+    now = time.time()
+    if _FIND_TUTOR_CONFIG_CACHE is not None and (now - _FIND_TUTOR_CONFIG_CACHE_TIME) < 60:
+        return _FIND_TUTOR_CONFIG_CACHE
+
+    res = None
     try:
         obj = SystemSetting.objects.filter(category='homepage', key='hp_find_tutor').first()
         if obj and obj.value:
@@ -86,10 +96,16 @@ def get_find_tutor_config():
                         merged[k].update(v)
                     else:
                         merged[k] = v
-                return merged
+                res = merged
     except Exception:
         pass
-    return json.loads(json.dumps(DEFAULT_FIND_TUTOR_CONFIG))
+
+    if res is None:
+        res = json.loads(json.dumps(DEFAULT_FIND_TUTOR_CONFIG))
+
+    _FIND_TUTOR_CONFIG_CACHE = res
+    _FIND_TUTOR_CONFIG_CACHE_TIME = now
+    return res
 
 
 def get_available_locations_and_subjects():

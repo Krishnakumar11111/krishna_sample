@@ -585,21 +585,23 @@
                 });
                 videoEl.addEventListener('error', dismissLoaderOverlay);
             } else {
-                // For custom loader: Use the exact loader duration from database
-                const rawDuration = "{{ platform_active_loader.minimum_display_time }}";
-                const durationMs = parseInt(rawDuration);
+                // For custom loader: Use the loader duration from database capped for performance
+                const rawDuration = "{{ platform_active_loader.minimum_display_time|default:0 }}";
+                const durationMs = parseInt(rawDuration, 10);
 
                 if (!isNaN(durationMs) && durationMs > 0) {
-                    setTimeout(dismissLoaderOverlay, durationMs);
+                    setTimeout(dismissLoaderOverlay, Math.min(durationMs, 200));
                 } else {
                     dismissLoaderOverlay();
                 }
             }
-            window.addEventListener('load', function() {
-                setTimeout(function() {
-                    if (typeof window.dismissLoaderOverlay === 'function') window.dismissLoaderOverlay();
-                }, 2500);
-            });
+
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                dismissLoaderOverlay();
+            } else {
+                document.addEventListener('DOMContentLoaded', dismissLoaderOverlay);
+                window.addEventListener('load', dismissLoaderOverlay);
+            }
         })();
     </script>
 
@@ -2802,7 +2804,7 @@
             });
         })();
     </script>
-    <script src="{% static 'js/admin_router.js' %}?v=36.0"></script>
+    <script src="{% static 'js/admin_router.js' %}?v=37.0"></script>
     <script src="{% static 'js/admin_spa.js' %}?v=36.0"></script>
 
     <!-- ENQUIRY DETAIL MODAL — Professional fullscreen style matching Students/Teachers -->
@@ -3849,9 +3851,6 @@ document.addEventListener('click', function(e) {
                     sub.style.display = 'block';
                     if (chev) chev.style.transform = 'rotate(180deg)';
                     if (typeof saveOpenSubmenusState === 'function') saveOpenSubmenusState();
-                    if (typeof window.navTo === 'function') {
-                        window.navTo('enquiries', e);
-                    }
                 } else {
                     sub.classList.add('hidden');
                     sub.style.display = 'none';
